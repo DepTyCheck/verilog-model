@@ -33,12 +33,14 @@ StdModulesNames =
   , "not"
   ]
 
+StdModulesSigNames : Vect StdModules .length $ Maybe (m ** SigNames m)
+StdModulesSigNames = replicate StdModules .length Nothing
 PrettyOpts : LayoutOpts
 PrettyOpts = Opts 152
 
 main : IO ()
 main = do
-  let vals = unGenTryN 10 someStdGen $ genModules (limit 4) StdModules >>= prettyModules (limit 10) (fromVect StdModulesNames)
+  let vals = unGenTryN 10 someStdGen $ genModules (limit 4) StdModules >>= prettyModules (limit 10) (fromVect StdModulesNames) StdModulesSigNames
   Lazy.for_ vals $ \val => do
     putStrLn "-------------------\n"
     putStr $ render PrettyOpts $ val

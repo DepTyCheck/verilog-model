@@ -55,6 +55,17 @@ namespace FinsList
   (.length) [] = 0
   (.length) (x::xs) = S xs.length
 
+  public export
+  (++) : (xs, ys : FinsList n) -> FinsList n
+  [] ++ ys = ys
+  (x :: xs) ++ ys = x :: xs ++ ys
+
+  public export
+  index : (fs : FinsList n) -> Fin (fs.length) -> Fin n
+  index (y :: fs) FZ = y
+  index (y :: fs) (FS x) = index fs x
+  
+
 public export
 totalInputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
 totalInputs []      = 0

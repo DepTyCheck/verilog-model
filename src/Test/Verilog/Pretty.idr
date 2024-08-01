@@ -164,10 +164,16 @@ solveAssigns iNames oNames = filter namesNotIdentical . toList . withIndex . tak
     namesNotIdentical : (Fin topLevelOutputs, Fin ins) -> Bool
     namesNotIdentical (outId, inId) = index outId oNames /= index inId iNames
 
+public export
+data SigNames : ModuleSig -> Type where
+  SNames : Vect m.inputs String -> Vect m.outputs String -> SigNames m
+
 export
-prettyModules : {opts : _} -> {ms : _} -> Fuel -> (names : SVect ms.length) -> UniqNames ms.length names => Modules ms -> Gen0 $ Doc opts
-prettyModules x _ End = pure empty
-prettyModules x names @{un} (NewCompositeModule m subMs conn cont) = do
+prettyModules : {opts : _} -> {ms : _} -> Fuel -> (names : SVect ms.length) -> UniqNames ms.length names => 
+                Vect (ms.length) (Maybe (m : ModuleSig ** SigNames m)) ->
+                Modules ms -> Gen0 $ Doc opts
+prettyModules x _ _ End = pure empty
+prettyModules x names sigNames @{un} (NewCompositeModule m subMs conn cont) = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} ms.length names un
   -- Generate toplevel input names
@@ -179,6 +185,9 @@ prettyModules x names @{un} (NewCompositeModule m subMs conn cont) = do
   -- Generate submodule instance names
   (namesIOWithSubMs ** uniosub) <- genNUniqueNames x subMs.length namesWithIO unio
   let subMInstanceNames = take subMs.length $ toVect namesIOWithSubMs
+
+  -- Choose if an attempt to use argument names each submodule instance will be made
+  subMInstanceUseArgNames <- vectOf {n=length (subMs.asList)} (choose (False, True))
 
   -- Extract a output to driving input mapping from conn
   let outputToDriver = connFwdRel conn
@@ -204,7 +213,7 @@ prettyModules x names @{un} (NewCompositeModule m subMs conn cont) = do
   let assigns = solveAssigns fullInputNames outputNames outputToDriver
 
   -- Recursive call to use at the end
-  recur <- prettyModules x (name::names) cont
+  recur <- prettyModules x (name::names) ((Just (m ** SNames inputNames outputNames))::sigNames) cont
   pure $ vsep
     [ enclose (flush $ line "module" <++> line name) (line "endmodule:" <++> line name) $ flush $ indent 2 $ vsep $ do
       let outerModuleInputs = map ("input logic " ++) inputNames
@@ -219,7 +228,13 @@ prettyModules x names @{un} (NewCompositeModule m subMs conn cont) = do
             let inputs  = inputs  <&> flip index subMINames
             let outputs = outputs <&> flip index subMONames
 
-            (tuple $ line <$> outputs ++ inputs) <+> symbol ';'
+            case (index subMsIdx subMInstanceUseArgNames, index msIdx sigNames) of
+              (False, _) => (tuple $ line <$> outputs ++ inputs) <+> symbol ';'
+              (_, Nothing) => (tuple $ line <$> outputs ++ inputs) <+> symbol ';'
+              (True, Just (_ ** SNames is os)) => do
+                let os_strings = zip (toList os) outputs <&> \(oname, cname) => "." ++ oname ++ "(" ++ cname ++ ")"
+                let is_strings = zip (toList is) inputs <&> \(iname, cname) => "." ++ iname ++ "(" ++ cname ++ ")"
+                (tuple $ line <$> os_strings ++ is_strings) <+> symbol ';'
         ) ++ [line ""] ++ (assigns <&> \(outIdx, inIdx) =>
           line "assign" <++> line (index outIdx outputNames) <++> symbol '=' <++> line (index inIdx fullInputNames) <+> symbol ';'
         )
