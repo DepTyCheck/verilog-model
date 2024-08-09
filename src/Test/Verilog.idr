@@ -17,25 +17,6 @@ namespace ModuleSig
 
   %name ModuleSig m
 
-  public export
-  data ModuleSigsList = Nil | (::) ModuleSig ModuleSigsList
-
-  %name ModuleSigsList ms
-
-  public export
-  length : ModuleSigsList -> Nat
-  length []      = Z
-  length (_::ms) = S $ length ms
-
-  public export %inline
-  (.length) : ModuleSigsList -> Nat
-  (.length) = length
-
-  public export
-  index : (ms : ModuleSigsList) -> Fin ms.length -> ModuleSig
-  index (m::_ ) FZ     = m
-  index (_::ms) (FS i) = index ms i
-
 namespace FinsList
 
   public export
@@ -64,38 +45,113 @@ namespace FinsList
   index : (fs : FinsList n) -> Fin (fs.length) -> Fin n
   index (y :: fs) FZ = y
   index (y :: fs) (FS x) = index fs x
-  
+
+namespace Connections
+  public export
+  data Connections : (ins, outs : Nat) -> Type where
+    Nil  : Connections ints Z
+    (::) : Fin ins -> Connections ins outs -> Connections ins (S outs)
+
+  public export
+  connSplit : {a : Nat} -> Connections f (a + b) -> (Connections f a, Connections f b)
+  connSplit {a=0} x = ([], x)
+  connSplit {a=(S k)} (x :: y) with (connSplit {a=k} y)
+    connSplit {a=(S k)} (x :: y) | (xs, ys) = (x :: xs, ys)
+
+  public export
+  (++) : Connections f a -> Connections f b -> Connections f (a + b)
+  (++) [] y = y
+  (++) (x :: z) y = x :: (++) z y
+
+  public export
+  index : Connections f l -> Fin l -> Fin f
+  index (x::xs) FZ = x
+  index (x::xs) (FS y) = index xs y
+
+  public export
+  finMap : (Fin a -> Fin b) -> Connections a l -> Connections b l
+  finMap f [] = []
+  finMap f (x::xs) = f x :: finMap f xs
 
 public export
-totalInputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
+data ContextModuleList : Type
+
+%name ContextModuleList ms
+
+public export
+data ContextModule : (ms: ContextModuleList) -> Type
+
+public export
+cmSig : ContextModule ms -> ModuleSig
+
+public export
+data ContextModuleList : Type where
+  Nil : ContextModuleList
+  Cons : (ms : ContextModuleList) -> (ContextModule ms) -> ContextModuleList
+
+public export
+length : ContextModuleList -> Nat
+length []      = Z
+length (Cons ms _) = S $ length ms
+
+public export %inline
+(.length) : ContextModuleList -> Nat
+(.length) = length
+
+public export
+indexSig : (ms: ContextModuleList) -> (idx : Fin ms.length) -> ModuleSig
+indexSig (Cons _ x) FZ = cmSig x
+indexSig (Cons ms _) (FS i) = indexSig ms i
+
+public export
+indexTail : (ms : ContextModuleList) -> (idx : Fin ms.length) -> ContextModuleList
+indexTail (Cons ms x) FZ = ms
+indexTail (Cons ms x) (FS y) = indexTail ms y
+
+public export
+indexFlawed : (ms : ContextModuleList) -> (idx : Fin ms.length) -> ContextModule $ indexTail ms idx
+indexFlawed (Cons ms x) FZ = x
+indexFlawed (Cons ms x) (FS y) = indexFlawed ms y
+
+public export
+totalInputs : {ms : ContextModuleList} -> FinsList ms.length -> Nat
 totalInputs []      = 0
-totalInputs (i::is) = (index ms i).inputs + totalInputs is
+totalInputs (i::is) = (indexSig ms i).inputs + totalInputs {ms} is
 
 public export
-totalOutputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
+totalOutputs : {ms : ContextModuleList} -> FinsList ms.length -> Nat
 totalOutputs []      = 0
-totalOutputs (i::is) = (index ms i).outputs + totalOutputs is
-
--- equivalent of `Vect outs (Fin ins)`
--- Each output has a connection from some single input.
--- Each input can go to several outputs.
-public export
-data Connections : (ins, outs : Nat) -> Type where
-  Nil  : Connections ints Z
-  (::) : Fin ins -> Connections ins outs -> Connections ins (S outs)
+totalOutputs (i::is) = (indexSig ms i).outputs + totalOutputs {ms} is
 
 public export
-data Modules : ModuleSigsList -> Type where
+SubmoduleList : ContextModuleList -> Type
+SubmoduleList ms = FinsList $ ms.length
 
-  End : Modules ms
+public export
+ConnectionsOf : {ms: ContextModuleList} -> ModuleSig -> SubmoduleList ms -> Type
+ConnectionsOf m subMs = Connections (m.inputs + totalOutputs {ms} subMs) (m.outputs + totalInputs {ms} subMs)
 
-  -- module containing only of submodules and connections
-  NewCompositeModule :
-    (m : ModuleSig) ->
-    (subMs : FinsList ms.length) ->
-    (conn : Connections (m.inputs + totalOutputs {ms} subMs) (m.outputs + totalInputs {ms} subMs)) ->
-    (cont : Modules (m::ms)) ->
-    Modules ms
+public export
+record Module (ms: ContextModuleList) where
+  constructor MModule
+  sig : ModuleSig
+  subMs : SubmoduleList ms
+  conns : ConnectionsOf {ms} sig subMs
+
+
+
+public export
+data ContextModule : (ms: ContextModuleList) -> Type where
+  SignatureOnly : (m : ModuleSig) -> ContextModule ms
+  FullModule : (mod : Module ms) -> ContextModule ms
+
+cmSig (SignatureOnly m) = m
+cmSig (FullModule (MModule m _ _)) = m
+
+public export
+data ModuleList : (ms : ContextModuleList) -> Type where
+  End : ModuleList ms
+  MCons : (mod : Module ms) -> ModuleList (Cons ms (FullModule mod)) -> ModuleList ms
 
 export
-genModules : Fuel -> (ms : ModuleSigsList) -> Gen MaybeEmpty $ Modules ms
+genModuleList : Fuel -> (ms : ContextModuleList) -> Gen MaybeEmpty $ ModuleList ms

@@ -24,31 +24,19 @@ import Syntax.IHateParens.SortedMap
 
 %default total
 
-toTotalInputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
+toTotalInputsIdx : {ms : ContextModuleList} -> {subMs : FinsList ms.length} ->
                    (idx : Fin subMs.asList.length) ->
-                   Fin (index ms (index' subMs.asList idx)).inputs ->
+                   Fin (indexSig ms (index' subMs.asList idx)).inputs ->
                    Fin $ totalInputs {ms} subMs
 toTotalInputsIdx {subMs=i::_ } FZ       x = indexSum $ Left x
 toTotalInputsIdx {subMs=i::is} (FS idx) x = indexSum $ Right $ toTotalInputsIdx idx x
 
-toTotalOutputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
+toTotalOutputsIdx : {ms : ContextModuleList} -> {subMs : FinsList ms.length} ->
                     (idx : Fin subMs.asList.length) ->
-                    Fin (index ms $ index' subMs.asList idx).outputs ->
+                    Fin (indexSig ms $ index' subMs.asList idx).outputs ->
                     Fin $ totalOutputs {ms} subMs
 toTotalOutputsIdx {subMs=i::_ } FZ       x = indexSum $ Left x
 toTotalOutputsIdx {subMs=i::is} (FS idx) x = indexSum $ Right $ toTotalOutputsIdx idx x
-
-connName : Fin (m.inputs + totalOutputs {ms} subMs) -> String
-connName n = "c\{show n}"
-
-outputName : Fin (m.outputs + totalInputs {ms} subMs) -> String
-outputName n = "o\{show n}"
-
-isModuleInput : {m : _} -> Fin (m.inputs + totalOutputs {ms} subMs) -> Bool
-isModuleInput = isLeft . splitSum
-
-isModuleOutput : {m : _} -> Fin (m.outputs + totalInputs {ms} subMs) -> Bool
-isModuleOutput = isLeft . splitSum
 
 connFwdRel : Connections f t -> Vect t $ Fin f
 connFwdRel []      = []
@@ -169,11 +157,11 @@ data SigNames : ModuleSig -> Type where
   SNames : Vect m.inputs String -> Vect m.outputs String -> SigNames m
 
 export
-prettyModules : {opts : _} -> {ms : _} -> Fuel -> (names : SVect ms.length) -> UniqNames ms.length names => 
+prettyModules : {opts : _} -> {ms : ContextModuleList} -> Fuel -> (names : SVect ms.length) -> UniqNames ms.length names => 
                 Vect (ms.length) (Maybe (m : ModuleSig ** SigNames m)) ->
-                Modules ms -> Gen0 $ Doc opts
+                ModuleList ms -> Gen0 $ Doc opts
 prettyModules x _ _ End = pure empty
-prettyModules x names sigNames @{un} (NewCompositeModule m subMs conn cont) = do
+prettyModules x names sigNames @{un} (MCons (MModule m subMs conn) cont) = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} ms.length names un
   -- Generate toplevel input names
@@ -222,8 +210,8 @@ prettyModules x names sigNames @{un} (NewCompositeModule m subMs conn cont) = do
       [ tuple outerModuleIO <+> symbol ';' , line "" ] ++
         (zip (toList subMInstanceNames) (withIndex subMs.asList) <&> \(instanceName, subMsIdx, msIdx) =>
           line (index msIdx $ toVect names) <++> line instanceName <+> do
-            let inputs  = List.allFins (index ms $ index' subMs.asList subMsIdx).inputs  <&> toTotalInputsIdx subMsIdx
-            let outputs = List.allFins (index ms $ index' subMs.asList subMsIdx).outputs <&> toTotalOutputsIdx subMsIdx
+            let inputs  = List.allFins (indexSig ms $ index' subMs.asList subMsIdx).inputs  <&> toTotalInputsIdx subMsIdx
+            let outputs = List.allFins (indexSig ms $ index' subMs.asList subMsIdx).outputs <&> toTotalOutputsIdx subMsIdx
 
             let inputs  = inputs  <&> flip index subMINames
             let outputs = outputs <&> flip index subMONames

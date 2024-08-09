@@ -10,4 +10,6 @@ import public Test.Verilog
 
 %hint LE : ConstructorDerivator; LE = LeastEffort {simplificationHack = True}
 
-Test.Verilog.genModules = deriveGen
+-- Test.Verilog.genModules = deriveGen
+
+Test.Verilog.genModuleList = deriveGen
