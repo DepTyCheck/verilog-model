@@ -268,7 +268,7 @@ connsExciseNew m subMs idx subMs' x = do
   let (e, f) = connSplit c
   let (g, h) = connSplit f
   let dr1 = sym $ totalInputsDistributive ms (subMsAfter subMs idx) subMs'
-  let i = replace {p=(Connections n)} dr1 $ d ++ h
+  let i = replace {p=(Connections n)} dr1 $ h ++ d
   let dr2 = sym $ totalInputsDistributive ms (subMsBefore subMs idx) (subMsAfter subMs idx ++ subMs')
   let j = replace {p=(Connections n)} dr2 $ e ++ i
   a ++ j
