@@ -94,7 +94,7 @@ data UniqNames : (l : Nat) -> SVect l -> Type where
 public export
 data NameIsNew : (l : Nat) -> (names: SVect l) -> (name: String) -> UniqNames l names -> Type where
   NNEmpty : NameIsNew 0 [] s Empty
-  NNCons : (0 _ : So $ x /= name) -> (nin: NameIsNew l xs x nn) -> NameIsNew (S l) (x :: xs) name (Cons xs x nn nin)
+  NNCons : (0 _ : So $ x /= name) -> (nin: NameIsNew l xs x nn) -> (nin' : NameIsNew l xs name nn') -> NameIsNew (S l) (x :: xs) name (Cons xs x nn nin)
 
 -- Minimize the signature while preserving the issue.
 export
