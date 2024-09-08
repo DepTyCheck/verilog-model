@@ -82,24 +82,66 @@ fromVect (x :: xs) = x :: fromVect xs
 public export
 data UniqNames : (l : Nat) -> SVect l -> Type
 public export
-data NameIsNew : (l : Nat) -> (names: SVect l) -> String -> UniqNames l names -> Type
+data NameNotIn : (l : Nat) -> (names : SVect l) -> (name : String) -> Type
 
--- Port JustNew
 public export
 data UniqNames : (l : Nat) -> SVect l -> Type where
   Empty : UniqNames 0 []
-  JustNew : {l : Nat} -> (names : SVect l) -> (name: String) -> (un: UniqNames l names) -> NameIsNew l names name un -> UniqNames l names
-  Cons : {l : Nat} -> (names : SVect l) -> (name: String) -> (un: UniqNames l names) -> NameIsNew l names name un -> UniqNames (S l) (name :: names)
+  Cons : {l : Nat} -> (names : SVect l) -> (name: String) -> UniqNames l names -> NameNotIn l names name -> UniqNames (S l) (name :: names)
 
 public export
-data NameIsNew : (l : Nat) -> (names: SVect l) -> (name: String) -> UniqNames l names -> Type where
-  NNEmpty : NameIsNew 0 [] s Empty
-  NNCons : (0 _ : So $ x /= name) -> (nin: NameIsNew l xs x nn) -> (nin' : NameIsNew l xs name nn') -> NameIsNew (S l) (x :: xs) name (Cons xs x nn nin)
+data NameNotIn : (l : Nat) -> (names : SVect l) -> (name : String) -> Type where
+  NNPEmpty : NameNotIn 0 [] s
+  NNPCons : (0 _ : So $ x /= name) -> (npi: NameNotIn l xs name) -> NameNotIn (S l) (x :: xs) name
 
--- Minimize the signature while preserving the issue.
+
+VerilogKeywords : SVect 225
+VerilogKeywords = [
+  "alias", "always", "always_comb", "always_ff", "always_latch", "and",
+  "assert", "assign", "assume", "automatic", "before", "begin", "bind",
+  "bins", "binsof", "bit", "break", "buf", "bufif0", "bufif1", "byte",
+  "case", "casex", "casez", "cell", "chandle", "class", "clocking", "cmos",
+  "config", "const", "constraint", "context", "continue", "cover", "covergroup",
+  "coverpoint", "cross", "deassign", "default", "defparam", "design", "disable",
+  "dist", "do", "edge", "else", "end", "endcase", "endclass", "endclocking",
+  "endconfig", "endfunction", "endgenerate", "endgroup", "endinterface", "endmodule",
+  "endpackage", "endprimitive", "endprogram", "endproperty", "endsequence", "endspecify",
+  "endtable", "endtask", "enum", "event", "expect", "export", "extends", "extern", "final",
+  "first_match", "for", "force", "foreach", "forever", "fork", "forkjoin", "function", "generate",
+  "genvar", "highz0", "highz1", "if", "iff", "ifnone", "ignore_bins", "illegal_bins", "import",
+  "incdir", "include", "initial", "inout", "input", "inside", "instance", "int", "integer",
+  "interface", "intersect", "join", "join_any", "join_none", "large", "larger", "liblist",
+  "library", "local", "localparam", "logic", "longint", "macromodule", "matches", "medium",
+  "modport", "module", "nand", "negedge", "new", "nmos", "nor", "noshow-cancelled", "noshowcancelled",
+  "not", "notif0", "notif1", "null", "or", "output", "package", "packed", "parameter", "pmos", "posedge",
+  "primitive", "priority", "program", "property", "protected", "pull0", "pull1", "pulldown", "pullup",
+  "pulsestyle_ondetect", "pulsestyle_onevent", "pure", "rand", "randc", "randcase", "randsequence", "rcmos",
+  "real", "realtime", "ref", "reg", "release", "repeat", "return", "rnmos", "rpmos", "rtran", "rtranif0",
+  "rtranif1", "scalared", "sequence", "shortint", "shortreal", "show-cancelled",
+  "showcancelled", "signed", "small", "solve", "specify", "specpa", "specparam",
+  "static", "string", "strong0", "strong1", "struct", "super", "supply0", "supply1",
+  "table", "tagged", "task", "this", "throughout", "time", "timeprecision", "timeunit",
+  "tran", "tranif0", "tranif1", "tri", "tri0", "tri1", "triand", "trior", "trireg", "type",
+  "typedef", "union", "unique", "unsigned", "use", "uwire", "var", "vectored", "virtual",
+  "void", "wait", "wait_order", "wand", "weak0", "weak1", "while", "wildcard", "wire",
+  "with", "within", "wor", "xnor", "xor"
+]
+
+public export
+data NameIsNewAndNonKeyword : (lk : Nat) -> (keywords : SVect lk) -> (l : Nat) -> (names: SVect l) -> (un: UniqNames l names) -> (name : String) -> Type where
+  NINANK : NameNotIn l names name -> NameNotIn lk keywords name -> NameIsNewAndNonKeyword lk keywords l names un name
+
+
+export
+rawNewName' : Fuel -> (Fuel -> Gen MaybeEmpty String) => (lk : Nat) -> (keywords : SVect lk) ->
+  (l : Nat) -> (names: SVect l) -> (un: UniqNames l names) -> Gen MaybeEmpty (s ** NameIsNewAndNonKeyword lk keywords l names un s)
+
 export
 rawNewName : Fuel -> (Fuel -> Gen MaybeEmpty String) =>
-             (l : Nat) -> (names: SVect l) -> (un: UniqNames l names) -> Gen MaybeEmpty (s ** NameIsNew l names s un)
+             (l : Nat) -> (names: SVect l) -> (un: UniqNames l names) -> Gen MaybeEmpty (s ** NameNotIn l names s)
+rawNewName f @{g} l names un = do
+  (s ** (NINANK a b)) <- rawNewName' f @{g} 225 VerilogKeywords l names un
+  pure $ (s ** a)
 
 namesGen : Gen0 String
 namesGen = pack <$> listOf {length = choose (1,10)} (choose ('a', 'z'))
