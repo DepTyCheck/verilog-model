@@ -95,7 +95,7 @@ data NameNotIn : (l : Nat) -> (names : SVect l) -> (name : String) -> Type where
   NNPCons : (0 _ : So $ x /= name) -> (npi: NameNotIn l xs name) -> NameNotIn (S l) (x :: xs) name
 
 
-VerilogKeywords : SVect 225
+VerilogKeywords : SVect ?
 VerilogKeywords = [
   "alias", "always", "always_comb", "always_ff", "always_latch", "and",
   "assert", "assign", "assume", "automatic", "before", "begin", "bind",
@@ -128,20 +128,25 @@ VerilogKeywords = [
 ]
 
 public export
-data NameIsNewAndNonKeyword : (lk : Nat) -> (keywords : SVect lk) -> (l : Nat) -> (names: SVect l) -> (un: UniqNames l names) -> (name : String) -> Type where
-  NINANK : NameNotIn l names name -> NameNotIn lk keywords name -> NameIsNewAndNonKeyword lk keywords l names un name
+data NameIsNewAndNonKeyword : (keywords : SVect lk) -> (names: SVect l) -> (un: UniqNames l names) -> (name : String) -> Type where
+  NINANK : NameNotIn l names name -> NameNotIn lk keywords name -> NameIsNewAndNonKeyword keywords names un name
 
 
 export
-rawNewName' : Fuel -> (Fuel -> Gen MaybeEmpty String) => (lk : Nat) -> (keywords : SVect lk) ->
-  (l : Nat) -> (names: SVect l) -> (un: UniqNames l names) -> Gen MaybeEmpty (s ** NameIsNewAndNonKeyword lk keywords l names un s)
+rawNewName' : Fuel ->
+              (Fuel -> Gen MaybeEmpty String) =>
+              {l : Nat} -> {lk : Nat} ->
+              (keywords : SVect lk) ->
+              (names: SVect l) ->
+              (un: UniqNames l names) ->
+              Gen MaybeEmpty (s ** NameIsNewAndNonKeyword keywords names un s)
 
 export
 rawNewName : Fuel -> (Fuel -> Gen MaybeEmpty String) =>
-             (l : Nat) -> (names: SVect l) -> (un: UniqNames l names) -> Gen MaybeEmpty (s ** NameNotIn l names s)
-rawNewName f @{g} l names un = do
-  (s ** (NINANK a b)) <- rawNewName' f @{g} 225 VerilogKeywords l names un
-  pure $ (s ** a)
+             {l : Nat} -> (names: SVect l) -> (un: UniqNames l names) -> Gen MaybeEmpty (s ** NameNotIn l names s)
+rawNewName f @{g} names un = do
+  (s ** NINANK a b) <- rawNewName' f @{g} VerilogKeywords names un
+  pure (s ** a)
 
 namesGen : Gen0 String
 namesGen = pack <$> listOf {length = choose (1,10)} (choose ('a', 'z'))
@@ -152,7 +157,7 @@ namesGen' _ = namesGen
 genOneUniqueName : {l : Nat} -> Fuel -> (names: SVect l) -> (un: UniqNames l names) ->
                    Gen MaybeEmpty (out : String ** UniqNames (S l) (out :: names))
 genOneUniqueName x names un = do
-  (name ** uname) <- rawNewName x @{namesGen'} l names un
+  (name ** uname) <- rawNewName x @{namesGen'} names un
   pure (name ** Cons names name un uname)
 
 genNUniqueNames : {l : Nat} -> Fuel -> (n : Nat) -> (names: SVect l) -> (un: UniqNames l names) ->
@@ -211,7 +216,7 @@ prettyModules : {opts : _} -> {ms : _} -> Fuel -> (names : SVect ms.length) -> U
 prettyModules x _ End = pure empty
 prettyModules x names @{un} (NewCompositeModule m subMs conn cont) = do
   -- Generate submodule name
-  (name ** isnew) <- rawNewName x @{namesGen'} ms.length names un
+  (name ** isnew) <- rawNewName x @{namesGen'} names un
   -- Generate toplevel input names
   (namesWithInput ** uni) <- genNUniqueNames x m.inputs names un
   let inputNames = take m.inputs $ toVect namesWithInput
