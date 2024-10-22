@@ -7,6 +7,7 @@ import Data.String
 
 import Test.DepTyCheck.Gen
 
+import Test.Verilog
 import Test.Verilog.Gen
 import Test.Verilog.Pretty
 import Test.Verilog.Pretty.Derived
@@ -35,6 +36,19 @@ StdModulesNames =
   , "nand"
   , "xor"
   , "not"
+  ]
+
+-- StdModulesPrintable : List PrintableModuleInfo
+-- StdModulesPrintable =  map (\(moduleSig, name) => MkPrintableModuleInfo name (listOfEmpties moduleSig.inputs) (listOfEmpties moduleSig.outputs) STDVerilog) (zip (toList StdModules) (toList StdModulesNames))
+
+StdModulesPV : Vect (StdModules .length) PrintableModuleInfo
+StdModulesPV =
+  [
+    MkPrintableModuleInfo "and"  ["", ""] [""] STDVerilog
+  , MkPrintableModuleInfo "or"   ["", ""] [""] STDVerilog
+  , MkPrintableModuleInfo "nand" ["", ""] [""] STDVerilog
+  , MkPrintableModuleInfo "xor"  ["", ""] [""] STDVerilog
+  , MkPrintableModuleInfo "not"  [""]     [""] STDVerilog
   ]
 
 record Config m where
@@ -133,7 +147,7 @@ main = do
 
   putStrLn "// initial seed: \{show cfg.randomSeed}"
   let vals = unGenTryAll' cfg.randomSeed $
-               genModules cfg.modelFuel StdModules >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) (fromVect StdModulesNames)
+               genModules cfg.modelFuel StdModules >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) (fromVect StdModulesNames) StdModulesPV
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \md : String => if nonTrivial md then Just (fst gmd, md) else Nothing
   let vals = vals <&> \(g, d) => d ++ "// seed after: \{show g}\n"
   let vals = take (limit cfg.testsCnt) vals

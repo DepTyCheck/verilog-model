@@ -5,6 +5,7 @@ import Data.List
 import Data.List.Extra
 import Data.List1
 import Data.List.Lazy
+import Data.String
 
 import Data.Fin.Split
 import Data.Fuel
@@ -73,6 +74,10 @@ data SVect : (len : Nat) -> Type where
 toVect : SVect l -> Vect l String
 toVect [] = []
 toVect (x :: xs) = x :: toVect xs
+
+toList : SVect l -> List String
+toList [] = []
+toList (x :: xs) = x :: toList xs
 
 public export
 fromVect : Vect l String -> SVect l
@@ -211,10 +216,37 @@ solveAssigns iNames oNames = filter namesNotIdentical . toList . withIndex . tak
     namesNotIdentical : (Fin topLevelOutputs, Fin ins) -> Bool
     namesNotIdentical (outId, inId) = index outId oNames /= index inId iNames
 
+public export
+data ModuleType = STDVerilog  -- std gate
+                | UserDefined -- module, interface, user-defined primitive, program
+
+public export
+record PrintableModuleInfo where
+  constructor MkPrintableModuleInfo
+  name     : String
+  inputs   : Vect n String  -- Input names
+  outputs  : Vect m String  -- Output names
+  mtype    : ModuleType     -- is name based connection allowed?
+
+data ConnectionStyle = PositionBased      -- ex. test0 test0Inst1 (h, i, j, a);
+                     | ExplicitNameBased  -- ex. test0 test1Inst2 (.a(h), .b(i), .c(j), .d(a));
+                    --  | ImplicitNameBased  -- ex. test0 test0Inst3 (.a, .b, .c);
+                    --  | Wildcard           -- ex. test0 test0Inst4 (.*)
+
+genConnectionStyle : Gen NonEmpty ConnectionStyle
+genConnectionStyle = elements [PositionBased, ExplicitNameBased]
+
+namesHelper: List String -> List String -> String
+namesHelper external internal =
+  do
+  let s = zip external internal
+  let s = map (\(external, internal) => "." ++ external ++ "(" ++ internal ++ ")") s
+  joinBy ", " s
+
 export
-prettyModules : {opts : _} -> {ms : _} -> Fuel -> (names : SVect ms.length) -> UniqNames ms.length names => Modules ms -> Gen0 $ Doc opts
-prettyModules x _ End = pure empty
-prettyModules x names @{un} (NewCompositeModule m subMs conn cont) = do
+prettyModules : {opts : _} -> {ms : _} -> Fuel -> (names : SVect ms.length) -> UniqNames ms.length names => Vect (length ms) PrintableModuleInfo -> Modules ms -> Gen0 $ Doc opts
+prettyModules x _ _ End  = pure empty
+prettyModules x names @{un} pmis (NewCompositeModule m subMs conn cont)  = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} names un
   -- Generate toplevel input names
@@ -250,24 +282,42 @@ prettyModules x names @{un} (NewCompositeModule m subMs conn cont) = do
   -- Compute necessary assign statements
   let assigns = solveAssigns fullInputNames outputNames outputToDriver
 
+  let thisModuleInfo = MkPrintableModuleInfo name inputNames outputNames UserDefined
   -- Recursive call to use at the end
-  recur <- prettyModules x (name::names) cont
+  recur <- prettyModules x (name::names) (thisModuleInfo::pmis) cont
   pure $ vsep
     [ enclose (flush $ line "module" <++> line name) (line "endmodule:" <++> line name) $ flush $ indent 2 $ vsep $ do
       let outerModuleInputs = map ("input logic " ++) inputNames
       let outerModuleOutputs = map ("output logic " ++) outputNames
       let outerModuleIO = toList $ line <$> (outerModuleOutputs ++ outerModuleInputs)
       [ tuple outerModuleIO <+> symbol ';' , line "" ] ++
-        (zip (toList subMInstanceNames) (withIndex subMs.asList) <&> \(instanceName, subMsIdx, msIdx) =>
-          line (index msIdx $ toVect names) <++> line instanceName <+> do
-            let inputs  = List.allFins (index ms $ index' subMs.asList subMsIdx).inputs  <&> toTotalInputsIdx subMsIdx
-            let outputs = List.allFins (index ms $ index' subMs.asList subMsIdx).outputs <&> toTotalOutputsIdx subMsIdx
+        (zip (toList subMInstanceNames) (withIndex subMs.asList) <&> \(instanceName, subMsIdx, msIdx) => line (index msIdx $ toVect names) <++> line instanceName <+>
+          do
+          let moduleSig = index ms msIdx
+          let modulePrintable = index msIdx pmis
 
-            let inputs  = inputs  <&> flip index subMINames
-            let outputs = outputs <&> flip index subMONames
+          let inputs  = List.allFins (index ms $ index' subMs.asList subMsIdx).inputs  <&> toTotalInputsIdx subMsIdx
+          let outputs = List.allFins (index ms $ index' subMs.asList subMsIdx).outputs <&> toTotalOutputsIdx subMsIdx
 
-            (tuple $ line <$> outputs ++ inputs) <+> symbol ';'
-        ) ++ [line ""] ++ (assigns <&> \(outIdx, inIdx) =>
+          let inputs  = inputs  <&> flip index subMINames
+          let outputs = outputs <&> flip index subMONames
+
+          case modulePrintable.mtype of
+            STDVerilog  => (tuple $ line <$> outputs ++ inputs) <+> symbol ';'
+            UserDefined =>
+              do
+              let externalInputs = modulePrintable.inputs
+              let externalOutputs = modulePrintable.outputs
+
+              let inpsJoined = namesHelper (toList externalInputs)  inputs
+              let outsJoined = namesHelper (toList externalOutputs) outputs
+
+              let res = if inpsJoined == "" || outsJoined == "" then inpsJoined ++ outsJoined
+                                                                else inpsJoined ++ ", " ++ outsJoined
+
+              line ("(" ++ res ++ ")") <+> symbol ';'
+        ) ++
+        [line ""] ++ (assigns <&> \(outIdx, inIdx) =>
           line "assign" <++> line (index outIdx outputNames) <++> symbol '=' <++> line (index inIdx fullInputNames) <+> symbol ';'
         )
     , line ""
