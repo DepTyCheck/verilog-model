@@ -73,9 +73,6 @@ data Connections : (ins, outs : Nat) -> Type where
   Nil  : Connections ints Z
   (::) : Fin ins -> Connections ins outs -> Connections ins (S outs)
 
-data SaveFin : Nat -> Type where
-  MkSaveFin : SaveFin n
-
 public export
 data Modules : ModuleSigsList -> Type where
 
@@ -84,10 +81,8 @@ data Modules : ModuleSigsList -> Type where
   -- module containing only of submodules and connections
   NewCompositeModule :
     (m : ModuleSig) ->
-    -- {(m::ms) : _ } ->
-    (fin: Fin (m::ms).length) ->
     (subMs : FinsList ms.length) ->
-    (conn : Connections ((index (m::ms) fin).inputs + totalOutputs {ms} subMs) ((index (m::ms) fin).outputs + totalInputs {ms} subMs)) ->
+    (conn : Connections (m.inputs + totalOutputs {ms} subMs) (m.outputs + totalInputs {ms} subMs)) ->
     (cont : Modules (m::ms)) ->
     Modules ms
 

@@ -29,26 +29,14 @@ StdModules =
   , MkModuleSig 1 1
   ]
 
-StdModulesNames : Vect StdModules .length String
-StdModulesNames =
-  [ "and"
-  , "or"
-  , "nand"
-  , "xor"
-  , "not"
-  ]
-
--- StdModulesPrintable : List PrintableModuleInfo
--- StdModulesPrintable =  map (\(moduleSig, name) => MkPrintableModuleInfo name (listOfEmpties moduleSig.inputs) (listOfEmpties moduleSig.outputs) STDVerilog) (zip (toList StdModules) (toList StdModulesNames))
-
-StdModulesPV : Vect (StdModules .length) PrintableModuleInfo
+StdModulesPV : PrintableModules StdModules
 StdModulesPV =
   [
-    MkPrintableModuleInfo "and"  ["", ""] [""] STDVerilog
-  , MkPrintableModuleInfo "or"   ["", ""] [""] STDVerilog
-  , MkPrintableModuleInfo "nand" ["", ""] [""] STDVerilog
-  , MkPrintableModuleInfo "xor"  ["", ""] [""] STDVerilog
-  , MkPrintableModuleInfo "not"  [""]     [""] STDVerilog
+    MkPrintableModule "and"  ["", ""] [""] STDVerilog
+  , MkPrintableModule "or"   ["", ""] [""] STDVerilog
+  , MkPrintableModule "nand" ["", ""] [""] STDVerilog
+  , MkPrintableModule "xor"  ["", ""] [""] STDVerilog
+  , MkPrintableModule "not"  [""]     [""] STDVerilog
   ]
 
 record Config m where
@@ -147,7 +135,7 @@ main = do
 
   putStrLn "// initial seed: \{show cfg.randomSeed}"
   let vals = unGenTryAll' cfg.randomSeed $
-               genModules cfg.modelFuel StdModules >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) (fromVect StdModulesNames) StdModulesPV
+               genModules cfg.modelFuel StdModules >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV ?foo31
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \md : String => if nonTrivial md then Just (fst gmd, md) else Nothing
   let vals = vals <&> \(g, d) => d ++ "// seed after: \{show g}\n"
   let vals = take (limit cfg.testsCnt) vals
