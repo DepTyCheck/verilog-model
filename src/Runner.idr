@@ -135,7 +135,7 @@ main = do
 
   putStrLn "// initial seed: \{show cfg.randomSeed}"
   let vals = unGenTryAll' cfg.randomSeed $
-               genModules cfg.modelFuel StdModules >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV ?foo31
+               genModules cfg.modelFuel StdModules >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV %search
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \md : String => if nonTrivial md then Just (fst gmd, md) else Nothing
   let vals = vals <&> \(g, d) => d ++ "// seed after: \{show g}\n"
   let vals = take (limit cfg.testsCnt) vals

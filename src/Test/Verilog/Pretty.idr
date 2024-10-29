@@ -230,9 +230,9 @@ record PrintableModule inps outs where
 
 namespace PrintableModules
   public export
-  data PrintableModules: (ms: ModuleSigsList) -> Type where
+  data PrintableModules : (ms : ModuleSigsList) -> Type where
     Nil : PrintableModules []
-    (::) : {m : ModuleSig} -> (PrintableModule m.inputs m.outputs) -> PrintableModules ms -> PrintableModules (m :: ms)
+    (::) : PrintableModule m.inputs m.outputs -> PrintableModules ms -> PrintableModules (m :: ms)
 
   public export
   length : PrintableModules _ -> Nat
@@ -249,11 +249,12 @@ namespace PrintableModules
   index (_::ms) (FS i) = index ms i
 
 zipExternalInternal: List String -> List String -> List String
-zipExternalInternal external internal = map (\(external, internal) => "." ++ external ++ "(" ++ internal ++ ")") (zip external internal)
+zipExternalInternal = zipWith $ \external, internal => ".\{external}(\{internal})"
 
 concatInpsOuts: {opts : _} -> List String -> List String -> Doc opts
 concatInpsOuts inputs outputs = (tuple $ line <$> outputs ++ inputs) <+> symbol ';'
 
+public export
 allModuleNames : PrintableModules ms -> SVect ms.length
 allModuleNames []        = []
 allModuleNames (x :: xs) = x.name :: allModuleNames xs
@@ -306,10 +307,11 @@ prettyModules x pms un (NewCompositeModule m subMs conn cont) = do
   let assigns = solveAssigns fullInputNames outputNames outputToDriver
 
   -- Save generated names
-  let generatedPrintableInfo = MkPrintableModule name inputNames outputNames UserDefined
+  let generatedPrintableInfo : ?
+      generatedPrintableInfo = MkPrintableModule name inputNames outputNames UserDefined
 
   -- Recursive call to use at the end
-  recur <- prettyModules x (generatedPrintableInfo :: pms) ?foo30 cont
+  recur <- prettyModules x (generatedPrintableInfo :: pms) %search cont
   pure $ vsep
     [ enclose (flush $ line "module" <++> line name) (line "endmodule:" <++> line name) $ flush $ indent 2 $ vsep $ do
       let outerModuleInputs = map ("input logic " ++) inputNames
