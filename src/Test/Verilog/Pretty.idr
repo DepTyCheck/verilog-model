@@ -309,25 +309,21 @@ prettyModules x pms @{un} (NewCompositeModule m subMs conn cont) = do
       let outerModuleIO = toList $ line <$> (outerModuleOutputs ++ outerModuleInputs)
       [ tuple outerModuleIO <+> symbol ';' , line "" ] ++
         (zip (toList subMInstanceNames) (withIndex subMs.asList) <&> \(instanceName, subMsIdx, msIdx) =>
-          line (index msIdx $ toVect (allModuleNames pms)) <++> line instanceName <+>
-          do
-          let moduleSig = index ms msIdx
-          let modulePrintable = index pms msIdx
+          line (index msIdx $ toVect (allModuleNames pms)) <++> line instanceName <+> do
+            let inputs  = List.allFins (index ms $ index' subMs.asList subMsIdx).inputs  <&> toTotalInputsIdx subMsIdx
+            let outputs = List.allFins (index ms $ index' subMs.asList subMsIdx).outputs <&> toTotalOutputsIdx subMsIdx
 
-          let inputs  = List.allFins (index ms $ index' subMs.asList subMsIdx).inputs  <&> toTotalInputsIdx subMsIdx
-          let outputs = List.allFins (index ms $ index' subMs.asList subMsIdx).outputs <&> toTotalOutputsIdx subMsIdx
+            let inputs  = inputs  <&> flip index subMINames
+            let outputs = outputs <&> flip index subMONames
 
-          let inputs  = inputs  <&> flip index subMINames
-          let outputs = outputs <&> flip index subMONames
+            let modulePrintable = index pms msIdx
+            case modulePrintable.insOuts of
+              StdModule  _        _         => concatInpsOuts inputs outputs
+              UserModule exInputs exOutputs => do
+                let inpsJoined = nameBasedConnections (toList exInputs)  inputs
+                let outsJoined = nameBasedConnections (toList exOutputs) outputs
 
-          case modulePrintable.insOuts of
-            StdModule  _        _         => concatInpsOuts inputs outputs
-            UserModule exInputs exOutputs =>
-              do
-              let inpsJoined = nameBasedConnections (toList exInputs)  inputs
-              let outsJoined = nameBasedConnections (toList exOutputs) outputs
-
-              concatInpsOuts inpsJoined outsJoined
+                concatInpsOuts inpsJoined outsJoined
         ) ++
         [line ""] ++ (assigns <&> \(outIdx, inIdx) =>
           line "assign" <++> line (index outIdx outputNames) <++> symbol '=' <++> line (index inIdx fullInputNames) <+> symbol ';'
