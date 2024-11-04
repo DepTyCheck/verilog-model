@@ -32,11 +32,11 @@ StdModules =
 StdModulesPV : PrintableModules StdModules
 StdModulesPV =
   [
-    MkPrintableModule "and"  ["", ""] [""] STDVerilog
-  , MkPrintableModule "or"   ["", ""] [""] STDVerilog
-  , MkPrintableModule "nand" ["", ""] [""] STDVerilog
-  , MkPrintableModule "xor"  ["", ""] [""] STDVerilog
-  , MkPrintableModule "not"  [""]     [""] STDVerilog
+    MkPrintableModule "and"  (StdModule 2 1)
+  , MkPrintableModule "or"   (StdModule 2 1)
+  , MkPrintableModule "nand" (StdModule 2 1)
+  , MkPrintableModule "xor"  (StdModule 2 1)
+  , MkPrintableModule "not"  (StdModule 1 1)
   ]
 
 record Config m where
@@ -135,7 +135,7 @@ main = do
 
   putStrLn "// initial seed: \{show cfg.randomSeed}"
   let vals = unGenTryAll' cfg.randomSeed $
-               genModules cfg.modelFuel StdModules >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV %search
+               genModules cfg.modelFuel StdModules >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \md : String => if nonTrivial md then Just (fst gmd, md) else Nothing
   let vals = vals <&> \(g, d) => d ++ "// seed after: \{show g}\n"
   let vals = take (limit cfg.testsCnt) vals

@@ -5,7 +5,6 @@ import Data.List
 import Data.List.Extra
 import Data.List1
 import Data.List.Lazy
-import Data.String
 
 import Data.Fin.Split
 import Data.Fuel
@@ -74,10 +73,6 @@ data SVect : (len : Nat) -> Type where
 toVect : SVect l -> Vect l String
 toVect [] = []
 toVect (x :: xs) = x :: toVect xs
-
-toList : SVect l -> List String
-toList [] = []
-toList (x :: xs) = x :: toList xs
 
 public export
 fromVect : Vect l String -> SVect l
@@ -216,22 +211,24 @@ solveAssigns iNames oNames = filter namesNotIdentical . toList . withIndex . tak
     namesNotIdentical : (Fin topLevelOutputs, Fin ins) -> Bool
     namesNotIdentical (outId, inId) = index outId oNames /= index inId iNames
 
+||| For standart gates in SystemVerilog only position-based connections are allowed.
+||| For user modules, interfaces, primitives and programs both position-based and name-based connections are allowed.
+||| This type stores the names of inputs and outputs, if they exist
 public export
-data ModuleType = STDVerilog  -- std gate
-                | UserDefined -- module, interface, user-defined primitive, program
+data InsOuts : (ins, outs : Nat) -> Type where
+  StdModule  : (ins, outs : Nat) -> InsOuts ins outs
+  UserModule : (inputs : Vect ins String) -> (outputs : Vect outs String) -> InsOuts ins outs
 
 public export
 record PrintableModule inps outs where
   constructor MkPrintableModule
-  name     : String
-  inputs   : Vect inps String  -- Input names
-  outputs  : Vect outs String  -- Output names
-  mtype    : ModuleType       -- is name based connection allowed?
+  name    : String
+  insOuts : InsOuts inps outs
 
 namespace PrintableModules
   public export
   data PrintableModules : (ms : ModuleSigsList) -> Type where
-    Nil : PrintableModules []
+    Nil  : PrintableModules []
     (::) : PrintableModule m.inputs m.outputs -> PrintableModules ms -> PrintableModules (m :: ms)
 
   public export
@@ -248,8 +245,8 @@ namespace PrintableModules
   index (m::_ ) FZ     = m
   index (_::ms) (FS i) = index ms i
 
-zipExternalInternal: List String -> List String -> List String
-zipExternalInternal = zipWith $ \external, internal => ".\{external}(\{internal})"
+nameBasedConnections : List String -> List String -> List String
+nameBasedConnections = zipWith $ \external, internal => ".\{external}(\{internal})"
 
 concatInpsOuts: {opts : _} -> List String -> List String -> Doc opts
 concatInpsOuts inputs outputs = (tuple $ line <$> outputs ++ inputs) <+> symbol ';'
@@ -259,18 +256,11 @@ allModuleNames : PrintableModules ms -> SVect ms.length
 allModuleNames []        = []
 allModuleNames (x :: xs) = x.name :: allModuleNames xs
 
-uniqNameNotIn : {ms: _} -> (x: PrintableModule _ _) -> (xs: PrintableModules ms) -> NameNotIn (length ms) (allModuleNames xs) (x .name)
-uniqNameNotIn x [] = NNPEmpty
-uniqNameNotIn x (y :: ys) = NNPCons ?foo29_1 (uniqNameNotIn x ys)
-
-uniqNames : {ms: _} -> (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms)
-uniqNames [] = Empty
-uniqNames (x :: xs) = Cons (allModuleNames xs) x.name (uniqNames xs) (uniqNameNotIn x xs)
-
 export
-prettyModules : {opts : _} -> {ms : _} -> Fuel -> (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) -> Modules ms ->  Gen0 $ Doc opts
-prettyModules x _ _ End = pure empty
-prettyModules x pms un (NewCompositeModule m subMs conn cont) = do
+prettyModules : {opts : _} -> {ms : _} -> Fuel ->
+                (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => Modules ms -> Gen0 $ Doc opts
+prettyModules x _         End = pure empty
+prettyModules x pms @{un} (NewCompositeModule m subMs conn cont) = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} (allModuleNames pms) un
   -- Generate toplevel input names
@@ -308,17 +298,18 @@ prettyModules x pms un (NewCompositeModule m subMs conn cont) = do
 
   -- Save generated names
   let generatedPrintableInfo : ?
-      generatedPrintableInfo = MkPrintableModule name inputNames outputNames UserDefined
+      generatedPrintableInfo = MkPrintableModule name (UserModule inputNames outputNames)
 
   -- Recursive call to use at the end
-  recur <- prettyModules x (generatedPrintableInfo :: pms) %search cont
+  recur <- prettyModules x (generatedPrintableInfo :: pms) cont
   pure $ vsep
     [ enclose (flush $ line "module" <++> line name) (line "endmodule:" <++> line name) $ flush $ indent 2 $ vsep $ do
       let outerModuleInputs = map ("input logic " ++) inputNames
       let outerModuleOutputs = map ("output logic " ++) outputNames
       let outerModuleIO = toList $ line <$> (outerModuleOutputs ++ outerModuleInputs)
       [ tuple outerModuleIO <+> symbol ';' , line "" ] ++
-        (zip (toList subMInstanceNames) (withIndex subMs.asList) <&> \(instanceName, subMsIdx, msIdx) => line (index msIdx $ toVect (allModuleNames pms)) <++> line instanceName <+>
+        (zip (toList subMInstanceNames) (withIndex subMs.asList) <&> \(instanceName, subMsIdx, msIdx) =>
+          line (index msIdx $ toVect (allModuleNames pms)) <++> line instanceName <+>
           do
           let moduleSig = index ms msIdx
           let modulePrintable = index pms msIdx
@@ -329,15 +320,12 @@ prettyModules x pms un (NewCompositeModule m subMs conn cont) = do
           let inputs  = inputs  <&> flip index subMINames
           let outputs = outputs <&> flip index subMONames
 
-          case modulePrintable.mtype of
-            STDVerilog  => concatInpsOuts inputs outputs
-            UserDefined =>
+          case modulePrintable.insOuts of
+            StdModule  _        _         => concatInpsOuts inputs outputs
+            UserModule exInputs exOutputs =>
               do
-              let externalInputs = modulePrintable.inputs
-              let externalOutputs = modulePrintable.outputs
-
-              let inpsJoined = zipExternalInternal (toList externalInputs)  inputs
-              let outsJoined = zipExternalInternal (toList externalOutputs) outputs
+              let inpsJoined = nameBasedConnections (toList exInputs)  inputs
+              let outsJoined = nameBasedConnections (toList exOutputs) outputs
 
               concatInpsOuts inpsJoined outsJoined
         ) ++
