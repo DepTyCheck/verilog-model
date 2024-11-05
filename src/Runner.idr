@@ -17,6 +17,7 @@ import Text.PrettyPrint.Bernardy
 import System
 import System.GetOpts
 import System.Random.Pure.StdGen
+import System.File
 
 %default total
 
@@ -45,6 +46,7 @@ record Config m where
   layoutOpts : m LayoutOpts
   testsCnt   : m Nat
   modelFuel  : m Fuel
+  testsDir   : m String
 
 allNothing : Config Maybe
 allNothing = MkConfig
@@ -52,7 +54,11 @@ allNothing = MkConfig
   , layoutOpts = Nothing
   , testsCnt   = Nothing
   , modelFuel  = Nothing
+  , testsDir   = Nothing
   }
+
+noTestDirPath : String
+noTestDirPath = ""
 
 defaultConfig : IO $ Config Prelude.id
 defaultConfig = pure $ MkConfig
@@ -60,11 +66,12 @@ defaultConfig = pure $ MkConfig
   , layoutOpts = Opts 152
   , testsCnt   = 10
   , modelFuel  = limit 4
+  , testsDir   = noTestDirPath
   }
 
 -- TODO to do this with `barbies`
 mergeCfg : (forall a. m a -> n a -> k a) -> Config m -> Config n -> Config k
-mergeCfg f (MkConfig rs lo tc mf) (MkConfig rs' lo' tc' mf') = MkConfig (f rs rs') (f lo lo') (f tc tc') (f mf mf')
+mergeCfg f (MkConfig rs lo tc mf td) (MkConfig rs' lo' tc' mf' td') = MkConfig (f rs rs') (f lo lo') (f tc tc') (f mf mf') (f td td')
 
 parseSeed : String -> Either String $ Config Maybe
 parseSeed str = do
@@ -93,6 +100,9 @@ parseModelFuel str = case parsePositive str of
   Just n  => Right $ {modelFuel := Just $ limit n} allNothing
   Nothing => Left "can't parse given model fuel"
 
+parseTestsDir : String -> Either String $ Config Maybe
+parseTestsDir str = Right $ {testsDir := Just str} allNothing
+
 cliOpts : List $ OptDescr $ Config Maybe
 cliOpts =
   [ MkOpt [] ["seed"]
@@ -107,6 +117,9 @@ cliOpts =
   , MkOpt [] ["model-fuel"]
       (ReqArg' parseModelFuel "<fuel>")
       "Sets how much fuel there is for generation of the model."
+  , MkOpt ['o'] ["to", "generate-to"]
+      (ReqArg' parseTestsDir "<target-dir>")
+      "Sets where to generate the tests."
   ]
 
 tail'' : List a -> List a
@@ -123,6 +136,11 @@ nonTrivial : String -> Bool
 nonTrivial = any (/= "") . map trim . lines
 
 covering
+countDigit: Nat -> Nat
+countDigit 0 = 1
+countDigit n = 1 + countDigit(div n 10)
+
+covering
 main : IO ()
 main = do
   let usage : Lazy String := usageInfo "\nUsage:" cliOpts
@@ -137,8 +155,18 @@ main = do
   let vals = unGenTryAll' cfg.randomSeed $
                genModules cfg.modelFuel StdModules >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \md : String => if nonTrivial md then Just (fst gmd, md) else Nothing
-  let vals = vals <&> \(g, d) => d ++ "// seed after: \{show g}\n"
   let vals = take (limit cfg.testsCnt) vals
-  Lazy.for_ vals $ \val => do
-    putStrLn "-------------------\n"
-    putStr val
+
+  if cfg.testsDir == noTestDirPath then do
+      Lazy.for_ vals $ \(seed, generatedModule) => do
+      putStrLn "-------------------\n"
+      putStr $ generatedModule ++ "// seed after: \{show seed}\n"
+    else do
+      let padding = countDigit cfg.testsCnt
+      -- generate indexes for files
+      let indexes = Lazy.iterate (\x => Just (x + 1)) 0
+      let numberedVals = zip indexes vals
+      Lazy.for_ numberedVals $ \(idx, (seed, generatedModule)) => do
+        let fileName = "\{cfg.testsDir}/\{padLeft padding '0' (show idx)}-\{show seed}.sv"
+        Right () <- writeFile fileName generatedModule | Left err => putStrLn (show err)
+        putStrLn "[+] Printed file \{fileName}"
