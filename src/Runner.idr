@@ -2,6 +2,7 @@ module Runner
 
 import Data.Fuel
 import Data.List.Lazy
+import Data.List.Lazy.Extra
 import Data.List1
 import Data.String
 
@@ -18,6 +19,7 @@ import System
 import System.GetOpts
 import System.Random.Pure.StdGen
 import System.File
+import System.Directory
 
 %default total
 
@@ -46,7 +48,7 @@ record Config m where
   layoutOpts : m LayoutOpts
   testsCnt   : m Nat
   modelFuel  : m Fuel
-  testsDir   : m String
+  testsDir   : m (Maybe String)
 
 allNothing : Config Maybe
 allNothing = MkConfig
@@ -57,16 +59,13 @@ allNothing = MkConfig
   , testsDir   = Nothing
   }
 
-noTestDirPath : String
-noTestDirPath = ""
-
 defaultConfig : IO $ Config Prelude.id
 defaultConfig = pure $ MkConfig
   { randomSeed = !initSeed
   , layoutOpts = Opts 152
   , testsCnt   = 10
   , modelFuel  = limit 4
-  , testsDir   = noTestDirPath
+  , testsDir   = Nothing
   }
 
 -- TODO to do this with `barbies`
@@ -101,7 +100,7 @@ parseModelFuel str = case parsePositive str of
   Nothing => Left "can't parse given model fuel"
 
 parseTestsDir : String -> Either String $ Config Maybe
-parseTestsDir str = Right $ {testsDir := Just str} allNothing
+parseTestsDir str = Right $ {testsDir := Just $ Just str} allNothing
 
 cliOpts : List $ OptDescr $ Config Maybe
 cliOpts =
@@ -135,10 +134,9 @@ mapMaybe f (x::xs) = case f x of
 nonTrivial : String -> Bool
 nonTrivial = any (/= "") . map trim . lines
 
-covering
-countDigit: Nat -> Nat
+countDigit : Nat -> Nat
 countDigit 0 = 1
-countDigit n = 1 + countDigit(div n 10)
+countDigit n = 1 + countDigit(assert_smaller n $ divNatNZ n 10 %search)
 
 covering
 main : IO ()
@@ -157,16 +155,25 @@ main = do
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \md : String => if nonTrivial md then Just (fst gmd, md) else Nothing
   let vals = take (limit cfg.testsCnt) vals
 
-  if cfg.testsDir == noTestDirPath then do
+  case cfg.testsDir of
+    Nothing => do
       Lazy.for_ vals $ \(seed, generatedModule) => do
       putStrLn "-------------------\n"
       putStr $ generatedModule ++ "// seed after: \{show seed}\n"
-    else do
+    Just path => do
+      -- create dirs
+      0 <- system "mkdir -p \{path}"
+        | errcode => die "`mkdir` returned \{show errcode}"
+      -- set file name paddings
       let padding = countDigit cfg.testsCnt
-      -- generate indexes for files
-      let indexes = Lazy.iterate (\x => Just (x + 1)) 0
-      let numberedVals = zip indexes vals
-      Lazy.for_ numberedVals $ \(idx, (seed, generatedModule)) => do
-        let fileName = "\{cfg.testsDir}/\{padLeft padding '0' (show idx)}-\{show seed}.sv"
-        Right () <- writeFile fileName generatedModule | Left err => putStrLn (show err)
-        putStrLn "[+] Printed file \{fileName}"
+      let (seeds, modules) = unzip vals
+      let alignedSeeds = cfg.randomSeed::seeds
+      let numberedVals = withIndex $ zip modules alignedSeeds
+      -- print files
+      Lazy.for_ numberedVals $ \(idx, (generatedModule, seed)) => do
+        let fileName = "\{path}/\{padLeft padding '0' (show idx)}-\{show seed}.sv"
+        writeRes <- writeFile fileName generatedModule
+        case writeRes of
+          Left err => putStrLn (show err)
+          Right () => putStrLn "[+] Printed file \{fileName}"
+        pure ()
