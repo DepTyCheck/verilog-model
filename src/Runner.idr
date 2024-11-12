@@ -142,7 +142,7 @@ createDir' = foldlM createDirHelper (Right ()) . inits . toList . split (=='/') 
   createDirHelper : Either FileError () -> List String -> IO (Either FileError ())
   createDirHelper _           []       = pure $ Right ()
   createDirHelper (Left  err) _        = pure $ Left err
-  createDirHelper (Right _  ) subpaths = createDir ?fooo <&> \case
+  createDirHelper (Right _  ) subpaths = createDir (joinBy "/" subpaths) <&> \case
     Left FileExists => Right ()
     e               => e
 
