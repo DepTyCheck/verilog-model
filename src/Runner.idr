@@ -18,7 +18,6 @@ import Text.PrettyPrint.Bernardy
 import System
 import System.GetOpts
 import System.Random.Pure.StdGen
-import System.File
 import System.Directory
 
 %default total
@@ -138,6 +137,19 @@ countDigit : Nat -> Nat
 countDigit 0 = 1
 countDigit n = 1 + countDigit(assert_smaller n $ divNatNZ n 10 %search)
 
+createDir' : String -> IO (Either FileError ())
+createDir' path = foldlM createDirHelper (Right ()) (inits $ toList $ split (=='/') path) where
+  createDirIgnoreFileExists : String -> IO (Either FileError ())
+  createDirIgnoreFileExists path = createDir path >>= \res => case res of
+    Right _          => pure $ Right ()
+    Left  FileExists => pure $ Right ()
+    Left  err        => pure $ Left err
+
+  createDirHelper : Either FileError () -> List String -> IO (Either FileError ())
+  createDirHelper _           []       = pure $ Right ()
+  createDirHelper (Right _)   subpaths = createDirIgnoreFileExists (joinBy "/" subpaths)
+  createDirHelper (Left  err) _        = pure $ Left err
+
 covering
 main : IO ()
 main = do
@@ -161,9 +173,7 @@ main = do
       putStrLn "-------------------\n"
       putStr $ generatedModule ++ "// seed after: \{show seed}\n"
     Just path => do
-      -- create dirs
-      0 <- system "mkdir -p \{path}"
-        | errcode => die "`mkdir` returned \{show errcode}"
+      Right () <- createDir' path | Left err => die "Couldn't create dirs due to an error: \{show err}"
       -- set file name paddings
       let padding = countDigit cfg.testsCnt
       let (seeds, modules) = unzip vals
