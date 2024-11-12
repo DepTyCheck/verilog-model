@@ -139,15 +139,12 @@ countDigit n = 1 + countDigit(assert_smaller n $ divNatNZ n 10 %search)
 
 createDir' : String -> IO (Either FileError ())
 createDir' path = foldlM createDirHelper (Right ()) (inits $ toList $ split (=='/') path) where
-  createDirIgnoreFileExists : String -> IO (Either FileError ())
-  createDirIgnoreFileExists path = createDir path >>= \res => case res of
-    Left FileExists => pure $ Right ()
-    e               => pure $ e
-
   createDirHelper : Either FileError () -> List String -> IO (Either FileError ())
   createDirHelper _           []       = pure $ Right ()
-  createDirHelper (Right _)   subpaths = createDirIgnoreFileExists (joinBy "/" subpaths)
   createDirHelper (Left  err) _        = pure $ Left err
+  createDirHelper (Right _  ) subpaths = createDir path >>= \res => case res of
+    Left FileExists => pure $ Right ()
+    e               => pure $ e
 
 covering
 main : IO ()
