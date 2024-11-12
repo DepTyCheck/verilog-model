@@ -141,9 +141,8 @@ createDir' : String -> IO (Either FileError ())
 createDir' path = foldlM createDirHelper (Right ()) (inits $ toList $ split (=='/') path) where
   createDirIgnoreFileExists : String -> IO (Either FileError ())
   createDirIgnoreFileExists path = createDir path >>= \res => case res of
-    Right _          => pure $ Right ()
-    Left  FileExists => pure $ Right ()
-    Left  err        => pure $ Left err
+    Left FileExists => pure $ Right ()
+    e               => pure $ e
 
   createDirHelper : Either FileError () -> List String -> IO (Either FileError ())
   createDirHelper _           []       = pure $ Right ()
