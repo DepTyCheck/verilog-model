@@ -8,6 +8,4 @@ import public Test.Verilog
 
 %logging "deptycheck" 5
 
-%hint LE : ConstructorDerivator; LE = LeastEffort {simplificationHack = True}
-
 Test.Verilog.genModules = deriveGen

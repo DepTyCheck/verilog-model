@@ -2,8 +2,8 @@
 ### The model ###
 #################
 
-[custom.all.verilog-dtc]
+[custom.all.verilog-model]
 type = "local"
 path = "."
-ipkg = "verilog-dtc.ipkg"
+ipkg = "verilog-model.ipkg"
 #test = "tests/tests.ipkg"

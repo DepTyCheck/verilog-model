@@ -1,4 +1,4 @@
-package verilog-dtc
+package verilog-model
 brief = "DepTyCheck model of SystemVerilog"
 
 authors = "Denis Buzdalov"
@@ -11,7 +11,7 @@ builddir = ".build"
 version = 0.1.0
 langversion >= 0.7.0
 
-executable = verilog-dtc
+executable = verilog-model
 main = Runner
 
 depends = collection-utils
