@@ -6,4 +6,4 @@
 type = "local"
 path = "."
 ipkg = "verilog-model.ipkg"
-#test = "tests/tests.ipkg"
+test = "tests/tests.ipkg"

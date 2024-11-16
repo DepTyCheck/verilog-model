@@ -1,0 +1,43 @@
+// initial seed: rawStdGen 0 1
+[+] Printed file newdir/newdir/0-rawStdGen 0 1.sv
+module halmew
+  ( output logic qgiwl
+  , output logic s
+  , output logic doy
+  , input logic hnlug
+  , input logic ytokmvi
+  , input logic adbwx
+  , input logic ifzari
+  );
+  
+  not rooejs(doy, adbwx);
+  
+  assign qgiwl = adbwx;
+  assign s = ifzari;
+endmodule: halmew
+
+module ift
+  (output logic spzzs, output logic pebelzq, output logic javnvkdjpl, input logic eimqwrop, input logic tyzmorgb, input logic ozdan);
+  
+  
+  assign spzzs = ozdan;
+  assign pebelzq = ozdan;
+  assign javnvkdjpl = ozdan;
+endmodule: ift
+
+module nwbavggy
+  (output logic itf, output logic q, input logic idamdzzr, input logic ceb, input logic frxfpt);
+  
+  
+  assign itf = frxfpt;
+  assign q = frxfpt;
+endmodule: nwbavggy
+
+module vzmw
+  (output logic l, input logic j, input logic bgyuyxe);
+  
+  and bamgs(l, bgyuyxe, l);
+  
+endmodule: vzmw
+
+

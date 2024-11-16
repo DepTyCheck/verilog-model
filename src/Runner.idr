@@ -134,7 +134,7 @@ nonTrivial : String -> Bool
 nonTrivial = any (/= "") . map trim . lines
 
 countDigit : Nat -> Nat
-countDigit 0 = 1
+countDigit 0 = 0
 countDigit n = 1 + countDigit(assert_smaller n $ divNatNZ n 10 %search)
 
 createDir' : String -> IO (Either FileError ())
