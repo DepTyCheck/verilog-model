@@ -1,19 +1,52 @@
 module Test.Verilog
 
 import Data.Fuel
+import Data.Vect
 import public Data.Fin
 
 import Test.DepTyCheck.Gen
 
 %default total
 
+namespace Connections
+  public export
+  data ConnectionType = Logic | Wire | Uwire
+
+  public export
+  data ConnectionFeasibleRegion = D4 | Dint
+
+  connFR : ConnectionType -> ConnectionFeasibleRegion
+  connFR Logic = D4
+  connFR Wire  = D4
+  connFR Uwire = D4
+
+  public export
+  data ConnectionsList = Nil | (::) ConnectionType ConnectionsList
+
+  public export
+  length : ConnectionsList -> Nat
+  length []      = Z
+  length (_::ms) = S $ length ms
+
+  public export %inline
+  (.length) : ConnectionsList -> Nat
+  (.length) = length
+
 namespace ModuleSig
 
   public export
   record ModuleSig where
     constructor MkModuleSig
-    inputs  : Nat
-    outputs : Nat
+    inputs  : ConnectionsList
+    outputs : ConnectionsList
+
+  public export
+  (.inputsLen) : ModuleSig -> Nat
+  (.inputsLen) m = length m.inputs
+
+  public export
+  (.outputsLen) : ModuleSig -> Nat
+  (.outputsLen) m = length m.outputs
 
   %name ModuleSig m
 
@@ -58,12 +91,12 @@ namespace FinsList
 public export
 totalInputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
 totalInputs []      = 0
-totalInputs (i::is) = (index ms i).inputs + totalInputs is
+totalInputs (i::is) = (index ms i).inputsLen + totalInputs is
 
 public export
 totalOutputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
 totalOutputs []      = 0
-totalOutputs (i::is) = (index ms i).outputs + totalOutputs is
+totalOutputs (i::is) = (index ms i).outputsLen + totalOutputs is
 
 -- equivalent of `Vect outs (Fin ins)`
 -- Each output has a connection from some single input.
@@ -82,7 +115,7 @@ data Modules : ModuleSigsList -> Type where
   NewCompositeModule :
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
-    (conn : Connections (m.inputs + totalOutputs {ms} subMs) (m.outputs + totalInputs {ms} subMs)) ->
+    (conn : Connections (m.inputsLen + totalOutputs {ms} subMs) (m.outputsLen + totalInputs {ms} subMs)) ->
     (cont : Modules (m::ms)) ->
     Modules ms
 

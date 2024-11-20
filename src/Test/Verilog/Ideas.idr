@@ -4,6 +4,8 @@ import Data.List
 import Data.Vect
 import Data.Vect.Quantifiers
 
+import Test.Verilog
+
 %default total
 
 namespace SuccessiveAdditionsIdea
@@ -111,4 +113,12 @@ namespace InductionOnInputs
     -- We add 'phantom' nodes, corresponding to inputs/outputs of the whole circuit.
     -- Note that input of a circuit requires a phantom output node, and vice versa.
     conn : ModuleConn (outs + foldr (+) 0 (elems <&> (.ins))) (ins + foldr (+) 0 (elems <&> (.outs)))
+
+
+data ConnectionUsage = Data | NetResolved | NetUnresolved
+
+connUseCase : ConnectionType -> ConnectionUsage
+connUseCase Logic = Data
+connUseCase Wire  = NetResolved
+connUseCase Uwire = NetUnresolved
 

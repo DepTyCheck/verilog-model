@@ -24,11 +24,11 @@ import System.Directory
 
 StdModules : ModuleSigsList
 StdModules =
-  [ MkModuleSig 2 1
-  , MkModuleSig 2 1
-  , MkModuleSig 2 1
-  , MkModuleSig 2 1
-  , MkModuleSig 1 1
+  [ MkModuleSig [Logic, Logic] [Logic]
+  , MkModuleSig [Logic, Logic] [Logic]
+  , MkModuleSig [Logic, Logic] [Logic]
+  , MkModuleSig [Logic, Logic] [Logic]
+  , MkModuleSig [Logic]        [Logic]
   ]
 
 StdModulesPV : PrintableModules StdModules
