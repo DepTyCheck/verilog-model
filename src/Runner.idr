@@ -146,6 +146,9 @@ createDir' = foldlM createDirHelper (Right ()) . inits . toList . split (=='/') 
     Left FileExists => Right ()
     e               => e
 
+showSeed: StdGen -> String
+showSeed gen = let (seed, gamma) = extractRaw gen in "seed_\{show seed}_\{show gamma}"
+
 covering
 main : IO ()
 main = do
@@ -177,7 +180,7 @@ main = do
       let numberedVals = withIndex $ zip modules alignedSeeds
       -- print files
       Lazy.for_ numberedVals $ \(idx, (generatedModule, seed)) => do
-        let fileName = "\{path}/\{padLeft padding '0' (show idx)}-\{show seed}.sv"
+        let fileName = "\{path}/\{padLeft padding '0' (show idx)}-\{showSeed seed}.sv"
         writeRes <- writeFile fileName generatedModule
         case writeRes of
           Left err => putStrLn (show err)
