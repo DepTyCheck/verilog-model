@@ -1,5 +1,5 @@
 // initial seed: rawStdGen 0 1
-[+] Printed file newdir/newdir/0-rawStdGen 0 1.sv
+[+] Printed file newdir/newdir/0-seed_0_1.sv
 module halmew
   ( output logic qgiwl
   , output logic s
