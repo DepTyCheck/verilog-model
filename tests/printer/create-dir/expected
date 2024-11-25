@@ -1,43 +1,43 @@
 // initial seed: rawStdGen 0 1
 [+] Printed file newdir/newdir/0-seed_0_1.sv
 module halmew
-  ( output logic qgiwl
-  , output logic s
-  , output logic doy
-  , input logic hnlug
-  , input logic ytokmvi
-  , input logic adbwx
-  , input logic ifzari
+  ( output logic z
+  , output logic ijc
+  , output logic xrscu
+  , input logic jtlqmgbdz
+  , input logic hsvmic
+  , input logic xrjbkn
+  , input logic jlzwnifco
   );
   
-  not rooejs(doy, adbwx);
+  not tpak(xrscu, xrjbkn);
   
-  assign qgiwl = adbwx;
-  assign s = ifzari;
+  assign z = xrjbkn;
+  assign ijc = jlzwnifco;
 endmodule: halmew
 
-module ift
-  (output logic spzzs, output logic pebelzq, output logic javnvkdjpl, input logic eimqwrop, input logic tyzmorgb, input logic ozdan);
+module lbsewnsxp
+  (output logic wecncj, output logic r, output logic juynpk, input logic rvbymfk, input logic yzygsfwci, input logic fu);
   
   
-  assign spzzs = ozdan;
-  assign pebelzq = ozdan;
-  assign javnvkdjpl = ozdan;
-endmodule: ift
+  assign wecncj = fu;
+  assign r = fu;
+  assign juynpk = fu;
+endmodule: lbsewnsxp
 
-module nwbavggy
-  (output logic itf, output logic q, input logic idamdzzr, input logic ceb, input logic frxfpt);
+module ebl
+  (output logic jreqrimkoo, output logic jxkevlvu, input logic tahpg, input logic a, input logic wfdackf);
   
   
-  assign itf = frxfpt;
-  assign q = frxfpt;
-endmodule: nwbavggy
+  assign jreqrimkoo = wfdackf;
+  assign jxkevlvu = wfdackf;
+endmodule: ebl
 
-module vzmw
-  (output logic l, input logic j, input logic bgyuyxe);
+module qwrnkoalvy
+  (output logic buvyjiqxq, input logic lgyp, input logic zriugkuyf);
   
-  and bamgs(l, bgyuyxe, l);
+  and pn(buvyjiqxq, zriugkuyf, buvyjiqxq);
   
-endmodule: vzmw
+endmodule: qwrnkoalvy
 
 
