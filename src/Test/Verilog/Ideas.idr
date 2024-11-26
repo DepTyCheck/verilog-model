@@ -114,11 +114,18 @@ namespace InductionOnInputs
     -- Note that input of a circuit requires a phantom output node, and vice versa.
     conn : ModuleConn (outs + foldr (+) 0 (elems <&> (.ins))) (ins + foldr (+) 0 (elems <&> (.outs)))
 
+||| Describes how types behave in assign statements and procedural blocks
+data ConnectionUsage = Variable | NetResolved | NetUnresolved
 
-data ConnectionUsage = Data | NetResolved | NetUnresolved
+||| Describes type's size and possible states
+public export
+data FeasibleRegion = S4 | S2x32 | S4x32
 
-connUseCase : ConnectionType -> ConnectionUsage
-connUseCase Logic = Data
-connUseCase Wire  = NetResolved
-connUseCase Uwire = NetUnresolved
-
+svtypeFR : SVType -> FeasibleRegion
+svtypeFR Logic'   = S4
+svtypeFR Wire'    = S4
+svtypeFR Uwire'   = S4
+svtypeFR Int'     = S2x32
+svtypeFR Integer' = S4x32
+svtypeFR Bit'     = S4
+svtypeFR Real'    = S2x32

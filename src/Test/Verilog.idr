@@ -8,20 +8,46 @@ import Test.DepTyCheck.Gen
 
 %default total
 
-namespace Connections
+namespace SVTypes
+
+  ||| Variable types
+  |||
+  ||| |  Type     | Description                                                     |
+  ||| |-----------|-----------------------------------------------------------------|
+  ||| | shortint  | 2-state data type, 16-bit signed integer                        |
+  ||| | int       | 2-state data type, 32-bit signed integer                        |
+  ||| | longint   | 2-state data type, 64-bit signed integer                        |
+  ||| | byte      | 2-state data type, 8-bit signed integer or ASCII character      |
+  ||| | bit       | 2-state data type, user-defined vector size, unsigned           |
+  ||| | logic     | 4-state data type, user-defined vector size, unsigned           |
+  ||| | reg       | 4-state data type, user-defined vector size, unsigned           |
+  ||| | integer   | 4-state data type, 32-bit signed integer                        |
+  ||| | time      | 4-state data type, 64-bit unsigned integer                      |
+  ||| | real      | The “real” data type is 64-bit                                  |
+  ||| | shortreal | The “shortreal” data type is 32-bit                             |
+  ||| | realtime  | The “realtime” declarations is treated synonymously with “real” |
+  |||
+  ||| Net types
+  |||
+  ||| | Net     | Description                                             |
+  ||| |---------|---------------------------------------------------------|
+  ||| | wire    | A high impedance net; multi-driver net                  |
+  ||| | tri     | A high impedance net; multi-driver net                  |
+  ||| | tri0    | Resistive pulldown net                                  |
+  ||| | tri1    | Resistive pullup net                                    |
+  ||| | trior   | Same as “wor”; “1” wins in all cases; multi-driver net  |
+  ||| | triand  | Same as “wand”; “0” wins in all cases; multi-driver net |
+  ||| | trireg  | Models charge storage node                              |
+  ||| | uwire   | Unresolved type; allows only one driver on the net      |
+  ||| | wand    | Same as “triand”; “0” wins in all cases                 |
+  ||| | wor     | Same as trior; “1” wins in all cases                    |
+  ||| | supply0 | Net with supply strength to model “gnd”                 |
+  ||| | supply1 | Net with supply strength to model “power”               |
   public export
-  data ConnectionType = Logic | Wire | Uwire
+  data SVType = Logic' | Wire' | Uwire' | Int' | Integer' | Bit' | Real'
 
   public export
-  data ConnectionFeasibleRegion = D4 | Dint
-
-  connFR : ConnectionType -> ConnectionFeasibleRegion
-  connFR Logic = D4
-  connFR Wire  = D4
-  connFR Uwire = D4
-
-  public export
-  data ConnectionsList = Nil | (::) ConnectionType ConnectionsList
+  data ConnectionsList = Nil | (::) SVType ConnectionsList
 
   public export
   length : ConnectionsList -> Nat

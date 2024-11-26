@@ -118,10 +118,14 @@ VerilogKeywords = [
   "with", "within", "wor", "xnor", "xor"
 ]
 
-Show ConnectionType where
-  show Logic = "logic"
-  show Wire  = "wire"
-  show Uwire = "uwire"
+Show SVType where
+  show Logic'   = "logic"
+  show Wire'    = "wire"
+  show Uwire'   = "uwire"
+  show Int'     = "int"
+  show Integer' = "integer"
+  show Bit'     = "bit"
+  show Real'    = "real"
 
 public export
 data NameIsNewAndNonKeyword : (keywords : SVect lk) -> (names: SVect l) -> (un: UniqNames l names) -> (name : String) -> Type where
@@ -252,7 +256,7 @@ allModuleNames : PrintableModules ms -> SVect ms.length
 allModuleNames []        = []
 allModuleNames (x :: xs) = x.name :: allModuleNames xs
 
-toList : ConnectionsList -> List ConnectionType
+toList : ConnectionsList -> List SVType
 toList []        = []
 toList (x :: xs) = x :: toList xs
 
