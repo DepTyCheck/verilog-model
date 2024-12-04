@@ -119,10 +119,11 @@ jobs:
           sudo make install
       - name: Compile with Icarus Verilog
         run: |
+          set +e
           for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
             echo "Compiling $FILE"
 
-            COMPILATION_OUTPUT=$(iverilog -g2012 "$FILE" 2>&1)
+            COMPILATION_OUTPUT="$(iverilog -g2012 "$FILE" 2>&1)"
             EXIT_CODE=$?
 
             echo "Exit code: $EXIT_CODE. Output:"
@@ -133,30 +134,30 @@ jobs:
             fi
             echo "---------------------------------------------"
           done
-          # for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
-          #   echo "Compiling $FILE"
+        # for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
+        #   echo "Compiling $FILE"
 
-          #   COMPILATION_OUTPUT=$(iverilog -g2012 "$FILE" 2>&1)
-          #   EXIT_CODE=$?
+        #   COMPILATION_OUTPUT=$(iverilog -g2012 "$FILE" 2>&1)
+        #   EXIT_CODE=$?
 
-          #   echo "Output:"
-          #   echo "$COMPILATION_OUTPUT"
-          #   echo "$EXIT_CODE"
+        #   echo "Output:"
+        #   echo "$COMPILATION_OUTPUT"
+        #   echo "$EXIT_CODE"
 
-          #   if [ $EXIT_CODE -ne 0 ]; then
-          #     echo "Compilation failed for $FILE"
-          #     ./.github/workflows/filter_errors.sh "$EXIT_CODE" "./.github/workflows/iverilog-errors.txt"
-          #   fi
+        #   if [ $EXIT_CODE -ne 0 ]; then
+        #     echo "Compilation failed for $FILE"
+        #     ./.github/workflows/filter_errors.sh "$EXIT_CODE" "./.github/workflows/iverilog-errors.txt"
+        #   fi
 
-          #   # echo "Running $FILE"
-          #   # vvp a.out
-          #   # if [ $? -ne 0 ]; then
-          #   #   echo "Error: Execution failed for $FILE"
-          #   #   exit 1
-          #   # fi
+        #   # echo "Running $FILE"
+        #   # vvp a.out
+        #   # if [ $? -ne 0 ]; then
+        #   #   echo "Error: Execution failed for $FILE"
+        #   #   exit 1
+        #   # fi
 
-          #   echo "---------------------------------------------"
-          # done
+        #   echo "---------------------------------------------"
+        # done
 
   # test-with-slang:
   #   name: Test with Slang
