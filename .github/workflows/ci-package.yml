@@ -85,6 +85,8 @@ jobs:
       #   run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules
         run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 3    # Generate modules
+      # - name: Set up Node for actions
+      #   run: apt update && apt install -y nodejs
       - uses: actions/upload-artifact@v4
         id: generated-files-upload-step
         with:
@@ -105,7 +107,7 @@ jobs:
           name: generated-modules
           path: "${{ env.GENERATION_DIR }}"
       - name: Install build tools
-        run: apt update && apt install -y autoconf gperf make gcc g++ bison flex cmake python3
+        run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
       - name: Set up iverilog
         run: |
           rm -rf iverilog
@@ -117,7 +119,7 @@ jobs:
           make install
       - name: Compile with Icarus Verilog
         run: |
-          for FILE in "$TESTS"/*.sv; do
+          for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
             echo "Compiling $FILE"
 
             COMPILATION_OUTPUT=$(iverilog -g2012 "$FILE" 2>&1)
