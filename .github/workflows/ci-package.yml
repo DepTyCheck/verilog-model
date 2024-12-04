@@ -115,8 +115,8 @@ jobs:
           cd iverilog
           sh autoconf.sh
           ./configure
-          make -j$(nproc)
-          make install
+          sudo make -j$(nproc)
+          sudo make install
       - name: Compile with Icarus Verilog
         run: |
           for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
