@@ -1,1 +1,2 @@
 error: Expression width 32 does not match width 1
+syntax error
