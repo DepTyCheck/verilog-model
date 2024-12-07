@@ -294,7 +294,7 @@ prettyModules x pms @{un} (NewCompositeModule m subMs conn cont) = do
   -- Recursive call to use at the end
   recur <- prettyModules x (generatedPrintableInfo :: pms) cont
   pure $ vsep
-    [ enclose (flush $ line "module" <++> line name) (line "endmodule::" <++> line name) $ flush $ indent 2 $ vsep $ do
+    [ enclose (flush $ line "module" <++> line name) (line "endmodule:" <++> line name) $ flush $ indent 2 $ vsep $ do
       let outerModuleInputs = map ("input logic " ++) inputNames
       let outerModuleOutputs = map ("output logic " ++) outputNames
       let outerModuleIO = toList $ line <$> (outerModuleOutputs ++ outerModuleInputs)
