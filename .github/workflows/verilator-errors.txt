@@ -1,3 +1,5 @@
 Expected integral \(non-'real'\) input to
 Output port connection '[A-z]+' connects real to non-real
 Wire inputs its own output, creating circular logic
+
+Settle region did not converge
