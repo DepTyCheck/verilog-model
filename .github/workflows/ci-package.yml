@@ -92,113 +92,113 @@ jobs:
           path: "${{ env.GENERATION_DIR }}"
 
 
-  # test-with-iverilog:
-  #   name: Test with Icarus Verilog
-  #   needs: build-and-test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #     - name: Download Generated Files
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: generated-modules
-  #         path: "${{ env.GENERATION_DIR }}"
-  #     - name: Install build tools
-  #       run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
-  #     - name: Set up iverilog
-  #       run: |
-  #         git clone https://github.com/steveicarus/iverilog.git
-  #         cd iverilog
-  #         sh autoconf.sh
-  #         ./configure
-  #         sudo make -j$(nproc)
-  #         sudo make install
-  #     - name: Run Icarus Verilog
-  #       run: |
-  #         set +e
-  #         for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
-  #           echo "Compiling $FILE"
+  test-with-iverilog:
+    name: Test with Icarus Verilog
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download Generated Files
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-modules
+          path: "${{ env.GENERATION_DIR }}"
+      - name: Install build tools
+        run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
+      - name: Set up iverilog
+        run: |
+          git clone https://github.com/steveicarus/iverilog.git
+          cd iverilog
+          sh autoconf.sh
+          ./configure
+          sudo make -j$(nproc)
+          sudo make install
+      - name: Run Icarus Verilog
+        run: |
+          set +e
+          for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
+            echo "Compiling $FILE"
 
-  #           COMPILATION_OUTPUT="$(iverilog -g2012 "$FILE" -o a.out 2>&1)"
-  #           COMPILATION_EXIT_CODE=$?
+            COMPILATION_OUTPUT="$(iverilog -g2012 "$FILE" -o a.out 2>&1)"
+            COMPILATION_EXIT_CODE=$?
 
-  #           echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
-  #           echo "$COMPILATION_OUTPUT"
+            echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
+            echo "$COMPILATION_OUTPUT"
 
-  #           if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
-  #             .github/workflows/filter_errors.sh "$COMPILATION_OUTPUT" "(error|sorry): [\S ]+$" ".github/workflows/iverilog-errors.txt"
-  #             FILTER_ERRORS_EXIT_CODE=$?
-  #             if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
-  #               echo "Exit."
-  #               exit 1
-  #             fi
-  #           else
-  #             echo "Simulating $FILE"
+            if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
+              .github/workflows/filter_errors.sh "$COMPILATION_OUTPUT" "(error|sorry): [\S ]+$" ".github/workflows/iverilog-errors.txt"
+              FILTER_ERRORS_EXIT_CODE=$?
+              if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
+                echo "Exit."
+                exit 1
+              fi
+            else
+              echo "Simulating $FILE"
 
-  #             SIM_OUTPUT="$(vvp a.out 2>&1)"
-  #             SIM_EXIT_CODE=$?
+              SIM_OUTPUT="$(vvp a.out 2>&1)"
+              SIM_EXIT_CODE=$?
 
-  #             echo "Exit code: $SIM_EXIT_CODE. Output:"
-  #             echo "$SIM_OUTPUT"
+              echo "Exit code: $SIM_EXIT_CODE. Output:"
+              echo "$SIM_OUTPUT"
 
-  #             if [ $SIM_EXIT_CODE -ne 0 ]; then
-  #               .github/workflows/filter_errors.sh "$SIM_OUTPUT" "(error|sorry): [\S ]+$" ".github/workflows/iverilog-errors.txt"
-  #               FILTER_ERRORS_EXIT_CODE=$?
-  #               if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
-  #                 echo "Exit."
-  #                 exit 1
-  #               fi
-  #             fi
-  #           fi
+              if [ $SIM_EXIT_CODE -ne 0 ]; then
+                .github/workflows/filter_errors.sh "$SIM_OUTPUT" "(error|sorry): [\S ]+$" ".github/workflows/iverilog-errors.txt"
+                FILTER_ERRORS_EXIT_CODE=$?
+                if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
+                  echo "Exit."
+                  exit 1
+                fi
+              fi
+            fi
 
-  #           echo "---------------------------------------------"
-  #         done
+            echo "---------------------------------------------"
+          done
 
-  # test-with-slang:
-  #   name: Test with Slang
-  #   needs: build-and-test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #     - name: Download Generated Files
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: generated-modules
-  #         path: "${{ env.GENERATION_DIR }}"
-  #     - name: Install build tools
-  #       run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
-  #     - name: Set up slang
-  #       run: |
-  #         git clone https://github.com/MikePopoloski/slang.git
-  #         cd slang
-  #         sudo cmake -B build
-  #         sudo cmake --build build -j$(nproc)
-  #         sudo cmake --install build --strip
-  #     - name: Run Slang
-  #       run: |
-  #         set +e
-  #         for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
-  #           echo "Compiling $FILE"
+  test-with-slang:
+    name: Test with Slang
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download Generated Files
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-modules
+          path: "${{ env.GENERATION_DIR }}"
+      - name: Install build tools
+        run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
+      - name: Set up slang
+        run: |
+          git clone https://github.com/MikePopoloski/slang.git
+          cd slang
+          sudo cmake -B build
+          sudo cmake --build build -j$(nproc)
+          sudo cmake --install build --strip
+      - name: Run Slang
+        run: |
+          set +e
+          for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
+            echo "Compiling $FILE"
 
-  #           COMPILATION_OUTPUT="$(slang -Weverything "$FILE" 2>&1)"
-  #           COMPILATION_EXIT_CODE=$?
+            COMPILATION_OUTPUT="$(slang -Weverything "$FILE" 2>&1)"
+            COMPILATION_EXIT_CODE=$?
 
-  #           echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
-  #           echo "$COMPILATION_OUTPUT"
+            echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
+            echo "$COMPILATION_OUTPUT"
 
-  #           if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
-  #             .github/workflows/filter_errors.sh "$COMPILATION_OUTPUT" "error: [\S ]+$" ".github/workflows/slang-errors.txt"
-  #             FILTER_ERRORS_EXIT_CODE=$?
-  #             if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
-  #               echo "Exit."
-  #               exit 1
-  #             fi
-  #           fi
+            if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
+              .github/workflows/filter_errors.sh "$COMPILATION_OUTPUT" "error: [\S ]+$" ".github/workflows/slang-errors.txt"
+              FILTER_ERRORS_EXIT_CODE=$?
+              if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
+                echo "Exit."
+                exit 1
+              fi
+            fi
 
-  #           echo "---------------------------------------------"
-  #         done
+            echo "---------------------------------------------"
+          done
 
   test-with-verilator:
     name: Test with Verilator
