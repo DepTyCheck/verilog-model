@@ -11,8 +11,9 @@ int main(int argc, char **argv) {
     // m_contextp->traceEverOn(true);     // Turn on trace switch in context
     // m_duvp->trace(m_tracep, 3);        // Set depth to 3
     // m_tracep->open("cnt_ceil_wf.vcd"); // Open the VCD file to store data
+    int i = 0;
     // Write data to the waveform file
-    while (!m_contextp->gotFinish())
+    while (!m_contextp->gotFinish() && i < 1000)
     {
         // Refresh circuit state
         m_duvp->eval();

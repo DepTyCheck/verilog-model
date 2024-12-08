@@ -223,7 +223,7 @@ jobs:
             rm -rf obj_dir
             rm top.sv
             cp $FILE top.sv
-            COMPILATION_OUTPUT="$(verilator --cc --exe .github/workflows/testbench.cpp --trace --timing -Wno-fatal -Wno-lint -Wno-style +1800-2023ext+sv top.sv 2>&1)"
+            COMPILATION_OUTPUT="$(verilator --cc --exe .github/workflows/testbench.cpp --trace --timing -Wno-fatal +1800-2023ext+sv top.sv 2>&1)"
             COMPILATION_EXIT_CODE=$?
 
             echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
