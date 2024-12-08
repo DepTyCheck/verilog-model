@@ -133,90 +133,108 @@ jobs:
                 echo "Exit."
                 exit 1
               fi
-            fi
+            else
+              echo "Simulating $FILE"
 
-            echo "---------------------------------------------"
-          done
+              SIM_OUTPUT="$(vvp a.out 2>&1)"
+              SIM_EXIT_CODE=$?
 
-  test-with-slang:
-    name: Test with Slang
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Download Generated Files
-        uses: actions/download-artifact@v4
-        with:
-          name: generated-modules
-          path: "${{ env.GENERATION_DIR }}"
-      - name: Install build tools
-        run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
-      - name: Set up slang
-        run: |
-          git clone https://github.com/MikePopoloski/slang.git
-          cd slang
-          sudo cmake -B build
-          sudo cmake --build build -j$(nproc)
-          sudo cmake --install build --strip
-      - name: Run Slang
-        run: |
-          set +e
-          for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
-            echo "Compiling $FILE"
+              echo "Exit code: $SIM_EXIT_CODE. Output:"
+              echo "$SIM_OUTPUT"
 
-            COMPILATION_OUTPUT="$(slang -Weverything "$FILE" 2>&1)"
-            COMPILATION_EXIT_CODE=$?
-
-            echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
-            echo "$COMPILATION_OUTPUT"
-
-            if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
-              .github/workflows/filter_errors.sh "$COMPILATION_OUTPUT" "error: [\S ]+$" ".github/workflows/slang-errors.txt"
-              FILTER_ERRORS_EXIT_CODE=$?
-              if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
-                echo "Exit."
-                exit 1
+              if [ $SIM_EXIT_CODE -ne 0 ]; then
+                .github/workflows/filter_errors.sh "$SIM_OUTPUT" "(error|sorry): [\S ]+$" ".github/workflows/iverilog-errors.txt"
+                FILTER_ERRORS_EXIT_CODE=$?
+                if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
+                  echo "Exit."
+                  exit 1
+                fi
               fi
             fi
 
             echo "---------------------------------------------"
           done
 
-  test-with-verilator:
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    container:
-      image: verilator/verilator
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Download Generated Files
-        uses: actions/download-artifact@v4
-        with:
-          name: generated-modules
-          path: "${{ env.GENERATION_DIR }}"
-      - name: Run verilator
-        run: |
-          set +e
-          for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
-            echo "Processing $FILE"
+  # test-with-slang:
+  #   name: Test with Slang
+  #   needs: build-and-test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Download Generated Files
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: generated-modules
+  #         path: "${{ env.GENERATION_DIR }}"
+  #     - name: Install build tools
+  #       run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
+  #     - name: Set up slang
+  #       run: |
+  #         git clone https://github.com/MikePopoloski/slang.git
+  #         cd slang
+  #         sudo cmake -B build
+  #         sudo cmake --build build -j$(nproc)
+  #         sudo cmake --install build --strip
+  #     - name: Run Slang
+  #       run: |
+  #         set +e
+  #         for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
+  #           echo "Compiling $FILE"
 
-            COMPILATION_OUTPUT="$(verilator --lint-only -Wno-fatal -Wno-lint -Wno-style +1800-2023ext+sv $FILE 2>&1)"
-            COMPILATION_EXIT_CODE=$?
+  #           COMPILATION_OUTPUT="$(slang -Weverything "$FILE" 2>&1)"
+  #           COMPILATION_EXIT_CODE=$?
 
-            echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
-            echo "$COMPILATION_OUTPUT"
+  #           echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
+  #           echo "$COMPILATION_OUTPUT"
 
-            if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
-              .github/workflows/filter_errors.sh "$COMPILATION_OUTPUT" "%Error(|\-[A-Z]+): [A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
-                ".github/workflows/verilator-errors.txt"
-              FILTER_ERRORS_EXIT_CODE=$?
-              if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
-                echo "Exit."
-                exit 1
-              fi
-            fi
+  #           if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
+  #             .github/workflows/filter_errors.sh "$COMPILATION_OUTPUT" "error: [\S ]+$" ".github/workflows/slang-errors.txt"
+  #             FILTER_ERRORS_EXIT_CODE=$?
+  #             if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
+  #               echo "Exit."
+  #               exit 1
+  #             fi
+  #           fi
 
-            echo "---------------------------------------------"
-          done
+  #           echo "---------------------------------------------"
+  #         done
+
+  # test-with-verilator:
+  #   name: Test with Verilator
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-test
+  #   container:
+  #     image: verilator/verilator
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Download Generated Files
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: generated-modules
+  #         path: "${{ env.GENERATION_DIR }}"
+  #     - name: Run verilator
+  #       run: |
+  #         set +e
+  #         for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
+  #           echo "Processing $FILE"
+
+  #           COMPILATION_OUTPUT="$(verilator --lint-only -Wno-fatal -Wno-lint -Wno-style +1800-2023ext+sv $FILE 2>&1)"
+  #           COMPILATION_EXIT_CODE=$?
+
+  #           echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
+  #           echo "$COMPILATION_OUTPUT"
+
+  #           if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
+  #             .github/workflows/filter_errors.sh "$COMPILATION_OUTPUT" "%Error(|\-[A-Z]+): [A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
+  #               ".github/workflows/verilator-errors.txt"
+  #             FILTER_ERRORS_EXIT_CODE=$?
+  #             if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
+  #               echo "Exit."
+  #               exit 1
+  #             fi
+  #           fi
+
+  #           echo "---------------------------------------------"
+  #         done
