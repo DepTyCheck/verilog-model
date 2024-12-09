@@ -142,15 +142,24 @@ jobs:
         with:
           name: generated-modules
           path: "${{ env.GENERATION_DIR }}"
+      - name: Cache Slang Build
+        id: cache-slang-build
+        uses: actions/cache@v4
+        with:
+          path: slang
+          key: ${{ runner.os }}-slang-cache-${{ hashFiles('slang/CHANGELOG.md') }}
       - name: Install build tools
+        if: ${{ steps.cache-slang-build.outputs.cache-hit != 'true' }}
         run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
-      - name: Set up slang
+      - name: Build Slang
+        if: ${{ steps.cache-slang-build.outputs.cache-hit != 'true' }}
         run: |
           git clone https://github.com/MikePopoloski/slang.git
           cd slang
           sudo cmake -B build
           sudo cmake --build build -j$(nproc)
-          sudo cmake --install build --strip
+      - name: Install Slang
+        run: sudo cmake --install build --strip
       - name: Run Slang
         run: |
           set +e
