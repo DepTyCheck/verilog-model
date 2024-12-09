@@ -142,11 +142,13 @@ jobs:
         with:
           name: generated-modules
           path: "${{ env.GENERATION_DIR }}"
+      - name: Clone Slang Repository
+        run: git clone https://github.com/MikePopoloski/slang.git
       - name: Cache Slang Build
         id: cache-slang-build
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
-          path: slang
+          path: slang/build
           key: ${{ runner.os }}-slang-cache-${{ hashFiles('slang/CHANGELOG.md') }}
       - name: Install build tools
         if: ${{ steps.cache-slang-build.outputs.cache-hit != 'true' }}
@@ -154,12 +156,19 @@ jobs:
       - name: Build Slang
         if: ${{ steps.cache-slang-build.outputs.cache-hit != 'true' }}
         run: |
-          git clone https://github.com/MikePopoloski/slang.git
           cd slang
           sudo cmake -B build
           sudo cmake --build build -j$(nproc)
+      - name: Save Slang build
+        if: ${{ steps.cache-slang-build.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v4
+        with:
+          path: slang/build
+          key: ${{ steps.cache-slang-build.outputs.cache-primary-key }}
       - name: Install Slang
-        run: sudo cmake --install build --strip
+        run: |
+          cd slang
+          sudo cmake --install build --strip
       - name: Run Slang
         run: |
           set +e
