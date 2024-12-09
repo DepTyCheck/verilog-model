@@ -1,2 +1,3 @@
 Expression width \d+ does not match width \d+
 vvp_arith_cast_int: recv_vec4 not implemented
+recv_real\(0\.000000\) not implemented

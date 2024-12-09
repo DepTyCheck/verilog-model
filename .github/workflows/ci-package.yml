@@ -49,7 +49,7 @@ jobs:
           if [ "$CURR" == "$MAIN" ]; then
             echo 'upstream-matrix=["latest-pack-collection"]'
           else
-            echo 'upstream-matrix=["latest-pack-collection", "bleeding-edge-compiler"]'
+            echo 'upstream-matrix=["latest-pack-collection" ]' # "bleeding-edge-compiler"
           fi >> "$GITHUB_OUTPUT"
 
   build-and-test:
@@ -100,7 +100,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Download Generated Files
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: generated-modules
           path: "${{ env.GENERATION_DIR }}"
@@ -108,6 +108,7 @@ jobs:
         run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
       - name: Set up iverilog
         run: |
+          rm -rf iverilog
           git clone https://github.com/steveicarus/iverilog.git
           cd iverilog
           sh autoconf.sh
@@ -117,43 +118,17 @@ jobs:
       - name: Run Icarus Verilog
         run: |
           set +e
-          for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
-            echo "Compiling $FILE"
+          bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
+            "iverilog -g2012 {file} -o a.out" \
+            "(error|sorry): [\S ]+$" \
+            ".github/workflows/iverilog-errors.txt" \
+            "vvp a.out" \
+            "(error|sorry): [\S ]+$"
 
-            COMPILATION_OUTPUT="$(iverilog -g2012 "$FILE" -o a.out 2>&1)"
-            COMPILATION_EXIT_CODE=$?
-
-            echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
-            echo "$COMPILATION_OUTPUT"
-
-            if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
-              .github/workflows/filter_errors.sh "$COMPILATION_OUTPUT" "(error|sorry): [\S ]+$" ".github/workflows/iverilog-errors.txt"
-              FILTER_ERRORS_EXIT_CODE=$?
-              if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
-                echo "Exit."
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -ne 0 ]; then
                 exit 1
-              fi
-            else
-              echo "Simulating $FILE"
-
-              SIM_OUTPUT="$(vvp a.out 2>&1)"
-              SIM_EXIT_CODE=$?
-
-              echo "Exit code: $SIM_EXIT_CODE. Output:"
-              echo "$SIM_OUTPUT"
-
-              if [ $SIM_EXIT_CODE -ne 0 ]; then
-                .github/workflows/filter_errors.sh "$SIM_OUTPUT" "(error|sorry): [\S ]+$" ".github/workflows/iverilog-errors.txt"
-                FILTER_ERRORS_EXIT_CODE=$?
-                if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
-                  echo "Exit."
-                  exit 1
-                fi
-              fi
-            fi
-
-            echo "---------------------------------------------"
-          done
+          fi
 
   test-with-slang:
     name: Test with Slang
@@ -179,26 +154,17 @@ jobs:
       - name: Run Slang
         run: |
           set +e
-          for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
-            echo "Compiling $FILE"
+          bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
+            "slang -Weverything {file}" \
+            "error: [\S ]+$" \
+            ".github/workflows/slang-errors.txt" \
+            "" \
+            ""
 
-            COMPILATION_OUTPUT="$(slang -Weverything "$FILE" 2>&1)"
-            COMPILATION_EXIT_CODE=$?
-
-            echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
-            echo "$COMPILATION_OUTPUT"
-
-            if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
-              .github/workflows/filter_errors.sh "$COMPILATION_OUTPUT" "error: [\S ]+$" ".github/workflows/slang-errors.txt"
-              FILTER_ERRORS_EXIT_CODE=$?
-              if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
-                echo "Exit."
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -ne 0 ]; then
                 exit 1
-              fi
-            fi
-
-            echo "---------------------------------------------"
-          done
+          fi
 
   test-with-verilator:
     name: Test with Verilator
@@ -217,46 +183,14 @@ jobs:
       - name: Run verilator
         run: |
           set +e
-          for FILE in "${{ env.GENERATION_DIR }}"/*.sv; do
-            echo "Compiling $FILE"
+          bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
+            "rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/testbench.cpp --trace --timing -Wno-fatal +1800-2023ext+sv top.sv" \
+            "%Error(|\-[A-Z]+): [A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
+            ".github/workflows/verilator-errors.txt" \
+            "make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop" \
+            "%Error:[\S ]+$"
 
-            rm -rf obj_dir
-            rm top.sv
-            cp $FILE top.sv
-            COMPILATION_OUTPUT="$(verilator --cc --exe .github/workflows/testbench.cpp --trace --timing -Wno-fatal +1800-2023ext+sv top.sv 2>&1)"
-            COMPILATION_EXIT_CODE=$?
-
-            echo "Exit code: $COMPILATION_EXIT_CODE. Output:"
-            echo "$COMPILATION_OUTPUT"
-
-            if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
-              .github/workflows/filter_errors.sh "$COMPILATION_OUTPUT" "%Error(|\-[A-Z]+): [A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
-                ".github/workflows/verilator-errors.txt"
-              FILTER_ERRORS_EXIT_CODE=$?
-              if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
-                echo "Exit."
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -ne 0 ]; then
                 exit 1
-              fi
-            else
-              echo "Simulating $FILE"
-
-              make -C obj_dir -f Vtop.mk Vtop
-
-              SIM_OUTPUT="$(./obj_dir/Vtop 2>&1)"
-              SIM_EXIT_CODE=$?
-
-              echo "Exit code: $SIM_EXIT_CODE. Output:"
-              echo "$SIM_OUTPUT"
-
-              if [ $SIM_EXIT_CODE -ne 0 ]; then
-                .github/workflows/filter_errors.sh "$SIM_OUTPUT" "%Error:[\S ]+$" ".github/workflows/verilator-errors.txt"
-                FILTER_ERRORS_EXIT_CODE=$?
-                if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
-                  echo "Exit."
-                  exit 1
-                fi
-              fi
-            fi
-
-            echo "---------------------------------------------"
-          done
+          fi

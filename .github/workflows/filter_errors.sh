@@ -19,7 +19,7 @@ while IFS= read -r MATCH; do
   FOUND_MATCH=false
   while read -r PATTERN; do
     if [ -z "$PATTERN" ]; then continue; fi
-    if echo "$MATCH" | grep -qE "$PATTERN"; then
+    if echo "$MATCH" | grep -qP "$PATTERN"; then
       echo "Ignore. Pattern: $PATTERN"
       FOUND_MATCH=true
       break
