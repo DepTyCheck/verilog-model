@@ -1,43 +1,40 @@
 // initial seed: rawStdGen 0 1
 [+] Printed file newdir/newdir/0-seed_0_1.sv
-module halmew
-  ( output logic z
-  , output logic ijc
-  , output logic xrscu
-  , input logic jtlqmgbdz
-  , input logic hsvmic
-  , input logic xrjbkn
-  , input logic jlzwnifco
+module l
+  (output bit xrscu, input bit jtlqmgbdz, input bit hsvmic, input integer vxrjbkn, input bit kyjlzwnifc);
+  
+  not z(iyweunvss, kyjlzwnifc);
+  nand ijc(tpak, vxrjbkn, vxrjbkn);
+  
+  assign xrscu = kyjlzwnifc;
+endmodule: l
+
+module spy
+  (output wire sivx, output int evf, output real s, output int tlvbixqr, input uwire hzwsqv, input real ym);
+  
+  
+  assign sivx = ym;
+  assign evf = hzwsqv;
+  assign s = ym;
+  assign tlvbixqr = ym;
+endmodule: spy
+
+module wsceb
+  ( output real nk
+  , output bit ssu
+  , output bit wjvriylpha
+  , output int jreqrimkoo
+  , input int jxkevlvu
+  , input bit tahpg
+  , input integer a
+  , input uwire wfdackf
   );
   
-  not tpak(xrscu, xrjbkn);
   
-  assign z = xrjbkn;
-  assign ijc = jlzwnifco;
-endmodule: halmew
-
-module lbsewnsxp
-  (output logic wecncj, output logic r, output logic juynpk, input logic rvbymfk, input logic yzygsfwci, input logic fu);
-  
-  
-  assign wecncj = fu;
-  assign r = fu;
-  assign juynpk = fu;
-endmodule: lbsewnsxp
-
-module ebl
-  (output logic jreqrimkoo, output logic jxkevlvu, input logic tahpg, input logic a, input logic wfdackf);
-  
-  
-  assign jreqrimkoo = wfdackf;
-  assign jxkevlvu = wfdackf;
-endmodule: ebl
-
-module qwrnkoalvy
-  (output logic buvyjiqxq, input logic lgyp, input logic zriugkuyf);
-  
-  and pn(buvyjiqxq, zriugkuyf, buvyjiqxq);
-  
-endmodule: qwrnkoalvy
+  assign nk = wfdackf;
+  assign ssu = tahpg;
+  assign wjvriylpha = wfdackf;
+  assign jreqrimkoo = jxkevlvu;
+endmodule: wsceb
 
 
