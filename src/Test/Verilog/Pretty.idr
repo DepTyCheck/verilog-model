@@ -26,28 +26,28 @@ import Syntax.IHateParens.SortedMap
 
 toTotalInputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
                    (idx : Fin subMs.asList.length) ->
-                   Fin (index ms (index' subMs.asList idx)).inputsLen ->
+                   Fin (index ms (index' subMs.asList idx)).inpsCount ->
                    Fin $ totalInputs {ms} subMs
 toTotalInputsIdx {subMs=i::_ } FZ       x = indexSum $ Left x
 toTotalInputsIdx {subMs=i::is} (FS idx) x = indexSum $ Right $ toTotalInputsIdx idx x
 
 toTotalOutputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
                     (idx : Fin subMs.asList.length) ->
-                    Fin (index ms $ index' subMs.asList idx).outputsLen ->
+                    Fin (index ms $ index' subMs.asList idx).outsCount ->
                     Fin $ totalOutputs {ms} subMs
 toTotalOutputsIdx {subMs=i::_ } FZ       x = indexSum $ Left x
 toTotalOutputsIdx {subMs=i::is} (FS idx) x = indexSum $ Right $ toTotalOutputsIdx idx x
 
-connName : Fin (m.inputsLen + totalOutputs {ms} subMs) -> String
+connName : Fin (m.inpsCount + totalOutputs {ms} subMs) -> String
 connName n = "c\{show n}"
 
-outputName : Fin (m.outputsLen + totalInputs {ms} subMs) -> String
+outputName : Fin (m.outsCount + totalInputs {ms} subMs) -> String
 outputName n = "o\{show n}"
 
-isModuleInput : {m : _} -> Fin (m.inputsLen + totalOutputs {ms} subMs) -> Bool
+isModuleInput : {m : _} -> Fin (m.inpsCount + totalOutputs {ms} subMs) -> Bool
 isModuleInput = isLeft . splitSum
 
-isModuleOutput : {m : _} -> Fin (m.outputsLen + totalInputs {ms} subMs) -> Bool
+isModuleOutput : {m : _} -> Fin (m.outsCount + totalInputs {ms} subMs) -> Bool
 isModuleOutput = isLeft . splitSum
 
 connFwdRel : Connections f t -> Vect t $ Fin f
@@ -229,7 +229,7 @@ namespace PrintableModules
   public export
   data PrintableModules : (ms : ModuleSigsList) -> Type where
     Nil  : PrintableModules []
-    (::) : PrintableModule m.inputsLen m.outputsLen -> PrintableModules ms -> PrintableModules (m :: ms)
+    (::) : PrintableModule m.inpsCount m.outsCount -> PrintableModules ms -> PrintableModules (m :: ms)
 
   public export
   length : PrintableModules _ -> Nat
@@ -241,7 +241,7 @@ namespace PrintableModules
   (.length) = length
 
   public export
-  index : {ms : _} -> (ps : PrintableModules ms) -> (fin: Fin ms.length) -> PrintableModule ((index ms fin).inputsLen) ((index ms fin).outputsLen)
+  index : {ms : _} -> (ps : PrintableModules ms) -> (fin: Fin ms.length) -> PrintableModule ((index ms fin).inpsCount) ((index ms fin).outsCount)
   index (m::_ ) FZ     = m
   index (_::ms) (FS i) = index ms i
 
@@ -271,11 +271,11 @@ prettyModules x pms @{un} (NewCompositeModule m subMs conn cont) = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} (allModuleNames pms) un
   -- Generate toplevel input names
-  (namesWithInput ** uni) <- genNUniqueNames x m.inputsLen (allModuleNames pms) un
-  let inputNames = take m.inputsLen $ toVect namesWithInput
+  (namesWithInput ** uni) <- genNUniqueNames x m.inpsCount (allModuleNames pms) un
+  let inputNames = take m.inpsCount $ toVect namesWithInput
   -- Generate toplevel output names
-  (namesWithIO ** unio) <- genNUniqueNames x m.outputsLen namesWithInput uni
-  let outputNames = take m.outputsLen $ toVect namesWithIO
+  (namesWithIO ** unio) <- genNUniqueNames x m.outsCount namesWithInput uni
+  let outputNames = take m.outsCount $ toVect namesWithIO
   -- Generate submodule instance names
   (namesIOWithSubMs ** uniosub) <- genNUniqueNames x subMs.length namesWithIO unio
   let subMInstanceNames = take subMs.length $ toVect namesIOWithSubMs
@@ -283,7 +283,7 @@ prettyModules x pms @{un} (NewCompositeModule m subMs conn cont) = do
   -- Extract a output to driving input mapping from conn
   let outputToDriver = connFwdRel conn
   -- Invert it into a input to driven outputs mapping
-  let inputToDriven : Vect (m.inputsLen + totalOutputs subMs) $ List $ Fin $ m.outputsLen + totalInputs subMs
+  let inputToDriven : Vect (m.inpsCount + totalOutputs subMs) $ List $ Fin $ m.outsCount + totalInputs subMs
                     = invertConn outputToDriver
 
   -- Generate names for internal inputs (inputs that drive no toplevel outputs)
@@ -293,13 +293,13 @@ prettyModules x pms @{un} (NewCompositeModule m subMs conn cont) = do
 
   -- Create a full list of input names
   let internalLUT = computeInternalsLookupTable internalInputs internalInputNames
-  let fullInputNames : Vect (m.inputsLen + totalOutputs subMs) String
+  let fullInputNames : Vect (m.inpsCount + totalOutputs subMs) String
                      = solveInputNames inputNames outputNames internalLUT $ withIndex inputToDriven
-  let subMONames = drop m.inputsLen fullInputNames
+  let subMONames = drop m.inpsCount fullInputNames
   -- Create a full list of output names
-  let fullOutputNames : Vect (m.outputsLen + totalInputs subMs) String
+  let fullOutputNames : Vect (m.outsCount + totalInputs subMs) String
                       = solveOutputNames fullInputNames outputNames outputToDriver
-  let subMINames = drop m.outputsLen fullOutputNames
+  let subMINames = drop m.outsCount fullOutputNames
   -- Compute necessary assign statements
   let assigns = solveAssigns fullInputNames outputNames outputToDriver
 
@@ -317,8 +317,8 @@ prettyModules x pms @{un} (NewCompositeModule m subMs conn cont) = do
       [ tuple outerModuleIO <+> symbol ';' , line "" ] ++
         (zip (toList subMInstanceNames) (withIndex subMs.asList) <&> \(instanceName, subMsIdx, msIdx) =>
           line (index msIdx $ toVect (allModuleNames pms)) <++> line instanceName <+> do
-            let inputs  = List.allFins (index ms $ index' subMs.asList subMsIdx).inputsLen  <&> toTotalInputsIdx subMsIdx
-            let outputs = List.allFins (index ms $ index' subMs.asList subMsIdx).outputsLen <&> toTotalOutputsIdx subMsIdx
+            let inputs  = List.allFins (index ms $ index' subMs.asList subMsIdx).inpsCount <&> toTotalInputsIdx subMsIdx
+            let outputs = List.allFins (index ms $ index' subMs.asList subMsIdx).outsCount <&> toTotalOutputsIdx subMsIdx
 
             let inputs  = inputs  <&> flip index subMINames
             let outputs = outputs <&> flip index subMONames

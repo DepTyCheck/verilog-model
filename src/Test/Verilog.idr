@@ -67,12 +67,12 @@ namespace ModuleSig
     outputs : ConnectionsList
 
   public export
-  (.inputsLen) : ModuleSig -> Nat
-  (.inputsLen) m = length m.inputs
+  (.inpsCount) : ModuleSig -> Nat
+  (.inpsCount) m = length m.inputs
 
   public export
-  (.outputsLen) : ModuleSig -> Nat
-  (.outputsLen) m = length m.outputs
+  (.outsCount) : ModuleSig -> Nat
+  (.outsCount) m = length m.outputs
 
   %name ModuleSig m
 
@@ -117,12 +117,12 @@ namespace FinsList
 public export
 totalInputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
 totalInputs []      = 0
-totalInputs (i::is) = (index ms i).inputsLen + totalInputs is
+totalInputs (i::is) = (index ms i).inpsCount + totalInputs is
 
 public export
 totalOutputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
 totalOutputs []      = 0
-totalOutputs (i::is) = (index ms i).outputsLen + totalOutputs is
+totalOutputs (i::is) = (index ms i).outsCount + totalOutputs is
 
 -- equivalent of `Vect outs (Fin ins)`
 -- Each output has a connection from some single input.
@@ -141,7 +141,7 @@ data Modules : ModuleSigsList -> Type where
   NewCompositeModule :
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
-    (conn : Connections (m.inputsLen + totalOutputs {ms} subMs) (m.outputsLen + totalInputs {ms} subMs)) ->
+    (conn : Connections (m.inpsCount + totalOutputs {ms} subMs) (m.outsCount + totalInputs {ms} subMs)) ->
     (cont : Modules (m::ms)) ->
     Modules ms
 
