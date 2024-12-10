@@ -121,7 +121,7 @@ jobs:
           bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
             "iverilog -g2012 {file} -o a.out" \
             "(error|sorry): [\S ]+$" \
-            ".github/workflows/iverilog-errors.txt" \
+            ".github/workflows/iverilog-ignored-errors.txt" \
             "vvp a.out" \
             "(error|sorry): [\S ]+$"
 
@@ -175,7 +175,7 @@ jobs:
           bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
             "slang -Weverything {file}" \
             "error: [\S ]+$" \
-            ".github/workflows/slang-errors.txt" \
+            ".github/workflows/slang-ignored-errors.txt" \
             "" \
             ""
 
@@ -204,7 +204,7 @@ jobs:
           bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
             "rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/testbench.cpp --trace --timing -Wno-fatal +1800-2023ext+sv top.sv" \
             "%Error(|\-[A-Z]+): [A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
-            ".github/workflows/verilator-errors.txt" \
+            ".github/workflows/verilator-ignored-errors.txt" \
             "make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop" \
             "%Error:[\S ]+$"
 
