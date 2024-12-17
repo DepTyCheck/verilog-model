@@ -2,5 +2,6 @@ Expected integral \(non-'real'\) input to
 Output port connection '[A-z]+' connects real to non-real
 Wire inputs its own output, creating circular logic
 Variable has same name as instance
+Instance has the same name as port
 
 Settle region did not converge
