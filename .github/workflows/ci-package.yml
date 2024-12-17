@@ -95,6 +95,7 @@ jobs:
   test-with-iverilog:
     name: Test with Icarus Verilog
     needs: build-and-test
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -133,6 +134,7 @@ jobs:
   test-with-slang:
     name: Test with Slang
     needs: build-and-test
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -188,6 +190,7 @@ jobs:
     name: Test with Verilator
     runs-on: ubuntu-latest
     needs: build-and-test
+    timeout-minutes: 20
     container:
       image: verilator/verilator
     steps:
