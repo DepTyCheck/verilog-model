@@ -222,6 +222,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [get-upstream-matrix, build-and-test, test-with-iverilog, test-with-slang, test-with-verilator]
     permissions:
+      contents: read
       issues: write
     steps:
       - name: Checkout
