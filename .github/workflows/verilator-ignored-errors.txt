@@ -3,5 +3,6 @@ Output port connection '[A-z]+' connects real to non-real
 Wire inputs its own output, creating circular logic
 Variable has same name as instance
 Instance has the same name as port
+Variable has same name as CELLINLINE
 
 Settle region did not converge
