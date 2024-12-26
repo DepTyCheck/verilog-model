@@ -1,0 +1,77 @@
+// initial seed: rawStdGen 0 1
+// Seed: seed_0_1
+-------------------
+
+module l
+  (output bit xrscu, input bit jtlqmgbdz, input bit hsvmic, input integer vxrjbkn, input bit kyjlzwnifc);
+  
+  not z(iyweunvss, kyjlzwnifc);
+  nand ijc(tpak, vxrjbkn, vxrjbkn);
+  
+  assign xrscu = kyjlzwnifc;
+endmodule: l
+
+module spy
+  (output wire sivx, output int evf, output real s, output int tlvbixqr, input uwire hzwsqv, input real ym);
+  
+  
+  assign sivx = ym;
+  assign evf = hzwsqv;
+  assign s = ym;
+  assign tlvbixqr = ym;
+endmodule: spy
+
+module wsceb
+  ( output real nk
+  , output bit ssu
+  , output bit wjvriylpha
+  , output int jreqrimkoo
+  , input int jxkevlvu
+  , input bit tahpg
+  , input integer a
+  , input uwire wfdackf
+  );
+  
+  
+  assign nk = wfdackf;
+  assign ssu = tahpg;
+  assign wjvriylpha = wfdackf;
+  assign jreqrimkoo = jxkevlvu;
+endmodule: wsceb
+
+
+Data.Fin.[1mFin[0m [38;5;10mcovered fully[0m (40 times)
+  - FS: [38;5;10mcovered[0m (26 times)
+  - FZ: [38;5;10mcovered[0m (14 times)
+
+Prelude.Types.[1mNat[0m [38;5;9mnot covered[0m
+  - S: [38;5;9mnot covered[0m
+  - Z: [38;5;9mnot covered[0m
+
+Test.Verilog.[1mConnections[0m [38;5;10mcovered fully[0m (15 times)
+  - (::): [38;5;10mcovered[0m (12 times)
+  - Nil: [38;5;10mcovered[0m (3 times)
+
+Test.Verilog.FinsList.[1mFinsList[0m [38;5;10mcovered fully[0m (5 times)
+  - (::): [38;5;10mcovered[0m (2 times)
+  - Nil: [38;5;10mcovered[0m (3 times)
+
+Test.Verilog.ModuleSig.[1mModuleSig[0m [38;5;10mcovered fully[0m (3 times)
+  - MkModuleSig: [38;5;10mcovered[0m (3 times)
+
+Test.Verilog.[1mModules[0m [38;5;10mcovered fully[0m (4 times)
+  - End: [38;5;10mcovered[0m (1 time)
+  - NewCompositeModule: [38;5;10mcovered[0m (3 times)
+
+Test.Verilog.SVTypes.[1mConnectionsList[0m [38;5;10mcovered fully[0m (25 times)
+  - (::): [38;5;10mcovered[0m (19 times)
+  - Nil: [38;5;10mcovered[0m (6 times)
+
+Test.Verilog.SVTypes.[1mSVType[0m [38;5;11mcovered partially[0m (19 times)
+  - Bit': [38;5;10mcovered[0m (7 times)
+  - Int': [38;5;10mcovered[0m (4 times)
+  - Integer': [38;5;10mcovered[0m (2 times)
+  - Logic': [38;5;9mnot covered[0m
+  - Real': [38;5;10mcovered[0m (3 times)
+  - Uwire': [38;5;10mcovered[0m (2 times)
+  - Wire': [38;5;10mcovered[0m (1 time)
