@@ -1,3 +1,4 @@
+rm -rf build
 rm -rf newdir
 
 pack run verilog-model -o newdir/newdir -n 1 --seed 0,1 && cat newdir/newdir/*
