@@ -163,6 +163,10 @@ forS_ : Monad f => (seed : s) -> LazyList a -> (s -> a -> f s) -> f ()
 forS_ seed []      g = pure ()
 forS_ seed (x::xs) g = forS_ !(g seed x) xs g
 
+maybeDo : Monad m => (Maybe a) -> (a -> m ()) -> m ()
+maybeDo Nothing   _ = pure ()
+maybeDo (Just x)  f = f x
+
 -- Creates dirs for the file path
 makeDirs : String -> IO ()
 makeDirs path = case init $ split (=='/') path of
@@ -185,12 +189,10 @@ printModule testsDir testsCnt idx generatedModule seed = case testsDir of
       Left err => putStrLn (show err)
       Right () => putStrLn "[+] Printed file \{fileName}"
 
-printMCov : Maybe String -> ModelCoverage -> CoverageGenInfo a -> IO ()
-printMCov mp mcov cgi = case mp of
-  Nothing   => pure ()
-  Just path => do
-    Right () <- writeFile path $ show @{Colourful} cgi | Left err => die "Couldn't write the model coverage to file: \{show err}"
-    pure ()
+printMCov : ModelCoverage -> CoverageGenInfo a -> String -> IO ()
+printMCov mcov cgi path = do
+  Right () <- writeFile path $ show @{Colourful} cgi | Left err => die "Couldn't write the model coverage to file: \{show err}"
+  pure ()
 
 covering
 main : IO ()
@@ -212,14 +214,10 @@ main = do
   let vals = take (limit cfg.testsCnt) vals
 
   -- Make sure the paths for the files exist
-  case cfg.covFile of
-    Nothing   => pure ()
-    Just path => makeDirs path
-  case cfg.testsDir of
-    Nothing => pure ()
-    Just path => do
-      Right () <- createDir' path | Left err => die "Couldn't create dirs due to an error: \{show err}"
-      pure ()
+  maybeDo cfg.covFile makeDirs
+  maybeDo cfg.testsDir \path => do
+    Right () <- createDir' path | Left err => die "Couldn't create dirs due to an error: \{show err}"
+    pure ()
 
   let (seeds, modules) = unzip vals
   let alignedSeeds = cfg.randomSeed::seeds
@@ -229,5 +227,5 @@ main = do
     printModule cfg.testsDir cfg.testsCnt idx generatedModule seed
 
     let cgi = registerCoverage mcov cgi
-    printMCov cfg.covFile mcov cgi
+    maybeDo cfg.covFile $ printMCov mcov cgi
     pure cgi
