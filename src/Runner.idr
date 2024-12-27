@@ -163,18 +163,17 @@ forS_ : Monad f => (seed : s) -> LazyList a -> (s -> a -> f s) -> f ()
 forS_ seed []      g = pure ()
 forS_ seed (x::xs) g = forS_ !(g seed x) xs g
 
-maybeDo : Monad m => (Maybe a) -> (a -> m ()) -> m ()
-maybeDo Nothing   _ = pure ()
-maybeDo (Just x)  f = f x
+-- A shortcut for createDir'
+createDir'' : String -> IO ()
+createDir'' path = do
+  Right () <- createDir' path | Left err => die "Couldn't create dirs for path '\{path}' due to an error: \{show err}"
+  pure()
 
 -- Creates dirs for the file path
-makeDirs : String -> IO ()
-makeDirs path = case init $ split (=='/') path of
+ensureParentDir : String -> IO ()
+ensureParentDir path = case init $ split (=='/') path of
   []   => pure ()
-  dirs => do
-    let joinedPath = joinBy "/" dirs
-    Right () <- createDir' joinedPath | Left err => die "Couldn't create dirs for path '\{joinedPath}' due to an error: \{show err}"
-    pure()
+  dirs => createDir'' $ joinBy "/" dirs
 
 printModule : Maybe String -> Nat -> Nat -> String -> StdGen -> IO ()
 printModule testsDir testsCnt idx generatedModule seed = case testsDir of
@@ -186,11 +185,11 @@ printModule testsDir testsCnt idx generatedModule seed = case testsDir of
     let fileName = "\{path}/\{padLeft padding '0' (show idx)}-\{showSeed seed}.sv"
     writeRes <- writeFile fileName generatedModule
     case writeRes of
-      Left err => putStrLn (show err)
+      Left err => ignore $ fPutStrLn stderr $ show err
       Right () => putStrLn "[+] Printed file \{fileName}"
 
-printMCov : ModelCoverage -> CoverageGenInfo a -> String -> IO ()
-printMCov mcov cgi path = do
+printMCov : CoverageGenInfo a -> String -> IO ()
+printMCov cgi path = do
   Right () <- writeFile path $ show @{Colourful} cgi | Left err => die "Couldn't write the model coverage to file: \{show err}"
   pure ()
 
@@ -214,18 +213,16 @@ main = do
   let vals = take (limit cfg.testsCnt) vals
 
   -- Make sure the paths for the files exist
-  maybeDo cfg.covFile makeDirs
-  maybeDo cfg.testsDir \path => do
-    Right () <- createDir' path | Left err => die "Couldn't create dirs due to an error: \{show err}"
-    pure ()
+  whenJust cfg.covFile ensureParentDir
+  whenJust cfg.testsDir $ createDir''
 
   let (seeds, modules) = unzip vals
   let alignedSeeds = cfg.randomSeed::seeds
-  let indexedVals = withIndex $ zip modules alignedSeeds
+  let indexedVals = withIndex $ zip alignedSeeds modules
 
-  forS_ cgi indexedVals $ \cgi, (idx, ((mcov, generatedModule), seed)) => do
+  forS_ cgi indexedVals $ \cgi, (idx, seed, mcov, generatedModule) => do
     printModule cfg.testsDir cfg.testsCnt idx generatedModule seed
 
     let cgi = registerCoverage mcov cgi
-    maybeDo cfg.covFile $ printMCov mcov cgi
+    whenJust cfg.covFile $ printMCov cgi
     pure cgi
