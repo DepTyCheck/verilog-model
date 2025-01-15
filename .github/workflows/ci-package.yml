@@ -83,6 +83,10 @@ jobs:
                 <<< ${{ github.repository }})" >> "$GITHUB_ENV"
       - name: Build `${{ env.package_name }}`
         run: pack build ${{ env.package_name }}
+      - name: DEBUG
+        run: date
+      - name: DEBUG2
+        run: pwd
       - name: Test `${{ env.package_name }}`
         run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules
