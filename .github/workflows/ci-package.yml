@@ -63,6 +63,8 @@ jobs:
       fail-fast: false
       matrix:
         upstream-mode: ${{ fromJSON(needs.get-upstream-matrix.outputs.upstream-matrix) }}
+    concurrency:
+      group: consecutive-matrix
     steps:
       - name: Checkout
         uses: actions/checkout@v4
