@@ -1,13 +1,40 @@
 // initial seed: rawStdGen 0 1
 [+] Printed file newdir/newdir/0-seed_0_1.sv
-total 8
-drwxr-xr-x 6 vscode vscode 192 Jan 15 13:17 .
-drwxr-xr-x 4 vscode vscode 128 Dec 26 14:46 ..
--rw-r--r-- 1 vscode vscode 539 Jan 15 13:17 expected
-drwxr-xr-x 3 vscode vscode  96 Jan 15 13:17 newdir
--rw-r--r-- 1 vscode vscode   0 Jan 15 13:17 output
--rw-r--r-- 1 vscode vscode 216 Jan 15 13:17 run
-total 4
-drwxr-xr-x 3 vscode vscode  96 Jan 15 13:17 .
-drwxr-xr-x 3 vscode vscode  96 Jan 15 13:17 ..
--rw-r--r-- 1 vscode vscode 786 Jan 15 13:17 0-seed_0_1.sv
+module l
+  (output bit xrscu, input bit jtlqmgbdz, input bit hsvmic, input integer vxrjbkn, input bit kyjlzwnifc);
+  
+  not z(iyweunvss, kyjlzwnifc);
+  nand ijc(tpak, vxrjbkn, vxrjbkn);
+  
+  assign xrscu = kyjlzwnifc;
+endmodule: l
+
+module spy
+  (output wire sivx, output int evf, output real s, output int tlvbixqr, input uwire hzwsqv, input real ym);
+  
+  
+  assign sivx = ym;
+  assign evf = hzwsqv;
+  assign s = ym;
+  assign tlvbixqr = ym;
+endmodule: spy
+
+module wsceb
+  ( output real nk
+  , output bit ssu
+  , output bit wjvriylpha
+  , output int jreqrimkoo
+  , input int jxkevlvu
+  , input bit tahpg
+  , input integer a
+  , input uwire wfdackf
+  );
+  
+  
+  assign nk = wfdackf;
+  assign ssu = tahpg;
+  assign wjvriylpha = wfdackf;
+  assign jreqrimkoo = jxkevlvu;
+endmodule: wsceb
+
+
