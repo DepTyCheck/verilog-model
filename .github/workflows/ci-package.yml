@@ -47,9 +47,9 @@ jobs:
           MAIN="$(git ls-remote https://github.com/idris-lang/Idris2 main | head -c 9)"
           echo "Current: $CURR, bleeding edge: $MAIN"
           if [ "$CURR" == "$MAIN" ]; then
-            echo 'upstream-matrix=["bleeding-edge-compiler", "bleeding-edge-compiler"]'
+            echo 'upstream-matrix=["bleeding-edge-compiler", "latest-pack-collection"]'
           else
-            echo 'upstream-matrix=["bleeding-edge-compiler", "bleeding-edge-compiler"]'
+            echo 'upstream-matrix=["bleeding-edge-compiler", "latest-pack-collection"]'
           fi >> "$GITHUB_OUTPUT"
 
   build-and-test:
