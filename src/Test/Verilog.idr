@@ -58,7 +58,10 @@ namespace SVTypes
     EqBit'     : EqSVType Bit'     Bit'
     EqReal'    : EqSVType Real'    Real'
 
+  ||| 7.4.1 Packed arrays
   ||| Packed arrays can be made of only the single bit data types (bit, logic, reg)
+  |||
+  ||| IEEE 1800-2023
   public export
   data AllowedInPackedArr : SVType -> Type where
     B : AllowedInPackedArr Bit'
@@ -192,7 +195,7 @@ namespace ConnectionsValidation
     ||| 6.22.2 Equivalent types
     ||| d) Unpacked fixed-size array types are equivalent if they have equivalent element types and equal size.
     ||| IEEE 1800 - 2023
-    CCUnpackedUnpacked : EqSVType t t' -> EqNat (plus s s') (plus e e') ->
+    CCUnpackedUnpacked : EqSVType t t' -> EqNat (plus (max s e) (min s' e')) (plus (max s' e') (min s e))  ->
       CanConnect (Arr (Unpacked t s e)) (Arr (Unpacked t' s' e'))
 
   ||| The list of sources may be empty (Nil). In this case, either an implicit net is declared or an external net declaration must exist
