@@ -101,6 +101,11 @@ namespace Ports
   toList []        = []
   toList (x :: xs) = x :: toList xs
 
+  public export
+  toVect: (pl: PortsList) -> Vect (length pl) PortType
+  toVect []        = []
+  toVect (x :: xs) = x :: toVect xs
+
   export
   portsListAppendLen : (xs : PortsList) -> (ys : PortsList) -> length xs + length ys = length (xs ++ ys)
   portsListAppendLen []        ys = Refl
