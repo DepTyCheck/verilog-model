@@ -278,22 +278,19 @@ resolveSinks sinks srcNames x names un = do
 ||| Net types aren't compatible with unpacked arrays. So connections to unpacked array ports must be declared explicitly.
 |||
 ||| Prints an explicit declaration for each submodule input that's not connected to any source
-resolveUnpSI : (inps: Nat) -> Vect sk (Fin sk, Maybe $ Fin ss, PortType) -> Vect sk String -> List String
-resolveUnpSI inps v names = do
-  let (_ ** res) = catMaybes $ map resolve' v
-  toList res where
-    resolve' : (Fin sk, Maybe $ Fin ss, PortType) -> Maybe String
-    resolve' (finSK, Nothing, Arr $ Unpacked t s e) = Just $ printSVArr (Unpacked t s e) $ index finSK names
-    resolve' _                                      = Nothing
+resolveUnpSI : Vect sk String -> List ((Fin sk, Maybe a), PortType) -> List String
+resolveUnpSI names = mapMaybe resolve' where
+  resolve' : ((Fin sk, Maybe a), PortType) -> Maybe String
+  resolve' ((finSK, Nothing), Arr u@(Unpacked {})) = Just $ printSVArr u $ index finSK names
+  resolve' _                                       = Nothing
 
 ||| Prints an explicit declaration for each submodule output connected to a submodule input or not connected at all.
 ||| Doesn't print declaration for ports connected to top outputs
-resolveUnpSO : Vect subOs (PortType, String) -> Vect topOs String -> List String
-resolveUnpSO ((Arr $ Unpacked t s e, n) :: xs) tops = case elem n tops of
-  False => printSVArr (Unpacked t s e) n :: resolveUnpSO xs tops
-  True  => resolveUnpSO xs tops
-resolveUnpSO []                                _    = []
-resolveUnpSO (x :: xs)                         tops = resolveUnpSO xs tops
+resolveUnpSO : Foldable c => Foldable d => c String -> d (PortType, String) -> List String
+resolveUnpSO tops = flip foldr [] $ resolve' where
+  resolve': (PortType, String) -> List String -> List String
+  resolve' (Arr u@(Unpacked {}), n) acc = if elem n tops then (printSVArr u n :: acc) else acc
+  resolve' _                        acc = acc
 
 ||| filter `top inputs -> top outputs` connections
 filterTITO : Vect n (Maybe (Fin ss)) -> (inps : Nat) -> Vect n (Maybe (Fin inps))
@@ -350,8 +347,8 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi cont) = do
   let (_ ** tito) = catMaybes $ resolveConAssigns (filterTITO toss m.inpsCount) outputNames inputNames
 
   -- Unpacked arrays declarations
-  let unpackedDecls = resolveUnpSI m.inpsCount (withIndex $ zip siss $ toVect $ allInputs {ms} subMs) subMINames ++
-                      resolveUnpSO (zip (toVect $ allOutputs {ms} subMs) subMONames) outputNames
+  let unpackedDecls = resolveUnpSI subMINames (toList (withIndex siss `zip` (toVect $ allInputs {ms} subMs)))
+                   ++ resolveUnpSO outputNames (zip (toList $ allOutputs {ms} subMs) (toList subMONames))
 
   -- Save generated names
   let generatedPrintableInfo : ?
