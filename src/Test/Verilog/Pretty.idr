@@ -289,7 +289,7 @@ resolveUnpSI names = mapMaybe resolve' where
 resolveUnpSO : Foldable c => Foldable d => c String -> d (PortType, String) -> List String
 resolveUnpSO tops = flip foldr [] $ resolve' where
   resolve': (PortType, String) -> List String -> List String
-  resolve' (Arr u@(Unpacked {}), n) acc = if elem n tops then (printSVArr u n :: acc) else acc
+  resolve' (Arr u@(Unpacked {}), n) acc = if elem n tops then acc else (printSVArr u n :: acc)
   resolve' _                        acc = acc
 
 ||| filter `top inputs -> top outputs` connections
@@ -317,6 +317,9 @@ resolveConAssigns v outNames inpNames = map (resolveConn outNames inpNames) $ wi
     Nothing     => Nothing
     Just finInp => Just $ printAssign (index finOut outNames) (index finInp inpNames)
 
+-- zip PortsList with List
+zipPLWList : Foldable b => PortsList -> b a -> List (PortType, a)
+zipPLWList ports other = toList ports `zip` toList other
 
 export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
@@ -347,8 +350,8 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi cont) = do
   let (_ ** tito) = catMaybes $ resolveConAssigns (filterTITO toss m.inpsCount) outputNames inputNames
 
   -- Unpacked arrays declarations
-  let unpackedDecls = resolveUnpSI subMINames (toList (withIndex siss `zip` (toVect $ allInputs {ms} subMs)))
-                   ++ resolveUnpSO outputNames (zip (toList $ allOutputs {ms} subMs) (toList subMONames))
+  let unpackedDecls = resolveUnpSI subMINames (toList $ withIndex siss `zip` (toVect $ allInputs {ms} subMs))
+                   ++ resolveUnpSO outputNames (allOutputs {ms} subMs `zipPLWList` subMONames)
 
   -- Save generated names
   let generatedPrintableInfo : ?
