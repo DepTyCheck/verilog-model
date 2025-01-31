@@ -1,5 +1,6 @@
-// initial seed: rawStdGen 0 1
-[+] Printed file newdir/newdir/0-seed_0_1.sv
+[+] Printed file newdir/newdir/0-seed_0,1.sv
+// Seed: 0,1
+
 module wmsebrlm
   ( output bit [4:3] nikyot
   , output integer fzzwdkfwwk
@@ -31,3 +32,5 @@ module asudin
 endmodule: asudin
 
 
+
+// Seed after: 7923,1

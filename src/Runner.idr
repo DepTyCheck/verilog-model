@@ -50,6 +50,8 @@ record Config m where
   modelFuel  : m Fuel
   testsDir   : m (Maybe String)
   covFile    : m (Maybe String)
+  seedName   : m Bool
+  seedFile   : m Bool
 
 allNothing : Config Maybe
 allNothing = MkConfig
@@ -59,9 +61,14 @@ allNothing = MkConfig
   , modelFuel  = Nothing
   , testsDir   = Nothing
   , covFile    = Nothing
+  , seedName   = Nothing
+  , seedFile   = Nothing
   }
 
-defaultConfig : IO $ Config Prelude.id
+Cfg : Type
+Cfg = Config Prelude.id
+
+defaultConfig : IO $ Cfg
 defaultConfig = pure $ MkConfig
   { randomSeed = !initSeed
   , layoutOpts = Opts 152
@@ -69,11 +76,14 @@ defaultConfig = pure $ MkConfig
   , modelFuel  = limit 4
   , testsDir   = Nothing
   , covFile    = Nothing
+  , seedName   = False
+  , seedFile   = False
   }
 
 -- TODO to do this with `barbies`
 mergeCfg : (forall a. m a -> n a -> k a) -> Config m -> Config n -> Config k
-mergeCfg f (MkConfig rs lo tc mf td cf) (MkConfig rs' lo' tc' mf' td' cf') = MkConfig (f rs rs') (f lo lo') (f tc tc') (f mf mf') (f td td') (f cf cf')
+mergeCfg f (MkConfig rs lo tc mf td cf sn sf) (MkConfig rs' lo' tc' mf' td' cf' sn' sf') =
+ MkConfig (f rs rs') (f lo lo') (f tc tc') (f mf mf') (f td td') (f cf cf') (f sn sn') (f sf sf')
 
 parseSeed : String -> Either String $ Config Maybe
 parseSeed str = do
@@ -127,7 +137,13 @@ cliOpts =
       "Sets where to generate the tests."
   , MkOpt [] ["coverage"]
       (ReqArg' parseCovFile "<coverage>")
-      "Sets the file path to save the model coverage"
+      "Sets the file path to save the model coverage."
+  , MkOpt [] ["seed-name"]
+      (NoArg $ {seedName := Just $ True} allNothing)
+      "Adds a seed to the names of generated files."
+  , MkOpt [] ["seed-content"]
+      (NoArg $ {seedFile := Just $ True} allNothing)
+      "Prints the initial-seed in the first line and the seed-after in the last line of the test file."
   ]
 
 tail'' : List a -> List a
@@ -158,7 +174,7 @@ createDir' p = foldlM createDirHelper (Right ()) $ inits $ toList $ split (=='/'
     e               => e
 
 showSeed: StdGen -> String
-showSeed gen = let (seed, gamma) = extractRaw gen in "seed_\{show seed}_\{show gamma}"
+showSeed gen = let (seed, gamma) = extractRaw gen in "\{show seed},\{show gamma}"
 
 forS_ : Monad f => (seed : s) -> LazyList a -> (s -> a -> f s) -> f ()
 forS_ seed []      g = pure ()
@@ -176,18 +192,30 @@ ensureParentDir path = case init $ split (=='/') path of
   []   => pure ()
   dirs => createDir'' $ joinBy "/" dirs
 
-printModule : Maybe String -> Nat -> Nat -> String -> StdGen -> IO ()
-printModule testsDir testsCnt idx generatedModule seed = case testsDir of
-  Nothing => do
-    putStrLn "// Seed: \{showSeed seed}\n-------------------\n"
-    putStr $ generatedModule
-  Just path => do
-    let padding = countDigit testsCnt
-    let fileName = "\{path}/\{padLeft padding '0' (show idx)}-\{showSeed seed}.sv"
-    writeRes <- writeFile fileName generatedModule
-    case writeRes of
-      Left err => ignore $ fPutStrLn stderr $ show err
-      Right () => putStrLn "[+] Printed file \{fileName}"
+content : Cfg -> String -> StdGen -> StdGen -> String
+content cfg generatedModule initialSeed seedAfter = case cfg.seedFile of
+  False => generatedModule
+  True  => "// Seed: \{showSeed initialSeed}\n\n"
+        ++ generatedModule
+        ++ "\n// Seed after: \{showSeed seedAfter}"
+
+fileName : Cfg -> String -> Nat -> StdGen -> String
+fileName cfg path idx initialSeed = do
+  let padding = countDigit cfg.testsCnt
+  let seedSuffix = if cfg.seedName then "-seed_\{showSeed initialSeed}" else ""
+  "\{path}/\{padLeft padding '0' (show idx)}\{seedSuffix}.sv"
+
+printModule : Cfg -> Nat -> String -> StdGen -> StdGen -> IO ()
+printModule cfg idx generatedModule initialSeed seedAfter = do
+  let text = content cfg generatedModule initialSeed seedAfter
+  case cfg.testsDir of
+    Nothing   => putStr text
+    Just path => do
+      let file = fileName cfg path idx initialSeed
+      writeRes <- writeFile file text
+      case writeRes of
+        Left err => ignore $ fPutStrLn stderr $ show err
+        Right () => putStrLn "[+] Printed file \{file}"
 
 printMCov : CoverageGenInfo a -> String -> IO ()
 printMCov cgi path = do
@@ -203,11 +231,10 @@ main = do
     | MkResult {unrecognized=unrecOpts@(_::_), _} => die "unrecodnised options \{show unrecOpts}\{usage}"
     | MkResult {errors=es@(_::_), _}              => die "arguments parse errors \{show es}\{usage}"
   let cfg : Config Maybe = foldl (mergeCfg (\x, y => x <|> y)) allNothing options
-  let cfg : Config Prelude.id = mergeCfg (\m, d => fromMaybe d m) cfg !defaultConfig
+  let cfg : Cfg = mergeCfg (\m, d => fromMaybe d m) cfg !defaultConfig
 
   let cgi = initCoverageInfo' `{Modules}
 
-  putStrLn "// initial seed: \{show cfg.randomSeed}"
   let vals = unGenTryAllD' cfg.randomSeed $
                genModules cfg.modelFuel StdModules >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) => if nonTrivial md then Just (fst gmd, mcov, md) else Nothing
@@ -219,10 +246,10 @@ main = do
 
   let (seeds, modules) = unzip vals
   let alignedSeeds = cfg.randomSeed::seeds
-  let indexedVals = withIndex $ zip alignedSeeds modules
+  let indexedVals = withIndex $ zip3 alignedSeeds seeds modules
 
-  forS_ cgi indexedVals $ \cgi, (idx, seed, mcov, generatedModule) => do
-    printModule cfg.testsDir cfg.testsCnt idx generatedModule seed
+  forS_ cgi indexedVals $ \cgi, (idx, initialSeed, seedAfter, mcov, generatedModule) => do
+    printModule cfg idx generatedModule initialSeed seedAfter
 
     let cgi = registerCoverage mcov cgi
     whenJust cfg.covFile $ printMCov cgi

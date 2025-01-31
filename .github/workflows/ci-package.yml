@@ -84,7 +84,7 @@ jobs:
       - name: Test `${{ env.package_name }}`
         run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules
-        run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 42    # Generate modules
+        run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 42 --seed-name --seed-content  # Generate modules
       - uses: actions/upload-artifact@v4
         if: ${{ matrix.upstream-mode == 'latest-pack-collection' }}
         with:

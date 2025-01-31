@@ -1,7 +1,3 @@
-// initial seed: rawStdGen 0 1
-// Seed: seed_0_1
--------------------
-
 module wmsebrlm
   ( output bit [4:3] nikyot
   , output integer fzzwdkfwwk
