@@ -50,8 +50,8 @@ record Config m where
   modelFuel  : m Fuel
   testsDir   : m (Maybe String)
   covFile    : m (Maybe String)
-  seedName   : m Bool
-  seedFile   : m Bool
+  seedInName : m Bool
+  seedInFile : m Bool
 
 allNothing : Config Maybe
 allNothing = MkConfig
@@ -61,8 +61,8 @@ allNothing = MkConfig
   , modelFuel  = Nothing
   , testsDir   = Nothing
   , covFile    = Nothing
-  , seedName   = Nothing
-  , seedFile   = Nothing
+  , seedInName = Nothing
+  , seedInFile = Nothing
   }
 
 Cfg : Type
@@ -76,8 +76,8 @@ defaultConfig = pure $ MkConfig
   , modelFuel  = limit 4
   , testsDir   = Nothing
   , covFile    = Nothing
-  , seedName   = False
-  , seedFile   = False
+  , seedInName = False
+  , seedInFile = False
   }
 
 -- TODO to do this with `barbies`
@@ -139,10 +139,10 @@ cliOpts =
       (ReqArg' parseCovFile "<coverage>")
       "Sets the file path to save the model coverage."
   , MkOpt [] ["seed-name"]
-      (NoArg $ {seedName := Just $ True} allNothing)
+      (NoArg $ {seedInName := Just $ True} allNothing)
       "Adds a seed to the names of generated files."
   , MkOpt [] ["seed-content"]
-      (NoArg $ {seedFile := Just $ True} allNothing)
+      (NoArg $ {seedInFile := Just $ True} allNothing)
       "Prints the initial-seed in the first line and the seed-after in the last line of the test file."
   ]
 
@@ -193,7 +193,7 @@ ensureParentDir path = case init $ split (=='/') path of
   dirs => createDir'' $ joinBy "/" dirs
 
 content : Cfg -> String -> StdGen -> StdGen -> String
-content cfg generatedModule initialSeed seedAfter = case cfg.seedFile of
+content cfg generatedModule initialSeed seedAfter = case cfg.seedInFile of
   False => generatedModule
   True  => "// Seed: \{showSeed initialSeed}\n\n"
         ++ generatedModule
@@ -202,7 +202,7 @@ content cfg generatedModule initialSeed seedAfter = case cfg.seedFile of
 fileName : Cfg -> String -> Nat -> StdGen -> String
 fileName cfg path idx initialSeed = do
   let padding = countDigit cfg.testsCnt
-  let seedSuffix = if cfg.seedName then "-seed_\{showSeed initialSeed}" else ""
+  let seedSuffix = if cfg.seedInName then "-seed_\{showSeed initialSeed}" else ""
   "\{path}/\{padLeft padding '0' (show idx)}\{seedSuffix}.sv"
 
 printModule : Cfg -> Nat -> String -> StdGen -> StdGen -> IO ()
