@@ -83,6 +83,22 @@ jobs:
                 <<< ${{ github.repository }})" >> "$GITHUB_ENV"
       - name: Build `${{ env.package_name }}`
         run: pack build ${{ env.package_name }}
+      - name: Debug
+        run: |
+          uname -a
+          lsb_release -a
+          free -h
+          vmstat -s
+          df -h
+          id
+          groups
+          echo $SHELL
+          ls -la
+          set -o
+          echo $RUNNER_NAME
+          pwd
+          echo $RUNNER_TEMP
+          ls $RUNNER_TEMP -la
       - name: Test `${{ env.package_name }}`
         run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules

@@ -1,5 +1,9 @@
 rm -rf newdir
 
+ls -la
+ls .. -la
+pwd
+
 pack run verilog-model -o newdir/newdir -n 1 --seed 0,1 && cat newdir/newdir/*
 
 rm -rf newdir
