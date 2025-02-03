@@ -286,11 +286,10 @@ resolveUnpSI names = mapMaybe resolve' where
 
 ||| Prints an explicit declaration for each submodule output connected to a submodule input or not connected at all.
 ||| Doesn't print declaration for ports connected to top outputs
-resolveUnpSO : Foldable c => Foldable d => c String -> d (PortType, String) -> List String
-resolveUnpSO tops = flip foldr [] $ resolve' where
-  resolve': (PortType, String) -> List String -> List String
-  resolve' (Arr u@(Unpacked {}), n) acc = if elem n tops then acc else (printSVArr u n :: acc)
-  resolve' _                        acc = acc
+resolveUnpSO : Foldable c => Foldable d => c String -> d (String, PortType) -> List String
+resolveUnpSO tops = flip foldr [] $ \case
+  (n, Arr u@(Unpacked {})) => if elem n tops then id else with Prelude.(::) (printSVArr u n ::)
+  _ => id {a=List String}
 
 ||| filter `top inputs -> top outputs` connections
 filterTITO : Vect n (Maybe (Fin ss)) -> (inps : Nat) -> Vect n (Maybe (Fin inps))
@@ -318,8 +317,8 @@ resolveConAssigns v outNames inpNames = map (resolveConn outNames inpNames) $ wi
     Just finInp => Just $ printAssign (index finOut outNames) (index finInp inpNames)
 
 -- zip PortsList with List
-zipPLWList : Foldable b => PortsList -> b a -> List (PortType, a)
-zipPLWList ports other = toList ports `zip` toList other
+zipPLWList : Foldable b => b a -> PortsList -> List (a, PortType)
+zipPLWList other ports = toList other `zip` toList ports
 
 export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
@@ -350,8 +349,8 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi cont) = do
   let (_ ** tito) = catMaybes $ resolveConAssigns (filterTITO toss m.inpsCount) outputNames inputNames
 
   -- Unpacked arrays declarations
-  let unpackedDecls = resolveUnpSI subMINames (toList $ withIndex siss `zip` (toVect $ allInputs {ms} subMs))
-                   ++ resolveUnpSO outputNames (allOutputs {ms} subMs `zipPLWList` subMONames)
+  let unpackedDecls = resolveUnpSI subMINames (withIndex siss `zipPLWList` allInputs {ms} subMs)
+                   ++ resolveUnpSO outputNames (subMONames `zipPLWList` allOutputs {ms} subMs)
 
   -- Save generated names
   let generatedPrintableInfo : ?
