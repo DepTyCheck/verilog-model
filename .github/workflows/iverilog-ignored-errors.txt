@@ -1,3 +1,6 @@
 Expression width \d+ does not match width \d+
 vvp_arith_cast_int: recv_vec4 not implemented
 recv_real\(0\.000000\) not implemented
+
+t-dll-api\.cc:2501: ivl_nexus_s\* ivl_signal_nex\(ivl_signal_t, unsigned int\): Assertion `net->type_ == IVL_SIT_REG' failed\.
+Array [\w]+ needs an array index here[\s\S]* Unable to elaborate r-value:

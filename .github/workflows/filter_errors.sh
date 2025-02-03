@@ -5,7 +5,7 @@ ERRORS_REGEX="$2"
 REGEX_FILE="$3"
 
 # Find all errors using the provided regex pattern
-matches=$(echo "$INPUT" | grep -Po "(?s)$ERRORS_REGEX")
+matches=$(echo "$INPUT" | grep -Po "(?s)$ERRORS_REGEX" | tr '\n' ' ')
 
 if [ -z "$matches" ]; then
   echo "No errors found."

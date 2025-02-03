@@ -84,7 +84,7 @@ jobs:
       - name: Test `${{ env.package_name }}`
         run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules
-        run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 42 --seed-name --seed-content  # Generate modules
+        run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 84 --seed-name --seed-content  # Generate modules
       - uses: actions/upload-artifact@v4
         if: ${{ matrix.upstream-mode == 'latest-pack-collection' }}
         with:
@@ -105,16 +105,36 @@ jobs:
         with:
           name: generated-modules
           path: "${{ env.GENERATION_DIR }}"
-      - name: Install build tools
-        run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
-      - name: Set up iverilog
+      - name: Clone iverilog repository
         run: |
-          rm -rf iverilog
           git clone https://github.com/steveicarus/iverilog.git
+          cd iverilog
+          echo "i_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: Cache iverilog build
+        id: cache-iverilog-build
+        uses: actions/cache/restore@v4
+        with:
+          path: iverilog
+          key: ${{ runner.os }}-iverilog-cache-${{ env.i_commit_hash }}
+      - name: Install build tools
+        if: steps.cache-iverilog-build.outputs.cache-hit != 'true'
+        run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
+      - name: Build iverilog
+        if: steps.cache-iverilog-build.outputs.cache-hit != 'true'
+        run: |
           cd iverilog
           sh autoconf.sh
           ./configure
           sudo make -j$(nproc)
+      - name: Save iverilog build
+        if: steps.cache-iverilog-build.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: iverilog
+          key: steps.cache-iverilog-build.outputs.cache-primary-key
+      - name: Install iverilog
+        run : |
+          cd iverilog
           sudo make install
       - name: Run Icarus Verilog
         run: |
@@ -153,20 +173,20 @@ jobs:
           path: slang/build
           key: ${{ runner.os }}-slang-cache-${{ hashFiles('slang/CHANGELOG.md') }}
       - name: Install build tools
-        if: ${{ steps.cache-slang-build.outputs.cache-hit != 'true' }}
+        if: steps.cache-slang-build.outputs.cache-hit != 'true'
         run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
       - name: Build Slang
-        if: ${{ steps.cache-slang-build.outputs.cache-hit != 'true' }}
+        if: steps.cache-slang-build.outputs.cache-hit != 'true'
         run: |
           cd slang
           sudo cmake -B build
           sudo cmake --build build -j$(nproc)
       - name: Save Slang build
-        if: ${{ steps.cache-slang-build.outputs.cache-hit != 'true' }}
+        if: steps.cache-slang-build.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: slang/build
-          key: ${{ steps.cache-slang-build.outputs.cache-primary-key }}
+          key: steps.cache-slang-build.outputs.cache-primary-key
       - name: Install Slang
         run: |
           cd slang
