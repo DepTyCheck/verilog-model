@@ -69,7 +69,7 @@ jobs:
       - name: Update `pack-db`
         run: pack update-db
       - name: Switch to the latest compiler, if needed
-        if: ${{ matrix.upstream-mode == 'bleeding-edge-compiler' }}
+        if: matrix.upstream-mode == 'bleeding-edge-compiler'
         run: |
           { echo; echo "[idris2]"; echo 'commit = "latest:main"'; } >> pack.toml
           pack fetch
@@ -84,9 +84,10 @@ jobs:
       - name: Test `${{ env.package_name }}`
         run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules
+        if: matrix.upstream-mode == 'latest-pack-collection'
         run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 84 --seed-name --seed-content  # Generate modules
       - uses: actions/upload-artifact@v4
-        if: ${{ matrix.upstream-mode == 'latest-pack-collection' }}
+        if: matrix.upstream-mode == 'latest-pack-collection'
         with:
           name: generated-modules
           path: "${{ env.GENERATION_DIR }}"
@@ -131,7 +132,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: iverilog
-          key: steps.cache-iverilog-build.outputs.cache-primary-key
+          key: ${{ steps.cache-iverilog-build.outputs.cache-primary-key }}
       - name: Install iverilog
         run : |
           cd iverilog
@@ -186,7 +187,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: slang/build
-          key: steps.cache-slang-build.outputs.cache-primary-key
+          key: ${{ steps.cache-slang-build.outputs.cache-primary-key }}
       - name: Install Slang
         run: |
           cd slang

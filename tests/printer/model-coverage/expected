@@ -29,6 +29,8 @@ module asudin
 endmodule: asudin
 
 
+--------------------------
+
 Data.Fin.[1mFin[0m [38;5;10mcovered fully[0m (6 times)
   - FS: [38;5;10mcovered[0m (4 times)
   - FZ: [38;5;10mcovered[0m (2 times)

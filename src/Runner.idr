@@ -209,7 +209,7 @@ printModule : Cfg -> Nat -> String -> StdGen -> StdGen -> IO ()
 printModule cfg idx generatedModule initialSeed seedAfter = do
   let text = content cfg generatedModule initialSeed seedAfter
   case cfg.testsDir of
-    Nothing   => putStr text
+    Nothing   => putStr $ text ++ "--------------------------\n\n"
     Just path => do
       let file = fileName cfg path idx initialSeed
       writeRes <- writeFile file text
