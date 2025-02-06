@@ -1,7 +1,5 @@
 rm -f mcov
-ls -la
-ls .. -la
-pwd
+
 pack run verilog-model --coverage mcov -n 1 --seed 0,1 && cat mcov
 
 rm -f mcov
