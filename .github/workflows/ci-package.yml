@@ -79,8 +79,6 @@ jobs:
         run: |
           echo "package_name=$(sed -e 's|.*/||' -e 's/idris2\?-//' \
                 <<< ${{ github.repository }})" >> "$GITHUB_ENV"
-      - name: Build `${{ env.package_name }}`
-        run: pack build ${{ env.package_name }}
       - name: Debug
         run: |
           set -x
@@ -106,6 +104,8 @@ jobs:
           mkswap /swapfile
           swapon /swapfile
           free -h
+      - name: Build `${{ env.package_name }}`
+        run: pack build ${{ env.package_name }}
       - name: Test `${{ env.package_name }}`
         run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules
