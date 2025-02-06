@@ -83,6 +83,7 @@ jobs:
         run: pack build ${{ env.package_name }}
       - name: Debug
         run: |
+          set -x
           uname -a
           whoami
           free -h
@@ -96,6 +97,15 @@ jobs:
           pwd
           echo $RUNNER_TEMP
           ls $RUNNER_TEMP -la
+          ulimit -n
+      - name: Realloc swap
+        run: |
+          swapoff -a
+          fallocate -l 6G /swapfile
+          chmod 600 /swapfile
+          mkswap /swapfile
+          swapon /swapfile
+          free -h
       - name: Test `${{ env.package_name }}`
         run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules
