@@ -47,9 +47,9 @@ jobs:
           MAIN="$(git ls-remote https://github.com/idris-lang/Idris2 main | head -c 9)"
           echo "Current: $CURR, bleeding edge: $MAIN"
           if [ "$CURR" == "$MAIN" ]; then
-            echo 'upstream-matrix=["latest-pack-collection"]'
+            echo 'upstream-matrix=["bleeding-edge-compiler", "latest-pack-collection"]'
           else
-            echo 'upstream-matrix=["latest-pack-collection", "bleeding-edge-compiler"]'
+            echo 'upstream-matrix=["bleeding-edge-compiler", "latest-pack-collection"]'
           fi >> "$GITHUB_OUTPUT"
 
   build-and-test:
@@ -79,8 +79,35 @@ jobs:
         run: |
           echo "package_name=$(sed -e 's|.*/||' -e 's/idris2\?-//' \
                 <<< ${{ github.repository }})" >> "$GITHUB_ENV"
+      - name: Debug
+        run: |
+          set -x
+          uname -a
+          whoami
+          free -h
+          df -h
+          id
+          groups
+          echo $SHELL
+          ls -la
+          set -o
+          echo $RUNNER_NAME
+          pwd
+          echo $RUNNER_TEMP
+          ls $RUNNER_TEMP -la
+          ulimit -n
+      - name: Realloc swap
+        run: |
+          sudo swapoff -a
+          sudo fallocate -l 6G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
       - name: Build `${{ env.package_name }}`
         run: pack build ${{ env.package_name }}
+      - name: Debug2
+        run: free -h
       - name: Test `${{ env.package_name }}`
         run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules
