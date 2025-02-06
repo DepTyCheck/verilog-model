@@ -98,14 +98,16 @@ jobs:
           ulimit -n
       - name: Realloc swap
         run: |
-          swapoff -a
-          fallocate -l 6G /swapfile
-          chmod 600 /swapfile
-          mkswap /swapfile
-          swapon /swapfile
+          sudo swapoff -a
+          sudo fallocate -l 6G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
           free -h
       - name: Build `${{ env.package_name }}`
         run: pack build ${{ env.package_name }}
+      - name: Debug2
+        run: free -h
       - name: Test `${{ env.package_name }}`
         run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules
