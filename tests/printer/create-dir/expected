@@ -1,36 +1,48 @@
 [+] Printed file newdir/newdir/0-seed_0,1.sv
 // Seed: 0,1
 
-module wmsebrlm
-  ( output bit [4:3] nikyot
-  , output integer fzzwdkfwwk
-  , output wire t
-  , output int ipctiu
-  , input bit mktvfwz
-  , input logic [2:4] vk
-  , input bit aqbmsi
+module dgcnwwt
+  ( output logic [4:2][3:2] jdcz
+  , output real sszcrgp [3:4][4:3]
+  , output uwire qozr [1:0][3:4]
+  , output uwire h
+  , input bit lkkqngk
+  , input bit he
   );
   
   
   
-  assign fzzwdkfwwk = aqbmsi;
-endmodule: wmsebrlm
+  assign jdcz = he;
+endmodule: dgcnwwt
 
-module ecxjyu
-  (output bit [1:0] k, output uwire fwemupzbpu [4:2], output bit da [4:2], input bit xxxnfljq, input real winfuj, input int x);
+module xjwjnopk
+  (output logic [3:1] zjjmxnmet, input logic [4:1][1:0][4:3] zghtyzmorg, input int majvge [2:3], input logic [4:1][1:4] aizc);
   
+  real kgnercyzl [3:4][4:3];
+  uwire hagcc [1:0][3:4];
   
+  dgcnwwt dfbgpas(.jdcz(fifqabm), .sszcrgp(kgnercyzl), .qozr(hagcc), .h(ym), .lkkqngk(etwwgby), .he(aqjfs));
   
-  assign k = x;
-endmodule: ecxjyu
+  assign zjjmxnmet = aizc;
+endmodule: xjwjnopk
 
-module asudin
-  (output int sbtiopr, output wire tdesg [4:2], output real kk, input bit n [0:1]);
+module irdhcrmbau
+  ( output uwire rg
+  , output logic [2:4][2:2][2:3] awffvz
+  , output integer erdoxzqg [4:1]
+  , output bit [2:1][1:0] hjgnx
+  , input uwire fgtaxuirlw [4:4][0:3]
+  , input wire a
+  , input wire eueudqln [0:3][1:4]
+  , input logic [0:1][2:0] fcbsmbxnx
+  );
   
   
   
-endmodule: asudin
+  assign rg = fcbsmbxnx;
+  assign hjgnx = a;
+endmodule: irdhcrmbau
 
 
 
-// Seed after: 7923,1
+// Seed after: 10727,1

@@ -135,7 +135,7 @@ VerilogKeywords = [
   "with", "within", "wor", "xnor", "xor"
 ]
 
-Show SVType where
+Show SVBasic where
   show Logic'   = "logic"
   show Wire'    = "wire"
   show Uwire'   = "uwire"
@@ -144,14 +144,39 @@ Show SVType where
   show Bit'     = "bit"
   show Real'    = "real"
 
+||| Prints the type's signature to the left of the name
+printVarOrPacked : SVType -> String
+printVarOrPacked $ Var bt                = "\{show bt} "
+printVarOrPacked $ Arr $ Packed t s e    = printVarOrPacked t ++ "[\{show s}:\{show e}]"
+printVarOrPacked $ Arr $ Unpacked {t, _} = printVarOrPacked t
+
+||| Prints the type's signature to the right of the name.
+|||
+||| 7.4.2
+||| A fixed-size unpacked dimension may also be specified by a single positive constant integer expression to
+||| specify the number of elements in the unpacked dimension, as in C. In this case, [size] shall mean the
+||| same as [0:size-1].
+||| ex:
+||| int Array[0:7][0:31]; // array declaration using ranges
+||| int Array[8][32];     // array declaration using sizes
+|||
+||| IEEE 1800-2023
+printUnpackedDims : SVType -> String
+printUnpackedDims $ Var _                = ""
+printUnpackedDims $ Arr $ Packed {}      = ""
+printUnpackedDims $ Arr $ Unpacked t s e = printUnpackedDims t ++ "[\{show s}:\{show e}]"
+
 ||| examples:
 ||| bit uP [3:0]; //1-D unpacked
 ||| bit [3:0] p;  //1-D packed
-printSVArr: SVArray _ _ _ -> String -> String
-printSVArr (Packed   svt s e _) name = "\{show svt} [\{show s}:\{show e}] \{name}"
-printSVArr (Unpacked svt s e)   name = "\{show svt} \{name} [\{show s}:\{show e}]"
+printSVArr : SVArray _ _ _ -> String -> String
+printSVArr (Packed   svt s e) name = "\{printVarOrPacked svt}[\{show s}:\{show e}] \{name}"
+printSVArr (Unpacked svt s e) name = "\{printVarOrPacked svt}\{space svt}\{name} \{printUnpackedDims svt}[\{show s}:\{show e}]" where
+  space : SVType -> String
+  space (Arr $ Packed {}) = " "
+  space _           = ""
 
-printConnType : PortType -> String -> String
+printConnType : SVType -> String -> String
 printConnType (Arr arr) name = printSVArr arr name
 printConnType (Var svt) name = "\{show svt} \{name}"
 
@@ -278,15 +303,15 @@ resolveSinks sinks srcNames x names un = do
 ||| Net types aren't compatible with unpacked arrays. So connections to unpacked array ports must be declared explicitly.
 |||
 ||| Prints an explicit declaration for each submodule input that's not connected to any source
-resolveUnpSI : Vect sk String -> List ((Fin sk, Maybe a), PortType) -> List String
+resolveUnpSI : Vect sk String -> List ((Fin sk, Maybe a), SVType) -> List String
 resolveUnpSI names = mapMaybe resolve' where
-  resolve' : ((Fin sk, Maybe a), PortType) -> Maybe String
+  resolve' : ((Fin sk, Maybe a), SVType) -> Maybe String
   resolve' ((finSK, Nothing), Arr u@(Unpacked {})) = Just $ printSVArr u $ index finSK names
   resolve' _                                       = Nothing
 
 ||| Prints an explicit declaration for each submodule output connected to a submodule input or not connected at all.
 ||| Doesn't print declaration for ports connected to top outputs
-resolveUnpSO : Foldable c => Foldable d => c String -> d (String, PortType) -> List String
+resolveUnpSO : Foldable c => Foldable d => c String -> d (String, SVType) -> List String
 resolveUnpSO tops = flip foldr [] $ \case
   (n, Arr u@(Unpacked {})) => if elem n tops then id else with Prelude.(::) (printSVArr u n ::)
   _ => id {a=List String}
@@ -317,7 +342,7 @@ resolveConAssigns v outNames inpNames = map (resolveConn outNames inpNames) $ wi
     Just finInp => Just $ printAssign (index finOut outNames) (index finInp inpNames)
 
 -- zip PortsList with List
-zipPLWList : Foldable b => b a -> PortsList -> List (a, PortType)
+zipPLWList : Foldable b => b a -> PortsList -> List (a, SVType)
 zipPLWList other ports = toList other `zip` toList ports
 
 export

@@ -8,79 +8,94 @@ import Test.DepTyCheck.Gen
 
 %default total
 
-namespace SVTypes
+||| Variable types
+|||
+||| |  Type     | Description                                                     |
+||| |-----------|-----------------------------------------------------------------|
+||| | shortint  | 2-state data type, 16-bit signed integer                        |
+||| | int       | 2-state data type, 32-bit signed integer                        |
+||| | longint   | 2-state data type, 64-bit signed integer                        |
+||| | byte      | 2-state data type, 8-bit signed integer or ASCII character      |
+||| | bit       | 2-state data type, user-defined vector size, unsigned           |
+||| | logic     | 4-state data type, user-defined vector size, unsigned           |
+||| | reg       | 4-state data type, user-defined vector size, unsigned           |
+||| | integer   | 4-state data type, 32-bit signed integer                        |
+||| | time      | 4-state data type, 64-bit unsigned integer                      |
+||| | real      | The “real” data type is 64-bit                                  |
+||| | shortreal | The “shortreal” data type is 32-bit                             |
+||| | realtime  | The “realtime” declarations is treated synonymously with “real” |
+|||
+||| Net types
+|||
+||| | Net     | Description                                             |
+||| |---------|---------------------------------------------------------|
+||| | wire    | A high impedance net; multi-driver net                  |
+||| | tri     | A high impedance net; multi-driver net                  |
+||| | tri0    | Resistive pulldown net                                  |
+||| | tri1    | Resistive pullup net                                    |
+||| | trior   | Same as “wor”; “1” wins in all cases; multi-driver net  |
+||| | triand  | Same as “wand”; “0” wins in all cases; multi-driver net |
+||| | trireg  | Models charge storage node                              |
+||| | uwire   | Unresolved type; allows only one driver on the net      |
+||| | wand    | Same as “triand”; “0” wins in all cases                 |
+||| | wor     | Same as trior; “1” wins in all cases                    |
+||| | supply0 | Net with supply strength to model “gnd”                 |
+||| | supply1 | Net with supply strength to model “power”               |
+|||
+||| Ashok B. Mehta. Introduction to SystemVerilog, 2021
+public export
+data SVBasic = Logic' | Wire' | Uwire' | Int' | Integer' | Bit' | Real'
 
-  ||| Variable types
-  |||
-  ||| |  Type     | Description                                                     |
-  ||| |-----------|-----------------------------------------------------------------|
-  ||| | shortint  | 2-state data type, 16-bit signed integer                        |
-  ||| | int       | 2-state data type, 32-bit signed integer                        |
-  ||| | longint   | 2-state data type, 64-bit signed integer                        |
-  ||| | byte      | 2-state data type, 8-bit signed integer or ASCII character      |
-  ||| | bit       | 2-state data type, user-defined vector size, unsigned           |
-  ||| | logic     | 4-state data type, user-defined vector size, unsigned           |
-  ||| | reg       | 4-state data type, user-defined vector size, unsigned           |
-  ||| | integer   | 4-state data type, 32-bit signed integer                        |
-  ||| | time      | 4-state data type, 64-bit unsigned integer                      |
-  ||| | real      | The “real” data type is 64-bit                                  |
-  ||| | shortreal | The “shortreal” data type is 32-bit                             |
-  ||| | realtime  | The “realtime” declarations is treated synonymously with “real” |
-  |||
-  ||| Net types
-  |||
-  ||| | Net     | Description                                             |
-  ||| |---------|---------------------------------------------------------|
-  ||| | wire    | A high impedance net; multi-driver net                  |
-  ||| | tri     | A high impedance net; multi-driver net                  |
-  ||| | tri0    | Resistive pulldown net                                  |
-  ||| | tri1    | Resistive pullup net                                    |
-  ||| | trior   | Same as “wor”; “1” wins in all cases; multi-driver net  |
-  ||| | triand  | Same as “wand”; “0” wins in all cases; multi-driver net |
-  ||| | trireg  | Models charge storage node                              |
-  ||| | uwire   | Unresolved type; allows only one driver on the net      |
-  ||| | wand    | Same as “triand”; “0” wins in all cases                 |
-  ||| | wor     | Same as trior; “1” wins in all cases                    |
-  ||| | supply0 | Net with supply strength to model “gnd”                 |
-  ||| | supply1 | Net with supply strength to model “power”               |
-  |||
-  ||| Ashok B. Mehta. Introduction to SystemVerilog, 2021
-  public export
-  data SVType = Logic' | Wire' | Uwire' | Int' | Integer' | Bit' | Real'
+public export
+data EqSVBasic : SVBasic -> SVBasic -> Type where
+  EqLogic'   : EqSVBasic Logic'   Logic'
+  EqWire'    : EqSVBasic Wire'    Wire'
+  EqUwire'   : EqSVBasic Uwire'   Uwire'
+  EqInt'     : EqSVBasic Int'     Int'
+  EqInteger' : EqSVBasic Integer' Integer'
+  EqBit'     : EqSVBasic Bit'     Bit'
+  EqReal'    : EqSVBasic Real'    Real'
 
-  public export
-  data EqSVType : SVType -> SVType -> Type where
-    EqLogic'   : EqSVType Logic'   Logic'
-    EqWire'    : EqSVType Wire'    Wire'
-    EqUwire'   : EqSVType Uwire'   Uwire'
-    EqInt'     : EqSVType Int'     Int'
-    EqInteger' : EqSVType Integer' Integer'
-    EqBit'     : EqSVType Bit'     Bit'
-    EqReal'    : EqSVType Real'    Real'
+data SVType : Type
+data SVArray : SVType -> Nat -> Nat -> Type
+data AllowedInPackedArr : SVType -> Type
 
-  ||| 7.4.1 Packed arrays
-  ||| Packed arrays can be made of only the single bit data types (bit, logic, reg)
-  |||
-  ||| IEEE 1800-2023
-  public export
-  data AllowedInPackedArr : SVType -> Type where
-    B : AllowedInPackedArr Bit'
-    L : AllowedInPackedArr Logic'
-    -- R : AllowedInPackedArr Reg' -- Uncomment when Reg is added to the SVType
+public export
+data SVType = Arr (SVArray t s e) | Var SVBasic
 
-  ||| The main difference between an unpacked array and a packed array is that
-  ||| an unpacked array is not guaranteed to be represented as a contiguous set of bits
-  public export
-  data SVArray : SVType -> Nat -> Nat -> Type where
-    Unpacked   : (t : SVType) -> (start : Nat) -> (end : Nat) -> SVArray t start end
-    Packed     : (t : SVType) -> (start : Nat) -> (end : Nat) -> AllowedInPackedArr t -> SVArray t start end
+||| The main difference between an unpacked array and a packed array is that
+||| an unpacked array is not guaranteed to be represented as a contiguous set of bits
+|||
+||| Ashok B. Mehta. Introduction to SystemVerilog, 2021
+|||
+||| 7.4.1
+||| Each packed dimension in a packed array declaration shall be specified by a range specification of the form
+||| [ constant_expression : constant_expression ]. Each constant expression may be any integer value --
+||| positive, negative, or zero, with no unknown (x) or high-impedance (z) bits. The first value may be greater
+||| than, equal to, or less than the second value.
+|||
+||| IEEE 1800-2023
+public export
+data SVArray : SVType -> Nat -> Nat -> Type where
+  Unpacked   : (t : SVType) -> (start : Nat) -> (end : Nat) -> SVArray t start end
+  Packed     : (t : SVType) -> (start : Nat) -> (end : Nat) -> AllowedInPackedArr t => SVArray t start end
+
+||| 7.4.1 Packed arrays
+||| Packed arrays can be made of only the single bit data types (bit, logic, reg), enumerated types, and
+||| recursively other packed arrays and packed structures.
+|||
+||| IEEE 1800-2023
+public export
+data AllowedInPackedArr : SVType -> Type where
+  B : AllowedInPackedArr (Var Bit')
+  L : AllowedInPackedArr (Var Logic')
+  -- R : AllowedInPackedArr Reg' -- Uncomment when Reg is added to the SVBasic
+  P : AllowedInPackedArr (Arr (Packed {} @{_}))
 
 namespace Ports
-  public export
-  data PortType = Arr (SVArray _ _ _) | Var SVType
 
   public export
-  data PortsList = Nil | (::) PortType PortsList
+  data PortsList = Nil | (::) SVType PortsList
 
   public export
   length : PortsList -> Nat
@@ -97,7 +112,7 @@ namespace Ports
   (x :: xs) ++ ys = x :: (xs ++ ys)
 
   public export
-  toList : PortsList -> List PortType
+  toList : PortsList -> List SVType
   toList []        = []
   toList (x :: xs) = x :: toList xs
 
@@ -109,7 +124,7 @@ namespace Ports
   -- Maybe, specialised type `IndexIn : PortsList -> Type` isomorphic to `Fin (length xs)`
 
   public export
-  typeOf : (xs : PortsList) -> Fin (length xs) -> PortType
+  typeOf : (xs : PortsList) -> Fin (length xs) -> SVType
   typeOf (p::_ ) FZ     = p
   typeOf (_::ps) (FS i) = typeOf ps i
 
@@ -185,26 +200,46 @@ namespace ConnectionsValidation
     Same : (x : Nat) -> EqNat x x
 
   public export
-  data VarOrPacked : PortType -> Type where
-    V : VarOrPacked (Var _)
-    P : VarOrPacked (Arr (Packed _ _ _ _))
+  packedSize : SVType -> Nat
+  packedSize (Var _)                = 1
+  packedSize (Arr $ Unpacked t _ _) = packedSize t
+  packedSize (Arr $ Packed   t s e) = (max s e `minus` min s e + 1) * (packedSize t)
 
   public export
-  data CanConnect : PortType -> PortType -> Type where
+  data EqSuperBasic : SVType -> SVType -> Type where
+    EqBasicV : EqSVBasic    t t' -> EqSuperBasic (Var t)                    (Var t')
+    EqBasicP : EqSuperBasic t t' -> EqSuperBasic (Arr $ Packed   t {} @{_}) (Arr $ Packed   t' {} @{_})
+    EqBasicU : EqSuperBasic t t' -> EqSuperBasic (Arr $ Unpacked t {})      (Arr $ Unpacked t' {})
+
+  public export
+  data VarOrPacked : SVType -> Type where
+    V : VarOrPacked (Var _)
+    P : VarOrPacked (Arr (Packed {} @{_}))
+
+  public export
+  data EqUnpackedArrSig : SVType -> SVType -> Type where
+    Other  : VarOrPacked t -> VarOrPacked t' -> EqUnpackedArrSig t t'
+    EqUArr : EqUnpackedArrSig t t' -> EqNat (max s e + min s' e') (max s' e' + min s e) ->
+      EqUnpackedArrSig (Arr $ Unpacked t s e) (Arr $ Unpacked t' s' e')
+
+  public export
+  data CanConnect : SVType -> SVType -> Type where
     CCVarOrPacked : VarOrPacked p1 -> VarOrPacked p2 -> CanConnect p1 p2
     ||| 6.22.2 Equivalent types
     ||| d) Unpacked fixed-size array types are equivalent if they have equivalent element types and equal size.
+    |||
     ||| IEEE 1800 - 2023
-    CCUnpackedUnpacked : EqSVType t t' -> EqNat (plus (max s e) (min s' e')) (plus (max s' e') (min s e))  ->
-      CanConnect (Arr (Unpacked t s e)) (Arr (Unpacked t' s' e'))
+    CCUnpackedUnpacked : EqSuperBasic t t' -> EqNat (packedSize t) (packedSize t') ->
+      EqUnpackedArrSig (Arr $ Unpacked t s e) (Arr $ Unpacked t' s' e') -> CanConnect (Arr $ Unpacked t s e) (Arr $ Unpacked t' s' e')
 
   ||| The list of sources may be empty (Nil). In this case, either an implicit net is declared or an external net declaration must exist
   |||
   ||| > If an identifier is used in a port expression declaration,
   ||| then an implicit net of default net type shall be assumed, with the vector width of the port expression declaration.
+  |||
   ||| IEEE 1800-2023
   public export
-  data SourceForSink : (srcs : PortsList) -> (sink : PortType) -> Type where
+  data SourceForSink : (srcs : PortsList) -> (sink : SVType) -> Type where
       NoSource     : SourceForSink srcs sink
       SingleSource : (srcIdx : Fin $ length srcs) -> CanConnect (typeOf srcs srcIdx) sink -> SourceForSink srcs sink
 
