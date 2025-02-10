@@ -1,4 +1,4 @@
-module Test.Verilog.Pretty
+module Test.Pretty
 
 import Data.Either
 import Data.List
@@ -14,7 +14,9 @@ import Data.Vect.Extra
 
 import Data.Fin.ToFin
 
-import public Test.Verilog
+import public Test.Verilog.Module
+import public Test.Verilog.Assign
+import public Test.Verilog.Literal
 
 import Test.DepTyCheck.Gen
 import System.Random.Pure.StdGen
@@ -50,12 +52,12 @@ toTotalOutputsIdx {subMs=i::is} idx x with 0 (sym $ portsListAppendLen (index ms
   toTotalOutputsIdx FZ       x | Refl | _ = indexSum $ Left x
   toTotalOutputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalOutputsIdx idx x
 
-connFwdRel : {ss, sk : PortsList} -> (cons: Connections ss sk) -> Vect (sk.length) $ Maybe $ Fin ss.length
-connFwdRel []          = []
-connFwdRel (sfs :: cs) = helper sfs :: connFwdRel cs where
-  helper : SourceForSink ss sink -> Maybe $ Fin (length ss)
-  helper NoSource                = Nothing
-  helper (SingleSource srcIdx _) = Just srcIdx
+-- connFwdRel : {ss, sk : PortsList} -> (cons: Connections ss sk) -> Vect (sk.length) $ Maybe $ Fin ss.length
+-- connFwdRel []          = []
+-- connFwdRel (sfs :: cs) = helper sfs :: connFwdRel cs where
+--   helper : SourceForSink ss sink -> Maybe $ Fin (length ss)
+--   helper NoSource                = Nothing
+--   helper (SingleSource srcIdx _) = Just srcIdx
 
 ||| Same as connFwdRel but repeated indexes are replaced to Nothing
 connFwdUnique : Vect sk (Maybe (Fin ss)) -> (used: List (Fin ss)) -> Vect sk (Maybe (Fin ss))
@@ -345,6 +347,24 @@ resolveConAssigns v outNames inpNames = map (resolveConn outNames inpNames) $ wi
 zipPLWList : Foldable b => b a -> PortsList -> List (a, SVType)
 zipPLWList other ports = toList other `zip` toList ports
 
+
+
+-- printArrLiteral : LiteralList t s -> String
+-- printArrLiteral [] = ""
+-- printArrLiteral (x :: xs) = ?foo_1 ++ printArrLiteral xs
+
+-- printLiteral : Literal t -> String
+-- printLiteral (Single x) = "1'b\{show x}"
+-- printLiteral (PArr x) = printArrLiteral x
+
+-- printLiterals : LiteralList' ls -> List String
+-- printLiterals []        = []
+-- printLiterals (x :: xs) = printLiteral x :: printLiterals xs
+
+-- printAssigns : List (Maybe (Fin sk), String) -> Vect sk String -> List String
+-- printAssigns [] names = []
+-- printAssigns (x :: xs) names = printAssign () () :: printAssigns xs names
+
 export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
                 (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => Modules ms -> Gen0 $ Doc opts
@@ -377,6 +397,13 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi cont) = do
   let unpackedDecls = resolveUnpSI subMINames (withIndex siss `zipPLWList` allInputs {ms} subMs)
                    ++ resolveUnpSO outputNames (subMONames `zipPLWList` allOutputs {ms} subMs)
 
+  -- Resolve assigns
+  -- assigns <- genAssigns x (allInputs {ms} subMs ++ m.outputs) (toFL (portsToAssign m.inpsCount allConns))
+  -- literals <- genLiterals x (toPL assigns)
+  -- let lol = fromList (portIdx assigns)
+  -- ?foo322232
+  -- let assigns = printAssigns (zip (portIdx assigns) (printLiterals literals)) (comLen $ subMINames ++ outputNames)
+
   -- Save generated names
   let generatedPrintableInfo : ?
       generatedPrintableInfo = MkPrintableModule name (UserModule inputNames outputNames)
@@ -408,6 +435,7 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi cont) = do
                 concatInpsOuts inpsJoined outsJoined
         )
         ++ [ line "" ] ++ (map line $ toList tito)
+        -- ++ [ line "" ] ++ (map line assigns)
     , line ""
     , recur
     ]

@@ -1,6 +1,6 @@
-module Test.Verilog.Pretty.Derived
+module Test.Pretty.Derived
 
-import public Test.Verilog.Pretty
+import public Test.Pretty
 
 import Deriving.DepTyCheck.Gen
 import System.Random.Pure.StdGen
@@ -9,4 +9,4 @@ import System.Random.Pure.StdGen
 
 %logging "deptycheck.derive" 5
 
-Test.Verilog.Pretty.rawNewName' = deriveGen
+Test.Pretty.rawNewName' = deriveGen

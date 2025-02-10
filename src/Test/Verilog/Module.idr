@@ -1,4 +1,4 @@
-module Test.Verilog
+module Test.Verilog.Module
 
 import Data.Fuel
 import Data.Vect
@@ -181,8 +181,18 @@ namespace FinsList
 
   public export
   (.length) : FinsList n -> Nat
-  (.length) [] = 0
+  (.length) []      = 0
   (.length) (x::xs) = S xs.length
+
+  public export
+  index : (fs : FinsList s) -> Fin fs.length -> Fin s
+  index (f::_ ) FZ     = f
+  index (_::fs) (FS i) = index fs i
+
+  public export
+  toFL: (List $ Fin sk) -> FinsList sk
+  toFL []      = []
+  toFL (x::xs) = x :: toFL xs
 
 public export
 allInputs : {ms : ModuleSigsList} -> FinsList ms.length -> PortsList
@@ -251,12 +261,20 @@ namespace ConnsList
     Nil  : Connections srcs []
     (::) : SourceForSink srcs sink -> Connections srcs sinks -> Connections srcs (sink :: sinks)
 
+  public export
+  connFwdRel : {ss, sk : PortsList} -> (cons: Connections ss sk) -> Vect (sk.length) $ Maybe $ Fin ss.length
+  connFwdRel []          = []
+  connFwdRel (sfs :: cs) = helper sfs :: connFwdRel cs where
+    helper : SourceForSink ss sink -> Maybe $ Fin (length ss)
+    helper NoSource                = Nothing
+    helper (SingleSource srcIdx _) = Just srcIdx
+
 public export
 data Modules : ModuleSigsList -> Type where
 
   End : Modules ms
 
-  ||| A module containing submodules and connections.
+  ||| A module containing only submodules and connections.
   NewCompositeModule :
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->

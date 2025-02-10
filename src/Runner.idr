@@ -9,10 +9,11 @@ import Data.String
 import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
 
-import Test.Verilog
-import Test.Verilog.Gen
-import Test.Verilog.Pretty
-import Test.Verilog.Pretty.Derived
+import Test.Pretty
+import Test.Pretty.Derived
+import Test.Verilog.Module.Derived
+import Test.Verilog.Assign.Derived
+import Test.Verilog.Literal.Derived
 
 import Text.PrettyPrint.Bernardy
 
