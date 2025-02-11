@@ -44,6 +44,7 @@ StdModulesPV =
 
 record Config m where
   constructor MkConfig
+  help       : m Bool
   randomSeed : m StdGen
   layoutOpts : m LayoutOpts
   testsCnt   : m Nat
@@ -52,10 +53,12 @@ record Config m where
   covFile    : m (Maybe String)
   seedInName : m Bool
   seedInFile : m Bool
+  silent   : m Bool
 
 allNothing : Config Maybe
 allNothing = MkConfig
-  { randomSeed = Nothing
+  { help       = Nothing
+  , randomSeed = Nothing
   , layoutOpts = Nothing
   , testsCnt   = Nothing
   , modelFuel  = Nothing
@@ -63,6 +66,7 @@ allNothing = MkConfig
   , covFile    = Nothing
   , seedInName = Nothing
   , seedInFile = Nothing
+  , silent   = Nothing
   }
 
 Cfg : Type
@@ -70,7 +74,8 @@ Cfg = Config Prelude.id
 
 defaultConfig : IO $ Cfg
 defaultConfig = pure $ MkConfig
-  { randomSeed = !initSeed
+  { help       = False
+  , randomSeed = !initSeed
   , layoutOpts = Opts 152
   , testsCnt   = 10
   , modelFuel  = limit 4
@@ -78,12 +83,13 @@ defaultConfig = pure $ MkConfig
   , covFile    = Nothing
   , seedInName = False
   , seedInFile = False
+  , silent   = False
   }
 
 -- TODO to do this with `barbies`
 mergeCfg : (forall a. m a -> n a -> k a) -> Config m -> Config n -> Config k
-mergeCfg f (MkConfig rs lo tc mf td cf sn sf) (MkConfig rs' lo' tc' mf' td' cf' sn' sf') =
- MkConfig (f rs rs') (f lo lo') (f tc tc') (f mf mf') (f td td') (f cf cf') (f sn sn') (f sf sf')
+mergeCfg f (MkConfig h rs lo tc mf td cf sn sf s) (MkConfig h' rs' lo' tc' mf' td' cf' sn' sf' s') =
+ MkConfig  (f h h') (f rs rs') (f lo lo') (f tc tc') (f mf mf') (f td td') (f cf cf') (f sn sn') (f sf sf') (f s s')
 
 parseSeed : String -> Either String $ Config Maybe
 parseSeed str = do
@@ -120,7 +126,10 @@ parseCovFile str = Right $ {covFile := Just $ Just str} allNothing
 
 cliOpts : List $ OptDescr $ Config Maybe
 cliOpts =
-  [ MkOpt [] ["seed"]
+  [ MkOpt ['h'] ["help"]
+      (NoArg $ {help := Just $ True} allNothing)
+      "Display the help message and exit."
+  , MkOpt [] ["seed"]
       (ReqArg' parseSeed "<seed>,<gamma>")
       "Sets particular random seed to start with."
   , MkOpt ['w'] ["pp-width"]
@@ -144,6 +153,9 @@ cliOpts =
   , MkOpt [] ["seed-content"]
       (NoArg $ {seedInFile := Just $ True} allNothing)
       "Prints the initial-seed in the first line and the seed-after in the last line of the test file."
+  , MkOpt [] ["silent"]
+      (NoArg $ {silent := Just $ True} allNothing)
+      "Disables all output to the console and files, useful for benchmarking."
   ]
 
 tail'' : List a -> List a
@@ -225,13 +237,17 @@ printMCov cgi path = do
 covering
 main : IO ()
 main = do
-  let usage : Lazy String := usageInfo "\nUsage:" cliOpts
+  let usage : Lazy String := usageInfo "Usage:" cliOpts
   MkResult options [] [] [] <- getOpt Permute cliOpts . tail'' <$> getArgs
-    | MkResult {nonOptions=nonOpts@(_::_), _}     => die "unrecognised arguments \{show nonOpts}\{usage}"
-    | MkResult {unrecognized=unrecOpts@(_::_), _} => die "unrecodnised options \{show unrecOpts}\{usage}"
-    | MkResult {errors=es@(_::_), _}              => die "arguments parse errors \{show es}\{usage}"
+    | MkResult {nonOptions=nonOpts@(_::_), _}     => die "unrecognised arguments \{show nonOpts}\n\{usage}"
+    | MkResult {unrecognized=unrecOpts@(_::_), _} => die "unrecodnised options \{show unrecOpts}\n\{usage}"
+    | MkResult {errors=es@(_::_), _}              => die "arguments parse errors \{show es}\n\{usage}"
   let cfg : Config Maybe = foldl (mergeCfg (\x, y => x <|> y)) allNothing options
   let cfg : Cfg = mergeCfg (\m, d => fromMaybe d m) cfg !defaultConfig
+
+  when cfg.help $ do
+    putStrLn usage
+    exitSuccess
 
   let cgi = initCoverageInfo' `{Modules}
 
@@ -249,7 +265,7 @@ main = do
   let indexedVals = withIndex $ zip3 alignedSeeds seeds modules
 
   forS_ cgi indexedVals $ \cgi, (idx, initialSeed, seedAfter, mcov, generatedModule) => do
-    printModule cfg idx generatedModule initialSeed seedAfter
+    when (not cfg.silent) $ printModule cfg idx generatedModule initialSeed seedAfter
 
     let cgi = registerCoverage mcov cgi
     whenJust cfg.covFile $ printMCov cgi

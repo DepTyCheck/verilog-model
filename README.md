@@ -1,9 +1,9 @@
 # SystemVerilog model for property-based testing
 
-This is a set of descriptions (a model) of semantically correct definitions on the SystemVerilog language
-expressed with dependent types on [Idris 2](https://github.com/idris-lang/Idris2) programming language.
+This is a set of descriptions (a model) of semantically correct definitions in the SystemVerilog language
+expressed with dependent types in [Idris 2](https://github.com/idris-lang/Idris2) programming language.
 
-This model is designed to be usable for property-based testing using [DepTyCheck library](https://github.com/buzden/deptycheck/),
+This model is designed for property-based testing using the [DepTyCheck library](https://github.com/buzden/deptycheck/),
 a library for property-based testing and generation of dependently-typed data.
 
 ## The model
@@ -40,4 +40,4 @@ The easiest way is to use [pack](https://github.com/stefan-hoeck/idris2-pack), t
 $ pack run verilog-model
 ```
 
-The program supports several options, you can see them is you call `--help` option.
+The program supports several options, which you can view by using the `--help` option.
