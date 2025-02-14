@@ -53,7 +53,7 @@ record Config m where
   covFile    : m (Maybe String)
   seedInName : m Bool
   seedInFile : m Bool
-  silent   : m Bool
+  silent     : m Bool
 
 allNothing : Config Maybe
 allNothing = MkConfig
@@ -66,7 +66,7 @@ allNothing = MkConfig
   , covFile    = Nothing
   , seedInName = Nothing
   , seedInFile = Nothing
-  , silent   = Nothing
+  , silent     = Nothing
   }
 
 Cfg : Type
@@ -83,7 +83,7 @@ defaultConfig = pure $ MkConfig
   , covFile    = Nothing
   , seedInName = False
   , seedInFile = False
-  , silent   = False
+  , silent     = False
   }
 
 -- TODO to do this with `barbies`
