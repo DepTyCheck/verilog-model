@@ -5,5 +5,6 @@ Variable has same name as instance
 Instance has the same name as port
 Variable has same name as CELLINLINE
 Operator ASSIGNW expected non-complex non-double Assign RHS in width check
+Input port connection '[A-z]+' expected non-complex non-double pin connection in width check
 
 Settle region did not converge
