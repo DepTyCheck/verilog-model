@@ -171,10 +171,6 @@ mapMaybe f (x::xs) = case f x of
 nonTrivial : String -> Bool
 nonTrivial = any (/= "") . map trim . lines
 
-countDigit : Nat -> Nat
-countDigit 0 = 0
-countDigit n = 1 + countDigit(assert_smaller n $ divNatNZ n 10 %search)
-
 createDir' : String -> IO (Either FileError ())
 createDir' p = foldlM createDirHelper (Right ()) $ inits $ toList $ split (=='/') p where
   pr = if isPrefixOf "/" p then "/" else ""
@@ -213,9 +209,8 @@ content cfg generatedModule initialSeed seedAfter = case cfg.seedInFile of
 
 fileName : Cfg -> String -> Nat -> StdGen -> String
 fileName cfg path idx initialSeed = do
-  let padding = countDigit cfg.testsCnt
   let seedSuffix = if cfg.seedInName then "-seed_\{showSeed initialSeed}" else ""
-  "\{path}/\{padLeft padding '0' (show idx)}\{seedSuffix}.sv"
+  "\{path}/\{show $ S idx}\{seedSuffix}.sv"
 
 printModule : Cfg -> Nat -> String -> StdGen -> StdGen -> IO ()
 printModule cfg idx generatedModule initialSeed seedAfter = do
