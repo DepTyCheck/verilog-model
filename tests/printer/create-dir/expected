@@ -1,48 +1,59 @@
 [+] Printed file newdir/newdir/1-seed_0,1.sv
 // Seed: 0,1
 
-module dgcnwwt
-  ( output logic [4:2][3:2] jdcz
-  , output real sszcrgp [3:4][4:3]
-  , output uwire qozr [1:0][3:4]
-  , output uwire h
-  , input bit lkkqngk
-  , input bit he
+module jg
+  ( output logic [4:2][3:2] wr
+  , output real ofaliwmc [4:3][3:4]
+  , output uwire dxbv [3:4][1:0]
+  , output uwire cfmmngfunq
+  , input bit ibmj
+  , input bit lgertm
   );
   
   
   
-  assign jdcz = he;
-endmodule: dgcnwwt
+  // Top inputs -> top outputs assigs
+  assign wr = lgertm;
+  
+  // Assigns
+endmodule: jg
 
-module xjwjnopk
-  (output logic [3:1] zjjmxnmet, input logic [4:1][1:0][4:3] zghtyzmorg, input int majvge [2:3], input logic [4:1][1:4] aizc);
+module qfeekp
+  (output logic [3:1] tuxfe, input logic [4:1][1:0][4:3] efznxh, input int ywdgrbxgo [2:3], input logic [4:1][1:4] aytkjsxh);
   
-  real kgnercyzl [3:4][4:3];
-  uwire hagcc [1:0][3:4];
+  real vllyqhb [4:3][3:4];
+  uwire t [3:4][1:0];
   
-  dgcnwwt dfbgpas(.jdcz(fifqabm), .sszcrgp(kgnercyzl), .qozr(hagcc), .h(ym), .lkkqngk(etwwgby), .he(aqjfs));
+  jg uhndpd(.wr(uyvxwe), .ofaliwmc(vllyqhb), .dxbv(t), .cfmmngfunq(ixes), .ibmj(mgtqfte), .lgertm(khcljl));
   
-  assign zjjmxnmet = aizc;
-endmodule: xjwjnopk
+  // Top inputs -> top outputs assigs
+  assign tuxfe = aytkjsxh;
+  
+  // Assigns
+  assign mgtqfte = 'b0;
+  assign khcljl = 'b1;
+endmodule: qfeekp
 
-module irdhcrmbau
-  ( output uwire rg
-  , output logic [2:4][2:2][2:3] awffvz
-  , output integer erdoxzqg [4:1]
-  , output bit [2:1][1:0] hjgnx
-  , input uwire fgtaxuirlw [4:4][0:3]
-  , input wire a
-  , input wire eueudqln [0:3][1:4]
-  , input logic [0:1][2:0] fcbsmbxnx
+module xroyjwg
+  ( output uwire oiuvd
+  , output logic [2:4][2:2][2:3] w
+  , output integer pn [4:1]
+  , output bit [2:1][1:0] awqywvacdl
+  , input uwire n [0:3][4:4]
+  , input wire epbbjwj
+  , input wire xnjjreqri [1:4][0:3]
+  , input logic [0:1][2:0] vlvuo
   );
   
   
   
-  assign rg = fcbsmbxnx;
-  assign hjgnx = a;
-endmodule: irdhcrmbau
+  // Top inputs -> top outputs assigs
+  assign oiuvd = vlvuo;
+  assign awqywvacdl = epbbjwj;
+  
+  // Assigns
+endmodule: xroyjwg
 
 
 
-// Seed after: 10727,1
+// Seed after: 10739,1

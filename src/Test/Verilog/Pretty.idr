@@ -5,24 +5,24 @@ import Data.List
 import Data.List.Extra
 import Data.List1
 import Data.List.Lazy
+import Data.String
 
 import Data.Fin.Split
 import Data.Fuel
-import Data.SortedMap
 import public Data.Vect
 import Data.Vect.Extra
 
 import Data.Fin.ToFin
 
-import public Test.Verilog
+import public Test.Verilog.UniqueNames.Derived
+
+import public Test.Verilog.Module
+import public Test.Verilog.Assign
+import public Test.Verilog.Literal
 
 import Test.DepTyCheck.Gen
-import System.Random.Pure.StdGen
-
 import Text.PrettyPrint.Bernardy
-
 import Syntax.IHateParens.List
-import Syntax.IHateParens.SortedMap
 
 %default total
 
@@ -50,6 +50,7 @@ toTotalOutputsIdx {subMs=i::is} idx x with 0 (sym $ portsListAppendLen (index ms
   toTotalOutputsIdx FZ       x | Refl | _ = indexSum $ Left x
   toTotalOutputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalOutputsIdx idx x
 
+public export
 connFwdRel : {ss, sk : PortsList} -> (cons: Connections ss sk) -> Vect (sk.length) $ Maybe $ Fin ss.length
 connFwdRel []          = []
 connFwdRel (sfs :: cs) = helper sfs :: connFwdRel cs where
@@ -58,7 +59,7 @@ connFwdRel (sfs :: cs) = helper sfs :: connFwdRel cs where
   helper (SingleSource srcIdx _) = Just srcIdx
 
 ||| Same as connFwdRel but repeated indexes are replaced to Nothing
-connFwdUnique : Vect sk (Maybe (Fin ss)) -> (used: List (Fin ss)) -> Vect sk (Maybe (Fin ss))
+connFwdUnique : Vect sk (Maybe $ Fin ss) -> (used: List $ Fin ss) -> Vect sk (Maybe $ Fin ss)
 connFwdUnique []        _    = []
 connFwdUnique (x :: xs) used = case x of
   Just srcIdx => case find (== srcIdx) used of
@@ -71,69 +72,6 @@ nothings []              = 0
 nothings (Nothing :: xs) = S (nothings xs)
 nothings (Just _  :: xs) = nothings xs
 
-public export
-data SVect : (len : Nat) -> Type where
-  ||| Empty vector
-  Nil  : SVect Z
-  ||| A non-empty vector of length `S len`, consisting of a head element and
-  ||| the rest of the list, of length `len`.
-  (::) : (x : String) -> (xs : SVect len) -> SVect (S len)
-
-(++) : SVect a -> SVect b -> SVect (a + b)
-(++) [] xs = xs
-(++) (x :: xs) ys = x :: (xs ++ ys)
-
-(.length) : SVect l -> Nat
-(.length) [] = Z
-(.length) (x :: xs) = S xs.length
-
-toVect : SVect l -> Vect l String
-toVect [] = []
-toVect (x :: xs) = x :: toVect xs
-
-public export
-fromVect : Vect l String -> SVect l
-fromVect [] = []
-fromVect (x :: xs) = x :: fromVect xs
-
-public export
-data UniqNames : (l : Nat) -> SVect l -> Type
-public export
-data NameNotIn : (l : Nat) -> (names : SVect l) -> (name : String) -> Type
-
-public export
-data UniqNames : (l : Nat) -> SVect l -> Type where
-  Empty : UniqNames 0 []
-  Cons : {l : Nat} -> (names : SVect l) -> (name: String) -> UniqNames l names -> NameNotIn l names name -> UniqNames (S l) (name :: names)
-
-public export
-data NameNotIn : (l : Nat) -> (names : SVect l) -> (name : String) -> Type where
-  NNPEmpty : NameNotIn 0 [] s
-  NNPCons : (0 _ : So $ x /= name) -> (npi: NameNotIn l xs name) -> NameNotIn (S l) (x :: xs) name
-
-
-VerilogKeywords : SVect ?
-VerilogKeywords = [
-  "accept_on", "alias", "always", "always_comb", "always_ff", "always_latch", "and", "assert", "assign", "assume", "automatic", "before", "begin",
-  "bind", "bins", "binsof", "bit", "break", "buf", "bufif0", "bufif1", "byte", "case", "casex", "casez", "cell", "chandle", "checker", "class",
-  "clocking", "cmos", "config", "const", "constraint", "context", "continue", "cover", "covergroup", "coverpoint", "cross", "deassign", "default",
-  "defparam", "design", "disable", "dist", "do", "edge", "else", "end", "endcase", "endchecker", "endclass", "endclocking","endconfig", "endfunction",
-  "endgenerate", "endgroup", "endinterface", "endmodule", "endpackage", "endprimitive", "endprogram", "endproperty", "endspecify", "endsequence",
-  "endtable", "endtask", "enum", "event", "eventually", "expect", "export", "extends", "extern", "final", "first_match", "for", "force", "foreach",
-  "forever", "fork", "forkjoin", "function", "generate", "genvar", "global", "highz0", "highz1", "if", "iff", "ifnone", "ignore_bins", "illegal_bins",
-  "implements", "implies", "import", "incdir", "include", "initial", "inout", "input", "inside", "instance", "int", "integer", "interconnect",
-  "interface", "intersect", "join", "join_any", "join_none", "large", "let", "liblist", "library", "local", "localparam", "logic", "longint",
-  "macromodule", "matches", "medium", "modport", "module", "nand", "negedge", "nettype", "new", "nexttime", "nmos", "nor", "noshowcancelled", "not",
-  "notif0", "notif1", "null", "or", "output", "package", "packed", "parameter", "pmos", "posedge", "primitive", "priority", "program", "property",
-  "protected", "pull0", "pull1", "pulldown", "pullup", "pulsestyle_ondetect", "pulsestyle_onevent", "pure", "rand", "randc", "randcase", "randsequence",
-  "rcmos", "real", "realtime", "ref", "reg", "reject_on", "release", "repeat", "restrict", "return", "rnmos", "rpmos", "rtran", "rtranif0", "rtranif1",
-  "s_always", "s_eventually", "s_nexttime", "s_until", "s_until_with", "scalared", "sequence", "shortint", "shortreal", "showcancelled", "signed",
-  "small", "soft", "solve", "specify", "specparam", "static", "string", "strong", "strong0", "strong1", "struct", "super", "supply0", "supply1",
-  "sync_accept_on", "sync_reject_on", "table", "tagged", "task", "this", "throughout", "time", "timeprecision", "timeunit", "tran", "tranif0",
-  "tranif1", "tri", "tri0", "tri1", "triand", "trior", "trireg", "type", "typedef", "union", "unique", "unique0", "unsigned", "until", "until_with",
-  "untyped", "use", "uwire", "var", "vectored", "virtual", "void", "wait", "wait_order", "wand", "weak", "weak0", "weak1", "while", "wildcard", "wire",
-  "with", "within", "wor", "xnor", "xor"
-]
 
 Show SVBasic where
   show Logic'   = "logic"
@@ -164,14 +102,14 @@ printVarOrPacked $ Arr $ Unpacked {t, _} = printVarOrPacked t
 printUnpackedDims : SVType -> String
 printUnpackedDims $ Var _                = ""
 printUnpackedDims $ Arr $ Packed {}      = ""
-printUnpackedDims $ Arr $ Unpacked t s e = printUnpackedDims t ++ "[\{show s}:\{show e}]"
+printUnpackedDims $ Arr $ Unpacked t s e = "[\{show s}:\{show e}]" ++ printUnpackedDims t
 
 ||| examples:
 ||| bit uP [3:0]; //1-D unpacked
 ||| bit [3:0] p;  //1-D packed
 printSVArr : SVArray _ _ _ -> String -> String
 printSVArr (Packed   svt s e) name = "\{printVarOrPacked svt}[\{show s}:\{show e}] \{name}"
-printSVArr (Unpacked svt s e) name = "\{printVarOrPacked svt}\{space svt}\{name} \{printUnpackedDims svt}[\{show s}:\{show e}]" where
+printSVArr (Unpacked svt s e) name = "\{printVarOrPacked svt}\{space svt}\{name} [\{show s}:\{show e}]\{printUnpackedDims svt}" where
   space : SVType -> String
   space (Arr $ Packed {}) = " "
   space _           = ""
@@ -179,47 +117,6 @@ printSVArr (Unpacked svt s e) name = "\{printVarOrPacked svt}\{space svt}\{name}
 printConnType : SVType -> String -> String
 printConnType (Arr arr) name = printSVArr arr name
 printConnType (Var svt) name = "\{show svt} \{name}"
-
-public export
-data NameIsNewAndNonKeyword : (keywords : SVect lk) -> (names: SVect l) -> (un: UniqNames l names) -> (name : String) -> Type where
-  NINANK : NameNotIn l names name -> NameNotIn lk keywords name -> NameIsNewAndNonKeyword keywords names un name
-
-
-export
-rawNewName' : Fuel ->
-              (Fuel -> Gen MaybeEmpty String) =>
-              {l : Nat} -> {lk : Nat} ->
-              (keywords : SVect lk) ->
-              (names: SVect l) ->
-              (un: UniqNames l names) ->
-              Gen MaybeEmpty (s ** NameIsNewAndNonKeyword keywords names un s)
-
-export
-rawNewName : Fuel -> (Fuel -> Gen MaybeEmpty String) =>
-             {l : Nat} -> (names: SVect l) -> (un: UniqNames l names) -> Gen MaybeEmpty (s ** NameNotIn l names s)
-rawNewName f @{g} names un = do
-  (s ** NINANK a b) <- rawNewName' f @{g} VerilogKeywords names un
-  pure (s ** a)
-
-namesGen : Gen0 String
-namesGen = pack <$> listOf {length = choose (1,10)} (choose ('a', 'z'))
-
-namesGen' : Fuel -> Gen MaybeEmpty String
-namesGen' _ = namesGen
-
-genOneUniqueName : {l : Nat} -> Fuel -> (names: SVect l) -> (un: UniqNames l names) ->
-                   Gen MaybeEmpty (out : String ** UniqNames (S l) (out :: names))
-genOneUniqueName x names un = do
-  (name ** uname) <- rawNewName x @{namesGen'} names un
-  pure (name ** Cons names name un uname)
-
-genNUniqueNames : {l : Nat} -> Fuel -> (n : Nat) -> (names: SVect l) -> (un: UniqNames l names) ->
-                  Gen MaybeEmpty (newNames : SVect (n + l) ** UniqNames (n + l) newNames)
-genNUniqueNames _ Z names un = pure (names ** un)
-genNUniqueNames x (S k) names un = do
-  (tail ** utail) <- genNUniqueNames x k names un
-  (head ** uhead) <- genOneUniqueName x tail utail
-  pure (head :: tail ** uhead)
 
 ||| For standart gates in SystemVerilog only position-based connections are allowed.
 ||| For user modules, interfaces, primitives and programs both position-based and name-based connections are allowed.
@@ -266,12 +163,6 @@ allModuleNames : PrintableModules ms -> SVect ms.length
 allModuleNames []        = []
 allModuleNames (x :: xs) = x.name :: allModuleNames xs
 
-genNUniqueNamesVect : Fuel -> (rl: Nat) -> {l: Nat} -> (names: SVect l) -> (un: UniqNames l names) ->
-                      Gen MaybeEmpty (res: Vect rl String ** (newNames : SVect (rl + l) ** UniqNames (rl + l) newNames))
-genNUniqueNamesVect x cnt names un = do
-  (nNames ** nun) <- genNUniqueNames x cnt names un
-  pure (take cnt $ toVect nNames ** nNames ** nun)
-
 printConnections: String -> (cons: PortsList) -> Vect (cons.length) String -> List String
 printConnections keyword cons names = zipWith (\conn, name => "\{keyword} \{printConnType conn name}") (toList cons) (toList names)
 
@@ -282,7 +173,7 @@ sepLen {a, b} v = rewrite portsListAppendLen a b in v
 comLen : {a, b: PortsList} -> Vect (length a + length b) c -> Vect (length (a ++ b)) c
 comLen {a, b} v = rewrite sym $ portsListAppendLen a b in v
 
-fillNames : Vect n (Maybe (Fin srcCount)) -> Vect srcCount String -> Vect x String -> Vect n String
+fillNames : Vect n (Maybe $ Fin srcCount) -> Vect srcCount String -> Vect x String -> Vect n String
 fillNames []                _         _               = []
 fillNames (Nothing  :: xs)  srcNames (fallback :: fs) = fallback :: fillNames xs srcNames fs
 fillNames (Nothing  :: xs)  srcNames []               = "error"  :: fillNames xs srcNames []
@@ -327,6 +218,10 @@ filterTITO (x :: xs) inps = tryToFit' x :: filterTITO xs inps where
 printAssign : String -> String -> String
 printAssign l r = "assign \{l} = \{r};"
 
+printAssigns : List (String, String) -> List String
+printAssigns []             = []
+printAssigns ((l, r) :: xs) = printAssign l r :: printAssigns xs
+
 ||| It's impossible to connect top inputs to top outputs directly because top ports must have unique names.
 ||| However, such an assignment may be declared so that these ports can transmit values
 |||
@@ -345,11 +240,70 @@ resolveConAssigns v outNames inpNames = map (resolveConn outNames inpNames) $ wi
 zipPLWList : Foldable b => b a -> PortsList -> List (a, SVType)
 zipPLWList other ports = toList other `zip` toList ports
 
+||| Line of bits
+printLinear : BinaryList t l -> String
+printLinear [] = ""
+printLinear (x :: xs) = printLinear' x ++ printLinear xs where
+  printLinear' : Binary t' -> String
+  printLinear' (Single y) = show y
+  printLinear' (PArr y) = printLinear y
+  printLinear' (UArr y) = printLinear y
+
+
+printCommaSep : BinaryList t l -> (Binary t -> String) -> String
+printCommaSep []        _           = ""
+printCommaSep (x :: []) printBinary = printBinary x
+printCommaSep (x :: xs) printBinary = printBinary x ++ ", " ++ printCommaSep xs printBinary
+
+||| Single x example:
+||| logic m;
+||| assign m = 'b1;
+|||
+||| UArr x example:
+||| logic m [1:0][4:0];
+||| assign m = '{'{'b1,'b0,'b1,'b0,'b1},'{'b0,'b1,'b0,'b1,'b0}};
+|||
+||| PArr x example:
+||| logic [1:0][4:0] m;
+||| assign m = 'b01010101;
+printBinary: Binary t -> String
+printBinary (Single x) = "'b\{show x}"
+printBinary (UArr   x) = "'{\{printCommaSep x printBinary}}"
+printBinary (PArr   x) = "'b\{printLinear x}"
+
+printLiterals : LiteralsList ls -> List String
+printLiterals Empty = []
+printLiterals (Cons _ b xs) = printBinary b :: printLiterals xs
+
+getNames : Vect l String -> (List $ Fin l) -> List String
+getNames names []        = []
+getNames names (x :: xs) = index x names :: getNames names xs
+
+export
+selectPorts : (ports: PortsList) -> List (Fin (ports.length)) -> PortsList
+selectPorts p []        = []
+selectPorts p (x :: xs) = typeOf p x :: selectPorts p xs
+
+
+public export
+data ExtendedModules : ModuleSigsList -> Type where
+
+  End : ExtendedModules ms
+  ||| A module with assigns and literals
+  NewCompositeModule :
+    (m : ModuleSig) ->
+    (subMs : FinsList ms.length) ->
+    (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs ++ m.outputs)) ->
+    (assigns : List $ Fin (allInputs {ms} subMs ++ m.outputs).length) ->
+    (literals : LiteralsList $ selectPorts (allInputs {ms} subMs ++ m .outputs) assigns) ->
+    (cont : ExtendedModules $ m::ms) ->
+    ExtendedModules ms
+
 export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
-                (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => Modules ms -> Gen0 $ Doc opts
+                (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => ExtendedModules ms -> Gen0 $ Doc opts
 prettyModules x _         End = pure empty
-prettyModules x pms @{un} (NewCompositeModule m subMs sssi cont) = do
+prettyModules x pms @{un} (NewCompositeModule m subMs sssi assigns literals cont) = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} (allModuleNames pms) un
 
@@ -376,6 +330,9 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi cont) = do
   -- Unpacked arrays declarations
   let unpackedDecls = resolveUnpSI subMINames (withIndex siss `zipPLWList` allInputs {ms} subMs)
                    ++ resolveUnpSO outputNames (subMONames `zipPLWList` allOutputs {ms} subMs)
+
+  -- Resolve assigns
+  let assignments = printAssigns $ zip (getNames (comLen $ subMINames ++ outputNames) assigns) $ printLiterals literals
 
   -- Save generated names
   let generatedPrintableInfo : ?
@@ -407,7 +364,8 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi cont) = do
 
                 concatInpsOuts inpsJoined outsJoined
         )
-        ++ [ line "" ] ++ (map line $ toList tito)
+        ++ [ line "", line "// Top inputs -> top outputs assigs" ] ++ (map line $ toList tito)
+        ++ [ line "", line "// Assigns" ] ++ (map line assignments)
     , line ""
     , recur
     ]

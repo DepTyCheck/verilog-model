@@ -9,10 +9,11 @@ import Data.String
 import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
 
-import Test.Verilog
-import Test.Verilog.Gen
+import Test.Verilog.Module.Derived
+import Test.Verilog.Assign.Derived
+import Test.Verilog.Literal.Derived
+
 import Test.Verilog.Pretty
-import Test.Verilog.Pretty.Derived
 
 import Text.PrettyPrint.Bernardy
 
@@ -229,6 +230,44 @@ printMCov cgi path = do
   Right () <- writeFile path $ show @{Colourful} cgi | Left err => die "Couldn't write the model coverage to file: \{show err}"
   pure ()
 
+finLookup : (y: FinsList n) -> (List $ Fin $ y.length) -> List $ Fin n
+finLookup xs []        = []
+finLookup xs (y :: ys) = index xs y :: finLookup xs ys
+
+gen : Fuel -> Gen MaybeEmpty $ ExtendedModules StdModules
+gen x = do
+  rawMS <- genModules x StdModules
+  res <- extend x rawMS
+  pure res where
+    ||| Continuous assignments are illegal to:
+    ||| - top input ports
+    ||| - submodule output port
+    |||
+    ||| So unconnected sumbodule inputs and unconnected top outputs are available for continuous assignment
+    portsToAssign : Nat -> Vect sk (Maybe $ Fin ss) -> FinsList sk
+    portsToAssign inps v = do
+      let (_ ** res) = catMaybes $ map resolve' $ withIndex v
+      fromVect res where
+        resolve': (Fin sk, Maybe $ Fin ss) -> Maybe $ Fin sk
+        resolve' (x, Nothing) = Just x
+        resolve' (x, (Just y)) = Nothing
+
+    extend: Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
+    extend _ End = pure End
+    extend x (NewCompositeModule m subMs sssi cont) = do
+      -- Gen assigns
+      let pta = portsToAssign m.inpsCount $ connFwdRel sssi
+      rawSD <- genSingleDriven x pta @{genFINSD}
+      let assignsSD = finLookup pta $ toList rawSD
+      rawMD <- genMultiDriven x $ allInputs {ms} subMs ++ m.outputs
+      let assignsMD = toList rawMD
+      let assigns = assignsSD ++ assignsMD
+      -- Gen literals
+      literals <- genLiterals x $ selectPorts (allInputs {ms} subMs ++ m.outputs) assigns
+      -- Extend the rest
+      contEx <- extend x cont
+      pure $ NewCompositeModule m subMs sssi assigns literals contEx
+
 covering
 main : IO ()
 main = do
@@ -246,9 +285,9 @@ main = do
 
   let cgi = initCoverageInfo' `{Modules}
 
-  let vals = unGenTryAllD' cfg.randomSeed $
-               genModules cfg.modelFuel StdModules >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
-  let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) => if nonTrivial md then Just (fst gmd, mcov, md) else Nothing
+  let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
+  let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>
+                                                        if nonTrivial md then Just (fst gmd, mcov, md) else Nothing
   let vals = take (limit cfg.testsCnt) vals
 
   -- Make sure the paths for the files exist

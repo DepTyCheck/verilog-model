@@ -21,7 +21,12 @@ depends = collection-utils
         , prettier
         , fin-lizzie
 
-modules = Test.Verilog
-        , Test.Verilog.Gen
+modules = Test.Verilog.Module
+        , Test.Verilog.Assign
+        , Test.Verilog.Literal
+        , Test.Verilog.UniqueNames
+        , Test.Verilog.UniqueNames.Derived
+        , Test.Verilog.Module.Derived
+        , Test.Verilog.Assign.Derived
+        , Test.Verilog.Literal.Derived
         , Test.Verilog.Pretty
-        , Test.Verilog.Pretty.Derived

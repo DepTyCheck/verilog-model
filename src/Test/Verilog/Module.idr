@@ -1,4 +1,4 @@
-module Test.Verilog
+module Test.Verilog.Module
 
 import Data.Fuel
 import Data.Vect
@@ -181,8 +181,18 @@ namespace FinsList
 
   public export
   (.length) : FinsList n -> Nat
-  (.length) [] = 0
+  (.length) []      = 0
   (.length) (x::xs) = S xs.length
+
+  public export
+  index : (fs : FinsList s) -> Fin fs.length -> Fin s
+  index (f::_ ) FZ     = f
+  index (_::fs) (FS i) = index fs i
+
+  public export
+  fromVect: Vect l (Fin sk) -> FinsList sk
+  fromVect []      = []
+  fromVect (x::xs) = x :: fromVect xs
 
 public export
 allInputs : {ms : ModuleSigsList} -> FinsList ms.length -> PortsList
@@ -203,7 +213,9 @@ namespace ConnectionsValidation
   packedSize : SVType -> Nat
   packedSize (Var _)                = 1
   packedSize (Arr $ Unpacked t _ _) = packedSize t
-  packedSize (Arr $ Packed   t s e) = S (max s e `minus` min s e) * packedSize t
+  packedSize (Arr $ Packed   t s e) = case max s e `minus` min s e of
+    Z => packedSize t
+    n => n * packedSize t
 
   public export
   data EqSuperBasic : SVType -> SVType -> Type where
@@ -256,7 +268,7 @@ data Modules : ModuleSigsList -> Type where
 
   End : Modules ms
 
-  ||| A module containing submodules and connections.
+  ||| A module containing only submodules and connections.
   NewCompositeModule :
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
