@@ -249,15 +249,15 @@ printLinear (x :: xs) = printLinear' x ++ printLinear xs where
   printLinear' (PArr y) = printLinear y
   printLinear' (UArr y) = printLinear y
 
-
-printCommaSep : BinaryList t l -> (Binary t -> String) -> String
-printCommaSep []        _           = ""
-printCommaSep (x :: []) printBinary = printBinary x
-printCommaSep (x :: xs) printBinary = printBinary x ++ ", " ++ printCommaSep xs printBinary
+toListStr : BinaryList t l -> (Binary t -> String) -> List String
+toListStr []        _ = []
+toListStr (x :: xs) f = f x :: toListStr xs f
 
 ||| Single x example:
 ||| logic m;
 ||| assign m = 'b1;
+||| TODO: print literals of different random lengths
+||| TODO: print the length of literal sometimes
 |||
 ||| UArr x example:
 ||| logic m [1:0][4:0];
@@ -268,7 +268,7 @@ printCommaSep (x :: xs) printBinary = printBinary x ++ ", " ++ printCommaSep xs 
 ||| assign m = 'b01010101;
 printBinary: Binary t -> String
 printBinary (Single x) = "'b\{show x}"
-printBinary (UArr   x) = "'{\{printCommaSep x printBinary}}"
+printBinary (UArr   x) = "'{\{joinBy "," $ toListStr x printBinary}}"
 printBinary (PArr   x) = "'b\{printLinear x}"
 
 printLiterals : LiteralsList ls -> List String
@@ -280,7 +280,7 @@ getNames names []        = []
 getNames names (x :: xs) = index x names :: getNames names xs
 
 export
-selectPorts : (ports: PortsList) -> List (Fin (ports.length)) -> PortsList
+selectPorts : (ports: PortsList) -> (List $ Fin $ ports.length) -> PortsList
 selectPorts p []        = []
 selectPorts p (x :: xs) = typeOf p x :: selectPorts p xs
 

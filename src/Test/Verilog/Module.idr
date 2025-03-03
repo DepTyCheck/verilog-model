@@ -209,6 +209,8 @@ namespace ConnectionsValidation
   data EqNat : Nat -> Nat -> Type where
     Same : (x : Nat) -> EqNat x x
 
+  ||| Returns the size of packed array.
+  ||| But the actual number of bits that a type stores may be different (Var SVBasic represents types of different sizes)
   public export
   packedSize : SVType -> Nat
   packedSize (Var _)                = 1

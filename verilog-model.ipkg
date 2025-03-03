@@ -14,6 +14,8 @@ langversion >= 0.7.0
 executable = verilog-model
 main = Runner
 
+prebuild = "sh .derive-in-parallel"
+
 depends = collection-utils
         , deptycheck >= 0.0.240409
         , getopts

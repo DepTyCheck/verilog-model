@@ -6,6 +6,7 @@ import Data.Fuel
 import Data.Vect
 
 import Test.DepTyCheck.Gen
+import Test.DepTyCheck.Gen.Coverage
 
 %default total
 
@@ -49,14 +50,18 @@ namespace SD
       (0 _ : FinNotEqual f fin) ->
       (npi: FinNotInSD rest fin) -> FinNotInSD (Cons f rest fni) fin
 
+  genFINSD' : Fuel -> {n': Nat} -> {fins': FinsList n'} -> (rest': SingleDrivenAssigns fins') -> (f': Fin (fins'.length)) ->
+            Gen MaybeEmpty $ FinNotInSD rest' f'
+  genFINSD' x Empty           _   = pure FNIEmpty
+  genFINSD' x (Cons f rest z) fin = do
+    res <- genFINSD' x rest fin
+    fne <- genFNE x f fin
+    pure $ FNICons fne res
+
   export
   genFINSD : Fuel -> {n': Nat} -> {fins': FinsList n'} -> (rest': SingleDrivenAssigns fins') -> (f': Fin (fins'.length)) ->
             Gen MaybeEmpty $ FinNotInSD rest' f'
-  genFINSD x Empty           _   = pure FNIEmpty
-  genFINSD x (Cons f rest z) fin = do
-    res <- genFINSD x rest fin
-    fne <- genFNE x f fin
-    pure $ FNICons fne res
+  genFINSD x rest f = withCoverage $ genFINSD' x rest f
 
 namespace MD
 

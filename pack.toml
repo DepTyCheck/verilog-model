@@ -1,3 +1,10 @@
+################
+### Settings ###
+################
+
+[install]
+whitelist = [ "verilog-model" ]
+
 #################
 ### The model ###
 #################
@@ -7,3 +14,9 @@ type = "local"
 path = "."
 ipkg = "verilog-model.ipkg"
 test = "tests/tests.ipkg"
+
+[custom.all.deptycheck]
+type = "git"
+url = "https://github.com/buzden/deptycheck"
+commit = "b87e7022c3437497fd663451ad98c1755f97bd52"
+ipkg = "deptycheck.ipkg"

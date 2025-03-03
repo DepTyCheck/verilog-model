@@ -62,6 +62,54 @@ Prelude.Types.[1mNat[0m [38;5;10mcovered fully[0m (161 times)
   - S: [38;5;10mcovered[0m (111 times)
   - Z: [38;5;10mcovered[0m (50 times)
 
+Test.Verilog.Assign.MD.[1mMultiDrivenAssigns[0m [38;5;11mcovered partially[0m (3 times)
+  - Cons: [38;5;9mnot covered[0m
+  - Empty: [38;5;10mcovered[0m (3 times)
+
+Test.Verilog.Assign.MD.[1mMultidriven[0m [38;5;9mnot covered[0m
+  - P: [38;5;9mnot covered[0m
+  - U: [38;5;9mnot covered[0m
+  - W: [38;5;9mnot covered[0m
+
+Test.Verilog.Assign.MD.[1mMultidrivenAt[0m [38;5;9mnot covered[0m
+  - MHere: [38;5;9mnot covered[0m
+  - MThere: [38;5;9mnot covered[0m
+
+Test.Verilog.Assign.SD.[1mFinNotInSD[0m [38;5;10mcovered fully[0m (7 times)
+  - FNICons: [38;5;10mcovered[0m (2 times)
+  - FNIEmpty: [38;5;10mcovered[0m (5 times)
+
+Test.Verilog.Assign.SD.[1mSingleDrivenAssigns[0m [38;5;11mcovered partially[0m (3 times)
+  - Cons: [38;5;10mcovered[0m (3 times)
+  - Empty: [38;5;9mnot covered[0m
+
+Test.Verilog.Literal.[1mBinary[0m [38;5;11mcovered partially[0m (2 times)
+  - PArr: [38;5;9mnot covered[0m
+  - Single: [38;5;10mcovered[0m (2 times)
+  - UArr: [38;5;9mnot covered[0m
+
+Test.Verilog.Literal.[1mBinaryList[0m [38;5;9mnot covered[0m
+  - (::): [38;5;9mnot covered[0m
+  - Nil: [38;5;9mnot covered[0m
+
+Test.Verilog.Literal.[1mBitState[0m [38;5;11mcovered partially[0m (2 times)
+  - S2: [38;5;10mcovered[0m (2 times)
+  - S4: [38;5;9mnot covered[0m
+
+Test.Verilog.Literal.[1mLiteralsList[0m [38;5;10mcovered fully[0m (5 times)
+  - Cons: [38;5;10mcovered[0m (2 times)
+  - Empty: [38;5;10mcovered[0m (3 times)
+
+Test.Verilog.Literal.[1mSValue2[0m [38;5;10mcovered fully[0m (2 times)
+  - O': [38;5;10mcovered[0m (1 time)
+  - Z': [38;5;10mcovered[0m (1 time)
+
+Test.Verilog.Literal.[1mSValue4[0m [38;5;9mnot covered[0m
+  - H: [38;5;9mnot covered[0m
+  - O'': [38;5;9mnot covered[0m
+  - X: [38;5;9mnot covered[0m
+  - Z'': [38;5;9mnot covered[0m
+
 Test.Verilog.Module.[1mAllowedInPackedArr[0m [38;5;10mcovered fully[0m (15 times)
   - B: [38;5;10mcovered[0m (1 time)
   - L: [38;5;10mcovered[0m (6 times)

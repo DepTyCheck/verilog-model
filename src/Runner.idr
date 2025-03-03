@@ -283,7 +283,7 @@ main = do
     putStrLn usage
     exitSuccess
 
-  let cgi = initCoverageInfo' `{Modules}
+  let cgi = initCoverageInfo'' [`{Modules}, `{SingleDrivenAssigns}, `{MultiDrivenAssigns}, `{LiteralsList}] -- {SingleDrivenAssigns} {MultiDrivenAssigns} {LiteralsList}
 
   let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>
