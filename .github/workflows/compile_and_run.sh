@@ -13,13 +13,13 @@ handle_errors() {
   local ERRORS_FILE="$3"
 
   # A single command output may contain multiple errors. Process each one
-  .github/workflows/filter_errors.sh "$OUTPUT" "$ERROR_REGEX" "$ERRORS_FILE"
+  .github/workflows/filter_errors.sh "$OUTPUT" "$ERROR_REGEX" "$ERRORS_FILE" false
   FILTER_ERRORS_EXIT_CODE=$?
 
   # If the command returned a non-zero code but no error is found, analyze the whole output
   if [ $FILTER_ERRORS_EXIT_CODE -eq 0 ]; then
     echo "No specific errors found. Running broader error matching."
-    .github/workflows/filter_errors.sh "$OUTPUT" "[\w\W]+" "$ERRORS_FILE"
+    .github/workflows/filter_errors.sh "$OUTPUT" "[\w\W]+" "$ERRORS_FILE" true
     FILTER_ERRORS_EXIT_CODE=$?
   fi
 

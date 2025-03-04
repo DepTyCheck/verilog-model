@@ -3,9 +3,14 @@
 INPUT="$1"
 ERRORS_REGEX="$2"
 REGEX_FILE="$3"
+CONCAT="$4"
 
 # Find all errors using the provided regex pattern
-matches=$(echo "$INPUT" | grep -Po "(?s)$ERRORS_REGEX" | tr '\n' ' ')
+if [ "$CONCAT" = true ]; then
+  matches=$(echo "$INPUT" | grep -Po "(?s)$ERRORS_REGEX" | tr '\n' ' ')
+else
+  matches=$(echo "$INPUT" | grep -Po "(?s)$ERRORS_REGEX")
+fi
 
 if [ -z "$matches" ]; then
   echo "No errors found."

@@ -215,9 +215,7 @@ namespace ConnectionsValidation
   packedSize : SVType -> Nat
   packedSize (Var _)                = 1
   packedSize (Arr $ Unpacked t _ _) = packedSize t
-  packedSize (Arr $ Packed   t s e) = case max s e `minus` min s e of
-    Z => packedSize t
-    n => n * packedSize t
+  packedSize (Arr $ Packed   t s e) = S (max s e `minus` min s e) * packedSize t
 
   public export
   data EqSuperBasic : SVType -> SVType -> Type where
