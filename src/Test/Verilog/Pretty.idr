@@ -59,6 +59,7 @@ connFwdRel (sfs :: cs) = helper sfs :: connFwdRel cs where
   helper (SingleSource srcIdx _) = Just srcIdx
 
 ||| Same as connFwdRel but repeated indexes are replaced to Nothing
+public export
 connFwdUnique : Vect sk (Maybe $ Fin ss) -> (used: List $ Fin ss) -> Vect sk (Maybe $ Fin ss)
 connFwdUnique []        _    = []
 connFwdUnique (x :: xs) used = case x of
@@ -167,6 +168,7 @@ printConnections: String -> (cons: PortsList) -> Vect (cons.length) String -> Li
 printConnections keyword cons names = zipWith (\conn, name => "\{keyword} \{printConnType conn name}") (toList cons) (toList names)
 
 -- rewrite length from concatenated to separated PortsLists
+export
 sepLen : {a, b: PortsList} -> Vect (length (a ++ b)) c -> Vect (length a + length b) c
 sepLen {a, b} v = rewrite portsListAppendLen a b in v
 -- rewrite length from separated to concatenated PortsLists
@@ -272,18 +274,12 @@ printBinary (UArr   x) = "'{\{joinBy "," $ toListStr x printBinary}}"
 printBinary (PArr   x) = "'b\{printLinear x}"
 
 printLiterals : LiteralsList ls -> List String
-printLiterals Empty = []
-printLiterals (Cons _ b xs) = printBinary b :: printLiterals xs
+printLiterals []        = []
+printLiterals (b :: xs) = printBinary b :: printLiterals xs
 
 getNames : Vect l String -> (List $ Fin l) -> List String
 getNames names []        = []
 getNames names (x :: xs) = index x names :: getNames names xs
-
-export
-selectPorts : (ports: PortsList) -> (List $ Fin $ ports.length) -> PortsList
-selectPorts p []        = []
-selectPorts p (x :: xs) = typeOf p x :: selectPorts p xs
-
 
 public export
 data ExtendedModules : ModuleSigsList -> Type where
@@ -294,8 +290,11 @@ data ExtendedModules : ModuleSigsList -> Type where
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
     (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs ++ m.outputs)) ->
-    (assigns : List $ Fin (allInputs {ms} subMs ++ m.outputs).length) ->
-    (literals : LiteralsList $ selectPorts (allInputs {ms} subMs ++ m .outputs) assigns) ->
+    (assignsSInps : List $ Fin (allInputs {ms} subMs).length) ->
+    (assignsTOuts : List $ Fin (m.outputs).length) ->
+    (assignsSS : List $ Fin (m.inputs ++ allOutputs {ms} subMs).length) ->
+    {pl : PortsList} ->
+    (literals : LiteralsList pl) ->
     (cont : ExtendedModules $ m::ms) ->
     ExtendedModules ms
 
@@ -303,7 +302,7 @@ export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
                 (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => ExtendedModules ms -> Gen0 $ Doc opts
 prettyModules x _         End = pure empty
-prettyModules x pms @{un} (NewCompositeModule m subMs sssi assigns literals cont) = do
+prettyModules x pms @{un} (NewCompositeModule m subMs sssi assignsSInps assignsTOuts assignsSS literals cont) = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} (allModuleNames pms) un
 
@@ -332,7 +331,9 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi assigns literals cont
                    ++ resolveUnpSO outputNames (subMONames `zipPLWList` allOutputs {ms} subMs)
 
   -- Resolve assigns
-  let assignments = printAssigns $ zip (getNames (comLen $ subMINames ++ outputNames) assigns) $ printLiterals literals
+  let assignments = printAssigns $ zip (getNames subMINames  assignsSInps
+                                     ++ getNames outputNames assignsTOuts
+                                     ++ getNames (comLen $ inputNames ++ subMONames) assignsSS) $ printLiterals literals
 
   -- Save generated names
   let generatedPrintableInfo : ?
@@ -364,7 +365,7 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi assigns literals cont
 
                 concatInpsOuts inpsJoined outsJoined
         )
-        ++ [ line "", line "// Top inputs -> top outputs assigs" ] ++ (map line $ toList tito)
+        ++ [ line "", line "// Top inputs -> top outputs assigns" ] ++ (map line $ toList tito)
         ++ [ line "", line "// Assigns" ] ++ (map line assignments)
     , line ""
     , recur

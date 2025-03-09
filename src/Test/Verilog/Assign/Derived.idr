@@ -6,8 +6,8 @@ import public Test.Verilog.Assign
 
 %default total
 
-%logging "deptycheck" 7
+%logging "deptycheck" 20
 
 Test.Verilog.Assign.SD.genFNE = deriveGen
 Test.Verilog.Assign.SD.genSingleDriven = deriveGen
-Test.Verilog.Assign.MD.genMultiDriven = deriveGen
+Test.Verilog.Assign.genMultiDriven = deriveGen

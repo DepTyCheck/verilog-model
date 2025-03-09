@@ -27,9 +27,10 @@ TBD
 
 Currently we have found several bugs in open-source instruments working with SystemVerilog.
 We are on the way of reporting them officially.
-Here we would have a list of reported bugs.
+There is a list of reported bugs:
 
-TBD
+- iverilog
+  - [Assertion 'net->type_ == IVL_SIT_REG'](https://github.com/steveicarus/iverilog/issues/1213)
 
 ## Running
 

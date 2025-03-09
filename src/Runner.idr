@@ -5,6 +5,7 @@ import Data.List.Lazy
 import Data.List.Lazy.Extra
 import Data.List1
 import Data.String
+import Data.Fin
 
 import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
@@ -14,6 +15,8 @@ import Test.Verilog.Assign.Derived
 import Test.Verilog.Literal.Derived
 
 import Test.Verilog.Pretty
+
+import Data.Fin.ToFin
 
 import Text.PrettyPrint.Bernardy
 
@@ -206,7 +209,7 @@ content cfg generatedModule initialSeed seedAfter = case cfg.seedInFile of
   False => generatedModule
   True  => "// Seed: \{showSeed initialSeed}\n\n"
         ++ generatedModule
-        ++ "\n// Seed after: \{showSeed seedAfter}"
+        ++ "\n// Seed after: \{showSeed seedAfter}\n"
 
 fileName : Cfg -> String -> Nat -> StdGen -> String
 fileName cfg path idx initialSeed = do
@@ -234,18 +237,27 @@ finLookup : (y: FinsList n) -> (List $ Fin $ y.length) -> List $ Fin n
 finLookup xs []        = []
 finLookup xs (y :: ys) = index xs y :: finLookup xs ys
 
+selectPorts : (ports: PortsList) -> (List $ Fin $ ports.length) -> PortsList
+selectPorts p []        = []
+selectPorts p (x :: xs) = typeOf p x :: selectPorts p xs
+
+tryToFitL : {to: _} -> List (Fin a) -> List (Fin to)
+tryToFitL []      = []
+tryToFitL (x::xs) = case tryToFit x of
+  Nothing => tryToFitL xs
+  Just x' => x' :: tryToFitL xs
+
+
 gen : Fuel -> Gen MaybeEmpty $ ExtendedModules StdModules
 gen x = do
   rawMS <- genModules x StdModules
   res <- extend x rawMS
   pure res where
-    ||| Continuous assignments are illegal to:
-    ||| - top input ports
-    ||| - submodule output port
+    ||| Continuous assignments to singledriven types are illegal when assigned to top input ports and submodule output ports
     |||
-    ||| So unconnected sumbodule inputs and unconnected top outputs are available for continuous assignment
-    portsToAssign : Nat -> Vect sk (Maybe $ Fin ss) -> FinsList sk
-    portsToAssign inps v = do
+    ||| So unconnected sumbodule inputs and unconnected top outputs are available for singledriven continuous assignment
+    portsToAssign : Vect sk (Maybe $ Fin ss) -> FinsList sk
+    portsToAssign v = do
       let (_ ** res) = catMaybes $ map resolve' $ withIndex v
       fromVect res where
         resolve': (Fin sk, Maybe $ Fin ss) -> Maybe $ Fin sk
@@ -255,18 +267,27 @@ gen x = do
     extend: Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
     extend _ End = pure End
     extend x (NewCompositeModule m subMs sssi cont) = do
-      -- Gen assigns
-      let pta = portsToAssign m.inpsCount $ connFwdRel sssi
-      rawSD <- genSingleDriven x pta @{genFINSD}
-      let assignsSD = finLookup pta $ toList rawSD
-      rawMD <- genMultiDriven x $ allInputs {ms} subMs ++ m.outputs
-      let assignsMD = toList rawMD
-      let assigns = assignsSD ++ assignsMD
+      let allConns = connFwdRel sssi
+      -- let allConns = connFwdRel sssi
+      let (siss, tossRaw) = splitAt (allInputs {ms} subMs).length (sepLen allConns)
+      let toss = connFwdUnique tossRaw []
+      -- Gen single driven assigns
+      let ptaSISS = portsToAssign siss
+      rawSInpsSD <- genSingleDriven x ptaSISS @{genFINSD}
+      let ptaTOSS = portsToAssign toss
+      rawTOutsSD <- genSingleDriven x ptaTOSS @{genFINSD}
+      -- Gen multi driven assigns
+      rawMD <- genMultiDriven x (m.inputs ++ allOutputs {ms} subMs) m.inpsCount (allInputs {ms} subMs) (toMFL siss) m.outputs (toMFL toss)
+      let assignsSS = toListSSs rawMD
+      let assignsSInps = toListSkSbInps rawMD  ++ (finLookup ptaSISS $ toList rawSInpsSD)
+      let assignsTOuts = toListSkTopOuts rawMD ++ (finLookup ptaTOSS $ toList rawTOutsSD)
       -- Gen literals
-      literals <- genLiterals x $ selectPorts (allInputs {ms} subMs ++ m.outputs) assigns
+      literals <- genLiterals x $ selectPorts (allInputs {ms} subMs)              assignsSInps 
+                               ++ selectPorts (m.outputs)                         assignsTOuts 
+                               ++ selectPorts (m.inputs ++ allOutputs {ms} subMs) assignsSS
       -- Extend the rest
       contEx <- extend x cont
-      pure $ NewCompositeModule m subMs sssi assigns literals contEx
+      pure $ NewCompositeModule m subMs sssi assignsSInps assignsTOuts assignsSS literals contEx
 
 covering
 main : IO ()
@@ -274,7 +295,7 @@ main = do
   let usage : Lazy String := usageInfo "Usage:" cliOpts
   MkResult options [] [] [] <- getOpt Permute cliOpts . tail'' <$> getArgs
     | MkResult {nonOptions=nonOpts@(_::_), _}     => die "unrecognised arguments \{show nonOpts}\n\{usage}"
-    | MkResult {unrecognized=unrecOpts@(_::_), _} => die "unrecodnised options \{show unrecOpts}\n\{usage}"
+    | MkResult {unrecognized=unrecOpts@(_::_), _} => die "unrecognised options \{show unrecOpts}\n\{usage}"
     | MkResult {errors=es@(_::_), _}              => die "arguments parse errors \{show es}\n\{usage}"
   let cfg : Config Maybe = foldl (mergeCfg (\x, y => x <|> y)) allNothing options
   let cfg : Cfg = mergeCfg (\m, d => fromMaybe d m) cfg !defaultConfig
@@ -283,7 +304,7 @@ main = do
     putStrLn usage
     exitSuccess
 
-  let cgi = initCoverageInfo'' [`{Modules}, `{SingleDrivenAssigns}, `{MultiDrivenAssigns}, `{LiteralsList}] -- {SingleDrivenAssigns} {MultiDrivenAssigns} {LiteralsList}
+  let cgi = initCoverageInfo'' [`{Modules}, `{SingleDrivenAssigns}, `{MultiDrivenAssigns}, `{LiteralsList}]
 
   let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>

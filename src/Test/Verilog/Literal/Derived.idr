@@ -6,6 +6,6 @@ import public Test.Verilog.Literal
 
 %default total
 
-%logging "deptycheck" 7
+%logging "deptycheck" 20
 
-Test.Verilog.Literal.genLiterals  = deriveGen
+Test.Verilog.Literal.genSingleBit  = deriveGen

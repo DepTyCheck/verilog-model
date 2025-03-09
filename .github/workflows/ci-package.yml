@@ -55,6 +55,7 @@ jobs:
   build-and-test:
     name: Build and test `${{ github.repository }}`
     needs: get-upstream-matrix
+    timeout-minutes: 90
     runs-on: ubuntu-latest
     container: ghcr.io/stefan-hoeck/idris2-pack:latest
     outputs:
@@ -81,6 +82,12 @@ jobs:
                 <<< ${{ github.repository }})" >> "$GITHUB_ENV"
       - name: Build `${{ env.package_name }}`
         run: pack build ${{ env.package_name }}
+      - name: File system fix ¯\_(ツ)_/¯
+        run: |
+          set -x +e
+          pack run verilog-model --coverage mcov -n 1 --seed 0,1
+          touch tests/printer/model-coverage/dummy
+          touch tests/printer/create-dir/dummy
       - name: Test `${{ env.package_name }}`
         run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules
@@ -226,7 +233,7 @@ jobs:
         run: |
           set +e
           bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
-            "rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/testbench.cpp --trace --timing -Wno-fatal +1800-2023ext+sv top.sv" \
+            "rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/testbench.cpp --timing -Wno-fatal +1800-2023ext+sv top.sv" \
             "%Error(|\-[A-Z]+): [A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
             ".github/workflows/verilator-ignored-errors.txt" \
             "make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop" \

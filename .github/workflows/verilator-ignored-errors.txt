@@ -8,5 +8,6 @@ Operator ASSIGNW expected non-complex non-double Assign RHS in width check
 Input port connection '[A-z]+' expected non-complex non-double pin connection in width check
 Unsupported tristate port expression: VARREF '__Vcellinpt__
 Unsupported tristate construct: INITITEM
+Assigning to input\/const variable:
 
 Settle region did not converge

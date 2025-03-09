@@ -272,6 +272,7 @@ data Modules : ModuleSigsList -> Type where
   NewCompositeModule :
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
+    -- Remember: Do not change the concatenation order of the port lists, the printer and assigns depend on it
     (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs ++ m.outputs)) ->
     (cont : Modules (m::ms)) ->
     Modules ms

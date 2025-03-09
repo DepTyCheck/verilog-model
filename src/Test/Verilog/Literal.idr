@@ -5,6 +5,7 @@ import public Test.Verilog.Module
 import Data.Fuel
 
 import Test.DepTyCheck.Gen
+import Test.DepTyCheck.Gen.Coverage
 
 %default total
 
@@ -70,10 +71,45 @@ toList : BinaryList t l -> List $ Binary t
 toList []        = []
 toList (x :: xs) = x :: toList xs
 
-public export
-data LiteralsList : PortsList -> Type where
-  Empty : LiteralsList t
-  Cons  : (t: SVType) -> Binary t -> LiteralsList sk -> LiteralsList (t :: sk)
+namespace Literals
+
+  public export
+  data LiteralsList : PortsList -> Type where
+    Nil : LiteralsList []
+    (::)  : {t: SVType} -> Binary t -> LiteralsList sk -> LiteralsList (t :: sk)
+
+genBinary' : Fuel -> (t: SVType) -> Gen MaybeEmpty $ Binary t
+
+export
+genSingleBit : Fuel -> (b: Bool) -> Gen MaybeEmpty $ BitState b
+
+genBinaryList : Fuel -> (t: SVType) -> (n: Nat) -> Gen MaybeEmpty $ BinaryList t n
+genBinaryList x t Z = pure Nil
+genBinaryList x t (S n) = do
+  rest <- genBinaryList x t n
+  bin <- genBinary' x t
+  pure $ bin :: rest
+
+genBinary' x (Arr $ Unpacked t s e) = do
+  lst <- genBinaryList x t $ S $ max s e `minus` min s e
+  pure $ UArr lst
+genBinary' x (Arr $ Packed   t s e) = do
+  lst <- genBinaryList x t $ S $ max s e `minus` min s e
+  pure $ PArr lst
+genBinary' x (Var y) = do
+  bit <- genSingleBit x (is2state y)
+  pure $ Single bit
+
+-- genBinary : Fuel -> (t: SVType) -> Gen MaybeEmpty $ Binary t
+-- genBinary x t = withCoverage $ genBinary' x t
+
+genLiterals' : Fuel -> (sk: PortsList) -> Gen MaybeEmpty $ LiteralsList sk
+genLiterals' _ []      = pure []
+genLiterals' x (y::ys) = do 
+  bin <- genBinary' x y
+  rest <- genLiterals' x ys
+  pure $ bin :: rest
 
 export
 genLiterals : Fuel -> (sk: PortsList) -> Gen MaybeEmpty $ LiteralsList sk
+genLiterals x sk = withCoverage $ genLiterals' x sk

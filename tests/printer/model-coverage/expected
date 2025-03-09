@@ -1,114 +1,161 @@
-module jg
-  ( output logic [4:2][3:2] wr
-  , output real ofaliwmc [4:3][3:4]
-  , output uwire dxbv [3:4][1:0]
-  , output uwire cfmmngfunq
-  , input bit ibmj
-  , input bit lgertm
+module raemllgias
+  ( output logic [4:2][3:2] w
+  , output real msuv [4:3][3:4]
+  , output uwire zcwhsogu [3:4][1:0]
+  , output uwire rrj
+  , input bit uzcoyx
+  , input bit zamyrg
   );
   
   
   
-  // Top inputs -> top outputs assigs
-  assign wr = lgertm;
+  // Top inputs -> top outputs assigns
+  assign w = zamyrg;
   
   // Assigns
-endmodule: jg
+endmodule: raemllgias
 
-module qfeekp
-  (output logic [3:1] tuxfe, input logic [4:1][1:0][4:3] efznxh, input int ywdgrbxgo [2:3], input logic [4:1][1:4] aytkjsxh);
+module jts
+  (output logic [3:1] tzz, input logic [4:1][1:0][4:3] witwml, input int tvguax [2:3], input logic [4:1][1:4] qqfhxawak);
   
-  real vllyqhb [4:3][3:4];
-  uwire t [3:4][1:0];
+  real sxfingmnwg [4:3][3:4];
+  uwire q [3:4][1:0];
   
-  jg uhndpd(.wr(uyvxwe), .ofaliwmc(vllyqhb), .dxbv(t), .cfmmngfunq(ixes), .ibmj(mgtqfte), .lgertm(khcljl));
+  raemllgias wblznyfr(.w(lnupxie), .msuv(sxfingmnwg), .zcwhsogu(q), .rrj(tjfuyhfmx), .uzcoyx(xyayahmta), .zamyrg(vepltbtd));
   
-  // Top inputs -> top outputs assigs
-  assign tuxfe = aytkjsxh;
+  // Top inputs -> top outputs assigns
+  assign tzz = qqfhxawak;
   
   // Assigns
-  assign mgtqfte = 'b0;
-  assign khcljl = 'b1;
-endmodule: qfeekp
+  assign xyayahmta = 'b0;
+  assign vepltbtd = 'b0;
+  assign lnupxie = 'b11zz1z;
+endmodule: jts
 
-module xroyjwg
-  ( output uwire oiuvd
-  , output logic [2:4][2:2][2:3] w
-  , output integer pn [4:1]
-  , output bit [2:1][1:0] awqywvacdl
-  , input uwire n [0:3][4:4]
-  , input wire epbbjwj
-  , input wire xnjjreqri [1:4][0:3]
-  , input logic [0:1][2:0] vlvuo
+module jix
+  ( output uwire ps
+  , output logic [2:4][2:2][2:3] sseivhqa
+  , output integer pagzbi [4:1]
+  , output bit [2:1][1:0] fwxvkvpauk
+  , input uwire hfs [0:3][4:4]
+  , input wire hqyhmglv
+  , input wire ndp [1:4][0:3]
+  , input logic [0:1][2:0] lnjc
   );
   
   
   
-  // Top inputs -> top outputs assigs
-  assign oiuvd = vlvuo;
-  assign awqywvacdl = epbbjwj;
+  // Top inputs -> top outputs assigns
+  assign ps = lnjc;
+  assign fwxvkvpauk = hqyhmglv;
   
   // Assigns
-endmodule: xroyjwg
+  assign pagzbi = '{'b0,'b1,'b0,'b1};
+  assign sseivhqa = 'b0x10zz;
+  assign ndp = '{'{'b0,'b0,'b0,'b1},'{'b0,'b1,'b1,'b0},'{'b1,'b0,'b0,'b1},'{'b0,'b1,'b1,'b0}};
+  assign hqyhmglv = 'b1;
+  assign ndp = '{'{'b0,'b1,'b1,'b1},'{'b1,'b1,'b1,'b0},'{'b0,'b0,'b0,'b1},'{'b0,'b0,'b1,'b1}};
+endmodule: jix
 
 
 --------------------------
 
-Data.Fin.[1mFin[0m [38;5;10mcovered fully[0m (19 times)
-  - FS: [38;5;10mcovered[0m (10 times)
-  - FZ: [38;5;10mcovered[0m (9 times)
+Data.Fin.[1mFin[0m [38;5;10mcovered fully[0m (30 times)
+  - FS: [38;5;10mcovered[0m (17 times)
+  - FZ: [38;5;10mcovered[0m (13 times)
+
+Data.Nat.[1mLTE[0m [38;5;10mcovered fully[0m (15 times)
+  - LTESucc: [38;5;10mcovered[0m (11 times)
+  - LTEZero: [38;5;10mcovered[0m (4 times)
+
+Prelude.Types.[1mMaybe[0m [38;5;9mnot covered[0m
+  - Just: [38;5;9mnot covered[0m
+  - Nothing: [38;5;9mnot covered[0m
 
 Prelude.Types.[1mNat[0m [38;5;10mcovered fully[0m (161 times)
   - S: [38;5;10mcovered[0m (111 times)
   - Z: [38;5;10mcovered[0m (50 times)
 
-Test.Verilog.Assign.MD.[1mMultiDrivenAssigns[0m [38;5;11mcovered partially[0m (3 times)
-  - Cons: [38;5;9mnot covered[0m
+Test.Verilog.Assign.MD.[1mAllSIsMD[0m [38;5;11mcovered partially[0m (3 times)
+  - ASISEmpty: [38;5;10mcovered[0m (1 time)
+  - ASISHere: [38;5;9mnot covered[0m
+  - ASISTHere: [38;5;10mcovered[0m (2 times)
+
+Test.Verilog.Assign.MD.[1mEqMaybeF[0m [38;5;9mnot covered[0m
+  - EqMF: [38;5;9mnot covered[0m
+
+Test.Verilog.Assign.MD.[1mEqMaybeMFMF[0m [38;5;10mcovered fully[0m (2 times)
+  - EqMFMF: [38;5;10mcovered[0m (2 times)
+
+Test.Verilog.Assign.MD.[1mFinNotInMFL[0m [38;5;10mcovered fully[0m (2 times)
+  - HFEmpty: [38;5;10mcovered[0m (1 time)
+  - HFTHere: [38;5;10mcovered[0m (1 time)
+
+Test.Verilog.Assign.MD.[1mMultiDrivenAssigns[0m [38;5;10mcovered fully[0m (9 times)
+  - ConsSink: [38;5;10mcovered[0m (2 times)
+  - ConsSource: [38;5;10mcovered[0m (4 times)
   - Empty: [38;5;10mcovered[0m (3 times)
 
-Test.Verilog.Assign.MD.[1mMultidriven[0m [38;5;9mnot covered[0m
+Test.Verilog.Assign.MD.[1mMultidriven[0m [38;5;11mcovered partially[0m (7 times)
   - P: [38;5;9mnot covered[0m
-  - U: [38;5;9mnot covered[0m
-  - W: [38;5;9mnot covered[0m
+  - U: [38;5;10mcovered[0m (4 times)
+  - W: [38;5;10mcovered[0m (3 times)
 
-Test.Verilog.Assign.MD.[1mMultidrivenAt[0m [38;5;9mnot covered[0m
-  - MHere: [38;5;9mnot covered[0m
-  - MThere: [38;5;9mnot covered[0m
+Test.Verilog.Assign.MD.[1mMultidrivenSink[0m [38;5;11mcovered partially[0m (2 times)
+  - NoSource: [38;5;10mcovered[0m (2 times)
+  - TopOut: [38;5;9mnot covered[0m
 
-Test.Verilog.Assign.SD.[1mFinNotInSD[0m [38;5;10mcovered fully[0m (7 times)
-  - FNICons: [38;5;10mcovered[0m (2 times)
-  - FNIEmpty: [38;5;10mcovered[0m (5 times)
+Test.Verilog.Assign.MD.[1mMultidrivenSource[0m [38;5;10mcovered fully[0m (4 times)
+  - NoDecl: [38;5;10mcovered[0m (1 time)
+  - TopInp: [38;5;10mcovered[0m (3 times)
 
-Test.Verilog.Assign.SD.[1mSingleDrivenAssigns[0m [38;5;11mcovered partially[0m (3 times)
-  - Cons: [38;5;10mcovered[0m (3 times)
-  - Empty: [38;5;9mnot covered[0m
+Test.Verilog.Assign.MD.[1mNoTopDeclMD[0m [38;5;11mcovered partially[0m (3 times)
+  - MD: [38;5;9mnot covered[0m
+  - VP: [38;5;10mcovered[0m (3 times)
 
-Test.Verilog.Literal.[1mBinary[0m [38;5;11mcovered partially[0m (2 times)
+Test.Verilog.Assign.MD.[1mNotEqMaybeF[0m [38;5;10mcovered fully[0m (3 times)
+  - NEqMFJ: [38;5;10mcovered[0m (1 time)
+  - NEqMFN: [38;5;10mcovered[0m (2 times)
+
+Test.Verilog.Assign.SD.[1mFinNotEqual[0m [38;5;11mcovered partially[0m (4 times)
+  - Rec: [38;5;10mcovered[0m (2 times)
+  - SZ: [38;5;9mnot covered[0m
+  - ZS: [38;5;10mcovered[0m (2 times)
+
+Test.Verilog.Assign.SD.[1mFinNotInSD[0m [38;5;10mcovered fully[0m (3 times)
+  - FNICons: [38;5;10mcovered[0m (1 time)
+  - FNIEmpty: [38;5;10mcovered[0m (2 times)
+
+Test.Verilog.Assign.SD.[1mSingleDrivenAssigns[0m [38;5;10mcovered fully[0m (6 times)
+  - Cons: [38;5;10mcovered[0m (1 time)
+  - Empty: [38;5;10mcovered[0m (5 times)
+
+Test.Verilog.Literal.[1mBinary[0m [38;5;9mnot covered[0m
   - PArr: [38;5;9mnot covered[0m
-  - Single: [38;5;10mcovered[0m (2 times)
+  - Single: [38;5;9mnot covered[0m
   - UArr: [38;5;9mnot covered[0m
 
 Test.Verilog.Literal.[1mBinaryList[0m [38;5;9mnot covered[0m
   - (::): [38;5;9mnot covered[0m
   - Nil: [38;5;9mnot covered[0m
 
-Test.Verilog.Literal.[1mBitState[0m [38;5;11mcovered partially[0m (2 times)
-  - S2: [38;5;10mcovered[0m (2 times)
-  - S4: [38;5;9mnot covered[0m
+Test.Verilog.Literal.[1mBitState[0m [38;5;10mcovered fully[0m (51 times)
+  - S2: [38;5;10mcovered[0m (39 times)
+  - S4: [38;5;10mcovered[0m (12 times)
 
-Test.Verilog.Literal.[1mLiteralsList[0m [38;5;10mcovered fully[0m (5 times)
-  - Cons: [38;5;10mcovered[0m (2 times)
-  - Empty: [38;5;10mcovered[0m (3 times)
+Test.Verilog.Literal.Literals.[1mLiteralsList[0m [38;5;10mcovered fully[0m (3 times)
+  - (::): [38;5;10mcovered[0m (2 times)
+  - Nil: [38;5;10mcovered[0m (1 time)
 
-Test.Verilog.Literal.[1mSValue2[0m [38;5;10mcovered fully[0m (2 times)
-  - O': [38;5;10mcovered[0m (1 time)
-  - Z': [38;5;10mcovered[0m (1 time)
+Test.Verilog.Literal.[1mSValue2[0m [38;5;10mcovered fully[0m (39 times)
+  - O': [38;5;10mcovered[0m (19 times)
+  - Z': [38;5;10mcovered[0m (20 times)
 
-Test.Verilog.Literal.[1mSValue4[0m [38;5;9mnot covered[0m
-  - H: [38;5;9mnot covered[0m
-  - O'': [38;5;9mnot covered[0m
-  - X: [38;5;9mnot covered[0m
-  - Z'': [38;5;9mnot covered[0m
+Test.Verilog.Literal.[1mSValue4[0m [38;5;10mcovered fully[0m (12 times)
+  - H: [38;5;10mcovered[0m (5 times)
+  - O'': [38;5;10mcovered[0m (4 times)
+  - X: [38;5;10mcovered[0m (1 time)
+  - Z'': [38;5;10mcovered[0m (2 times)
 
 Test.Verilog.Module.[1mAllowedInPackedArr[0m [38;5;10mcovered fully[0m (15 times)
   - B: [38;5;10mcovered[0m (1 time)
@@ -135,9 +182,9 @@ Test.Verilog.Module.ConnectionsValidation.[1mSourceForSink[0m [38;5;10mcovere
   - NoSource: [38;5;10mcovered[0m (6 times)
   - SingleSource: [38;5;10mcovered[0m (5 times)
 
-Test.Verilog.Module.ConnectionsValidation.[1mVarOrPacked[0m [38;5;10mcovered fully[0m (10 times)
-  - P: [38;5;10mcovered[0m (5 times)
-  - V: [38;5;10mcovered[0m (5 times)
+Test.Verilog.Module.ConnectionsValidation.[1mVarOrPacked[0m [38;5;10mcovered fully[0m (13 times)
+  - P: [38;5;10mcovered[0m (6 times)
+  - V: [38;5;10mcovered[0m (7 times)
 
 Test.Verilog.Module.ConnsList.[1mConnections[0m [38;5;10mcovered fully[0m (14 times)
   - (::): [38;5;10mcovered[0m (11 times)

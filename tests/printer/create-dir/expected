@@ -1,59 +1,65 @@
 [+] Printed file newdir/newdir/1-seed_0,1.sv
 // Seed: 0,1
 
-module jg
-  ( output logic [4:2][3:2] wr
-  , output real ofaliwmc [4:3][3:4]
-  , output uwire dxbv [3:4][1:0]
-  , output uwire cfmmngfunq
-  , input bit ibmj
-  , input bit lgertm
+module raemllgias
+  ( output logic [4:2][3:2] w
+  , output real msuv [4:3][3:4]
+  , output uwire zcwhsogu [3:4][1:0]
+  , output uwire rrj
+  , input bit uzcoyx
+  , input bit zamyrg
   );
   
   
   
-  // Top inputs -> top outputs assigs
-  assign wr = lgertm;
+  // Top inputs -> top outputs assigns
+  assign w = zamyrg;
   
   // Assigns
-endmodule: jg
+endmodule: raemllgias
 
-module qfeekp
-  (output logic [3:1] tuxfe, input logic [4:1][1:0][4:3] efznxh, input int ywdgrbxgo [2:3], input logic [4:1][1:4] aytkjsxh);
+module jts
+  (output logic [3:1] tzz, input logic [4:1][1:0][4:3] witwml, input int tvguax [2:3], input logic [4:1][1:4] qqfhxawak);
   
-  real vllyqhb [4:3][3:4];
-  uwire t [3:4][1:0];
+  real sxfingmnwg [4:3][3:4];
+  uwire q [3:4][1:0];
   
-  jg uhndpd(.wr(uyvxwe), .ofaliwmc(vllyqhb), .dxbv(t), .cfmmngfunq(ixes), .ibmj(mgtqfte), .lgertm(khcljl));
+  raemllgias wblznyfr(.w(lnupxie), .msuv(sxfingmnwg), .zcwhsogu(q), .rrj(tjfuyhfmx), .uzcoyx(xyayahmta), .zamyrg(vepltbtd));
   
-  // Top inputs -> top outputs assigs
-  assign tuxfe = aytkjsxh;
+  // Top inputs -> top outputs assigns
+  assign tzz = qqfhxawak;
   
   // Assigns
-  assign mgtqfte = 'b0;
-  assign khcljl = 'b1;
-endmodule: qfeekp
+  assign xyayahmta = 'b0;
+  assign vepltbtd = 'b0;
+  assign lnupxie = 'b11zz1z;
+endmodule: jts
 
-module xroyjwg
-  ( output uwire oiuvd
-  , output logic [2:4][2:2][2:3] w
-  , output integer pn [4:1]
-  , output bit [2:1][1:0] awqywvacdl
-  , input uwire n [0:3][4:4]
-  , input wire epbbjwj
-  , input wire xnjjreqri [1:4][0:3]
-  , input logic [0:1][2:0] vlvuo
+module jix
+  ( output uwire ps
+  , output logic [2:4][2:2][2:3] sseivhqa
+  , output integer pagzbi [4:1]
+  , output bit [2:1][1:0] fwxvkvpauk
+  , input uwire hfs [0:3][4:4]
+  , input wire hqyhmglv
+  , input wire ndp [1:4][0:3]
+  , input logic [0:1][2:0] lnjc
   );
   
   
   
-  // Top inputs -> top outputs assigs
-  assign oiuvd = vlvuo;
-  assign awqywvacdl = epbbjwj;
+  // Top inputs -> top outputs assigns
+  assign ps = lnjc;
+  assign fwxvkvpauk = hqyhmglv;
   
   // Assigns
-endmodule: xroyjwg
+  assign pagzbi = '{'b0,'b1,'b0,'b1};
+  assign sseivhqa = 'b0x10zz;
+  assign ndp = '{'{'b0,'b0,'b0,'b1},'{'b0,'b1,'b1,'b0},'{'b1,'b0,'b0,'b1},'{'b0,'b1,'b1,'b0}};
+  assign hqyhmglv = 'b1;
+  assign ndp = '{'{'b0,'b1,'b1,'b1},'{'b1,'b1,'b1,'b0},'{'b0,'b0,'b0,'b1},'{'b0,'b0,'b1,'b1}};
+endmodule: jix
 
 
 
-// Seed after: 10739,1
+// Seed after: 10904,1
