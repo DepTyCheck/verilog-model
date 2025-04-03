@@ -3,9 +3,6 @@ vvp_arith_cast_int: recv_vec4 not implemented
 recv_real\(0\.000000\) not implemented
 scalar type is not a valid context for assignment pattern.
 Unable to elaborate r-value: ['{]+d
-Packed array assignment pattern expects 32 element\(s\) in this context\.
-I don't know how to elaborate assignment_pattern expressions for real type yet\.
-Unable to elaborate r-value: '{'bz
 Packed array assignment pattern expects \d+ element\(s\) in this context
 I don't know how to elaborate assignment_pattern expressions for real type yet\.
 Unable to elaborate r-value: '{'b[zx]
