@@ -7,8 +7,11 @@ Packed array assignment pattern expects 32 element\(s\) in this context\.
 I don't know how to elaborate assignment_pattern expressions for real type yet\.
 Unable to elaborate r-value: '{'bz
 Packed array assignment pattern expects \d+ element\(s\) in this context
-Unable to elaborate r-value: '{'bx
+I don't know how to elaborate assignment_pattern expressions for real type yet\.
+Unable to elaborate r-value: '{'b[zx]
 \(implicit\) uwire "\w+" must have a single driver, found \(\d+\)
+elaborate\.cc:1661: failed assertion prts\[0\]->unpacked_dimensions\(\)==0
+Code generation had \d+ error(s).
 
 t-dll-api\.cc:2501: ivl_nexus_s\* ivl_signal_nex\(ivl_signal_t, unsigned int\): Assertion `net->type_ == IVL_SIT_REG' failed\.
 
