@@ -247,10 +247,9 @@ tryToFitL (x::xs) = case tryToFit x of
   Nothing => tryToFitL xs
   Just x' => x' :: tryToFitL xs
 
-
 gen : Fuel -> Gen MaybeEmpty $ ExtendedModules StdModules
 gen x = do
-  rawMS <- genModules x StdModules
+  rawMS <- genModules x StdModules @{genSourceForSink} @{genConnections}
   res <- extend x rawMS
   pure res where
     ||| Continuous assignments to singledriven types are illegal when assigned to top input ports and submodule output ports
@@ -266,11 +265,9 @@ gen x = do
 
     extend: Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
     extend _ End = pure End
-    extend x (NewCompositeModule m subMs sssi cont) = do
-      let allConns = connFwdRel sssi
-      -- let allConns = connFwdRel sssi
-      let (siss, tossRaw) = splitAt (allInputs {ms} subMs).length (sepLen allConns)
-      let toss = connFwdUnique tossRaw []
+    extend x (NewCompositeModule m subMs sssi ssto cont) = do
+      let siss = connFwdRel sssi
+      let toss = connFwdRel ssto
       -- Gen single driven assigns
       let ptaSISS = portsToAssign siss
       rawSInpsSD <- genSingleDriven x ptaSISS @{genFINSD}
@@ -287,7 +284,7 @@ gen x = do
                                ++ selectPorts (m.inputs ++ allOutputs {ms} subMs) assignsSS
       -- Extend the rest
       contEx <- extend x cont
-      pure $ NewCompositeModule m subMs sssi assignsSInps assignsTOuts assignsSS literals contEx
+      pure $ NewCompositeModule m subMs sssi ssto assignsSInps assignsTOuts assignsSS literals contEx
 
 covering
 main : IO ()

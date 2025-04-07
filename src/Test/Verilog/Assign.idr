@@ -17,7 +17,7 @@ namespace SD
   public export
   data SingleDrivenAssigns : FinsList n -> Type
   public export
-  data FinNotInSD : {n: Nat} -> {fins: FinsList n} -> SingleDrivenAssigns fins -> Fin (fins.length) -> Type
+  data FinNotInSD : {n : Nat} -> {fins : FinsList n} -> SingleDrivenAssigns fins -> Fin (fins.length) -> Type
 
   ||| 10.3.2
   ||| Variables can only be driven by one continuous assignment or by one primitive
@@ -29,36 +29,30 @@ namespace SD
   public export
   data SingleDrivenAssigns : FinsList n -> Type where
     Empty : SingleDrivenAssigns fins
-    Cons  : {n: Nat} -> {fins: FinsList n} -> (f: Fin fins.length) -> (rest: SingleDrivenAssigns fins) -> FinNotInSD rest f -> SingleDrivenAssigns fins
+    Cons  : {n : Nat} -> {fins : FinsList n} -> (f : Fin fins.length) -> (rest : SingleDrivenAssigns fins) -> FinNotInSD rest f -> SingleDrivenAssigns fins
 
   export
-  genSingleDriven : Fuel -> {n: Nat} -> (fins: FinsList n) ->
+  genSingleDriven : Fuel -> {n : Nat} -> (fins : FinsList n) ->
     (Fuel -> {n': Nat} -> {fins': FinsList n'} -> (rest': SingleDrivenAssigns fins') -> (f': Fin $ fins'.length) ->
     Gen MaybeEmpty $ FinNotInSD rest' f') =>
     Gen MaybeEmpty $ SingleDrivenAssigns fins
 
   public export
-  toList : {sk: PortsList} -> {fins: FinsList $ sk.length} -> SingleDrivenAssigns fins -> List $ Fin $ fins.length
+  toList : {sk : PortsList} -> {fins : FinsList $ sk.length} -> SingleDrivenAssigns fins -> List $ Fin $ fins.length
   toList Empty           = []
   toList (Cons f rest _) = f :: toList rest
 
-  public export
-  data FinNotEqual : Fin n -> Fin n -> Type where
-    ZS  : FinNotEqual FZ (FS i)
-    SZ  : FinNotEqual (FS i) FZ
-    Rec : FinNotEqual x y -> FinNotEqual (FS x) (FS y)
-
   export
-  genFNE: Fuel -> {n: Nat} -> (f, fin : Fin $ n) -> Gen MaybeEmpty $ FinNotEqual f fin
+  genFNE: Fuel -> {n : Nat} -> (f, fin : Fin $ n) -> Gen MaybeEmpty $ NotEqFin f fin
 
   public export
-  data FinNotInSD : {n: Nat} -> {fins: FinsList n} -> (rest: SingleDrivenAssigns fins) -> (f: Fin (fins.length)) -> Type where
+  data FinNotInSD : {n : Nat} -> {fins : FinsList n} -> (rest : SingleDrivenAssigns fins) -> (f : Fin (fins.length)) -> Type where
     FNIEmpty : FinNotInSD Empty f
-    FNICons  : {rest: SingleDrivenAssigns fins} -> {f, fin : Fin (fins.length)} -> {fni: FinNotInSD rest f} ->
-      (0 _ : FinNotEqual f fin) ->
-      (npi: FinNotInSD rest fin) -> FinNotInSD (Cons f rest fni) fin
+    FNICons  : {rest : SingleDrivenAssigns fins} -> {f, fin : Fin (fins.length)} -> {fni : FinNotInSD rest f} ->
+      (0 _ : NotEqFin f fin) ->
+      (npi : FinNotInSD rest fin) -> FinNotInSD (Cons f rest fni) fin
 
-  genFINSD' : Fuel -> {n': Nat} -> {fins': FinsList n'} -> (rest': SingleDrivenAssigns fins') -> (f': Fin (fins'.length)) ->
+  genFINSD' : Fuel -> {n' : Nat} -> {fins' : FinsList n'} -> (rest' : SingleDrivenAssigns fins') -> (f' : Fin (fins'.length)) ->
             Gen MaybeEmpty $ FinNotInSD rest' f'
   genFINSD' x Empty           _   = pure FNIEmpty
   genFINSD' x (Cons f rest z) fin = do
@@ -67,7 +61,7 @@ namespace SD
     pure $ FNICons fne res
 
   export
-  genFINSD : Fuel -> {n': Nat} -> {fins': FinsList n'} -> (rest': SingleDrivenAssigns fins') -> (f': Fin (fins'.length)) ->
+  genFINSD : Fuel -> {n' : Nat} -> {fins' : FinsList n'} -> (rest' : SingleDrivenAssigns fins') -> (f' : Fin (fins'.length)) ->
             Gen MaybeEmpty $ FinNotInSD rest' f'
   genFINSD x rest f = withCoverage $ genFINSD' x rest f
 
@@ -116,26 +110,26 @@ namespace MD
   public export
   data NotEqMaybeF : Maybe (Fin a) -> Fin a -> Type where
     NEqMFN : NotEqMaybeF Nothing n
-    NEqMFJ : FinNotEqual m n -> NotEqMaybeF (Just m) n
+    NEqMFJ : NotEqFin m n -> NotEqMaybeF (Just m) n
 
   ||| Check if there is at least one connection (or no connections at all) to the given source
   public export
-  data FinNotInMFL : (conns: MFinsList ss) -> (f: Fin ss) -> Type where
+  data FinNotInMFL : (conns : MFinsList ss) -> (f : Fin ss) -> Type where
     HFEmpty : FinNotInMFL [] f
-    HFTHere : {c : Maybe $ Fin ss} -> NotEqMaybeF c f -> (rest: FinNotInMFL cs f) -> FinNotInMFL (c::cs) f
+    HFTHere : {c : Maybe $ Fin ss} -> NotEqMaybeF c f -> (rest : FinNotInMFL cs f) -> FinNotInMFL (c::cs) f
 
   ||| All submodule inputs connected to given source are multidriven (never declared or unpacked & md)
   public export
-  data AllSIsMD : (sk: PortsList) -> (subConns: MFinsList ss) -> (f: Fin ss) -> Type where
+  data AllSIsMD : (sk : PortsList) -> (subConns : MFinsList ss) -> (f : Fin ss) -> Type where
     ASISEmpty : AllSIsMD [] [] f
-    ASISHere  : {c : Maybe $ Fin ss} -> EqMaybeF c f    -> NoTopDeclMD p -> (rest: AllSIsMD ps cs f) -> AllSIsMD (p::ps) (c::cs) f
-    ASISTHere : {c : Maybe $ Fin ss} -> NotEqMaybeF c f                  -> (rest: AllSIsMD ps cs f) -> AllSIsMD (p::ps) (c::cs) f
+    ASISHere  : {c : Maybe $ Fin ss} -> EqMaybeF c f    -> NoTopDeclMD p -> (rest : AllSIsMD ps cs f) -> AllSIsMD (p::ps) (c::cs) f
+    ASISTHere : {c : Maybe $ Fin ss} -> NotEqMaybeF c f                  -> (rest : AllSIsMD ps cs f) -> AllSIsMD (p::ps) (c::cs) f
 
   ||| A source is multidriven if there is no explicit declaration of its type as singledriven
   public export
-  data MultidrivenSource : (ss: PortsList) -> (tIs: Nat) ->
-                           (subInPs: PortsList) -> (subConns: MFinsList ss.length) -> (topConns: MFinsList ss.length) ->
-                           (f: Fin ss.length) -> Type where
+  data MultidrivenSource : (ss : PortsList) -> (tIs : Nat) ->
+                           (subInPs : PortsList) -> (subConns : MFinsList ss.length) -> (topConns : MFinsList ss.length) ->
+                           (f : Fin ss.length) -> Type where
     ||| Connection to a top input is multidriven if the top input port has multidriven type
     TopInp : GT tIs (finToNat f) -> Multidriven (typeOf ss f) -> MultidrivenSource ss tIs subInPs subConns topConns f
     ||| Connection to a submodule output is multidriven if
@@ -151,11 +145,11 @@ namespace MD
 
   ||| An index of a multidriven sink
   public export
-  data MultidrivenSink : (subInPs: PortsList) -> (subConns: MFinsList ss) -> (topOuPs: PortsList) -> Type where
+  data MultidrivenSink : (subInPs : PortsList) -> (subConns : MFinsList ss) -> (topOuPs : PortsList) -> Type where
     ||| The sink is not declared and has no source
-    NoSource : (f: Fin subInPs.length) -> EqMaybeMFMF Nothing (find subConns f) -> NoTopDeclMD (typeOf subInPs f) -> MultidrivenSink subInPs subConns topOuPs
+    NoSource : (f : Fin subInPs.length) -> EqMaybeMFMF Nothing (find subConns f) -> NoTopDeclMD (typeOf subInPs f) -> MultidrivenSink subInPs subConns topOuPs
     ||| The sink is top output and multidriven itself
-    TopOut   : (f: Fin topOuPs.length) -> Multidriven (typeOf topOuPs f) -> MultidrivenSink subInPs subConns topOuPs
+    TopOut   : (f : Fin topOuPs.length) -> Multidriven (typeOf topOuPs f) -> MultidrivenSink subInPs subConns topOuPs
 
   ||| 10.3.2
   ||| Nets can be driven by multiple continuous assignments or by a mixture of primitive outputs, module outputs,
@@ -165,24 +159,24 @@ namespace MD
   ||| Each implicit connection has a net type by default. So all implicit connections and explicit net connections can be multidriven
   ||| Some sinks are not connected to the source and vice versa
   public export
-  data MultiDrivenAssigns : (ss: PortsList) -> (tIs: Nat) ->
-                            (subInPs: PortsList) -> (subConns: MFinsList ss.length) ->
-                            (topOuPs: PortsList) -> (topConns: MFinsList ss.length) -> Type where
+  data MultiDrivenAssigns : (ss : PortsList) -> (tIs : Nat) ->
+                            (subInPs : PortsList) -> (subConns : MFinsList ss.length) ->
+                            (topOuPs : PortsList) -> (topConns : MFinsList ss.length) -> Type where
     Empty      : MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns
-    ConsSource : (f: Fin ss.length) -> MultidrivenSource ss tIs subInPs subConns topConns f ->
-                 (rest: MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns) -> MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns
-    ConsSink   : (f: MultidrivenSink subInPs subConns topOuPs) ->
-                 (rest: MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns) -> MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns
+    ConsSource : (f : Fin ss.length) -> MultidrivenSource ss tIs subInPs subConns topConns f ->
+                 (rest : MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns) -> MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns
+    ConsSink   : (f : MultidrivenSink subInPs subConns topOuPs) ->
+                 (rest : MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns) -> MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns
 
   public export
-  toListSSs : {ss: PortsList} -> {subConns: MFinsList ss.length} -> {topConns: MFinsList ss.length} ->
+  toListSSs : {ss : PortsList} -> {subConns : MFinsList ss.length} -> {topConns : MFinsList ss.length} ->
               MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns -> List $ Fin $ ss.length
   toListSSs Empty                 = []
   toListSSs (ConsSource f _ rest) = f :: toListSSs rest
   toListSSs (ConsSink   f   rest) = toListSSs rest
 
   public export
-  toListSkSbInps : {ss: PortsList} -> {subConns: MFinsList ss.length} -> {topConns: MFinsList ss.length} ->
+  toListSkSbInps : {ss : PortsList} -> {subConns : MFinsList ss.length} -> {topConns : MFinsList ss.length} ->
                    MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns -> List $ Fin $ subInPs.length
   toListSkSbInps Empty                 = []
   toListSkSbInps (ConsSource f _ rest) = toListSkSbInps rest
@@ -191,7 +185,7 @@ namespace MD
     TopOut   _  _   => toListSkSbInps rest
 
   public export
-  toListSkTopOuts : {ss: PortsList} -> {subConns: MFinsList ss.length} -> {topConns: MFinsList ss.length} ->
+  toListSkTopOuts : {ss : PortsList} -> {subConns : MFinsList ss.length} -> {topConns : MFinsList ss.length} ->
                     MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns -> List $ Fin $ topOuPs.length
   toListSkTopOuts Empty                 = []
   toListSkTopOuts (ConsSource f _ rest) = toListSkTopOuts rest
@@ -200,7 +194,7 @@ namespace MD
     TopOut   f' _   => f' :: toListSkTopOuts rest
 
 export
-genMultiDriven : Fuel -> (ss: PortsList) -> (tIs: Nat) ->
-                 (subInPs: PortsList) -> (subConns: MFinsList ss.length) ->
-                 (topOuPs: PortsList) -> (topConns: MFinsList ss.length) ->
+genMultiDriven : Fuel -> (ss : PortsList) -> (tIs : Nat) ->
+                 (subInPs : PortsList) -> (subConns : MFinsList ss.length) ->
+                 (topOuPs : PortsList) -> (topConns : MFinsList ss.length) ->
                  Gen MaybeEmpty $ MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns

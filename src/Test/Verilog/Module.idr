@@ -5,6 +5,7 @@ import Data.Vect
 import public Data.Fin
 
 import Test.DepTyCheck.Gen
+import Test.DepTyCheck.Gen.Coverage
 
 %default total
 
@@ -190,7 +191,7 @@ namespace FinsList
   index (_::fs) (FS i) = index fs i
 
   public export
-  fromVect: Vect l (Fin sk) -> FinsList sk
+  fromVect : Vect l (Fin sk) -> FinsList sk
   fromVect []      = []
   fromVect (x::xs) = x :: fromVect xs
 
@@ -252,16 +253,48 @@ namespace ConnectionsValidation
   ||| IEEE 1800-2023
   public export
   data SourceForSink : (srcs : PortsList) -> (sink : SVType) -> Type where
-      NoSource     : SourceForSink srcs sink
-      SingleSource : (srcIdx : Fin $ length srcs) -> CanConnect (typeOf srcs srcIdx) sink -> SourceForSink srcs sink
+    NoSource  : SourceForSink srcs sink
+    HasSource : (srcIdx : Fin $ length srcs) -> CanConnect (typeOf srcs srcIdx) sink -> SourceForSink srcs sink
 
 namespace ConnsList
-  ||| Each output has a connection from some single input.
-  ||| Each input can go to several outputs.
+
   public export
-  data Connections : (srcs, sinks : PortsList) -> Type where
-    Nil  : Connections srcs []
-    (::) : SourceForSink srcs sink -> Connections srcs sinks -> Connections srcs (sink :: sinks)
+  data NotEqFin : Fin n -> Fin n -> Type where
+    ZS  : NotEqFin FZ (FS i)
+    SZ  : NotEqFin (FS i) FZ
+    Rec : NotEqFin x y -> NotEqFin (FS x) (FS y)
+  
+  public export
+  data Connections : (srcs, sinks : PortsList) -> (isUnique : Bool) -> Type
+
+  public export
+  data NoSourceConns : SourceForSink srcs sink' -> Connections srcs sinks isUnique -> Type
+
+  ||| Each output maybe has connection from some input.
+  ||| If isUnique then each input can go to one output. Otherwise each input can go to several outputs
+  public export
+  data Connections : (srcs, sinks : PortsList) -> (isUnique : Bool) -> Type where
+    Empty : Connections srcs [] u
+    Cons  : (sfs : SourceForSink srcs sink) -> (rest : Connections srcs sinks u) -> NoSourceConns sfs rest -> Connections srcs (sink :: sinks) u
+  
+  ||| List of source indexes
+  public export
+  consToFins : Connections srcs sinks u -> FinsList (srcs.length)
+  consToFins Empty                              = []
+  consToFins (Cons NoSource             rest _) = consToFins rest
+  consToFins (Cons (HasSource srcIdx _) rest _) = srcIdx :: consToFins rest
+
+  public export
+  data FinNotIn : FinsList srcs -> Fin srcs -> Type where
+    FNIEmpty : FinNotIn [] f
+    FNICons  : {x, f : Fin srcs} -> (0 _ : NotEqFin x f) -> (fni: FinNotIn xs f) -> FinNotIn (x :: xs) f
+
+  ||| If Connections are indexed as Unique, then source indexes must not repeat
+  public export
+  data NoSourceConns : (sfs : SourceForSink srcs sink') -> (conns : Connections srcs sinks isUnique) -> Type where
+    NotUnique : {conns : Connections srcs sinks False} -> NoSourceConns sfs conns
+    ConsNoS   : {conns : Connections srcs sinks True } -> NoSourceConns NoSource conns
+    ConsHasS  : {conns : Connections srcs sinks True } -> FinNotIn (consToFins conns) f -> NoSourceConns (HasSource f cc) conns
 
 public export
 data Modules : ModuleSigsList -> Type where
@@ -272,10 +305,44 @@ data Modules : ModuleSigsList -> Type where
   NewCompositeModule :
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
-    -- Remember: Do not change the concatenation order of the port lists, the printer and assigns depend on it
-    (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs ++ m.outputs)) ->
+    -- Remember: Do not change the concatenation order of the port lists, the printer and the assigns depend on it
+    (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs) False) ->
+    (ssto : Connections (m.inputs ++ allOutputs {ms} subMs) (m.outputs)            True ) ->
     (cont : Modules (m::ms)) ->
     Modules ms
 
+
 export
-genModules : Fuel -> (ms : ModuleSigsList) -> Gen MaybeEmpty $ Modules ms
+genNotEqFin : Fuel -> {n : Nat} -> (a, b : Fin n) -> Gen MaybeEmpty $ NotEqFin a b
+export
+genSourceForSink : Fuel -> (srcs : PortsList) -> (sink' : SVType) -> Gen MaybeEmpty $ SourceForSink srcs sink'
+
+genFinNotIn : Fuel -> {srcs : Nat} -> (fins : FinsList srcs) -> (fin : Fin srcs) -> Gen MaybeEmpty $ FinNotIn fins fin
+genFinNotIn x []        fin = pure FNIEmpty
+genFinNotIn x (f :: fs) fin = do
+  rest <- genFinNotIn x fs fin
+  ne <- genNotEqFin x f fin
+  pure $ FNICons ne rest
+
+genNoSourceConns : Fuel -> {isUnique : Bool} -> {srcs : PortsList} ->
+                   (sfs : SourceForSink srcs sink) -> (conns : Connections srcs sinks isUnique) -> Gen MaybeEmpty $ NoSourceConns sfs conns
+genNoSourceConns x {isUnique = False} sfs conns = pure NotUnique
+genNoSourceConns x {isUnique = True} NoSource conns = pure ConsNoS
+genNoSourceConns x {isUnique = True} (HasSource srcIdx y) conns = do
+  fni <- genFinNotIn x (consToFins conns) srcIdx
+  pure $ ConsHasS fni
+
+export
+genConnections : Fuel -> (srcs : PortsList) -> (sinks : PortsList) -> (isUnique : Bool) -> Gen MaybeEmpty $ Connections srcs sinks isUnique
+genConnections x srcs [] u        = pure Empty
+genConnections x srcs (y :: ys) u = do
+  sfs <- genSourceForSink x srcs y
+  rest <- genConnections x srcs ys u
+  nsc <- genNoSourceConns x sfs rest
+  pure $ Cons sfs rest nsc
+
+export
+genModules : Fuel -> (ms : ModuleSigsList) ->
+  (Fuel -> (srcs : PortsList) -> (sink' : SVType) -> Gen MaybeEmpty $ SourceForSink srcs sink') =>
+  (Fuel -> (srcs' : PortsList) -> (sinks' : PortsList) -> (isUnique' : Bool) -> Gen MaybeEmpty $ Connections srcs' sinks' isUnique') =>
+  Gen MaybeEmpty $ Modules ms

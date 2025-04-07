@@ -1,65 +1,39 @@
 [+] Printed file newdir/newdir/1-seed_0,1.sv
 // Seed: 0,1
 
-module raemllgias
-  ( output logic [4:2][3:2] w
-  , output real msuv [4:3][3:4]
-  , output uwire zcwhsogu [3:4][1:0]
-  , output uwire rrj
-  , input bit uzcoyx
-  , input bit zamyrg
+module zolspkvipx
+  ( output logic [4:2][3:2] qvjnq
+  , output real thvd [4:3][3:4]
+  , output uwire eckuucc [3:4][1:0]
+  , output uwire giquvqdauo
+  , input bit utsbypy
+  , input bit rjvykl
   );
   
   
+  not hbwkk(mhlffmqvw, giquvqdauo);
+  nand duxnohw(giquvqdauo, jrnxz, giquvqdauo);
   
   // Top inputs -> top outputs assigns
-  assign w = zamyrg;
+  assign qvjnq = utsbypy;
   
   // Assigns
-endmodule: raemllgias
+  assign jrnxz = 'bz;
+  assign eckuucc = '{'{'b1,'b1},'{'b1,'b0}};
+  assign thvd = '{'{'b0,'bz},'{'bx,'bz}};
+  assign mhlffmqvw = 'bx;
+endmodule: zolspkvipx
 
-module jts
-  (output logic [3:1] tzz, input logic [4:1][1:0][4:3] witwml, input int tvguax [2:3], input logic [4:1][1:4] qqfhxawak);
-  
-  real sxfingmnwg [4:3][3:4];
-  uwire q [3:4][1:0];
-  
-  raemllgias wblznyfr(.w(lnupxie), .msuv(sxfingmnwg), .zcwhsogu(q), .rrj(tjfuyhfmx), .uzcoyx(xyayahmta), .zamyrg(vepltbtd));
-  
-  // Top inputs -> top outputs assigns
-  assign tzz = qqfhxawak;
-  
-  // Assigns
-  assign xyayahmta = 'b0;
-  assign vepltbtd = 'b0;
-  assign lnupxie = 'b11zz1z;
-endmodule: jts
-
-module jix
-  ( output uwire ps
-  , output logic [2:4][2:2][2:3] sseivhqa
-  , output integer pagzbi [4:1]
-  , output bit [2:1][1:0] fwxvkvpauk
-  , input uwire hfs [0:3][4:4]
-  , input wire hqyhmglv
-  , input wire ndp [1:4][0:3]
-  , input logic [0:1][2:0] lnjc
-  );
+module mqwropwpa
+  (input logic [4:4] xrgux [0:4], input logic rj, input integer ujnuzxm [1:0][3:1]);
   
   
   
   // Top inputs -> top outputs assigns
-  assign ps = lnjc;
-  assign fwxvkvpauk = hqyhmglv;
   
   // Assigns
-  assign pagzbi = '{'b0,'b1,'b0,'b1};
-  assign sseivhqa = 'b0x10zz;
-  assign ndp = '{'{'b0,'b0,'b0,'b1},'{'b0,'b1,'b1,'b0},'{'b1,'b0,'b0,'b1},'{'b0,'b1,'b1,'b0}};
-  assign hqyhmglv = 'b1;
-  assign ndp = '{'{'b0,'b1,'b1,'b1},'{'b1,'b1,'b1,'b0},'{'b0,'b0,'b0,'b1},'{'b0,'b0,'b1,'b1}};
-endmodule: jix
+endmodule: mqwropwpa
 
 
 
-// Seed after: 10904,1
+// Seed after: 6215,1

@@ -92,7 +92,10 @@ jobs:
         run: pack test ${{ env.package_name }}
       - name: Gen SystemVerilog modules
         if: matrix.upstream-mode == 'latest-pack-collection'
-        run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 84 --seed-name --seed-content  # Generate modules
+        run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 128 --seed-name --seed-content --coverage mcov  # Generate modules
+      - name: Show mcov
+        if: matrix.upstream-mode == 'latest-pack-collection'
+        run : cat mcov
       - uses: actions/upload-artifact@v4
         if: matrix.upstream-mode == 'latest-pack-collection'
         with:
@@ -149,7 +152,7 @@ jobs:
           set +e
           bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
             "iverilog -g2012 {file} -o a.out" \
-            "(error|sorry): [\S ]+$" \
+            "(error|sorry|assert): [\S ]+$" \
             ".github/workflows/iverilog-ignored-errors.txt" \
             "vvp a.out" \
             "(error|sorry): [\S ]+$"

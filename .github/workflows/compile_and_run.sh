@@ -45,6 +45,12 @@ execute_command() {
   echo "$OUTPUT_VAR"
 }
 
+print_file() {
+  local FILE="$1"
+  echo "Printing the entire content of $FILE to the log:"
+  cat "$FILE"
+}
+
 for FILE in "$GEN_PATH"/*.sv; do
   echo "Compiling $FILE"
 
@@ -52,6 +58,9 @@ for FILE in "$GEN_PATH"/*.sv; do
 
   if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
     handle_errors "$COMPILATION_OUTPUT" "$COMPILE_ERROR_REGEX" "$ERRORS_FILE"
+    if [ $? -eq 1 ]; then
+      print_file "$FILE"
+    fi
   else
     if [ -z "$SIM_CMD" ]; then continue; fi
     echo "Simulating $FILE"
@@ -60,6 +69,9 @@ for FILE in "$GEN_PATH"/*.sv; do
 
     if [ $SIM_EXIT_CODE -ne 0 ]; then
       handle_errors "$SIM_OUTPUT" "$SIM_ERROR_REGEX" "$ERRORS_FILE"
+      if [ $? -eq 1 ]; then
+        print_file "$FILE"
+      fi
     fi
   fi
 

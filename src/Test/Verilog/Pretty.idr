@@ -51,22 +51,12 @@ toTotalOutputsIdx {subMs=i::is} idx x with 0 (sym $ portsListAppendLen (index ms
   toTotalOutputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalOutputsIdx idx x
 
 public export
-connFwdRel : {ss, sk : PortsList} -> (cons: Connections ss sk) -> Vect (sk.length) $ Maybe $ Fin ss.length
-connFwdRel []          = []
-connFwdRel (sfs :: cs) = helper sfs :: connFwdRel cs where
+connFwdRel : {ss, sk : PortsList} -> (cons: Connections ss sk b) -> Vect (sk.length) $ Maybe $ Fin ss.length
+connFwdRel Empty           = []
+connFwdRel (Cons sfs cs _) = helper sfs :: connFwdRel cs where
   helper : SourceForSink ss sink -> Maybe $ Fin (length ss)
-  helper NoSource                = Nothing
-  helper (SingleSource srcIdx _) = Just srcIdx
-
-||| Same as connFwdRel but repeated indexes are replaced to Nothing
-public export
-connFwdUnique : Vect sk (Maybe $ Fin ss) -> (used: List $ Fin ss) -> Vect sk (Maybe $ Fin ss)
-connFwdUnique []        _    = []
-connFwdUnique (x :: xs) used = case x of
-  Just srcIdx => case find (== srcIdx) used of
-    Nothing => Just srcIdx :: connFwdUnique xs (srcIdx::used)
-    Just _  => Nothing     :: connFwdUnique xs used
-  Nothing   => Nothing     :: connFwdUnique xs used
+  helper NoSource             = Nothing
+  helper (HasSource srcIdx _) = Just srcIdx
 
 nothings : Vect sk (Maybe a) -> Nat
 nothings []              = 0
@@ -167,11 +157,7 @@ allModuleNames (x :: xs) = x.name :: allModuleNames xs
 printConnections: String -> (cons: PortsList) -> Vect (cons.length) String -> List String
 printConnections keyword cons names = zipWith (\conn, name => "\{keyword} \{printConnType conn name}") (toList cons) (toList names)
 
--- rewrite length from concatenated to separated PortsLists
-export
-sepLen : {a, b: PortsList} -> Vect (length (a ++ b)) c -> Vect (length a + length b) c
-sepLen {a, b} v = rewrite portsListAppendLen a b in v
--- rewrite length from separated to concatenated PortsLists
+||| rewrite length from separated to concatenated PortsLists
 comLen : {a, b: PortsList} -> Vect (length a + length b) c -> Vect (length (a ++ b)) c
 comLen {a, b} v = rewrite sym $ portsListAppendLen a b in v
 
@@ -228,8 +214,9 @@ printAssigns ((l, r) :: xs) = printAssign l r :: printAssigns xs
 ||| However, such an assignment may be declared so that these ports can transmit values
 |||
 ||| ex:
-||| module m(output wire a, input wire b);
-|||   assign a = b;
+||| module a(output int o1, output int o2, input int i1);
+|||   assign o1 = i1;
+|||   assign o2 = i1;
 ||| endmodule
 resolveConAssigns : Vect sk (Maybe (Fin inps)) -> Vect sk String -> Vect inps String -> Vect sk (Maybe String)
 resolveConAssigns v outNames inpNames = map (resolveConn outNames inpNames) $ withIndex v where
@@ -289,7 +276,8 @@ data ExtendedModules : ModuleSigsList -> Type where
   NewCompositeModule :
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
-    (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs ++ m.outputs)) ->
+    (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs) False) ->
+    (ssto : Connections (m.inputs ++ allOutputs {ms} subMs) (m.outputs)            True ) ->
     (assignsSInps : List $ Fin (allInputs {ms} subMs).length) ->
     (assignsTOuts : List $ Fin (m.outputs).length) ->
     (assignsSS : List $ Fin (m.inputs ++ allOutputs {ms} subMs).length) ->
@@ -302,7 +290,7 @@ export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
                 (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => ExtendedModules ms -> Gen0 $ Doc opts
 prettyModules x _         End = pure empty
-prettyModules x pms @{un} (NewCompositeModule m subMs sssi assignsSInps assignsTOuts assignsSS literals cont) = do
+prettyModules x pms @{un} (NewCompositeModule m subMs sssi ssto assignsSInps assignsTOuts assignsSS literals cont) = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} (allModuleNames pms) un
 
@@ -314,12 +302,11 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi assignsSInps assignsT
   (subMInstanceNames ** namesWithSubMs ** uniosub) <- genNUniqueNamesVect x subMs.length namesWithSubOuts unis
 
   -- Resolve submodule inputs
-  let allConns = connFwdRel sssi
-  let (siss, tossRaw) = splitAt (allInputs {ms} subMs).length (sepLen allConns)
+  let siss = connFwdRel sssi
   (subMINames, (namesWithNoSources ** uniosubn)) <- resolveSinks siss (comLen $ inputNames ++ subMONames) x namesWithSubMs uniosub
 
   -- Resolve top outputs
-  let toss = connFwdUnique tossRaw []
+  let toss = connFwdRel ssto
   (assignedInpNames ** namesWithTIN ** uniosubnt) <- genNUniqueNamesVect x m.inpsCount namesWithNoSources uniosubn
   (outputNames, (namesWithNoTopOuts ** uniosubnto)) <- resolveSinks toss (comLen $ assignedInpNames ++ subMONames) x namesWithTIN uniosubnt
 

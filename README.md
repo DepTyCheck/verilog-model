@@ -31,6 +31,21 @@ There is a list of reported bugs:
 
 - iverilog
   - [Assertion 'net->type_ == IVL_SIT_REG'](https://github.com/steveicarus/iverilog/issues/1213)
+  - [Unable to elaborate r-value](https://github.com/steveicarus/iverilog/issues/1217)
+  - [Unable to resolve label v0x55abf7187e10_0](https://github.com/steveicarus/iverilog/issues/1218)
+  - [Expression width does not match width of logic gate](https://github.com/steveicarus/iverilog/issues/1221)
+  - [18vvp_arith_cast_int: recv_vec4 not implemented](https://github.com/steveicarus/iverilog/issues/1222)
+  - [11vvp_fun_not: recv_real(0.000000) not implemented](https://github.com/steveicarus/iverilog/issues/1223)
+  - [Packed vs unpacked dimension confusion](https://github.com/steveicarus/iverilog/issues/1224)
+  - [elaborate.cc:1661: failed assertion prts[0]->unpacked_dimensions()==0](https://github.com/steveicarus/iverilog/issues/1231)
+- verilator
+  - [Real arrays with opposite index ranges](https://github.com/verilator/verilator/issues/5877)
+
+### Known bugs
+
+We also found some already known bugs:
+
+- [Missing MULTIDRIVEN warning for variable with multiple drivers](https://github.com/verilator/verilator/issues/5887)
 
 ## Running
 
