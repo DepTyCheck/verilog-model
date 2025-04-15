@@ -1,39 +1,41 @@
 [+] Printed file newdir/newdir/1-seed_0,1.sv
 // Seed: 0,1
 
-module zolspkvipx
-  ( output logic [4:2][3:2] qvjnq
-  , output real thvd [4:3][3:4]
-  , output uwire eckuucc [3:4][1:0]
-  , output uwire giquvqdauo
-  , input bit utsbypy
-  , input bit rjvykl
+module hlu
+  ( output logic [4:2][3:2] msixeyfxa
+  , output real i [4:3][3:4]
+  , output uwire pavctyy [3:4][1:0]
+  , output uwire abcinstoun
+  , input bit vfwz
+  , input bit gvxrjbkn
   );
   
   
-  not hbwkk(mhlffmqvw, giquvqdauo);
-  nand duxnohw(giquvqdauo, jrnxz, giquvqdauo);
+  not ckqldtpaks(hzynsgrwmy, abcinstoun);
+  xor k(abcinstoun, xrftgz, hzynsgrwmy);
   
   // Top inputs -> top outputs assigns
-  assign qvjnq = utsbypy;
+  assign msixeyfxa = vfwz;
   
   // Assigns
-  assign jrnxz = 'bz;
-  assign eckuucc = '{'{'b1,'b1},'{'b1,'b0}};
-  assign thvd = '{'{'b0,'bz},'{'bx,'bz}};
-  assign mhlffmqvw = 'bx;
-endmodule: zolspkvipx
+  assign pavctyy = '{'{'b0,'b1},'{'b1,'b0}};
+  assign i = '{'{'b0,'b0},'{'b0,'bx}};
+  assign hzynsgrwmy = 'b0;
+  assign hzynsgrwmy = 'bx;
+  assign hzynsgrwmy = 'bx;
+  assign hzynsgrwmy = 'b1;
+endmodule: hlu
 
-module mqwropwpa
-  (input logic [4:4] xrgux [0:4], input logic rj, input integer ujnuzxm [1:0][3:1]);
+module npkwmgqlv
+  (input logic [4:4] syu [0:4], input logic o, input integer njrloeraq [1:0][3:1]);
   
   
   
   // Top inputs -> top outputs assigns
   
   // Assigns
-endmodule: mqwropwpa
+endmodule: npkwmgqlv
 
 
 
-// Seed after: 6215,1
+// Seed after: 7347,1
