@@ -11,7 +11,8 @@ elaborate\.cc:1661: failed assertion prts\[0\]->unpacked_dimensions\(\)==0
 Code generation had \d+ error\(s\)
 Array \w+ needs an array index here\.
 uwire "\w+" must have a single driver, found \(\d+\)
-error: Unable to elaborate r-value: [A-z]+
+Unable to elaborate r-value: [A-z]+
+11vvp_fun_not: recv_real\(1\.000000\) not implemented
 
 t-dll-api\.cc:2501: ivl_nexus_s\* ivl_signal_nex\(ivl_signal_t, unsigned int\): Assertion `net->type_ == IVL_SIT_REG' failed\.
 

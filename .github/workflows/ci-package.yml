@@ -82,7 +82,7 @@ jobs:
                 <<< ${{ github.repository }})" >> "$GITHUB_ENV"
       - name: Build `${{ env.package_name }}`
         run: pack build ${{ env.package_name }}
-      - name: File system fix ¯\_(ツ)_/¯
+      - name: Fix file system  ¯\_(ツ)_/¯
         run: |
           set -x +e
           pack run verilog-model --coverage mcov -n 1 --seed 0,1
@@ -155,7 +155,7 @@ jobs:
             "(error|sorry|assert): [\S ]+$" \
             ".github/workflows/iverilog-ignored-errors.txt" \
             "vvp a.out" \
-            "(error|sorry): [\S ]+$"
+            "(error|sorry|vvp|assert): [\S ]+$"
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then
