@@ -10,7 +10,8 @@ import Data.Fin
 import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
 
-import Test.Verilog.Module.Derived
+import Test.Verilog.Connections.Derived
+import Test.Verilog.CtxPorts.Derived
 import Test.Verilog.Assign.Derived
 import Test.Verilog.Literal.Derived
 
@@ -263,7 +264,7 @@ gen x = do
         resolve' (x, Nothing) = Just x
         resolve' (x, (Just y)) = Nothing
 
-    extend: Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
+    extend : Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
     extend _ End = pure End
     extend x (NewCompositeModule m subMs sssi ssto cont) = do
       let siss = connFwdRel sssi
@@ -284,7 +285,9 @@ gen x = do
                                ++ selectPorts (m.inputs ++ allOutputs {ms} subMs) assignsSS
       -- Extend the rest
       contEx <- extend x cont
-      pure $ NewCompositeModule m subMs sssi ssto assignsSInps assignsTOuts assignsSS literals contEx
+      -- Gen port types for current context
+      (ports ** _) <- genCtx x m ms subMs (connsToMFL sssi) (connsToMFL ssto) (allFins subMs.length)
+      pure $ NewCompositeModule m subMs sssi ssto assignsSInps assignsTOuts assignsSS literals contEx ports
 
 covering
 main : IO ()

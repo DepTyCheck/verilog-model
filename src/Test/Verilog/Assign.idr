@@ -1,6 +1,6 @@
 module Test.Verilog.Assign
 
-import public Test.Verilog.Module
+import public Test.Verilog.SVType
 
 import Data.Fuel
 import Data.Vect
@@ -43,7 +43,7 @@ namespace SD
   toList (Cons f rest _) = f :: toList rest
 
   export
-  genFNE: Fuel -> {n : Nat} -> (f, fin : Fin $ n) -> Gen MaybeEmpty $ NotEqFin f fin
+  genFNE : Fuel -> {n : Nat} -> (f, fin : Fin $ n) -> Gen MaybeEmpty $ NotEqFin f fin
 
   public export
   data FinNotInSD : {n : Nat} -> {fins : FinsList n} -> (rest : SingleDrivenAssigns fins) -> (f : Fin (fins.length)) -> Type where
@@ -65,26 +65,6 @@ namespace SD
             Gen MaybeEmpty $ FinNotInSD rest' f'
   genFINSD x rest f = withCoverage $ genFINSD' x rest f
 
-namespace MFinsList
-
-  public export
-  data MFinsList : Nat -> Type where
-    Nil  : MFinsList n
-    (::) : Maybe (Fin n) -> MFinsList n -> MFinsList n
-
-  %name FinsList fs
-
-  public export
-  find : (ms : MFinsList n) -> Fin a -> Maybe (Fin n)
-  find (m::_ ) FZ     = m
-  find (_::ms) (FS i) = find ms i
-  find []       _     = Nothing
-
-  public export
-  toMFL : Vect l (Maybe $ Fin r) -> MFinsList r
-  toMFL []      = []
-  toMFL (x::xs) = x :: toMFL xs
-
 namespace MD
   ||| All resolved nets are multidriven
   ||| TODO: Add necessary constructors when extend SVBasic
@@ -102,21 +82,6 @@ namespace MD
     VP : VarOrPacked t -> NoTopDeclMD t
     ||| The port type itself also could be multidriven itself
     MD : Multidriven t -> NoTopDeclMD $ Arr $ Unpacked t {}
-
-  public export
-  data EqMaybeF : Maybe (Fin a) -> Fin a -> Type where
-    EqMF : EqMaybeF (Just n) n
-
-  public export
-  data NotEqMaybeF : Maybe (Fin a) -> Fin a -> Type where
-    NEqMFN : NotEqMaybeF Nothing n
-    NEqMFJ : NotEqFin m n -> NotEqMaybeF (Just m) n
-
-  ||| Check if there is at least one connection (or no connections at all) to the given source
-  public export
-  data FinNotInMFL : (conns : MFinsList ss) -> (f : Fin ss) -> Type where
-    HFEmpty : FinNotInMFL [] f
-    HFTHere : {c : Maybe $ Fin ss} -> NotEqMaybeF c f -> (rest : FinNotInMFL cs f) -> FinNotInMFL (c::cs) f
 
   ||| All submodule inputs connected to given source are multidriven (never declared or unpacked & md)
   public export
@@ -139,9 +104,7 @@ namespace MD
     NoDecl : LTE tIs (finToNat f) -> FinNotInMFL topConns f -> AllSIsMD subInPs subConns f -> NoTopDeclMD (typeOf ss f) ->
              MultidrivenSource ss tIs subInPs subConns topConns f
 
-  public export
-  data EqMaybeMFMF : Maybe (Fin a) -> Maybe (Fin a) -> Type where
-    EqMFMF : EqMaybeMFMF n n
+  
 
   ||| An index of a multidriven sink
   public export

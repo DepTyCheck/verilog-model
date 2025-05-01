@@ -237,7 +237,7 @@ jobs:
           set +e
           bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
             "rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/testbench.cpp --timing -Wno-fatal +1800-2023ext+sv top.sv" \
-            "%Error(|\-[A-Z]+): [A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
+            "%Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
             ".github/workflows/verilator-ignored-errors.txt" \
             "make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop" \
             "%Error:[\S ]+$"
@@ -249,7 +249,7 @@ jobs:
 
   create-issue-on-failure:
     name: Create an issue on failure
-    if: ${{ always() && contains(needs.*.result, 'failure') && github.ref == 'refs/heads/master' }}
+    if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     needs: [get-upstream-matrix, build-and-test, test-with-iverilog, test-with-slang, test-with-verilator]
     permissions:

@@ -7,6 +7,8 @@ ERRORS_FILE="$4"
 SIM_CMD="$5"
 SIM_ERROR_REGEX="$6"
 
+set +e # So that we won't exit immidiately after handle_errors
+
 handle_errors() {
   local OUTPUT="$1"
   local ERROR_REGEX="$2"

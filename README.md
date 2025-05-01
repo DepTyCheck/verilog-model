@@ -41,11 +41,12 @@ There is a list of reported bugs:
 - verilator
   - [Real arrays with opposite index ranges](https://github.com/verilator/verilator/issues/5877)
 
-### Known bugs
-
 We also found some already known bugs:
 
-- [Missing MULTIDRIVEN warning for variable with multiple drivers](https://github.com/verilator/verilator/issues/5887)
+- iverilog
+  - [Single-element unpacked array ports fail to elaborate](https://github.com/steveicarus/iverilog/issues/915)
+- verilator
+  - [Missing MULTIDRIVEN warning for variable with multiple drivers](https://github.com/verilator/verilator/issues/5887)
 
 ## Running
 

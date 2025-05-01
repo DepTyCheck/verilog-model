@@ -1,0 +1,219 @@
+module q
+  ( output logic [4:2][3:2] msixeyfxa
+  , output real i [4:3][3:4]
+  , output uwire pavctyy [3:4][1:0]
+  , output uwire s
+  , input bit fklz
+  , input bit wwd
+  );
+  
+  
+  not wqyv(fcde, s);
+  
+  xor qozr(s, xrftgz, fcde);
+  
+  
+  // Top inputs -> top outputs assigns
+  assign msixeyfxa = fklz;
+  
+  // Assigns
+  assign pavctyy = '{'{'b0,'b1},'{'b1,'b0}};
+  assign i = '{'{'b0,'b0},'{'b0,'bx}};
+  assign fcde = 'b0;
+  assign fcde = 'bx;
+  assign fcde = 'bx;
+  assign fcde = 'b1;
+endmodule: q
+
+module npkwmgqlv
+  (input logic [4:4] syu [0:4], input logic o, input integer njrloeraq [1:0][3:1]);
+  
+  
+  
+  // Top inputs -> top outputs assigns
+  
+  // Assigns
+endmodule: npkwmgqlv
+
+
+--------------------------
+
+Data.Fin.[1mFin[0m [38;5;10mcovered fully[0m (41 times)
+  - FS: [38;5;10mcovered[0m (28 times)
+  - FZ: [38;5;10mcovered[0m (13 times)
+
+Data.Nat.[1mLTE[0m [38;5;10mcovered fully[0m (18 times)
+  - LTESucc: [38;5;10mcovered[0m (12 times)
+  - LTEZero: [38;5;10mcovered[0m (6 times)
+
+Prelude.Types.[1mMaybe[0m [38;5;9mnot covered[0m
+  - Just: [38;5;9mnot covered[0m
+  - Nothing: [38;5;9mnot covered[0m
+
+Prelude.Types.[1mNat[0m [38;5;10mcovered fully[0m (70 times)
+  - S: [38;5;10mcovered[0m (50 times)
+  - Z: [38;5;10mcovered[0m (20 times)
+
+Test.Common.Utils.[1mEqMaybeF[0m [38;5;10mcovered fully[0m (7 times)
+  - EqMF: [38;5;10mcovered[0m (7 times)
+
+Test.Common.Utils.[1mEqMaybeMFMF[0m [38;5;10mcovered fully[0m (3 times)
+  - EqMFMF: [38;5;10mcovered[0m (3 times)
+
+Test.Common.Utils.[1mEqNat[0m [38;5;9mnot covered[0m
+  - SameN: [38;5;9mnot covered[0m
+
+Test.Common.Utils.FinsList.[1mFinNotIn[0m [38;5;10mcovered fully[0m (2 times)
+  - FNICons: [38;5;10mcovered[0m (1 time)
+  - FNIEmpty: [38;5;10mcovered[0m (1 time)
+
+Test.Common.Utils.FinsList.[1mFinsList[0m [38;5;10mcovered fully[0m (4 times)
+  - (::): [38;5;10mcovered[0m (2 times)
+  - Nil: [38;5;10mcovered[0m (2 times)
+
+Test.Common.Utils.MFinsList.[1mFinNotInMFL[0m [38;5;10mcovered fully[0m (30 times)
+  - Cons: [38;5;10mcovered[0m (24 times)
+  - Empty: [38;5;10mcovered[0m (6 times)
+
+Test.Common.Utils.[1mNotEqFin[0m [38;5;10mcovered fully[0m (43 times)
+  - Rec: [38;5;10mcovered[0m (22 times)
+  - SZ: [38;5;10mcovered[0m (12 times)
+  - ZS: [38;5;10mcovered[0m (9 times)
+
+Test.Common.Utils.[1mNotEqMaybeF[0m [38;5;10mcovered fully[0m (40 times)
+  - NEqMFJ: [38;5;10mcovered[0m (19 times)
+  - NEqMFN: [38;5;10mcovered[0m (21 times)
+
+Test.Verilog.Assign.MD.[1mAllSIsMD[0m [38;5;10mcovered fully[0m (16 times)
+  - ASISEmpty: [38;5;10mcovered[0m (4 times)
+  - ASISHere: [38;5;10mcovered[0m (4 times)
+  - ASISTHere: [38;5;10mcovered[0m (8 times)
+
+Test.Verilog.Assign.MD.[1mMultiDrivenAssigns[0m [38;5;11mcovered partially[0m (6 times)
+  - ConsSink: [38;5;9mnot covered[0m
+  - ConsSource: [38;5;10mcovered[0m (4 times)
+  - Empty: [38;5;10mcovered[0m (2 times)
+
+Test.Verilog.Assign.MD.[1mMultidriven[0m [38;5;9mnot covered[0m
+  - P: [38;5;9mnot covered[0m
+  - U: [38;5;9mnot covered[0m
+  - W: [38;5;9mnot covered[0m
+
+Test.Verilog.Assign.MD.[1mMultidrivenSink[0m [38;5;9mnot covered[0m
+  - NoSource: [38;5;9mnot covered[0m
+  - TopOut: [38;5;9mnot covered[0m
+
+Test.Verilog.Assign.MD.[1mMultidrivenSource[0m [38;5;11mcovered partially[0m (4 times)
+  - NoDecl: [38;5;10mcovered[0m (4 times)
+  - TopInp: [38;5;9mnot covered[0m
+
+Test.Verilog.Assign.MD.[1mNoTopDeclMD[0m [38;5;11mcovered partially[0m (8 times)
+  - MD: [38;5;9mnot covered[0m
+  - VP: [38;5;10mcovered[0m (8 times)
+
+Test.Verilog.Assign.SD.[1mFinNotInSD[0m [38;5;10mcovered fully[0m (3 times)
+  - FNICons: [38;5;10mcovered[0m (1 time)
+  - FNIEmpty: [38;5;10mcovered[0m (2 times)
+
+Test.Verilog.Assign.SD.[1mSingleDrivenAssigns[0m [38;5;10mcovered fully[0m (4 times)
+  - Cons: [38;5;10mcovered[0m (1 time)
+  - Empty: [38;5;10mcovered[0m (3 times)
+
+Test.Verilog.Connections.ConnectionsValidation.[1mCanConnect[0m [38;5;11mcovered partially[0m (4 times)
+  - CCUnpackedUnpacked: [38;5;9mnot covered[0m
+  - CCVarOrPacked: [38;5;10mcovered[0m (4 times)
+
+Test.Verilog.Connections.ConnectionsValidation.[1mEqSuperBasic[0m [38;5;9mnot covered[0m
+  - EqBasicP: [38;5;9mnot covered[0m
+  - EqBasicU: [38;5;9mnot covered[0m
+  - EqBasicV: [38;5;9mnot covered[0m
+
+Test.Verilog.Connections.ConnectionsValidation.[1mEqUnpackedArrSig[0m [38;5;9mnot covered[0m
+  - EqUArr: [38;5;9mnot covered[0m
+  - Other: [38;5;9mnot covered[0m
+
+Test.Verilog.Connections.ConnectionsValidation.[1mSourceForSink[0m [38;5;10mcovered fully[0m (7 times)
+  - HasSource: [38;5;10mcovered[0m (4 times)
+  - NoSource: [38;5;10mcovered[0m (3 times)
+
+Test.Verilog.Connections.ConnsList.[1mConnections[0m [38;5;10mcovered fully[0m (4 times)
+  - Cons: [38;5;10mcovered[0m (2 times)
+  - Empty: [38;5;10mcovered[0m (2 times)
+
+Test.Verilog.Connections.ConnsList.[1mNoSourceConns[0m [38;5;10mcovered fully[0m (7 times)
+  - ConsHasS: [38;5;10mcovered[0m (2 times)
+  - ConsNoS: [38;5;10mcovered[0m (2 times)
+  - NotUnique: [38;5;10mcovered[0m (3 times)
+
+Test.Verilog.Connections.[1mModules[0m [38;5;10mcovered fully[0m (3 times)
+  - End: [38;5;10mcovered[0m (1 time)
+  - NewCompositeModule: [38;5;10mcovered[0m (2 times)
+
+Test.Verilog.Literal.[1mBinary[0m [38;5;9mnot covered[0m
+  - PArr: [38;5;9mnot covered[0m
+  - Single: [38;5;9mnot covered[0m
+  - UArr: [38;5;9mnot covered[0m
+
+Test.Verilog.Literal.[1mBinaryList[0m [38;5;9mnot covered[0m
+  - (::): [38;5;9mnot covered[0m
+  - Nil: [38;5;9mnot covered[0m
+
+Test.Verilog.Literal.[1mBitState[0m [38;5;10mcovered fully[0m (12 times)
+  - S2: [38;5;10mcovered[0m (4 times)
+  - S4: [38;5;10mcovered[0m (8 times)
+
+Test.Verilog.Literal.Literals.[1mLiteralsList[0m [38;5;10mcovered fully[0m (2 times)
+  - (::): [38;5;10mcovered[0m (1 time)
+  - Nil: [38;5;10mcovered[0m (1 time)
+
+Test.Verilog.Literal.[1mSValue2[0m [38;5;10mcovered fully[0m (4 times)
+  - O': [38;5;10mcovered[0m (2 times)
+  - Z': [38;5;10mcovered[0m (2 times)
+
+Test.Verilog.Literal.[1mSValue4[0m [38;5;11mcovered partially[0m (8 times)
+  - H: [38;5;9mnot covered[0m
+  - O'': [38;5;10mcovered[0m (1 time)
+  - X: [38;5;10mcovered[0m (3 times)
+  - Z'': [38;5;10mcovered[0m (4 times)
+
+Test.Verilog.SVType.[1mAllowedInPackedArr[0m [38;5;11mcovered partially[0m (3 times)
+  - B: [38;5;9mnot covered[0m
+  - L: [38;5;10mcovered[0m (2 times)
+  - P: [38;5;10mcovered[0m (1 time)
+
+Test.Verilog.SVType.[1mEqSVBasic[0m [38;5;9mnot covered[0m
+  - EqBit': [38;5;9mnot covered[0m
+  - EqInt': [38;5;9mnot covered[0m
+  - EqInteger': [38;5;9mnot covered[0m
+  - EqLogic': [38;5;9mnot covered[0m
+  - EqReal': [38;5;9mnot covered[0m
+  - EqUwire': [38;5;9mnot covered[0m
+  - EqWire': [38;5;9mnot covered[0m
+
+Test.Verilog.SVType.ModuleSig.[1mModuleSig[0m [38;5;10mcovered fully[0m (2 times)
+  - MkModuleSig: [38;5;10mcovered[0m (2 times)
+
+Test.Verilog.SVType.Ports.[1mPortsList[0m [38;5;10mcovered fully[0m (13 times)
+  - (::): [38;5;10mcovered[0m (9 times)
+  - Nil: [38;5;10mcovered[0m (4 times)
+
+Test.Verilog.SVType.[1mSVArray[0m [38;5;10mcovered fully[0m (9 times)
+  - Packed: [38;5;10mcovered[0m (2 times)
+  - Unpacked: [38;5;10mcovered[0m (7 times)
+
+Test.Verilog.SVType.[1mSVBasic[0m [38;5;11mcovered partially[0m (7 times)
+  - Bit': [38;5;10mcovered[0m (2 times)
+  - Int': [38;5;9mnot covered[0m
+  - Integer': [38;5;10mcovered[0m (1 time)
+  - Logic': [38;5;10mcovered[0m (1 time)
+  - Real': [38;5;10mcovered[0m (1 time)
+  - Uwire': [38;5;10mcovered[0m (2 times)
+  - Wire': [38;5;9mnot covered[0m
+
+Test.Verilog.SVType.[1mSVType[0m [38;5;10mcovered fully[0m (16 times)
+  - Arr: [38;5;10mcovered[0m (9 times)
+  - Var: [38;5;10mcovered[0m (7 times)
+
+Test.Verilog.SVType.[1mVarOrPacked[0m [38;5;10mcovered fully[0m (21 times)
+  - VPP: [38;5;10mcovered[0m (1 time)
+  - VPV: [38;5;10mcovered[0m (20 times)

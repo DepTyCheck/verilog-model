@@ -17,18 +17,22 @@ main = Runner
 prebuild = "sh .derive-in-parallel"
 
 depends = collection-utils
-        , deptycheck >= 0.0.240409
+        , deptycheck >= 0.0.250305
         , getopts
         , i-hate-parens
         , prettier
         , fin-lizzie
 
-modules = Test.Verilog.Module
+modules = Test.Common.Utils
+        , Test.Verilog.SVType
+        , Test.Verilog.Connections
+        , Test.Verilog.CtxPorts
         , Test.Verilog.Assign
         , Test.Verilog.Literal
         , Test.Verilog.UniqueNames
         , Test.Verilog.UniqueNames.Derived
-        , Test.Verilog.Module.Derived
+        , Test.Verilog.Connections.Derived
+        , Test.Verilog.CtxPorts.Derived
         , Test.Verilog.Assign.Derived
         , Test.Verilog.Literal.Derived
         , Test.Verilog.Pretty

@@ -1,0 +1,43 @@
+[+] Printed file newdir/newdir/1-seed_0,1.sv
+// Seed: 0,1
+
+module q
+  ( output logic [4:2][3:2] msixeyfxa
+  , output real i [4:3][3:4]
+  , output uwire pavctyy [3:4][1:0]
+  , output uwire s
+  , input bit fklz
+  , input bit wwd
+  );
+  
+  
+  not wqyv(fcde, s);
+  
+  xor qozr(s, xrftgz, fcde);
+  
+  
+  // Top inputs -> top outputs assigns
+  assign msixeyfxa = fklz;
+  
+  // Assigns
+  assign pavctyy = '{'{'b0,'b1},'{'b1,'b0}};
+  assign i = '{'{'b0,'b0},'{'b0,'bx}};
+  assign fcde = 'b0;
+  assign fcde = 'bx;
+  assign fcde = 'bx;
+  assign fcde = 'b1;
+endmodule: q
+
+module npkwmgqlv
+  (input logic [4:4] syu [0:4], input logic o, input integer njrloeraq [1:0][3:1]);
+  
+  
+  
+  // Top inputs -> top outputs assigns
+  
+  // Assigns
+endmodule: npkwmgqlv
+
+
+
+// Seed after: 7347,1

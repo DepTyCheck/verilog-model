@@ -16,7 +16,9 @@ import Data.Fin.ToFin
 
 import public Test.Verilog.UniqueNames.Derived
 
-import public Test.Verilog.Module
+import public Test.Verilog.SVType
+import public Test.Verilog.Connections
+import public Test.Verilog.CtxPorts
 import public Test.Verilog.Assign
 import public Test.Verilog.Literal
 
@@ -26,21 +28,17 @@ import Syntax.IHateParens.List
 
 %default total
 
-totalInputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
-totalInputs = length . allInputs
-
-totalOutputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
-totalOutputs = length . allOutputs
-
+public export
 toTotalInputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
-                   (idx : Fin subMs.asList.length) ->
-                   Fin (index ms (index' subMs.asList idx)).inpsCount ->
-                   Fin $ totalInputs {ms} subMs
+                  (idx : Fin subMs.asList.length) ->
+                  Fin (index ms (index' subMs.asList idx)).inpsCount ->
+                  Fin $ totalInputs {ms} subMs
 toTotalInputsIdx {subMs=i::is} idx x with 0 (sym $ portsListAppendLen (index ms i).inputs (allInputs {ms} is))
                                         | 0 (length ((index ms i).inputs ++ allInputs {ms} is))
   toTotalInputsIdx FZ       x | Refl | _ = indexSum $ Left x
   toTotalInputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalInputsIdx idx x
 
+public export
 toTotalOutputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
                     (idx : Fin subMs.asList.length) ->
                     Fin (index ms $ index' subMs.asList idx).outsCount ->
@@ -49,11 +47,11 @@ toTotalOutputsIdx {subMs=i::is} idx x with 0 (sym $ portsListAppendLen (index ms
                                          | 0 (length ((index ms i).outputs ++ allOutputs {ms} is))
   toTotalOutputsIdx FZ       x | Refl | _ = indexSum $ Left x
   toTotalOutputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalOutputsIdx idx x
-
+  
 public export
-connFwdRel : {ss, sk : PortsList} -> (cons: Connections ss sk b) -> Vect (sk.length) $ Maybe $ Fin ss.length
+connFwdRel : {ss, sk : PortsList} -> (cons: Connections ss sk b tIs) -> Vect (sk.length) $ Maybe $ Fin ss.length
 connFwdRel Empty           = []
-connFwdRel (Cons sfs cs _) = helper sfs :: connFwdRel cs where
+connFwdRel (Cons sfs cs) = helper sfs :: connFwdRel cs where
   helper : SourceForSink ss sink -> Maybe $ Fin (length ss)
   helper NoSource             = Nothing
   helper (HasSource srcIdx _) = Just srcIdx
@@ -156,10 +154,6 @@ allModuleNames (x :: xs) = x.name :: allModuleNames xs
 
 printConnections: String -> (cons: PortsList) -> Vect (cons.length) String -> List String
 printConnections keyword cons names = zipWith (\conn, name => "\{keyword} \{printConnType conn name}") (toList cons) (toList names)
-
-||| rewrite length from separated to concatenated PortsLists
-comLen : {a, b: PortsList} -> Vect (length a + length b) c -> Vect (length (a ++ b)) c
-comLen {a, b} v = rewrite sym $ portsListAppendLen a b in v
 
 fillNames : Vect n (Maybe $ Fin srcCount) -> Vect srcCount String -> Vect x String -> Vect n String
 fillNames []                _         _               = []
@@ -268,6 +262,153 @@ getNames : Vect l String -> (List $ Fin l) -> List String
 getNames names []        = []
 getNames names (x :: xs) = index x names :: getNames names xs
 
+typeOf' : List SVType -> Fin a -> Maybe SVType
+typeOf' []      _      = Nothing
+typeOf' (x::xs) FZ     = Just x
+typeOf' (x::xs) (FS i) = typeOf' xs i
+
+allInputs' : ModuleSigsList -> List SVType
+allInputs' []      = []
+allInputs' (m::ms) = (toList m.inputs) ++ allInputs' ms
+
+allOutputs' : ModuleSigsList -> List SVType
+allOutputs' []      = []
+allOutputs' (m::ms) = (toList m.outputs) ++ allOutputs' ms
+
+namespace Wanings
+
+  export
+  bitsCnt' : SVBasic -> Nat
+  bitsCnt' Logic'   = 1
+  bitsCnt' Wire'    = 1
+  bitsCnt' Uwire'   = 1
+  bitsCnt' Int'     = 32
+  bitsCnt' Integer' = 32
+  bitsCnt' Bit'     = 1
+  bitsCnt' Real'    = 64
+
+  export
+  bitsCnt : SVType -> Nat
+  bitsCnt (Var b)                = bitsCnt' b
+  bitsCnt (Arr $ Unpacked t _ _) = bitsCnt t
+  bitsCnt (Arr $ Packed t s e)   = S (max s e `minus` min s e) * bitsCnt t
+
+  export
+  printTruncationWarning : SVType -> String -> SVType -> String -> Maybe String
+  printTruncationWarning op on np nn = do
+    let oldb = bitsCnt op
+    let newb = bitsCnt np
+    case oldb == newb of
+      True  => Nothing
+      False => Just "// warning: implicit conversion of port connection \{specialWord oldb newb} from \{show oldb} to \{show newb} bits" where
+        specialWord : (oldb : Nat) -> (newb : Nat) -> String
+        specialWord o n =  if o > n then "truncates" else "expands"
+
+  export
+  isSigned : SVBasic -> Bool
+  isSigned Logic'   = False
+  isSigned Wire'    = False
+  isSigned Uwire'   = False
+  isSigned Int'     = True
+  isSigned Integer' = True
+  isSigned Bit'     = False
+  isSigned Real'    = True
+
+  export
+  superBasic : SVType -> SVBasic
+  superBasic (Arr (Unpacked t s e)) = superBasic t
+  superBasic (Arr (Packed t s e)) = superBasic t
+  superBasic (Var x) = x
+
+  export
+  printSignednessWarning : SVType -> String -> SVType -> String -> Maybe String
+  printSignednessWarning op on np nn = do
+    let olds = isSigned $ superBasic op
+    let news = isSigned $ superBasic np
+    case olds == news of
+      True  => Nothing
+      False => Just "// warning: implicit conversion changes signedness from \{specialWorld olds} to \{specialWorld news}" where
+        specialWorld : Bool -> String
+        specialWorld isSigned = if isSigned then "signed" else "unsigned"
+
+  export
+  states : SVBasic -> Nat
+  states Logic'   = 4
+  states Wire'    = 4
+  states Uwire'   = 4
+  states Int'     = 2
+  states Integer' = 4
+  states Bit'     = 2
+  states Real'    = 2
+
+  export
+  printStatesWarning : SVType -> String -> SVType -> String -> Maybe String
+  printStatesWarning op on np nn = do
+    let olds = states $ superBasic op
+    let news = states $ superBasic np
+    case olds == news of
+      True  => Nothing
+      False => Just "// warning: implicit conversion changes possible bit states from \{show olds}-state to \{show news}-state"
+
+parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : FinsList ms.length) (pms : PrintableModules ms) 
+           (subMINames : Vect (length $ allInputs {ms} subMs) String) (subMONames : Vect (length $ allOutputs {ms} subMs) String)
+           (ports : ModuleSigsList)
+
+  printSubmodules : List String -> List (Fin (length (subMs.asList)), Fin (length ms)) -> List $ Doc opts
+  printSubmodules  subMInstanceNames subMsIdxs = foldl plus' [] $ map printSubm $ zip subMInstanceNames subMsIdxs where
+    plus' : List (Doc opts) -> List (Doc opts) -> List (Doc opts)
+    plus' a b = a ++ b
+
+    printImplicitCast : SVType -> String -> SVType -> String -> List String
+    printImplicitCast op on np nn = do
+      let warnings = catMaybes [ printTruncationWarning op on np nn, printSignednessWarning op on np nn, printStatesWarning op on np nn ]
+      case isNil warnings of
+        True  => []
+        False => warnings ++ [ "//   \{printConnType op on} -> \{printConnType np nn}" ]
+
+    setDilimiters : List (List String) -> List String
+    setDilimiters (x::[]::xs) = x ++ setDilimiters xs
+    setDilimiters ([]::y::xs) = y ++ setDilimiters xs
+    setDilimiters (x::y::xs)  = x ++ ["//"] ++ y ++ setDilimiters xs
+    setDilimiters (x::xs)     = x ++ setDilimiters xs
+    setDilimiters []          = []
+
+    printAllImplicitCasts : List SVType -> List String -> List SVType -> List String -> List $ List String
+    printAllImplicitCasts (p::ps) (n::ns) (p'::ps') (n'::ns') = printImplicitCast p n p' n' :: printAllImplicitCasts ps ns ps' ns'
+    printAllImplicitCasts _       _       _         _         = []
+
+    printSubm' : (pre : Doc opts) -> (siNames : List String) -> (soNames : List String) -> (exM : ModuleSig) ->
+                 (ctxInps : List SVType) -> (ctxOuts : List SVType) -> (exInps : List String) -> (exOuts : List String) -> List (Doc opts)
+    printSubm' pre siNames soNames exM ctxInps ctxOuts exInps exOuts = do
+      let warnings = printAllImplicitCasts (toList exM.outputs) exOuts ctxOuts soNames ++
+                     printAllImplicitCasts ctxInps siNames (toList exM.inputs) exInps
+      let warnings = setDilimiters warnings
+      case isNil warnings of
+        True  => [ pre, line "" ]
+        False => [ pre ] ++ map line warnings ++ [ line "" ]
+
+    printSubm : (String, (Fin (length (subMs.asList)), Fin (length ms))) -> List $ Doc opts
+    printSubm (instanceName, subMsIdx, msIdx) = do
+      let pre : Doc opts = line (index msIdx $ toVect $ allModuleNames pms) <++> line instanceName
+
+      let inputs  = List.allFins (index ms $ index' subMs.asList subMsIdx).inpsCount <&> toTotalInputsIdx subMsIdx
+      let outputs = List.allFins (index ms $ index' subMs.asList subMsIdx).outsCount <&> toTotalOutputsIdx subMsIdx
+
+      let siNames = inputs  <&> flip index subMINames
+      let soNames = outputs <&> flip index subMONames
+
+      let ctxInps = catMaybes $ map (\x => typeOf' (allInputs'  ports) x) inputs
+      let ctxOuts = catMaybes $ map (\x => typeOf' (allOutputs' ports) x) outputs
+
+      let modulePrintable = index pms msIdx
+      case modulePrintable.insOuts of
+        StdModule  _      _      => printSubm' (pre <+> concatInpsOuts siNames soNames) siNames soNames (index ms msIdx) ctxInps ctxOuts siNames soNames
+        UserModule exInps exOuts => do
+          let inpsJoined = nameBasedConnections (toList exInps) siNames
+          let outsJoined = nameBasedConnections (toList exOuts) soNames
+
+          printSubm' (pre <+> concatInpsOuts inpsJoined outsJoined) siNames soNames (index ms msIdx) ctxInps ctxOuts (toList exInps) (toList exOuts)
+
 public export
 data ExtendedModules : ModuleSigsList -> Type where
 
@@ -276,21 +417,22 @@ data ExtendedModules : ModuleSigsList -> Type where
   NewCompositeModule :
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
-    (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs) False) ->
-    (ssto : Connections (m.inputs ++ allOutputs {ms} subMs) (m.outputs)            True ) ->
+    (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs) False m.inpsCount) ->
+    (ssto : Connections (m.inputs ++ allOutputs {ms} subMs) (m.outputs)            True  m.inpsCount) ->
     (assignsSInps : List $ Fin (allInputs {ms} subMs).length) ->
     (assignsTOuts : List $ Fin (m.outputs).length) ->
     (assignsSS : List $ Fin (m.inputs ++ allOutputs {ms} subMs).length) ->
     {pl : PortsList} ->
     (literals : LiteralsList pl) ->
     (cont : ExtendedModules $ m::ms) ->
+    (ports : ModuleSigsList) ->
     ExtendedModules ms
 
 export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
                 (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => ExtendedModules ms -> Gen0 $ Doc opts
 prettyModules x _         End = pure empty
-prettyModules x pms @{un} (NewCompositeModule m subMs sssi ssto assignsSInps assignsTOuts assignsSS literals cont) = do
+prettyModules x pms @{un} (NewCompositeModule m subMs sssi ssto assignsSInps assignsTOuts assignsSS literals cont ports) = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} (allModuleNames pms) un
 
@@ -335,25 +477,9 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi ssto assignsSInps ass
       let outerModuleIO = toList $ line <$> (outerModuleOutputs ++ outerModuleInputs)
       [ tuple outerModuleIO <+> symbol ';' , line "" ] ++
       (unpackedDecls <&> \(unp) : String => line unp <+> symbol ';') ++ [ line "" ] ++
-        (zip (toList subMInstanceNames) (withIndex subMs.asList) <&> \(instanceName, subMsIdx, msIdx) =>
-          line (index msIdx $ toVect (allModuleNames pms)) <++> line instanceName <+> do
-            let inputs  = List.allFins (index ms $ index' subMs.asList subMsIdx).inpsCount <&> toTotalInputsIdx subMsIdx
-            let outputs = List.allFins (index ms $ index' subMs.asList subMsIdx).outsCount <&> toTotalOutputsIdx subMsIdx
-
-            let inputs  = inputs  <&> flip index subMINames
-            let outputs = outputs <&> flip index subMONames
-
-            let modulePrintable = index pms msIdx
-            case modulePrintable.insOuts of
-              StdModule  _        _         => concatInpsOuts inputs outputs
-              UserModule exInputs exOutputs => do
-                let inpsJoined = nameBasedConnections (toList exInputs)  inputs
-                let outsJoined = nameBasedConnections (toList exOutputs) outputs
-
-                concatInpsOuts inpsJoined outsJoined
-        )
-        ++ [ line "", line "// Top inputs -> top outputs assigns" ] ++ (map line $ toList tito)
-        ++ [ line "", line "// Assigns" ] ++ (map line assignments)
+      printSubmodules m ms subMs pms subMINames subMONames ports (toList subMInstanceNames) (withIndex subMs.asList) ++
+      [ line "", line "// Top inputs -> top outputs assigns" ] ++ (map line $ toList tito) ++
+      [ line "", line "// Assigns" ] ++ (map line assignments)
     , line ""
     , recur
     ]

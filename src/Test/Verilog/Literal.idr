@@ -1,6 +1,6 @@
 module Test.Verilog.Literal
 
-import public Test.Verilog.Module
+import public Test.Verilog.SVType
 
 import Data.Fuel
 
