@@ -355,10 +355,7 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : Fi
            (ports : ModuleSigsList)
 
   printSubmodules : List String -> List (Fin (length (subMs.asList)), Fin (length ms)) -> List $ Doc opts
-  printSubmodules  subMInstanceNames subMsIdxs = foldl plus' [] $ map printSubm $ zip subMInstanceNames subMsIdxs where
-    plus' : List (Doc opts) -> List (Doc opts) -> List (Doc opts)
-    plus' a b = a ++ b
-
+  printSubmodules  subMInstanceNames subMsIdxs = foldl (++) [] $ map printSubm $ zip subMInstanceNames subMsIdxs where
     printImplicitCast : SVType -> String -> SVType -> String -> List String
     printImplicitCast op on np nn = do
       let warnings = catMaybes [ printTruncationWarning op on np nn, printSignednessWarning op on np nn, printStatesWarning op on np nn ]
