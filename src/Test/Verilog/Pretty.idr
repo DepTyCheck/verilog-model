@@ -363,23 +363,22 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : Fi
         True  => []
         False => warnings ++ [ "//   \{printConnType op on} -> \{printConnType np nn}" ]
 
-    setDilimiters : List (List String) -> List String
-    setDilimiters (x::[]::xs) = x ++ setDilimiters xs
-    setDilimiters ([]::y::xs) = y ++ setDilimiters xs
-    setDilimiters (x::y::xs)  = x ++ ["//"] ++ y ++ setDilimiters xs
-    setDilimiters (x::xs)     = x ++ setDilimiters xs
-    setDilimiters []          = []
-
-    printAllImplicitCasts : List SVType -> List String -> List SVType -> List String -> List $ List String
-    printAllImplicitCasts (p::ps) (n::ns) (p'::ps') (n'::ns') = printImplicitCast p n p' n' :: printAllImplicitCasts ps ns ps' ns'
+    printAllImplicitCasts : List SVType -> List String -> List SVType -> List String -> List String
+    printAllImplicitCasts (p::ps) (n::ns) (p'::ps') (n'::ns') = do
+      let curr = printImplicitCast p n p' n'
+      let rest = printAllImplicitCasts ps ns ps' ns'
+      case isNil curr of
+        True  => rest
+        False => if isNil rest then curr else curr ++ [ "//" ] ++ rest
     printAllImplicitCasts _       _       _         _         = []
 
     printSubm' : (pre : Doc opts) -> (siNames : List String) -> (soNames : List String) -> (exM : ModuleSig) ->
                  (ctxInps : List SVType) -> (ctxOuts : List SVType) -> (exInps : List String) -> (exOuts : List String) -> List (Doc opts)
     printSubm' pre siNames soNames exM ctxInps ctxOuts exInps exOuts = do
-      let warnings = printAllImplicitCasts (toList exM.outputs) exOuts ctxOuts soNames ++
-                     printAllImplicitCasts ctxInps siNames (toList exM.inputs) exInps
-      let warnings = setDilimiters warnings
+      let warningsSubOuts = printAllImplicitCasts (toList exM.outputs) exOuts ctxOuts soNames
+      let warningsSubInps = printAllImplicitCasts ctxInps siNames (toList exM.inputs) exInps
+      let warnings = if isNil warningsSubOuts || 
+                        isNil warningsSubInps then warningsSubOuts ++ warningsSubInps else warningsSubOuts ++ [ "//" ] ++ warningsSubInps
       case isNil warnings of
         True  => [ pre, line "" ]
         False => [ pre ] ++ map line warnings ++ [ line "" ]
