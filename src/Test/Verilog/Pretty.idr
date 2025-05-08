@@ -367,9 +367,7 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : Fi
     printAllImplicitCasts (p::ps) (n::ns) (p'::ps') (n'::ns') = do
       let curr = printImplicitCast p n p' n'
       let rest = printAllImplicitCasts ps ns ps' ns'
-      case isNil curr of
-        True  => rest
-        False => if isNil rest then curr else curr ++ [ "//" ] ++ rest
+      if isNil curr || isNil rest then curr ++ rest else curr ++ ["//"] ++ rest
     printAllImplicitCasts _       _       _         _         = []
 
     printSubm' : (pre : Doc opts) -> (siNames : List String) -> (soNames : List String) -> (exM : ModuleSig) ->
