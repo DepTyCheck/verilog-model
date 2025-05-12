@@ -244,13 +244,6 @@ namespace IndexInPorts
     Here : {x : SVType} -> {xs : PortsList} -> IndexInPorts x (x :: xs)
     There : {y : SVType} -> {xs : PortsList} -> {x : SVType} -> IndexInPorts y xs -> IndexInPorts y (x :: xs)
 
-  export
-  DecEq (IndexInPorts x ports) where
-    decEq Here Here = Yes Refl
-    decEq (Here {xs = xs} {x = x}) (There {x} {xs} {y = x} y) = No $ \Refl impossible
-    decEq (There _) Here = No $ \Refl impossible
-    decEq (There {y} {xs} {x} i) (There {y} {xs} {x} z) = ?k_3
-
   public export
   data ListOfPortsIndices : PortsList -> Type where
     Nil  : {ports : _} -> ListOfPortsIndices ports
