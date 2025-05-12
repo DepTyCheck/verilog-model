@@ -47,6 +47,58 @@ import Test.DepTyCheck.Gen.Coverage
 public export
 data SVBasic = Logic' | Wire' | Uwire' | Int' | Integer' | Bit' | Real'
 
+export
+DecEq SVBasic where
+  decEq Logic' Logic' = Yes Refl
+  decEq Logic' Wire' = No $ \Refl impossible
+  decEq Logic' Uwire' = No $ \Refl impossible
+  decEq Logic' Int' = No $ \Refl impossible
+  decEq Logic' Integer' = No $ \Refl impossible
+  decEq Logic' Bit' = No $ \Refl impossible
+  decEq Logic' Real' = No $ \Refl impossible
+  decEq Wire' Logic' = No $ \Refl impossible
+  decEq Wire' Wire' = Yes Refl
+  decEq Wire' Uwire' = No $ \Refl impossible
+  decEq Wire' Int' = No $ \Refl impossible
+  decEq Wire' Integer' = No $ \Refl impossible
+  decEq Wire' Bit' = No $ \Refl impossible
+  decEq Wire' Real' = No $ \Refl impossible
+  decEq Uwire' Logic' = No $ \Refl impossible
+  decEq Uwire' Wire' = No $ \Refl impossible
+  decEq Uwire' Uwire' = Yes Refl
+  decEq Uwire' Int' = No $ \Refl impossible
+  decEq Uwire' Integer' = No $ \Refl impossible
+  decEq Uwire' Bit' = No $ \Refl impossible
+  decEq Uwire' Real' = No $ \Refl impossible
+  decEq Int' Logic' = No $ \Refl impossible
+  decEq Int' Wire' = No $ \Refl impossible
+  decEq Int' Uwire' = No $ \Refl impossible
+  decEq Int' Int' = Yes Refl
+  decEq Int' Integer' = No $ \Refl impossible
+  decEq Int' Bit' = No $ \Refl impossible
+  decEq Int' Real' = No $ \Refl impossible
+  decEq Integer' Logic' = No $ \Refl impossible
+  decEq Integer' Wire' = No $ \Refl impossible
+  decEq Integer' Uwire' = No $ \Refl impossible
+  decEq Integer' Int' = No $ \Refl impossible
+  decEq Integer' Integer' = Yes Refl
+  decEq Integer' Bit' = No $ \Refl impossible
+  decEq Integer' Real' = No $ \Refl impossible
+  decEq Bit' Logic' = No $ \Refl impossible
+  decEq Bit' Wire' = No $ \Refl impossible
+  decEq Bit' Uwire' = No $ \Refl impossible
+  decEq Bit' Int' = No $ \Refl impossible
+  decEq Bit' Integer' = No $ \Refl impossible
+  decEq Bit' Bit' = Yes Refl
+  decEq Bit' Real' = No $ \Refl impossible
+  decEq Real' Logic' = No $ \Refl impossible
+  decEq Real' Wire' = No $ \Refl impossible
+  decEq Real' Uwire' = No $ \Refl impossible
+  decEq Real' Int' = No $ \Refl impossible
+  decEq Real' Integer' = No $ \Refl impossible
+  decEq Real' Bit' = No $ \Refl impossible
+  decEq Real' Real' = Yes Refl
+
 public export
 data EqSVBasic : SVBasic -> SVBasic -> Type where
   EqLogic'   : EqSVBasic Logic'   Logic'
@@ -63,6 +115,10 @@ data AllowedInPackedArr : SVType -> Type
 
 public export
 data SVType = Arr (SVArray t s e) | Var SVBasic
+
+export
+Injective Var where
+  injective Refl = Refl
 
 ||| The main difference between an unpacked array and a packed array is that
 ||| an unpacked array is not guaranteed to be represented as a contiguous set of bits
@@ -93,10 +149,64 @@ data AllowedInPackedArr : SVType -> Type where
   -- R : AllowedInPackedArr Reg' -- Uncomment when Reg is added to the SVBasic
   P : AllowedInPackedArr (Arr (Packed {} @{_}))
 
+export
+DecEq (AllowedInPackedArr t)
+
+export
+DecEq (SVArray t start end)
+
+export
+DecEq SVType where
+  decEq (Arr (Unpacked t s e)) (Arr (Unpacked t' s' e')) with (decEq t t')
+    decEq (Arr (Unpacked t s e)) (Arr (Unpacked t' s' e')) | No p = No $ \Refl => p Refl
+    decEq (Arr (Unpacked t s e)) (Arr (Unpacked t s' e')) | Yes Refl with (decEq s s')
+      decEq (Arr (Unpacked t s e)) (Arr (Unpacked t s' e')) | Yes Refl | No p = No $ \Refl => p Refl
+      decEq (Arr (Unpacked t s e)) (Arr (Unpacked t s e')) | Yes Refl | Yes Refl with (decEq e e')
+        decEq (Arr (Unpacked t s e)) (Arr (Unpacked t s e')) | Yes Refl | Yes Refl | No p = No $ \Refl => p Refl
+        decEq (Arr (Unpacked t s e)) (Arr (Unpacked t s e)) | Yes Refl | Yes Refl | Yes Refl = Yes Refl
+  decEq (Arr (Unpacked t s e)) (Arr (Packed t' s' e' @{k'})) = No $ \Refl impossible
+  decEq (Arr (Packed t s e @{k})) (Arr (Unpacked t' s' e')) = No $ \Refl impossible
+  decEq (Arr (Packed t s e @{k})) (Arr (Packed t' s' e' @{k'})) with (decEq t t')
+    decEq (Arr (Packed t s e @{k})) (Arr (Packed t' s' e' @{k'})) | No p = No $ \Refl => p Refl
+    decEq (Arr (Packed t s e @{k})) (Arr (Packed t s' e' @{k'})) | Yes Refl with (decEq s s')
+      decEq (Arr (Packed t s e @{k})) (Arr (Packed t s' e' @{k'})) | Yes Refl | No p = No $ \Refl => p Refl
+      decEq (Arr (Packed t s e @{k})) (Arr (Packed t s e' @{k'})) | Yes Refl | Yes Refl with (decEq e e')
+        decEq (Arr (Packed t s e @{k})) (Arr (Packed t s e' @{k'})) | Yes Refl | Yes Refl | No p = No $ \Refl => p Refl
+        decEq (Arr (Packed t s e @{k})) (Arr (Packed t s e @{k'})) | Yes Refl | Yes Refl | Yes Refl with (decEq k k')
+          decEq (Arr (Packed t s e @{k})) (Arr (Packed t s e @{k'})) | Yes Refl | Yes Refl | Yes Refl | No p = No $ \Refl => p Refl
+          decEq (Arr (Packed t s e @{k})) (Arr (Packed t s e @{k})) | Yes Refl | Yes Refl | Yes Refl | Yes Refl = Yes Refl
+  decEq (Arr x) (Var y) = No $ \Refl impossible
+  decEq (Var x) (Arr y) = No $ \Refl impossible
+  decEq (Var x) (Var y) = decEqCong (decEq x y)
+
+DecEq (AllowedInPackedArr t) where
+  decEq B B = Yes Refl
+  decEq L L = Yes Refl
+  decEq P P = Yes Refl
+
+DecEq (SVArray t start end) where
+  decEq (Unpacked t start end) (Unpacked t start end) = Yes Refl
+  decEq (Unpacked _ _ _) (Packed _ _ _) = No $ \Refl impossible
+  decEq (Packed t start end @{k}) (Unpacked t start end) = No $ \Refl impossible
+  decEq (Packed t start end @{k}) (Packed t start end @{k'}) with (decEq k k')
+    decEq (Packed t start end @{k}) (Packed t start end @{k'}) | No p = No $ \Refl => p Refl
+    decEq (Packed t start end @{k}) (Packed t start end @{k})  | Yes Refl = Yes Refl
+
 namespace Ports
 
   public export
   data PortsList = Nil | (::) SVType PortsList
+
+  export
+  DecEq PortsList where
+    decEq [] [] = Yes Refl
+    decEq [] (_ :: _) = No $ \Refl impossible
+    decEq (x :: z) [] = No $ \Refl impossible
+    decEq (x :: xs) (x' :: xs'') with (decEq x x')
+      decEq (x :: xs) (x' :: xs'') | No p = No $ \Refl => p Refl
+      decEq (x :: xs) (x :: xs'') | Yes Refl with (decEq xs xs'')
+        decEq (x :: xs) (x :: xs'') | Yes Refl | No p = No $ \Refl => p Refl
+        decEq (x :: xs) (x :: xs) | Yes Refl | Yes Refl = Yes Refl
 
   public export
   length : PortsList -> Nat
@@ -122,12 +232,29 @@ namespace Ports
   portsListAppendLen []        ys = Refl
   portsListAppendLen (_ :: xs) ys = rewrite portsListAppendLen xs ys in Refl
 
-  -- Maybe, specialised type `IndexIn : PortsList -> Type` isomorphic to `Fin (length xs)`
-
   public export
   typeOf : (xs : PortsList) -> Fin (length xs) -> SVType
   typeOf (p::_ ) FZ     = p
   typeOf (_::ps) (FS i) = typeOf ps i
+
+namespace IndexInPorts
+
+  public export
+  data IndexInPorts : SVType -> PortsList -> Type where
+    Here : {x : SVType} -> {xs : PortsList} -> IndexInPorts x (x :: xs)
+    There : {y : SVType} -> {xs : PortsList} -> {x : SVType} -> IndexInPorts y xs -> IndexInPorts y (x :: xs)
+
+  export
+  DecEq (IndexInPorts x ports) where
+    decEq Here Here = Yes Refl
+    decEq (Here {xs = xs} {x = x}) (There {x} {xs} {y = x} y) = No $ \Refl impossible
+    decEq (There _) Here = No $ \Refl impossible
+    decEq (There {y} {xs} {x} i) (There {y} {xs} {x} z) = ?k_3
+
+  public export
+  data ListOfPortsIndices : PortsList -> Type where
+    Nil  : {ports : _} -> ListOfPortsIndices ports
+    (::) : {x : _} -> {ports : _} -> IndexInPorts x ports -> ListOfPortsIndices ports -> ListOfPortsIndices ports
 
 namespace ModuleSig
 
@@ -263,7 +390,7 @@ namespace ConnsList
     ZS  : NotEqFin FZ (FS i)
     SZ  : NotEqFin (FS i) FZ
     Rec : NotEqFin x y -> NotEqFin (FS x) (FS y)
-  
+
   public export
   data Connections : (srcs, sinks : PortsList) -> (isUnique : Bool) -> Type
 
@@ -276,7 +403,7 @@ namespace ConnsList
   data Connections : (srcs, sinks : PortsList) -> (isUnique : Bool) -> Type where
     Empty : Connections srcs [] u
     Cons  : (sfs : SourceForSink srcs sink) -> (rest : Connections srcs sinks u) -> NoSourceConns sfs rest -> Connections srcs (sink :: sinks) u
-  
+
   ||| List of source indexes
   public export
   consToFins : Connections srcs sinks u -> FinsList (srcs.length)

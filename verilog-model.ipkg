@@ -32,3 +32,5 @@ modules = Test.Verilog.Module
         , Test.Verilog.Assign.Derived
         , Test.Verilog.Literal.Derived
         , Test.Verilog.Pretty
+        , Test.Verilog.Expression
+        , Test.Verilog.Expression.Derived
