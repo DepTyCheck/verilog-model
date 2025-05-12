@@ -37,3 +37,5 @@ modules = Test.Common.Utils
         , Test.Verilog.Connections.Derived
         , Test.Verilog.TMPExpression.Derived
         , Test.Verilog.Pretty
+        , Test.Verilog.Expression
+        , Test.Verilog.Expression.Derived

@@ -3,6 +3,12 @@ module Test.Verilog.SVType
 import Data.Fuel
 import Data.Vect
 
+import Data.List
+
+import Decidable.Equality
+
+import Decidable.Decidable
+
 import public Test.Common.Utils
 
 %default total
@@ -41,6 +47,155 @@ import public Test.Common.Utils
 public export
 data NetType = Supply0' | Supply1' | Triand' | Trior' | Trireg' | Tri0' | Tri1' | Tri' | Uwire' | Wire' | Wand' | Wor';
 
+DecEq NetType where
+  decEq Supply0' Supply0' = Yes Refl
+  decEq Supply0' Supply1' = No  $ \Refl impossible
+  decEq Supply0' Triand'  = No  $ \Refl impossible
+  decEq Supply0' Trior'   = No  $ \Refl impossible
+  decEq Supply0' Trireg'  = No  $ \Refl impossible
+  decEq Supply0' Tri0'    = No  $ \Refl impossible
+  decEq Supply0' Tri1'    = No  $ \Refl impossible
+  decEq Supply0' Tri'     = No  $ \Refl impossible
+  decEq Supply0' Uwire'   = No  $ \Refl impossible
+  decEq Supply0' Wire'    = No  $ \Refl impossible
+  decEq Supply0' Wand'    = No  $ \Refl impossible
+  decEq Supply0' Wor'     = No  $ \Refl impossible
+  decEq Supply1' Supply0' = No  $ \Refl impossible
+  decEq Supply1' Supply1' = Yes Refl
+  decEq Supply1' Triand'  = No  $ \Refl impossible
+  decEq Supply1' Trior'   = No  $ \Refl impossible
+  decEq Supply1' Trireg'  = No  $ \Refl impossible
+  decEq Supply1' Tri0'    = No  $ \Refl impossible
+  decEq Supply1' Tri1'    = No  $ \Refl impossible
+  decEq Supply1' Tri'    =  No  $ \Refl impossible
+  decEq Supply1' Uwire'   = No  $ \Refl impossible
+  decEq Supply1' Wire'    = No  $ \Refl impossible
+  decEq Supply1' Wand'    = No  $ \Refl impossible
+  decEq Supply1' Wor'     = No  $ \Refl impossible
+  decEq Triand'  Supply0' = No  $ \Refl impossible
+  decEq Triand'  Supply1' = No  $ \Refl impossible
+  decEq Triand'  Triand'  = Yes Refl
+  decEq Triand'  Trior'   = No  $ \Refl impossible
+  decEq Triand'  Trireg'  = No  $ \Refl impossible
+  decEq Triand'  Tri0'    = No  $ \Refl impossible
+  decEq Triand'  Tri1'    = No  $ \Refl impossible
+  decEq Triand'  Tri'     = No  $ \Refl impossible
+  decEq Triand'  Uwire'   = No  $ \Refl impossible
+  decEq Triand'  Wire'    = No  $ \Refl impossible
+  decEq Triand'  Wand'    = No  $ \Refl impossible
+  decEq Triand'  Wor'     = No  $ \Refl impossible
+  decEq Trior'   Supply0' = No  $ \Refl impossible
+  decEq Trior'   Supply1' = No  $ \Refl impossible
+  decEq Trior'   Triand'  = No  $ \Refl impossible
+  decEq Trior'   Trior'   = Yes Refl
+  decEq Trior'   Trireg'  = No  $ \Refl impossible
+  decEq Trior'   Tri0'    = No  $ \Refl impossible
+  decEq Trior'   Tri1'    = No  $ \Refl impossible
+  decEq Trior'   Tri'     = No  $ \Refl impossible
+  decEq Trior'   Uwire'   = No  $ \Refl impossible
+  decEq Trior'   Wire'    = No  $ \Refl impossible
+  decEq Trior'   Wand'    = No  $ \Refl impossible
+  decEq Trior'   Wor'     = No  $ \Refl impossible
+  decEq Trireg'  Supply0' = No  $ \Refl impossible
+  decEq Trireg'  Supply1' = No  $ \Refl impossible
+  decEq Trireg'  Triand'  = No  $ \Refl impossible
+  decEq Trireg'  Trior'   = No  $ \Refl impossible
+  decEq Trireg'  Trireg'  = Yes Refl
+  decEq Trireg'  Tri0'    = No  $ \Refl impossible
+  decEq Trireg'  Tri1'    = No  $ \Refl impossible
+  decEq Trireg'  Tri'     = No  $ \Refl impossible
+  decEq Trireg'  Uwire'   = No  $ \Refl impossible
+  decEq Trireg'  Wire'    = No  $ \Refl impossible
+  decEq Trireg'  Wand'    = No  $ \Refl impossible
+  decEq Trireg'  Wor'     = No  $ \Refl impossible
+  decEq Tri0'    Supply0' = No  $ \Refl impossible
+  decEq Tri0'    Supply1' = No  $ \Refl impossible
+  decEq Tri0'    Triand'  = No  $ \Refl impossible
+  decEq Tri0'    Trior'   = No  $ \Refl impossible
+  decEq Tri0'    Trireg'  = No  $ \Refl impossible
+  decEq Tri0'    Tri0'    = Yes Refl
+  decEq Tri0'    Tri1'    = No  $ \Refl impossible
+  decEq Tri0'    Tri'     = No  $ \Refl impossible
+  decEq Tri0'    Uwire'   = No  $ \Refl impossible
+  decEq Tri0'    Wire'    = No  $ \Refl impossible
+  decEq Tri0'    Wand'    = No  $ \Refl impossible
+  decEq Tri0'    Wor'     = No  $ \Refl impossible
+  decEq Tri1'    Supply0' = No  $ \Refl impossible
+  decEq Tri1'    Supply1' = No  $ \Refl impossible
+  decEq Tri1'    Triand'  = No  $ \Refl impossible
+  decEq Tri1'    Trior'   = No  $ \Refl impossible
+  decEq Tri1'    Trireg'  = No  $ \Refl impossible
+  decEq Tri1'    Tri0'    = No  $ \Refl impossible
+  decEq Tri1'    Tri1'    = Yes Refl
+  decEq Tri1'    Tri'     = No  $ \Refl impossible
+  decEq Tri1'    Uwire'   = No  $ \Refl impossible
+  decEq Tri1'    Wire'    = No  $ \Refl impossible
+  decEq Tri1'    Wand'    = No  $ \Refl impossible
+  decEq Tri1'    Wor'     = No  $ \Refl impossible
+  decEq Tri'     Supply0' = No  $ \Refl impossible
+  decEq Tri'     Supply1' = No  $ \Refl impossible
+  decEq Tri'     Triand'  = No  $ \Refl impossible
+  decEq Tri'     Trior'   = No  $ \Refl impossible
+  decEq Tri'     Trireg'  = No  $ \Refl impossible
+  decEq Tri'     Tri0'    = No  $ \Refl impossible
+  decEq Tri'     Tri1'    = No  $ \Refl impossible
+  decEq Tri'     Tri'     = Yes Refl
+  decEq Tri'     Uwire'   = No  $ \Refl impossible
+  decEq Tri'     Wire'    = No  $ \Refl impossible
+  decEq Tri'     Wand'    = No  $ \Refl impossible
+  decEq Tri'     Wor'     = No  $ \Refl impossible
+  decEq Uwire'   Supply0' = No  $ \Refl impossible
+  decEq Uwire'   Supply1' = No  $ \Refl impossible
+  decEq Uwire'   Triand'  = No  $ \Refl impossible
+  decEq Uwire'   Trior'   = No  $ \Refl impossible
+  decEq Uwire'   Trireg'  = No  $ \Refl impossible
+  decEq Uwire'   Tri0'    = No  $ \Refl impossible
+  decEq Uwire'   Tri1'    = No  $ \Refl impossible
+  decEq Uwire'   Tri'     = No  $ \Refl impossible
+  decEq Uwire'   Uwire'   = Yes Refl
+  decEq Uwire'   Wire'    = No  $ \Refl impossible
+  decEq Uwire'   Wand'    = No  $ \Refl impossible
+  decEq Uwire'   Wor'     = No  $ \Refl impossible
+  decEq Wire'    Supply0' = No  $ \Refl impossible
+  decEq Wire'    Supply1' = No  $ \Refl impossible
+  decEq Wire'    Triand'  = No  $ \Refl impossible
+  decEq Wire'    Trior'   = No  $ \Refl impossible
+  decEq Wire'    Trireg'  = No  $ \Refl impossible
+  decEq Wire'    Tri0'    = No  $ \Refl impossible
+  decEq Wire'    Tri1'    = No  $ \Refl impossible
+  decEq Wire'    Tri'     = No  $ \Refl impossible
+  decEq Wire'    Uwire'   = No  $ \Refl impossible
+  decEq Wire'    Wire'    = Yes Refl
+  decEq Wire'    Wand'    = No  $ \Refl impossible
+  decEq Wire'    Wor'     = No  $ \Refl impossible
+  decEq Wand'    Supply0' = No  $ \Refl impossible
+  decEq Wand'    Supply1' = No  $ \Refl impossible
+  decEq Wand'    Triand'  = No  $ \Refl impossible
+  decEq Wand'    Trior'   = No  $ \Refl impossible
+  decEq Wand'    Trireg'  = No  $ \Refl impossible
+  decEq Wand'    Tri0'    = No  $ \Refl impossible
+  decEq Wand'    Tri1'    = No  $ \Refl impossible
+  decEq Wand'    Tri'     = No  $ \Refl impossible
+  decEq Wand'    Uwire'   = No  $ \Refl impossible
+  decEq Wand'    Wire'    = No  $ \Refl impossible
+  decEq Wand'    Wand'    = Yes Refl
+  decEq Wand'    Wor'     = No  $ \Refl impossible
+  decEq Wor'     Supply0' = No  $ \Refl impossible
+  decEq Wor'     Supply1' = No  $ \Refl impossible
+  decEq Wor'     Triand'  = No  $ \Refl impossible
+  decEq Wor'     Trior'   = No  $ \Refl impossible
+  decEq Wor'     Trireg'  = No  $ \Refl impossible
+  decEq Wor'     Tri0'    = No  $ \Refl impossible
+  decEq Wor'     Tri1'    = No  $ \Refl impossible
+  decEq Wor'     Tri'     = No  $ \Refl impossible
+  decEq Wor'     Uwire'   = No  $ \Refl impossible
+  decEq Wor'     Wire'    = No  $ \Refl impossible
+  decEq Wor'     Wand'    = No  $ \Refl impossible
+  decEq Wor'     Wor'     = Yes Refl
+
+Eq NetType where
+  (==) a b = isYes $ decEq a b
+
 namespace States
   ||| 6.3.1 Logic values
   |||
@@ -51,11 +206,15 @@ namespace States
   public export
   data State = S2 | S4
 
+  DecEq State where
+    decEq S2 S2 = Yes Refl
+    decEq S2 S4 = No  $ \Refl impossible
+    decEq S4 S2 = No  $ \Refl impossible
+    decEq S4 S4 = Yes Refl
+
   public export
   Eq State where
-    (==) S2 S2 = True
-    (==) S4 S4 = True
-    (==) _  _  = False
+    (==) a b = isYes $ decEq a b
 
 namespace IntegerAtomType
 
@@ -68,14 +227,47 @@ namespace IntegerAtomType
   data IntegerAtomType = Byte' | Shortint' | Int' | Longint' | Integer' | Time';
 
   public export
+  DecEq IntegerAtomType where
+    decEq Byte'     Byte'     = Yes Refl
+    decEq Byte'     Shortint' = No $ \Refl impossible
+    decEq Byte'     Int'      = No $ \Refl impossible
+    decEq Byte'     Longint'  = No $ \Refl impossible
+    decEq Byte'     Integer'  = No $ \Refl impossible
+    decEq Byte'     Time'     = No $ \Refl impossible
+    decEq Shortint' Byte'     = No $ \Refl impossible
+    decEq Shortint' Shortint' = Yes Refl
+    decEq Shortint' Int'      = No $ \Refl impossible
+    decEq Shortint' Longint'  = No $ \Refl impossible
+    decEq Shortint' Integer'  = No $ \Refl impossible
+    decEq Shortint' Time'     = No $ \Refl impossible
+    decEq Int'      Byte'     = No $ \Refl impossible
+    decEq Int'      Shortint' = No $ \Refl impossible
+    decEq Int'      Int'      = Yes Refl
+    decEq Int'      Longint'  = No $ \Refl impossible
+    decEq Int'      Integer'  = No $ \Refl impossible
+    decEq Int'      Time'     = No $ \Refl impossible
+    decEq Longint'  Byte'     = No $ \Refl impossible
+    decEq Longint'  Shortint' = No $ \Refl impossible
+    decEq Longint'  Int'      = No $ \Refl impossible
+    decEq Longint'  Longint'  = Yes Refl
+    decEq Longint'  Integer'  = No $ \Refl impossible
+    decEq Longint'  Time'     = No $ \Refl impossible
+    decEq Integer'  Byte'     = No $ \Refl impossible
+    decEq Integer'  Shortint' = No $ \Refl impossible
+    decEq Integer'  Int'      = No $ \Refl impossible
+    decEq Integer'  Longint'  = No $ \Refl impossible
+    decEq Integer'  Integer'  = Yes Refl
+    decEq Integer'  Time'     = No $ \Refl impossible
+    decEq Time'     Byte'     = No $ \Refl impossible
+    decEq Time'     Shortint' = No $ \Refl impossible
+    decEq Time'     Int'      = No $ \Refl impossible
+    decEq Time'     Longint'  = No $ \Refl impossible
+    decEq Time'     Integer'  = No $ \Refl impossible
+    decEq Time'     Time'     = Yes Refl
+
+  public export
   Eq IntegerAtomType where
-    (==) Byte'     Byte'     = True
-    (==) Shortint' Shortint' = True
-    (==) Int'      Int'      = True
-    (==) Longint'  Longint'  = True
-    (==) Integer'  Integer'  = True
-    (==) Time'     Time'     = True
-    (==) _         _         = False
+   (==) a b = isYes $ decEq a b
 
   public export
   bitsCnt : IntegerAtomType -> Nat
@@ -110,11 +302,20 @@ namespace IntegerVectorType
   data IntegerVectorType = Bit' | Logic' | Reg';
 
   public export
+  DecEq IntegerVectorType where
+    decEq Bit'   Bit'   = Yes Refl
+    decEq Bit'   Logic' = No $ \Refl impossible
+    decEq Bit'   Reg'   = No $ \Refl impossible
+    decEq Logic' Bit'   = No $ \Refl impossible
+    decEq Logic' Logic' = Yes Refl
+    decEq Logic' Reg'   = No $ \Refl impossible
+    decEq Reg'   Bit'   = No $ \Refl impossible
+    decEq Reg'   Logic' = No $ \Refl impossible
+    decEq Reg'   Reg'   = Yes Refl
+
+  public export
   Eq IntegerVectorType where
-    (==) Bit'   Bit'   = True
-    (==) Logic' Logic' = True
-    (==) Reg'   Reg'   = True
-    (==) _      _      = False
+   (==) a b = isYes $ decEq a b
 
   public export
   states : IntegerVectorType -> State
@@ -128,11 +329,20 @@ namespace NonIntegerType
   data NonIntegerType = Shortreal' | Real' | Realtime';
 
   public export
+  DecEq NonIntegerType where
+    decEq Shortreal' Shortreal' = Yes Refl
+    decEq Shortreal' Real'      = No $ \Refl impossible
+    decEq Shortreal' Realtime'  = No $ \Refl impossible
+    decEq Real' Shortreal'      = No $ \Refl impossible
+    decEq Real' Real'           = Yes Refl
+    decEq Real' Realtime'       = No $ \Refl impossible
+    decEq Realtime' Shortreal'  = No $ \Refl impossible
+    decEq Realtime' Real'       = No $ \Refl impossible
+    decEq Realtime' Realtime'   = Yes Refl
+
+  public export
   Eq NonIntegerType where
-    (==) Shortreal' Shortreal' = True
-    (==) Real'      Real'      = True
-    (==) Realtime'  Realtime'  = True
-    (==) _          _          = False
+    (==) a b = isYes $ decEq a b
 
   public export
   bitsCnt : NonIntegerType -> Nat
@@ -273,6 +483,61 @@ namespace SVType
     -- Event
     -- User-defined
 
+  public export
+  DecEq (PABasic t)
+
+  public export
+  DecEq SVType where
+    decEq (RVar x) (RVar y) with (decEq x y)
+      decEq (RVar x) (RVar x) | (Yes Refl) = Yes Refl
+      decEq (RVar x) (RVar y) | (No contra) = No $ \Refl => contra Refl
+    decEq (RVar x) (SVar y) = No $ \Refl impossible
+    decEq (RVar x) (VVar y) = No $ \Refl impossible
+    decEq (RVar x) (PackedArr t k j) = No $ \Refl impossible
+    decEq (RVar x) (UnpackedArr y k j) = No $ \Refl impossible
+    decEq (SVar x) (RVar y) = No $ \Refl impossible
+    decEq (SVar x) (SVar y) with (decEq x y)
+      decEq (SVar x) (SVar x) | (Yes Refl) = Yes Refl
+      decEq (SVar x) (SVar y) | (No contra) = No $ \Refl => contra Refl
+    decEq (SVar x) (VVar y) = No $ \Refl impossible
+    decEq (SVar x) (PackedArr t k j) = No $ \Refl impossible
+    decEq (SVar x) (UnpackedArr y k j) = No $ \Refl impossible
+    decEq (VVar x) (RVar y) = No $ \Refl impossible
+    decEq (VVar x) (SVar y) = No $ \Refl impossible
+    decEq (VVar x) (VVar y) with (decEq x y)
+      decEq (VVar x) (VVar x) | (Yes Refl) = Yes Refl
+      decEq (VVar x) (VVar y) | (No contra) = No $ \Refl => contra Refl
+    decEq (VVar x) (PackedArr t k j) = No $ \Refl impossible
+    decEq (VVar x) (UnpackedArr y k j) = No $ \Refl impossible
+    decEq (PackedArr t k j) (RVar x) = No $ \Refl impossible
+    decEq (PackedArr t k j) (SVar x) = No $ \Refl impossible
+    decEq (PackedArr t k j) (VVar x) = No $ \Refl impossible
+    decEq (PackedArr t {p} k j) (PackedArr t' {p = p'} k' j') with (decEq k k')
+      decEq (PackedArr t {p} k j) (PackedArr t' {p = p'} k j') | (Yes Refl) with (decEq j j')
+        decEq (PackedArr t {p} k j) (PackedArr t' {p = p'} k j) | (Yes Refl) | (Yes Refl) with (decEq t t')
+          decEq (PackedArr t {p} k j) (PackedArr t {p = p'} k j) | (Yes Refl) | (Yes Refl) | (Yes Refl) with (decEq p p')
+            decEq (PackedArr t {p} k j) (PackedArr t {p} k j) | (Yes Refl) | (Yes Refl) | (Yes Refl) | (Yes Refl) = Yes Refl
+            decEq (PackedArr t {p} k j) (PackedArr t {p = p'} k j) | (Yes Refl) | (Yes Refl) | (Yes Refl) | (No contra) = No $ \Refl => contra Refl
+          decEq (PackedArr t {p} k j) (PackedArr t' {p = p'} k j) | (Yes Refl) | (Yes Refl) | (No contra) = No $ \Refl => contra Refl
+        decEq (PackedArr t k j) (PackedArr t' k j') | (Yes Refl) | (No contra) = No $ \Refl => contra Refl
+      decEq (PackedArr t k j) (PackedArr t' k' j') | (No contra) = No $ \Refl => contra Refl
+    decEq (PackedArr t k j) (UnpackedArr x i k1) = No $ \Refl impossible
+    decEq (UnpackedArr x k j) (RVar y) = No $ \Refl impossible
+    decEq (UnpackedArr x k j) (SVar y) = No $ \Refl impossible
+    decEq (UnpackedArr x k j) (VVar y) = No $ \Refl impossible
+    decEq (UnpackedArr x k j) (PackedArr t i k1) = No $ \Refl impossible
+    decEq (UnpackedArr x k j) (UnpackedArr x' k' j') with (decEq k k')
+      decEq (UnpackedArr x k j) (UnpackedArr x' k j') | (Yes Refl) with (decEq j j')
+        decEq (UnpackedArr x k j) (UnpackedArr x' k j) | (Yes Refl) | (Yes Refl) with (decEq x x')
+          decEq (UnpackedArr x k j) (UnpackedArr x k j) | (Yes Refl) | (Yes Refl) | (Yes Refl) = Yes Refl
+          decEq (UnpackedArr x k j) (UnpackedArr x' k j') | (Yes Refl) | (Yes Refl) | (No contra) = No $ \Refl => contra Refl
+        decEq (UnpackedArr x k j) (UnpackedArr x' k' j') | (Yes Refl) | (No contra) = No $ \Refl => contra Refl
+      decEq (UnpackedArr x k j) (UnpackedArr x' k' j') | (No contra) = No $ \Refl => contra Refl
+
+  public export
+  Eq SVType where
+    (==) a b = isYes $ decEq a b
+
   ||| 7.4.1 Packed arrays
   ||| Packed arrays can be made of only the single bit data types (bit, logic, reg), enumerated types, and
   ||| recursively other packed arrays and packed structures.
@@ -280,6 +545,15 @@ namespace SVType
   data PABasic : SVType -> Type where
     PS : PABasic $ SVar s
     PA : {t : SVType} -> (p : PABasic t) => PABasic $ PackedArr t s e
+
+  public export
+  DecEq (PABasic t) where
+   decEq PS PS = Yes Refl
+   decEq PA PA = Yes Refl
+
+  public export
+  Eq (PABasic t) where
+    (==) a b = isYes $ decEq a b
 
   ||| 6.11.1 Integral types
   |||
@@ -293,9 +567,25 @@ namespace SVType
     -- Packed struct, union, enum
 
   public export
+  DecEq (SVIntegral t) where
+    decEq ST ST = Yes Refl
+    decEq VT VT = Yes Refl
+    decEq PT PT = Yes Refl
+
+  SVIntegralIsSingleton : (t : SVType) -> (a : SVIntegral t) -> (b : SVIntegral t) -> a === b
+  SVIntegralIsSingleton (SVar t) ST ST = Refl
+  SVIntegralIsSingleton (VVar t) VT VT = Refl
+  SVIntegralIsSingleton (PackedArr t s e) PT PT = Refl
+
+  public export
   data State4S : IntegerVectorType -> Type where
     S4L : State4S Logic'
     S4R : State4S Reg'
+
+  public export
+  DecEq (State4S t) where
+    decEq S4L S4L = Yes Refl
+    decEq S4R S4R = Yes Refl
 
   public export
   data State4V : IntegerAtomType -> Type where
@@ -303,10 +593,59 @@ namespace SVType
     V4T : State4V Time'
 
   public export
+  DecEq (State4V t) where
+    decEq V4I V4I = Yes Refl
+    decEq V4T V4T = Yes Refl
+
+  public export
   data State4 : SVIntegral svt -> Type where
     SS : State4S t => State4 $ ST {t}
     SV : State4V t => State4 $ VT {t}
     SP : {t : SVType} -> (p : PABasic t) => (i : SVIntegral t) => State4 i -> State4 $ PT {t}
+
+  public export
+  DecEq (State4 t) where
+    decEq (SS @{a}) (SS @{b}) with (decEq a b)
+      decEq (SS @{a}) (SS @{a}) | (Yes Refl) = Yes Refl
+      decEq (SS @{a}) (SS @{b}) | (No contra) = No $ \Refl => contra Refl
+    decEq (SV @{a}) (SV @{b}) with (decEq a b)
+      decEq (SV @{a}) (SV @{a}) | (Yes Refl) = Yes Refl
+      decEq (SV @{a}) (SV @{b}) | (No contra) = No $ \Refl => contra Refl
+    decEq (SP @{p} @{i} x) (SP @{p} @{i'} y) with (decEq i i')
+      decEq (SP @{p} @{i} x) (SP @{p} @{i} y) | (Yes Refl) with (decEq x y)
+        decEq (SP @{i} x) (SP @{i} x) | (Yes Refl) | (Yes Refl) = Yes Refl
+        decEq (SP @{i} x) (SP @{i} y) | (Yes Refl) | (No contra) = No $ \Refl => contra Refl
+      decEq (SP @{i} x) (SP @{i'} y) | (No contra) = No $ \Refl => contra Refl
+
+  public export
+  data State2S : IntegerVectorType -> Type where
+    S2B : State2S Bit'
+
+  public export
+  data State2V : IntegerAtomType -> Type where
+    V2Int : State2V Int'
+    V2Long : State2V Longint'
+    V2Short : State2V Shortint'
+    V2Byte : State2V Byte'
+
+  public export
+  data State2 : SVIntegral svt -> Type where
+    SB : State2S t => State2 $ ST {t}
+    SV2 : State2V t => State2 $ VT {t}
+    SP2 : {t : SVType} -> {p : PABasic t} -> (i : SVIntegral t) => State2 i -> State2 $ PT {t} {p}
+
+  EitherState : (svt : SVType) -> (t : SVIntegral svt) -> State2 t -> State4 t -> Void
+  EitherState (SVar Bit') ST SB SS impossible
+  EitherState (SVar Logic') ST SB SS impossible
+  EitherState (SVar Reg') ST SB SS impossible
+  EitherState (VVar Byte') VT SV2 SV impossible
+  EitherState (VVar Shortint') VT SV2 SV impossible
+  EitherState (VVar Int') VT SV2 SV impossible
+  EitherState (VVar Longint') VT SV2 SV impossible
+  EitherState (VVar Integer') VT SV2 SV impossible
+  EitherState (VVar Time') VT SV2 SV impossible
+  EitherState (PackedArr t s e) PT (SP2 {i} x) (SP {i = i'} y) with (SVIntegralIsSingleton t i i')
+    EitherState (PackedArr t s e) PT (SP2 {i} x) (SP {i} y) | Refl = EitherState t i x y
 
   ||| 6.7.1 Net declarations with built-in net types
   ||| A lexical restriction applies to the use of the reg keyword in a net or port declaration. A net type keyword
@@ -329,6 +668,18 @@ namespace SVType
     NA : (i : SVIntegral obj) => (s : State4 i) => NotReg i => AllowedNetData obj
     NB : AllowedNetData t => AllowedNetData $ UnpackedArr t s e
     -- TODO: unpacked structure, union
+
+  DecEq (AllowedNetData t) where
+    decEq (NA @{i} @{s} @{nReg}) (NA @{i'} @{s'} @{nReg'}) with (decEq i i')
+      decEq (NA @{i} @{s} @{nReg}) (NA @{i} @{s'} @{nReg'}) | (Yes Refl) with (decEq s s')
+        decEq (NA @{i} @{s} @{nReg}) (NA @{i} @{s} @{nReg'}) | (Yes Refl) | (Yes Refl)  = ?ggg
+        decEq (NA @{i} @{s} @{nReg}) (NA @{i} @{s'} @{nReg'}) | (Yes Refl) | (No contra) = No $ \Refl => contra Refl
+      decEq (NA @{i} @{s} @{nReg}) (NA @{i'} @{s'} @{nReg'}) | (No contra) = No $ \Refl => contra Refl
+    decEq (NA @{i} @{s} @{nReg}) NB = No $ \Refl impossible
+    decEq (NB @{rq}) NA = No $ \Refl impossible
+    decEq (NB @{rq}) (NB @{rq'}) with (decEq rq rq')
+      decEq (NB @{rq}) (NB @{rq}) | (Yes Refl) = Yes Refl
+      decEq (NB @{rq}) (NB @{rq'}) | (No contra) = No $ \Refl => contra Refl
 
   public export
   bitsCnt : SVType -> Nat
@@ -353,6 +704,80 @@ namespace SVType
   states (VVar x)            = states x
   states (PackedArr   t s e) = states t
   states (UnpackedArr t s e) = states t
+
+  public export
+  boundsLen : Nat -> Nat -> Nat
+  boundsLen a b = (max a b) `minus` (min a b) + 1
+
+  public export
+  (.bitLength) : (t : SVType) -> SVIntegral t => Nat
+  (.bitLength) (SVar _) = 1
+  (.bitLength) (VVar Int') = 32
+  (.bitLength) (VVar Integer') = 32
+  (.bitLength) (VVar Longint') = 64
+  (.bitLength) (VVar Shortint') = 16
+  (.bitLength) (VVar Byte') = 8
+  (.bitLength) (VVar Time') = 64
+  (.bitLength) (PackedArr t@(SVar _) {p = PS} s e) = (boundsLen s e) * t.bitLength
+  (.bitLength) (PackedArr t@(PackedArr _ _ _) {p = PA} s e) = (boundsLen s e) * t.bitLength
+
+  public export
+  data NatEq : Nat -> Nat -> Type where
+    ReflNat : NatEq n n
+
+  NatEqToEq : {n, m : _} -> n `NatEq` m -> n === m
+  NatEqToEq ReflNat = Refl
+
+  EqToNatEq : n === m -> n `NatEq` m
+  EqToNatEq Refl = ReflNat
+
+  public export
+  data IsEquivalentTo : SVType -> SVType -> Type where
+    EquivReflex : IsEquivalentTo t t
+    EquivIntegrals2 : (a' : SVIntegral a) => (b' : SVIntegral b) =>
+                      State2 a' => State2 b' => (be : a.bitLength `NatEq` b.bitLength) =>
+                      IsEquivalentTo a b
+    EquivIntegrals4 : (a' : SVIntegral a) => (b' : SVIntegral b) =>
+                      State4 a' => State4 b' => (be : a.bitLength `NatEq` b.bitLength) =>
+                      IsEquivalentTo a b
+    EquivUnpacked : (equiv : IsEquivalentTo a b) => (be : (boundsLen s1 e1) `NatEq` (boundsLen s2 e2)) =>
+                    IsEquivalentTo (UnpackedArr a s1 e1) (UnpackedArr b s2 e2)
+
+  0 IsEquivalentToSym : {a, b : SVType} -> IsEquivalentTo a b -> IsEquivalentTo b a
+  IsEquivalentToSym {a} {b = a} EquivReflex = EquivReflex
+  IsEquivalentToSym {a} {b} (EquivIntegrals2 {be}) = EquivIntegrals2 {be = EqToNatEq $ sym $ NatEqToEq be}
+  IsEquivalentToSym {a} {b} (EquivIntegrals4 {be}) = EquivIntegrals4 {be = EqToNatEq $ sym $ NatEqToEq be}
+  IsEquivalentToSym {a = (UnpackedArr a s1 e1)} {b = (UnpackedArr b s2 e2)} (EquivUnpacked {equiv} {be}) =
+    EquivUnpacked {equiv = IsEquivalentToSym equiv} {be = EqToNatEq $ sym $ NatEqToEq be}
+
+  0 IsEquivalentToTrans : (a, b, c : SVType) -> IsEquivalentTo a b -> IsEquivalentTo b c -> IsEquivalentTo a c
+  IsEquivalentToTrans a a c EquivReflex p2 = p2
+  IsEquivalentToTrans a b b EquivIntegrals2 EquivReflex = EquivIntegrals2
+  IsEquivalentToTrans a b c (EquivIntegrals2 {b'} {be = be1}) (EquivIntegrals2 {a' = b''} {be = be2}) with (SVIntegralIsSingleton b b' b'')
+    IsEquivalentToTrans a b c (EquivIntegrals2 {b'} {be = be1}) (EquivIntegrals2 {a' = b'} {be = be2}) | Refl =
+      EquivIntegrals2 {be = EqToNatEq $ trans (NatEqToEq be1) (NatEqToEq be2)}
+  IsEquivalentToTrans a b c (EquivIntegrals2 @{_} @{b'} @{_} @{u}) (EquivIntegrals4 @{b''} @{_} @{u'}) with (SVIntegralIsSingleton b b' b'')
+    IsEquivalentToTrans a b c (EquivIntegrals2 @{_} @{b''} @{_} @{u}) (EquivIntegrals4 @{b''} @{_} @{u'}) | Refl = absurd $ EitherState b b'' u u'
+  IsEquivalentToTrans a b b EquivIntegrals4 EquivReflex = EquivIntegrals4
+  IsEquivalentToTrans a b c (EquivIntegrals4 @{_} @{b'} @{_} @{u}) (EquivIntegrals2 @{b''} @{_} @{u'}) with (SVIntegralIsSingleton b b' b'')
+    IsEquivalentToTrans a b c (EquivIntegrals4 @{_} @{b''} @{_} @{u}) (EquivIntegrals2 @{b''} @{_} @{u'}) | Refl = absurd $ EitherState b b'' u' u
+  IsEquivalentToTrans a b c (EquivIntegrals4 {be} {b'}) (EquivIntegrals4 {be = be'} {a' = b''}) with (SVIntegralIsSingleton b b' b'')
+    IsEquivalentToTrans a b c (EquivIntegrals4 {be} {b'}) (EquivIntegrals4 {be = be'} {a' = b'}) | Refl =
+      EquivIntegrals4 {be = EqToNatEq $ trans (NatEqToEq be) (NatEqToEq be')}
+  IsEquivalentToTrans (UnpackedArr a s1 e1) (UnpackedArr b s2 e2) (UnpackedArr b s2 e2) EquivUnpacked EquivReflex = EquivUnpacked
+  IsEquivalentToTrans (UnpackedArr a s1 e1) (UnpackedArr b s2 e2) c EquivUnpacked EquivIntegrals4 impossible
+  IsEquivalentToTrans (UnpackedArr a s1 e1) (UnpackedArr b s2 e2) (UnpackedArr c s3 e3)
+                      (EquivUnpacked {be} {equiv}) (EquivUnpacked {be = be'} {equiv = equiv'}) =
+                      EquivUnpacked {be = EqToNatEq $ trans (NatEqToEq be) (NatEqToEq be')} {equiv = IsEquivalentToTrans a b c equiv equiv'}
+
+  -- For now the definition is quite trivial, but we will need to expand it for unpacked structures, dynamic arrays, etc.
+  public export
+  data IsAssignableTo : SVType -> SVType -> Type where
+    EquivalentsAreAssignable : IsEquivalentTo a b -> IsAssignableTo a b
+    IntegralsAreAssignable : (SVIntegral a) => (SVIntegral b) => IsAssignableTo a b
+
+  0 IsAssignableReflexive : (a : SVType) -> IsAssignableTo a a
+  IsAssignableReflexive a = EquivalentsAreAssignable {a} {b = a} EquivReflex
 
 namespace SVObject
 
@@ -416,6 +841,28 @@ namespace SVObject
   valueOf : SVObject -> SVType
   valueOf (Net _ t) = t
   valueOf (Var   t) = t
+
+  public export
+  DecEq (AllowedNetData t)
+
+  public export
+  DecEq SVObject where
+    decEq (Net x t @{ald} ) (Net x' t' @{ald'}) with (decEq x x')
+      decEq (Net x t @{ald} ) (Net x t' @{ald'}) | (Yes Refl) with (decEq t t')
+        decEq (Net x t @{ald} ) (Net x t @{ald'}) | (Yes Refl) | (Yes Refl) with (decEq ald ald')
+          decEq (Net x t @{ald} ) (Net x t @{ald}) | (Yes Refl) | (Yes Refl) | (Yes Refl) = Yes Refl
+          decEq (Net x t @{ald} ) (Net x' t @{ald'}) | (Yes Refl) | (Yes Refl) | (No contra) = No $ \Refl => contra Refl
+        decEq (Net x t @{ald} ) (Net x' t' @{ald'}) | (Yes Refl) | (No contra) = No $ \Refl => contra Refl
+      decEq (Net x t @{ald} ) (Net x' t' @{ald'}) | (No contra) = No $ \Refl => contra Refl
+    decEq (Net x t) (Var y) = No $ \Refl impossible
+    decEq (Var x) (Net y t) = No $ \Refl impossible
+    decEq (Var x) (Var y) with (decEq x y)
+      decEq (Var x) (Var x) | (Yes Refl) = Yes Refl
+      decEq (Var x) (Var y) | (No contra) = No $ \Refl => contra Refl
+
+  public export
+  Eq SVObject where
+    (==) a b = isYes $ decEq a b
 
 ||| 6.6.2 Unresolved nets
 ||| The uwire net is an unresolved or unidriver wire and is used to model nets that allow only a single driver.
@@ -498,12 +945,122 @@ namespace SVObjList
   comFin : {0 a, b: SVObjList} -> Fin (length a + length b) -> Fin (length (a ++ b))
   comFin = comPS Fin
 
-  -- Maybe, specialised type `IndexIn : PortsList -> Type` isomorphic to `Fin (length xs)`
-
   public export
   typeOf : (xs : SVObjList) -> Fin (length xs) -> SVObject
   typeOf (p::_ ) FZ     = p
   typeOf (_::ps) (FS i) = typeOf ps i
+
+namespace IndexInObjects
+
+  public export
+  data IndexInObjects : SVObjList -> Type where
+    Here : {x : SVObject} -> {xs : SVObjList} -> IndexInObjects (x :: xs)
+    There : {x : SVObject} -> {xs : SVObjList} -> IndexInObjects xs -> IndexInObjects (x :: xs)
+
+  public export
+  DecEq (IndexInObjects objects) where
+    decEq Here Here = Yes Refl
+    decEq (Here) (There _) = No $ \Refl impossible
+    decEq (There _) Here = No $ \Refl impossible
+    decEq (There i) (There i') with (decEq i i')
+      decEq (There i) (There i') | No p = No $ \Refl => p Refl
+      decEq (There i) (There i) | Yes Refl = Yes Refl
+
+  public export
+  Eq (IndexInObjects objects) where
+    (==) x y = isYes $ decEq x y
+
+  public export
+  data ListOfObjIndices : SVObjList -> Type where
+    Nil  : {objects : _} -> ListOfObjIndices objects
+    (::) : {objects : _} -> IndexInObjects objects -> ListOfObjIndices objects -> ListOfObjIndices objects
+
+  public export
+  DecEq (ListOfObjIndices objects) where
+    decEq [] [] = Yes Refl
+    decEq (a :: as) [] = No $ \Refl impossible
+    decEq [] (b :: bs) = No $ \Refl impossible
+    decEq (a :: as) (b :: bs) with (decEq a b)
+      decEq (a :: as) (b :: bs) | No p = No $ \Refl => p Refl
+      decEq (a :: as) (a :: bs) | Yes Refl with (decEq as bs)
+        decEq (a :: as) (a :: bs) | Yes Refl | No p = No $ \Refl => p Refl
+        decEq (a :: as) (a :: as) | Yes Refl | Yes Refl = Yes Refl
+
+  public export
+  Eq (ListOfObjIndices objects) where
+    (==) x y = isYes $ decEq x y
+
+  public export
+  (++) : ListOfObjIndices objects -> ListOfObjIndices objects -> ListOfObjIndices objects
+  (++) [] bs = bs
+  (++) (a :: as) bs = a :: (as ++ bs)
+
+  public export
+  (.toList) : ListOfObjIndices objects -> List (IndexInObjects objects)
+  (.toList) []        = []
+  (.toList) (x :: xs) = x :: xs.toList
+
+  public export
+  (.fromList) : {objects : _} -> List (IndexInObjects objects) -> ListOfObjIndices objects
+  (.fromList) []        = []
+  (.fromList) (x :: xs) = x :: xs.fromList
+
+  public export
+  data TreeOfIndices : SVObjList -> Type where
+    EmptyLeaf : TreeOfIndices objects
+    Leaf : IndexInObjects objects -> TreeOfIndices objects
+    Node2Degree : (left : TreeOfIndices objects) -> (right : TreeOfIndices objects) -> TreeOfIndices objects
+    Node3Degree : (left : TreeOfIndices objects) ->
+                  (middle : TreeOfIndices objects) ->
+                  (right : TreeOfIndices objects) -> TreeOfIndices objects
+
+  public export
+  data AtIndexType : {objects : SVObjList} -> (i : IndexInObjects objects) -> (typeOfPort : SVType) -> Type where
+    [search objects i]
+    HereAtVar : {typeOfObject : SVType} -> {xs : SVObjList} -> AtIndexType {objects = (Var typeOfPort) :: xs} Here typeOfObject
+
+    HereAtNet : {typeOfObject : SVType} -> {xs : SVObjList} -> (0 ald : AllowedNetData typeOfObject) =>
+                AtIndexType {objects = (Net netTy @{ald} typeOfObject) :: xs} Here typeOfObject
+
+    ThereAt : {typeOfPort : SVType} -> {x : SVObject} -> {xs : SVObjList} -> {i : IndexInObjects xs}
+            -> (ati : AtIndexType {objects = xs} i typeOfPort) -> AtIndexType {objects = x :: xs} (There i) typeOfPort
+
+  public export
+  appendIfNew : {objects: _} -> ListOfObjIndices objects -> (i : IndexInObjects objects) -> ListOfObjIndices objects
+  appendIfNew [] i = [i]
+  appendIfNew (a :: as) i with (a == i)
+    _ | True = a :: as
+    _ | False = a :: appendIfNew as i
+
+  public export
+  union : {objects : _} -> ListOfObjIndices objects -> ListOfObjIndices objects -> ListOfObjIndices objects
+  union x y = (x.toList `union` y.toList).fromList
+
+  public export
+  setEqual : ListOfObjIndices objects -> ListOfObjIndices objects -> Bool
+  setEqual x y = ((x.toList `intersect` y.toList) == x.toList) && ((y.toList `intersect` x.toList) == y.toList)
+
+  public export
+  elem : IndexInObjects objects -> ListOfObjIndices objects -> Bool
+  elem i [] = False
+  elem i (x :: xs) with (decEq i x)
+    _ | Yes _ = True
+    _ | No _  = elem i xs
+
+  public export
+  data IsElemOf : (i : IndexInObjects objects) -> TreeOfIndices objects -> Type where
+    InLeaf : IsElemOf i (Leaf i)
+    OnTheLeft : IsElemOf i left -> IsElemOf i (Node2Degree leeft right)
+    OnTheRight : IsElemOf i right -> IsElemOf i (Node2Degree left right)
+    OnTheLeftMost : IsElemOf i left -> IsElemOf i (Node3Degree left middle right)
+    OnTheMiddle : IsElemOf i middle -> IsElemOf i (Node3Degree left middle right)
+    OnTheRightMost : IsElemOf i right -> IsElemOf i (Node3Degree left middle right)
+
+  public export
+  shortenIndexObjs : ListOfObjIndices (p :: ports) -> ListOfObjIndices ports
+  shortenIndexObjs []        = []
+  shortenIndexObjs (Here :: xs) = shortenIndexObjs xs
+  shortenIndexObjs ((There x) :: xs) = x :: (shortenIndexObjs xs)
 
 public export
 isUnpacked' : SVType -> Bool
