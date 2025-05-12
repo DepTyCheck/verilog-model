@@ -2,7 +2,6 @@ module Test.Verilog.Expression
 
 import Data.Fuel
 import Data.Vect
-import public Data.Fin
 
 import public Data.So
 
@@ -13,7 +12,6 @@ import public Test.Verilog.Module
 
 import public Test.Verilog.Literal
 
-import Deriving.DepTyCheck.Gen
 
 %default total
 
@@ -143,6 +141,8 @@ public export
 data IsLogicOrBite : SVType -> Type where
   LogicIs : IsLogicOrBite (Var Logic')
   BitIs : IsLogicOrBite (Var Bit')
+  WireIs : IsLogicOrBite (Var Wire')
+  UwireIs : IsLogicOrBite (Var Uwire')
 
 public export
 data SVUnaryOperator : (iType : SVType) -> (oType : SVType) -> Type where

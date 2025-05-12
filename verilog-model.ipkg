@@ -34,3 +34,5 @@ modules = Test.Verilog.Module
         , Test.Verilog.Pretty
         , Test.Verilog.Expression
         , Test.Verilog.Expression.Derived
+        , Test.Verilog.ProceduralBlock
+        , Test.Verilog.ProceduralBlock.Derived

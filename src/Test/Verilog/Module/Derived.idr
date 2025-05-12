@@ -2,7 +2,7 @@ module Test.Verilog.Module.Derived
 
 import Deriving.DepTyCheck.Gen
 
-import public Test.Verilog.Module
+import public Test.Verilog.ProceduralBlock
 
 %default total
 
@@ -11,3 +11,5 @@ import public Test.Verilog.Module
 Test.Verilog.Module.genNotEqFin = deriveGen
 Test.Verilog.Module.genSourceForSink = deriveGen
 Test.Verilog.Module.genModules  = deriveGen
+
+Test.Verilog.ProceduralBlock.genProceduralBlock = deriveGen

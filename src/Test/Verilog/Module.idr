@@ -311,6 +311,24 @@ namespace IndexInPorts
   setEqual : ListOfPortsIndices ports -> ListOfPortsIndices ports -> Bool
   setEqual x y = ((x.toList `intersect` y.toList) == x.toList) && ((y.toList `intersect` x.toList) == y.toList)
 
+  public export
+  elem : IndexInPorts ports -> ListOfPortsIndices ports -> Bool
+  elem i [] = False
+  elem i (x :: xs) with (decEq i x)
+    _ | Yes _ = True
+    _ | No _  = elem i xs
+
+  public export
+  data IsElemOf : IndexInPorts ports -> ListOfPortsIndices ports -> Type where
+    InHead : {x : IndexInPorts ports} -> IsElemOf x (x :: xs)
+    InTail : IsElemOf y xs -> IsElemOf y (x :: xs)
+
+  public export
+  shortenIndexPorts : ListOfPortsIndices (p :: ports) -> ListOfPortsIndices ports
+  shortenIndexPorts []        = []
+  shortenIndexPorts (Here :: xs) = shortenIndexPorts xs
+  shortenIndexPorts ((There x) :: xs) = x :: (shortenIndexPorts xs)
+
 namespace ModuleSig
 
   public export
