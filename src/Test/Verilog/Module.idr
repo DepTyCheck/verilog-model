@@ -47,7 +47,7 @@ import Test.DepTyCheck.Gen.Coverage
 public export
 data SVBasic = Logic' | Wire' | Uwire' | Int' | Integer' | Bit' | Real'
 
-export
+public export
 DecEq SVBasic where
   decEq Logic' Logic' = Yes Refl
   decEq Logic' Wire' = No $ \Refl impossible
@@ -114,9 +114,11 @@ data SVArray : SVType -> Nat -> Nat -> Type
 data AllowedInPackedArr : SVType -> Type
 
 public export
-data SVType = Arr (SVArray t s e) | Var SVBasic
+data SVType : Type where
+  Arr : {t : _} -> {s : _} -> {e : _} -> (SVArray t s e) -> SVType
+  Var : SVBasic -> SVType
 
-export
+public export
 Injective Var where
   injective Refl = Refl
 
@@ -149,13 +151,13 @@ data AllowedInPackedArr : SVType -> Type where
   -- R : AllowedInPackedArr Reg' -- Uncomment when Reg is added to the SVBasic
   P : AllowedInPackedArr (Arr (Packed {} @{_}))
 
-export
+public export
 DecEq (AllowedInPackedArr t)
 
-export
+public export
 DecEq (SVArray t start end)
 
-export
+public export
 DecEq SVType where
   decEq (Arr (Unpacked t s e)) (Arr (Unpacked t' s' e')) with (decEq t t')
     decEq (Arr (Unpacked t s e)) (Arr (Unpacked t' s' e')) | No p = No $ \Refl => p Refl
@@ -229,14 +231,85 @@ namespace Ports
 namespace IndexInPorts
 
   public export
-  data IndexInPorts : SVType -> PortsList -> Type where
-    Here : {x : SVType} -> {xs : PortsList} -> IndexInPorts x (x :: xs)
-    There : {y : SVType} -> {xs : PortsList} -> {x : SVType} -> IndexInPorts y xs -> IndexInPorts y (x :: xs)
+  data IndexInPorts : PortsList -> Type where
+    Here : {x : SVType} -> {xs : PortsList} -> IndexInPorts (x :: xs)
+    There : {x : SVType} -> {xs : PortsList} -> IndexInPorts xs -> IndexInPorts (x :: xs)
+
+  public export
+  DecEq (IndexInPorts ports) where
+    decEq Here Here = Yes Refl
+    decEq (Here) (There _) = No $ \Refl impossible
+    decEq (There _) Here = No $ \Refl impossible
+    decEq (There i) (There i') with (decEq i i')
+      decEq (There i) (There i') | No p = No $ \Refl => p Refl
+      decEq (There i) (There i) | Yes Refl = Yes Refl
+
+  public export
+  Eq (IndexInPorts ports) where
+    (==) x y with (decEq x y)
+      _ | Yes _ = True
+      _ | No _  = False
 
   public export
   data ListOfPortsIndices : PortsList -> Type where
     Nil  : {ports : _} -> ListOfPortsIndices ports
-    (::) : {x : _} -> {ports : _} -> IndexInPorts x ports -> ListOfPortsIndices ports -> ListOfPortsIndices ports
+    (::) : {ports : _} -> IndexInPorts ports -> ListOfPortsIndices ports -> ListOfPortsIndices ports
+
+  public export
+  DecEq (ListOfPortsIndices ports) where
+    decEq [] [] = Yes Refl
+    decEq (a :: as) [] = No $ \Refl impossible
+    decEq [] (b :: bs) = No $ \Refl impossible
+    decEq (a :: as) (b :: bs) with (decEq a b)
+      decEq (a :: as) (b :: bs) | No p = No $ \Refl => p Refl
+      decEq (a :: as) (a :: bs) | Yes Refl with (decEq as bs)
+        decEq (a :: as) (a :: bs) | Yes Refl | No p = No $ \Refl => p Refl
+        decEq (a :: as) (a :: as) | Yes Refl | Yes Refl = Yes Refl
+
+  public export
+  Eq (ListOfPortsIndices ports) where
+    (==) x y with (decEq x y)
+      _ | Yes _ = True
+      _ | No _  = False
+
+  public export
+  (++) : ListOfPortsIndices ports -> ListOfPortsIndices ports -> ListOfPortsIndices ports
+  (++) [] bs = bs
+  (++) (a :: as) bs = a :: (as ++ bs)
+
+  public export
+  (.toList) : ListOfPortsIndices ports -> List (IndexInPorts ports)
+  (.toList) []        = []
+  (.toList) (x :: xs) = x :: xs.toList
+
+  public export
+  (.fromList) : {ports : _} -> List (IndexInPorts ports) -> ListOfPortsIndices ports
+  (.fromList) []        = []
+  (.fromList) (x :: xs) = x :: xs.fromList
+
+  public export
+    data AtIndexInPorts : {ports : PortsList} -> (i : IndexInPorts ports) -> (typeOfPort : SVType) -> Type where
+      [search ports i]
+      HereAt : {typeOfPort : SVType} -> {xs : PortsList}
+            -> AtIndexInPorts {ports = typeOfPort :: xs} Here typeOfPort
+
+      ThereAt : {typeOfPort : SVType} -> {x : SVType} -> {xs : PortsList} -> {i : IndexInPorts xs}
+             -> (ati : AtIndexInPorts {ports = xs} i typeOfPort) -> AtIndexInPorts {ports = x :: xs} (There i) typeOfPort
+
+  public export
+  appendIfNew : {ports: _} -> ListOfPortsIndices ports -> (i : IndexInPorts ports) -> ListOfPortsIndices ports
+  appendIfNew [] i = [i]
+  appendIfNew (a :: as) i with (a == i)
+    _ | True = a :: as
+    _ | False = a :: appendIfNew as i
+
+  public export
+  union : {ports : _} -> ListOfPortsIndices ports -> ListOfPortsIndices ports -> ListOfPortsIndices ports
+  union x y = (x.toList `union` y.toList).fromList
+
+  public export
+  setEqual : ListOfPortsIndices ports -> ListOfPortsIndices ports -> Bool
+  setEqual x y = ((x.toList `intersect` y.toList) == x.toList) && ((y.toList `intersect` x.toList) == y.toList)
 
 namespace ModuleSig
 
