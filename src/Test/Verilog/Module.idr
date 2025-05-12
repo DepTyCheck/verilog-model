@@ -197,17 +197,6 @@ namespace Ports
   public export
   data PortsList = Nil | (::) SVType PortsList
 
-  export
-  DecEq PortsList where
-    decEq [] [] = Yes Refl
-    decEq [] (_ :: _) = No $ \Refl impossible
-    decEq (x :: z) [] = No $ \Refl impossible
-    decEq (x :: xs) (x' :: xs'') with (decEq x x')
-      decEq (x :: xs) (x' :: xs'') | No p = No $ \Refl => p Refl
-      decEq (x :: xs) (x :: xs'') | Yes Refl with (decEq xs xs'')
-        decEq (x :: xs) (x :: xs'') | Yes Refl | No p = No $ \Refl => p Refl
-        decEq (x :: xs) (x :: xs) | Yes Refl | Yes Refl = Yes Refl
-
   public export
   length : PortsList -> Nat
   length []      = Z
