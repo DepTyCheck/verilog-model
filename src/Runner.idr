@@ -6,6 +6,7 @@ import Data.List.Lazy.Extra
 import Data.List1
 import Data.String
 import Data.Fin
+import Data.Vect.Extra
 
 import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
