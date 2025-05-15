@@ -151,7 +151,7 @@ jobs:
         run: |
           set +e
           bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
-            "iverilog -g2012 {file} -o a.out" \
+            "iverilog -g2012 -o a.out {file}" \
             "(error|sorry|assert): [\S ]+$" \
             ".github/workflows/iverilog-ignored-errors.txt" \
             "vvp a.out" \

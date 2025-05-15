@@ -19,7 +19,9 @@ fi
 
 # Loop through each match
 while IFS= read -r MATCH; do
-  echo "Match: $MATCH"
+  if [ "$CONCAT" = false ]; then
+    echo "Match: $MATCH"
+  fi
   # Check for matches against regex patterns
   FOUND_MATCH=false
   while read -r PATTERN; do
