@@ -168,7 +168,7 @@ jobs:
         with:
           path: ${{ matrix.tool.name }}
           key: ${{ matrix.tool.name }}-cache-${{ env.commit_hash }}
-            - name: Add bazel repo (if needed)
+      - name: Add bazel repo (if needed)
         if: ${{ contains(matrix.tool.deps, 'bazel') }} && steps.cache-build.outputs.cache-hit != 'true'
         run: |
           apt -qq -y install apt-transport-https curl gnupg
