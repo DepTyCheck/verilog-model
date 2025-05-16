@@ -107,6 +107,8 @@ jobs:
     needs: build-and-test
     timeout-minutes: 128
     runs-on: ubuntu-latest
+    env:
+      GENERATION_DIR: generated-modules
     strategy:
       fail-fast: false
       matrix:
@@ -123,7 +125,7 @@ jobs:
               cd iverilog
               sudo make install
             run: |
-              bash .github/workflows/compile_and_run.sh "${{ github.event.deployment.environment.GENERATION_DIR }}" \
+              bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
               "iverilog -g2012 -o a.out {file}" \
               "(error|sorry|assert): [\S ]+$" \
               ".github/workflows/error-patterns/iverilog-ignored-errors.txt" \
@@ -141,7 +143,7 @@ jobs:
               cd slang
               sudo cmake --install build --strip
             run: |
-              bash .github/workflows/compile_and_run.sh "${{ github.event.deployment.environment.GENERATION_DIR }}" \
+              bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
               "slang -Weverything {file}" \
               "error: [\S ]+$" \
               ".github/workflows/error-patterns/slang-ignored-errors.txt" \
@@ -173,8 +175,9 @@ jobs:
           echo "cache hit: ${{ steps.cache-build.outputs.cache-hit }}"
           echo "cache hit2: ${{ steps.cache-build.outputs.cache-hit != 'true' }}"
           echo "has bazel ${{ contains(matrix.tool.deps, 'bazel') }}"
+          echo "${{ contains(matrix.tool.deps, 'bazel') && steps.cache-build.outputs.cache-hit != 'true' }}"
       - name: Add bazel repo (if needed)
-        if: ${{ contains(matrix.tool.deps, 'bazel') }} && ${{ steps.cache-build.outputs.cache-hit != 'true' }}
+        if: ${{ contains(matrix.tool.deps, 'bazel') && steps.cache-build.outputs.cache-hit != 'true' }}
         run: |
           sudo apt -qq -y install apt-transport-https curl gnupg
           curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
@@ -182,7 +185,7 @@ jobs:
           sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
           sudo echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
           sudo apt update -qq
-      - name: Install tool-specific dependencies
+      - name: Install tool-specific dependencies (if needed)
         if: ${{ matrix.tool.deps }} && steps.cache-build.outputs.cache-hit != 'true'
         run: |
           sudo apt -qq -y install ${{ matrix.tool.deps }}
@@ -201,10 +204,10 @@ jobs:
           stack upgrade
       - name: Build tool
         if: steps.cache-build.outputs.cache-hit != 'true'
-        run : |
-          echo "${{ matrix.tool.build }}" > build.sh
-          cat build.sh
-          bash build.sh
+        run : ${{ matrix.tool.build }}
+          # echo "${{ matrix.tool.build }}" > build.sh
+          # cat build.sh
+          # bash build.sh
       - name: Save build
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
@@ -212,13 +215,13 @@ jobs:
           path: ${{ matrix.tool.name }}
           key: ${{ steps.cache-build.outputs.cache-primary-key }}
       - name: Install tool
-        run : |
-          echo "${{ matrix.tool.install }}" > install.sh
-          bash install.sh
+        run : ${{ matrix.tool.install }}
+          # echo "${{ matrix.tool.install }}" > install.sh
+          # bash install.sh
       - name: Run
         run : |
           set +e
-          
+
           ${{ matrix.tool.run }}
 
           EXIT_CODE=$?
