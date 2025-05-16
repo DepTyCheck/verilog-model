@@ -369,7 +369,7 @@ jobs:
     name: Create an issue on failure
     if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
-    needs: [get-upstream-matrix, build-and-test, test-with-iverilog, test-with-slang, test-with-verilator]
+    needs: [get-upstream-matrix, build-and-test, run-tools]
     permissions:
       contents: read
       issues: write
