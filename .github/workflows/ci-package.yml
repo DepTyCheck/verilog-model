@@ -107,6 +107,8 @@ jobs:
     needs: build-and-test
     timeout-minutes: 128
     runs-on: ubuntu-latest
+    env:
+      GENERATION_DIR: 'generated-modules' # For unknown reason Github does not see top level env, so we redeclare it here
     strategy:
       fail-fast: false
       matrix:
