@@ -114,6 +114,7 @@ jobs:
           - name: icarus
             repo: https://github.com/steveicarus/iverilog.git
             deps: autoconf autotools-dev bison flex libfl-dev gperf make gcc g++ cmake python3
+            path: iverilog
             build: |
               cd iverilog
               sh autoconf.sh
@@ -133,6 +134,7 @@ jobs:
           - name: slang
             repo: https://github.com/MikePopoloski/slang.git
             deps: cmake
+            path: slang
             build: |
               cd slang
               sudo cmake -B build
@@ -147,6 +149,26 @@ jobs:
               ".github/workflows/error-patterns/slang-ignored-errors.txt" \
               "" \
               ""
+            
+          - name: verilator
+            repo: https://github.com/verilator/verilator.git
+            deps: autoconf autotools-dev bison flex help2man libfl-dev libelf-dev cmake
+            path: verilator
+            build: |
+              cd verilator
+              autoconf
+              ./configure
+              make -j$(nproc)
+            install: |
+              cd verilator
+              sudo make install
+            run: |
+              bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
+              "rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/verilator_testbench.cpp --timing -Wno-fatal +1800-2023ext+sv top.sv" \
+              "%Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
+              ".github/workflows/error-patterns/verilator-ignored-errors.txt" \
+              "make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop" \
+              "%Error:[\S ]+$"
 
     steps:
       - name: Checkout
@@ -160,20 +182,14 @@ jobs:
         run: sudo apt update -qq
       - name: Clone tool
         run: |
-          git clone ${{ matrix.tool.repo }}
+          git clone ${{ matrix.tool.repo }} ${{ matrix.tool.path }}
           echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
         with:
-          path: ${{ matrix.tool.name }}
+          path: ${{ matrix.tool.path }}
           key: ${{ matrix.tool.name }}-cache-${{ env.commit_hash }}
-      - name: Debug
-        run: |
-          echo "cache hit: ${{ steps.cache-build.outputs.cache-hit }}"
-          echo "cache hit2: ${{ steps.cache-build.outputs.cache-hit != 'true' }}"
-          echo "has bazel ${{ contains(matrix.tool.deps, 'bazel') }}"
-          echo "${{ contains(matrix.tool.deps, 'bazel') && steps.cache-build.outputs.cache-hit != 'true' }}"
       - name: Add bazel repo (if needed)
         if: ${{ contains(matrix.tool.deps, 'bazel') && steps.cache-build.outputs.cache-hit != 'true' }}
         run: |
@@ -184,11 +200,11 @@ jobs:
           sudo echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
           sudo apt update -qq
       - name: Install tool-specific dependencies (if needed)
-        if: ${{ matrix.tool.deps }} && steps.cache-build.outputs.cache-hit != 'true'
+        if: ${{ matrix.tool.deps && steps.cache-build.outputs.cache-hit != 'true' }}
         run: |
           sudo apt -qq -y install ${{ matrix.tool.deps }}
       - name: Setup Rust (if needed)
-        if: ${{ matrix.tool.rust_ver }} && steps.cache-build.outputs.cache-hit != 'true'
+        if: ${{ matrix.tool.rust_ver && steps.cache-build.outputs.cache-hit != 'true' }}
         run: |
           sudo apt -y install curl
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
@@ -197,25 +213,20 @@ jobs:
           rustup install ${{ matrix.tool.rust_ver }}
           rustup default ${{ matrix.tool.rust_ver }}
       - name: Update haskell (if needed)
-        if: ${{ contains(matrix.tool.deps, 'haskell') }} && steps.cache-build.outputs.cache-hit != 'true'
+        if: ${{ contains(matrix.tool.deps, 'haskell') && steps.cache-build.outputs.cache-hit != 'true' }}
         run: |
           stack upgrade
       - name: Build tool
         if: steps.cache-build.outputs.cache-hit != 'true'
         run : ${{ matrix.tool.build }}
-          # echo "${{ matrix.tool.build }}" > build.sh
-          # cat build.sh
-          # bash build.sh
       - name: Save build
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          path: ${{ matrix.tool.name }}
+          path: ${{ matrix.tool.path }}
           key: ${{ steps.cache-build.outputs.cache-primary-key }}
       - name: Install tool
         run : ${{ matrix.tool.install }}
-          # echo "${{ matrix.tool.install }}" > install.sh
-          # bash install.sh
       - name: Run
         run : |
           set +e
@@ -226,120 +237,6 @@ jobs:
           if [ $EXIT_CODE -ne 0 ]; then
                 exit 1
           fi
-
-  # test-with-iverilog:
-  #   name: Test with Icarus Verilog
-  #   needs: build-and-test
-  #   timeout-minutes: 20
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #     - name: Download Generated Files
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: generated-modules
-  #         path: "${{ env.GENERATION_DIR }}"
-  #     - name: Clone iverilog repository
-  #       run: |
-  #         git clone https://github.com/steveicarus/iverilog.git
-  #         cd iverilog
-  #         echo "i_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-  #     - name: Cache iverilog build
-  #       id: cache-iverilog-build
-  #       uses: actions/cache/restore@v4
-  #       with:
-  #         path: iverilog
-  #         key: ${{ runner.os }}-iverilog-cache-${{ env.i_commit_hash }}
-  #     - name: Install build tools
-  #       if: steps.cache-iverilog-build.outputs.cache-hit != 'true'
-  #       run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
-  #     - name: Build iverilog
-  #       if: steps.cache-iverilog-build.outputs.cache-hit != 'true'
-  #       run: |
-  #         cd iverilog
-  #         sh autoconf.sh
-  #         ./configure
-  #         sudo make -j$(nproc)
-  #     - name: Save iverilog build
-  #       if: steps.cache-iverilog-build.outputs.cache-hit != 'true'
-  #       uses: actions/cache/save@v4
-  #       with:
-  #         path: iverilog
-  #         key: ${{ steps.cache-iverilog-build.outputs.cache-primary-key }}
-  #     - name: Install iverilog
-  #       run : |
-  #         cd iverilog
-  #         sudo make install
-  #     - name: Run Icarus Verilog
-  #       run: |
-  #         set +e
-  #         bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
-  #           "iverilog -g2012 -o a.out {file}" \
-  #           "(error|sorry|assert): [\S ]+$" \
-  #           ".github/workflows/iverilog-ignored-errors.txt" \
-  #           "vvp a.out" \
-  #           "(error|sorry|vvp|assert): [\S ]+$"
-
-  #         EXIT_CODE=$?
-  #         if [ $EXIT_CODE -ne 0 ]; then
-  #               exit 1
-  #         fi
-
-  # test-with-slang:
-  #   name: Test with Slang
-  #   needs: build-and-test
-  #   timeout-minutes: 20
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #     - name: Download Generated Files
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: generated-modules
-  #         path: "${{ env.GENERATION_DIR }}"
-  #     - name: Clone Slang Repository
-  #       run: git clone https://github.com/MikePopoloski/slang.git
-  #     - name: Cache Slang Build
-  #       id: cache-slang-build
-  #       uses: actions/cache/restore@v4
-  #       with:
-  #         path: slang/build
-  #         key: ${{ runner.os }}-slang-cache-${{ hashFiles('slang/CHANGELOG.md') }}
-  #     - name: Install build tools
-  #       if: steps.cache-slang-build.outputs.cache-hit != 'true'
-  #       run: sudo apt update && sudo apt install -y autoconf gperf make gcc g++ bison flex cmake python3
-  #     - name: Build Slang
-  #       if: steps.cache-slang-build.outputs.cache-hit != 'true'
-  #       run: |
-  #         cd slang
-  #         sudo cmake -B build
-  #         sudo cmake --build build -j$(nproc)
-  #     - name: Save Slang build
-  #       if: steps.cache-slang-build.outputs.cache-hit != 'true'
-  #       uses: actions/cache/save@v4
-  #       with:
-  #         path: slang/build
-  #         key: ${{ steps.cache-slang-build.outputs.cache-primary-key }}
-  #     - name: Install Slang
-  #       run: |
-  #         cd slang
-  #         sudo cmake --install build --strip
-  #     - name: Run Slang
-  #       run: |
-  #         set +e
-  #         bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
-  #           "slang -Weverything {file}" \
-  #           "error: [\S ]+$" \
-  #           ".github/workflows/slang-ignored-errors.txt" \
-  #           "" \
-  #           ""
-
-  #         EXIT_CODE=$?
-  #         if [ $EXIT_CODE -ne 0 ]; then
-  #               exit 1
-  #         fi
 
   # test-with-verilator:
   #   name: Test with Verilator
@@ -359,12 +256,7 @@ jobs:
   #     - name: Run verilator
   #       run: |
   #         set +e
-  #         bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
-  #           "rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/verilator_testbench.cpp --timing -Wno-fatal +1800-2023ext+sv top.sv" \
-  #           "%Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
-  #           ".github/workflows/verilator-ignored-errors.txt" \
-  #           "make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop" \
-  #           "%Error:[\S ]+$"
+  #         
 
   #         EXIT_CODE=$?
   #         if [ $EXIT_CODE -ne 0 ]; then
