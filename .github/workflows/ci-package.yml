@@ -218,8 +218,8 @@ jobs:
       - name: Run
         run : |
           set +e
-          echo "${{ matrix.tool.run }}" > run.sh
-          bash run.sh
+          
+          ${{ matrix.tool.run }}
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then
