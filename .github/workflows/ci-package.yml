@@ -170,6 +170,25 @@ jobs:
               "make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop" \
               "%Error:[\S ]+$"
 
+          - name: surelog
+            repo: https://github.com/chipsalliance/Surelog
+            deps: cmake gcc build-essential git pkg-config tclsh swig uuid-dev libgoogle-perftools-dev python3 python3-orderedmultidict python3-psutil python3-dev default-jre lcov zlib1g-dev
+            path: surelog
+            build: |
+              cd surelog
+              git submodule update --init --recursive
+              make -j$(nproc)
+            install: |
+              cd surelog
+              sudo make install
+            run: |
+              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
+              "surelog -sv {file}" \
+              "" \
+              ".github/workflows/error-patterns/surelog-ignored-errors.txt" \
+              "" \
+              ""
+              
     steps:
       - name: Checkout
         uses: actions/checkout@v4
