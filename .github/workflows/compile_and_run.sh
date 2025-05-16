@@ -7,6 +7,17 @@ ERRORS_FILE="$4"
 SIM_CMD="$5"
 SIM_ERROR_REGEX="$6"
 
+FAILED_TESTS=0
+FAILED_FILES=()
+
+print_file() {
+  local FILE="$1"
+  echo ""
+  echo "The entire content of $FILE :"
+  cat "$FILE"
+  echo ""
+}
+
 handle_errors() {
   local OUTPUT="$1"
   local ERROR_REGEX="$2"
@@ -25,9 +36,14 @@ handle_errors() {
   fi
 
   if [ $FILTER_ERRORS_EXIT_CODE -ne 0 ]; then
-    echo "Exit."
+    print_file "$FILE"
+    FAILED_TESTS=$((FAILED_TESTS + 1))
+    FAILED_FILES+=("$FILE")
+
     return 1
   fi
+
+  return 0
 }
 
 execute_command() {
@@ -46,14 +62,6 @@ execute_command() {
   echo "$OUTPUT_VAR"
 }
 
-print_file() {
-  local FILE="$1"
-  echo ""
-  echo "The entire content of $FILE :"
-  cat "$FILE"
-  echo ""
-}
-
 for FILE in "$GEN_PATH"/*.sv; do
   FILE_CONTENT="$(cat "$FILE")"
 
@@ -63,9 +71,6 @@ for FILE in "$GEN_PATH"/*.sv; do
 
   if [ $COMPILATION_EXIT_CODE -ne 0 ]; then
     handle_errors "$COMPILATION_OUTPUT" "$COMPILE_ERROR_REGEX" "$ERRORS_FILE" "$FILE_CONTENT"
-    if [ $? -ne 0 ]; then
-      print_file "$FILE"
-    fi
   else
     if [ -z "$SIM_CMD" ]; then continue; fi
     echo "Simulating $FILE"
@@ -74,11 +79,24 @@ for FILE in "$GEN_PATH"/*.sv; do
 
     if [ $SIM_EXIT_CODE -ne 0 ]; then
       handle_errors "$SIM_OUTPUT" "$SIM_ERROR_REGEX" "$ERRORS_FILE" "$FILE_CONTENT"
-      if [ $? -ne 0 ]; then
-        print_file "$FILE"
-      fi
     fi
   fi
 
   echo -e "\n-------------------------------------------------------------------------------------------------------------------------\n"
 done
+
+echo ""
+echo "==========================================="
+echo "  Total failed tests: $FAILED_TESTS"
+if [ $FAILED_TESTS -ne 0 ]; then
+  echo "  Failed files:"
+  for f in "${FAILED_FILES[@]}"; do
+    echo "  - $f"
+  done
+  echo "==========================================="
+  exit 1
+else
+  echo "  All tests passed successfully."
+  echo "==========================================="
+  exit 0
+fi
