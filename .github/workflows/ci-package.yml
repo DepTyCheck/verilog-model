@@ -163,7 +163,7 @@ jobs:
               cd verilator
               sudo make install
             run: |
-              bash .github/workflows/compile_and_run.sh "${{ env.GENERATION_DIR }}" \
+              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
               "rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/verilator_testbench.cpp --timing -Wno-fatal +1800-2023ext+sv top.sv" \
               "%Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
               ".github/workflows/error-patterns/verilator-ignored-errors.txt" \
