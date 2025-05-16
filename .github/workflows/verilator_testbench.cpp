@@ -1,4 +1,4 @@
-#include "Vtop.h"  // Include the header for the top module
+#include "Vtop.h"  // Include the header for the top module. `top` is a hardcoded name of the source file
 #include "verilated.h"
 
 int main(int argc, char **argv) {

@@ -2,3 +2,7 @@ build/
 .build/
 **/tests/**/failures
 **/tests/**/output
+
+.DS_Store
+.vscode
+.devcontainer
