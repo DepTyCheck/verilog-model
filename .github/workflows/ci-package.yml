@@ -118,10 +118,10 @@ jobs:
               cd iverilog
               sh autoconf.sh
               ./configure
-              make -j$(nproc)
+              sudo make -j$(nproc)
             install: |
               cd iverilog
-              make install
+              sudo make install
             run: |
               bash .github/workflows/compile_and_run.sh "${{ github.event.deployment.environment.GENERATION_DIR }}" \
               "iverilog -g2012 -o a.out {file}" \
@@ -135,11 +135,11 @@ jobs:
             deps: cmake
             build: |
               cd slang
-              cmake -B build
-              cmake --build build -j$(nproc)
+              sudo cmake -B build
+              sudo cmake --build build -j$(nproc)
             install: |
               cd slang
-              cmake --install build --strip
+              sudo cmake --install build --strip
             run: |
               bash .github/workflows/compile_and_run.sh "${{ github.event.deployment.environment.GENERATION_DIR }}" \
               "slang -Weverything {file}" \
@@ -157,7 +157,7 @@ jobs:
           name: generated-modules
           path: "${{ env.GENERATION_DIR }}"
       - name: Update apt
-        run: apt update -qq
+        run: sudo apt update -qq
       - name: Clone tool
         run: |
           git clone ${{ matrix.tool.repo }}
@@ -171,20 +171,20 @@ jobs:
       - name: Add bazel repo (if needed)
         if: ${{ contains(matrix.tool.deps, 'bazel') }} && steps.cache-build.outputs.cache-hit != 'true'
         run: |
-          apt -qq -y install apt-transport-https curl gnupg
+          sudo apt -qq -y install apt-transport-https curl gnupg
           curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
           chmod a+r bazel.gpg
           mv bazel.gpg /etc/apt/trusted.gpg.d/
           echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
-          apt update -qq
+          sudo apt update -qq
       - name: Install tool-specific dependencies
         if: ${{ matrix.tool.deps }} && steps.cache-build.outputs.cache-hit != 'true'
         run: |
-          apt -qq -y install ${{ matrix.tool.deps }}
+          sudo apt -qq -y install ${{ matrix.tool.deps }}
       - name: Setup Rust (if needed)
         if: ${{ matrix.tool.rust_ver }} && steps.cache-build.outputs.cache-hit != 'true'
         run: |
-          apt -y install curl
+          sudo apt -y install curl
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
           sh setup.sh -y
           source $HOME/.cargo/env
