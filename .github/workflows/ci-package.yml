@@ -103,7 +103,7 @@ jobs:
           path: "${{ env.GENERATION_DIR }}"
 
   run-tools:
-    name: Run all tools
+    name: ${{ matrix.tool.name }}
     needs: build-and-test
     timeout-minutes: 128
     runs-on: ubuntu-latest
@@ -111,23 +111,23 @@ jobs:
       fail-fast: false
       matrix:
         tool:
-          - name: icarus
+          - name: icarus verilog
             repo: https://github.com/steveicarus/iverilog.git
             deps: autoconf autotools-dev bison flex libfl-dev gperf make gcc g++ cmake python3
             path: iverilog
             build: |
-              cd iverilog
               sh autoconf.sh
               ./configure
               sudo make -j$(nproc)
             install: |
-              cd iverilog
               sudo make install
+            version: |
+              iverilog -V
             run: |
               bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
               "iverilog -g2012 -o a.out {file}" \
               "(error|sorry|assert): [\S ]+$" \
-              ".github/workflows/error-patterns/iverilog-ignored-errors.txt" \
+              "$IGNORED_ERRORS" \
               "vvp a.out" \
               "(error|sorry|vvp|assert): [\S ]+$"
 
@@ -136,17 +136,17 @@ jobs:
             deps: cmake
             path: slang
             build: |
-              cd slang
               sudo cmake -B build
               sudo cmake --build build -j$(nproc)
             install: |
-              cd slang
               sudo cmake --install build --strip
+            version: |
+              slang --version
             run: |
               bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
               "slang -Weverything {file}" \
               "error: [\S ]+$" \
-              ".github/workflows/error-patterns/slang-ignored-errors.txt" \
+              "$IGNORED_ERRORS" \
               "" \
               ""
             
@@ -155,40 +155,97 @@ jobs:
             deps: autoconf autotools-dev bison flex help2man libfl-dev libelf-dev cmake
             path: verilator
             build: |
-              cd verilator
               autoconf
               ./configure
               make -j$(nproc)
             install: |
-              cd verilator
               sudo make install
+            version: |
+              verilator --version
             run: |
               bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
               "rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/verilator_testbench.cpp --timing -Wno-fatal +1800-2023ext+sv top.sv" \
               "%Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
-              ".github/workflows/error-patterns/verilator-ignored-errors.txt" \
+              "$IGNORED_ERRORS" \
               "make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop" \
               "%Error:[\S ]+$"
 
           - name: surelog
-            repo: https://github.com/chipsalliance/Surelog
+            repo: https://github.com/chipsalliance/Surelog.git
             deps: cmake gcc build-essential git pkg-config tclsh swig uuid-dev libgoogle-perftools-dev python3 python3-orderedmultidict python3-psutil python3-dev default-jre lcov zlib1g-dev
             path: surelog
             build: |
-              cd surelog
               git submodule update --init --recursive
               make -j$(nproc)
             install: |
-              cd surelog
               sudo make install
+            version: |
+              surelog --version
             run: |
               bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "surelog -sv {file}" \
+              "surelog -parse -nopython -sv {file}" \
               "" \
-              ".github/workflows/error-patterns/surelog-ignored-errors.txt" \
+              "$IGNORED_ERRORS" \
               "" \
               ""
-              
+          
+          - name: zachjs-sv2v
+            repo: https://github.com/zachjs/sv2v.git
+            deps: haskell-stack
+            path: zachjs-sv2v
+            build: |
+              make -j$(nproc)
+            install: |
+              sudo stack install
+            version: |
+              sv2v --version
+            run: |
+              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
+              "sv2v -v {file}" \
+              "" \
+              "$IGNORED_ERRORS" \
+              "" \
+              ""
+          
+          # - name: tree-sitter-systemverilog
+          #   repo: https://github.com/gmlarumbe/tree-sitter-systemverilog.git
+          #   deps: gcc
+          #   path: tssv
+          #   build: |
+          #     cc -fPIC -c -I. src/parser.c
+          #     cc -fPIC -shared *.o -o
+          #   install: |
+          #     echo "TODO"
+          #   version: |
+          #     echo "TODO"
+          #   run: |
+          #     bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
+          #     "sv2v -v {file}" \
+          #     "" \
+          #     "$IGNORED_ERRORS" \
+          #     "" \
+          #     ""
+
+          - name: synling
+            repo: https://github.com/chipsalliance/synlig.git
+            deps: gcc-11 g++-11 build-essential cmake tclsh ant default-jre swig google-perftools libgoogle-perftools-dev python3 python3-dev python3-pip uuid uuid-dev tcl-dev flex libfl-dev git pkg-config libreadline-dev bison libffi-dev wget python3-orderedmultidict
+            path: synling
+            build: |
+              git submodule sync
+              git submodule update --init --recursive third_party/{surelog,yosys}
+              make install -j$(nproc)
+            install: |
+              echo "synling installed"
+            version: |
+              synlig --version
+            run: |
+              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
+              "synlig read_systemverilog {file}" \
+              "" \
+              "$IGNORED_ERRORS" \
+              "" \
+              ""
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -202,7 +259,8 @@ jobs:
       - name: Clone tool
         run: |
           git clone ${{ matrix.tool.repo }} ${{ matrix.tool.path }}
-          echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          cd ${{ matrix.tool.path }}
+          echo "commit_hash=$(git rev-parse HEAD)" >> $GITHUB_ENV
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
@@ -237,7 +295,9 @@ jobs:
           stack upgrade
       - name: Build tool
         if: steps.cache-build.outputs.cache-hit != 'true'
-        run : ${{ matrix.tool.build }}
+        run : |
+          cd ${{ matrix.tool.path }}
+          ${{ matrix.tool.build }}
       - name: Save build
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
@@ -245,10 +305,16 @@ jobs:
           path: ${{ matrix.tool.path }}
           key: ${{ steps.cache-build.outputs.cache-primary-key }}
       - name: Install tool
-        run : ${{ matrix.tool.install }}
+        run : |
+          cd ${{ matrix.tool.path }}
+          ${{ matrix.tool.install }}
+      - name: Print version
+        run: ${{ matrix.tool.version }}
       - name: Run
         run : |
           set +e
+
+          IGNORED_ERRORS=".github/workflows/error-patterns/${{ matrix.tool.path }}-ignored-errors.txt"
 
           ${{ matrix.tool.run }}
 
@@ -256,31 +322,6 @@ jobs:
           if [ $EXIT_CODE -ne 0 ]; then
                 exit 1
           fi
-
-  # test-with-verilator:
-  #   name: Test with Verilator
-  #   runs-on: ubuntu-latest
-  #   needs: build-and-test
-  #   timeout-minutes: 20
-  #   container:
-  #     image: verilator/verilator
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #     - name: Download Generated Files
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: generated-modules
-  #         path: "${{ env.GENERATION_DIR }}"
-  #     - name: Run verilator
-  #       run: |
-  #         set +e
-  #         
-
-  #         EXIT_CODE=$?
-  #         if [ $EXIT_CODE -ne 0 ]; then
-  #               exit 1
-  #         fi
 
   create-issue-on-failure:
     name: Create an issue on failure
