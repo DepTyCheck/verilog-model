@@ -178,7 +178,10 @@ jobs:
               git submodule update --init --recursive
               make -j$(nproc)
             install: |
-              pip3 install orderedmultidict
+              which python3
+              python3 -m site
+              sudo python3 -m site
+              sudo pip3 install orderedmultidict
               sudo make install
             version: |
               surelog --version
@@ -199,6 +202,8 @@ jobs:
             install: |
               sudo stack install --allow-different-user
             version: |
+              cd bin
+              ls -l
               sv2v --version
             run: |
               bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
@@ -236,7 +241,7 @@ jobs:
               git submodule update --init --recursive third_party/{surelog,yosys}
               make -j$(nproc)
             install: |
-              pip3 install orderedmultidict
+              sudo pip3 install orderedmultidict
               sudo make install
             version: |
               synlig --version
