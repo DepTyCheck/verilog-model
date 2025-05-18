@@ -178,6 +178,7 @@ jobs:
               git submodule update --init --recursive
               make -j$(nproc)
             install: |
+              pip install orderedmultidict
               sudo make install
             version: |
               surelog --version
@@ -257,7 +258,7 @@ jobs:
               sudo install -m 755 target/release/examples/parse_sv /usr/local/bin/parse_sv
             version: |
               cd sv_parser
-              cargo pkgid
+            # cargo pkgid
             run: |
               bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
               "parse_sv {file}" \
@@ -274,30 +275,30 @@ jobs:
             build: |
               git submodule update --init --recursive
  
-              mkdir -p circt/llvm/build
-              pushd circt/llvm/build
-              cmake ../llvm \
-                  -DCMAKE_BUILD_TYPE=Release \
-                  -DLLVM_BUILD_EXAMPLES=OFF \
-                  -DLLVM_ENABLE_ASSERTIONS=ON \
-                  -DLLVM_ENABLE_BINDINGS=OFF \
-                  -DLLVM_ENABLE_OCAMLDOC=OFF \
-                  -DLLVM_ENABLE_PROJECTS=mlir \
-                  -DLLVM_INSTALL_UTILS=ON \
-                  -DLLVM_OPTIMIZED_TABLEGEN=ON \
-                  -DLLVM_TARGETS_TO_BUILD="host"
-              cmake --build .
-              popd
+              # mkdir -p circt/llvm/build
+              # pushd circt/llvm/build
+              # cmake ../llvm \
+              #     -DCMAKE_BUILD_TYPE=Release \
+              #     -DLLVM_BUILD_EXAMPLES=OFF \
+              #     -DLLVM_ENABLE_ASSERTIONS=ON \
+              #     -DLLVM_ENABLE_BINDINGS=OFF \
+              #     -DLLVM_ENABLE_OCAMLDOC=OFF \
+              #     -DLLVM_ENABLE_PROJECTS=mlir \
+              #     -DLLVM_INSTALL_UTILS=ON \
+              #     -DLLVM_OPTIMIZED_TABLEGEN=ON \
+              #     -DLLVM_TARGETS_TO_BUILD="host"
+              # cmake --build .
+              # popd
 
-              mkdir -p circt/build
-              pushd circt/build
-              cmake .. \
-                  -DCMAKE_BUILD_TYPE=Release \
-                  -DMLIR_DIR=$PWD/../llvm/build/lib/cmake/mlir \
-                  -DLLVM_DIR=$PWD/../llvm/build/lib/cmake/llvm \
-                  -DLLVM_ENABLE_ASSERTIONS=ON
-              cmake --build .
-              popd
+              # mkdir -p circt/build
+              # pushd circt/build
+              # cmake .. \
+              #     -DCMAKE_BUILD_TYPE=Release \
+              #     -DMLIR_DIR=$PWD/../llvm/build/lib/cmake/mlir \
+              #     -DLLVM_DIR=$PWD/../llvm/build/lib/cmake/llvm \
+              #     -DLLVM_ENABLE_ASSERTIONS=ON
+              # cmake --build .
+              # popd
 
               export CIRCT_SYS_CIRCT_DIR=$PWD/circt
               export CIRCT_SYS_CIRCT_BUILD_DIR=$PWD/circt/build
@@ -309,10 +310,10 @@ jobs:
               sudo "moore is installed"
             version: |
               cd moore
-              cargo pkgid
+            # cargo pkgid
             run: |
               bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "echo $PWD" \
+              "moore -e \"$(bash .github/workflows/find_top.sh {file})\" {file}" \
               "" \
               "$IGNORED_ERRORS" \
               "" \
