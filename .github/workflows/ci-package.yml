@@ -178,7 +178,7 @@ jobs:
               git submodule update --init --recursive
               make -j$(nproc)
             install: |
-              pip install orderedmultidict
+              pip3 install orderedmultidict
               sudo make install
             version: |
               surelog --version
@@ -236,6 +236,7 @@ jobs:
               git submodule update --init --recursive third_party/{surelog,yosys}
               make -j$(nproc)
             install: |
+              pip3 install orderedmultidict
               sudo make install
             version: |
               synlig --version
@@ -305,7 +306,7 @@ jobs:
               export CIRCT_SYS_LLVM_DIR=$PWD/circt/llvm
               export CIRCT_SYS_LLVM_BUILD_DIR=$PWD/circt/llvm/build
 
-              sudo cargo install moore
+              sudo cargo install --locked moore
             install: |
               sudo "moore is installed"
             version: |
