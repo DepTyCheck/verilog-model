@@ -178,9 +178,7 @@ jobs:
               git submodule update --init --recursive
               make -j$(nproc)
             install: |
-              which python3
-              python3 -m site
-              sudo python3 -m site
+              sudo apt install -y libgoogle-perftools-dev
               sudo pip3 install orderedmultidict
               sudo make install
             version: |
@@ -202,8 +200,6 @@ jobs:
             install: |
               sudo stack install --allow-different-user
             version: |
-              cd bin
-              ls -l
               sv2v --version
             run: |
               bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
@@ -325,6 +321,72 @@ jobs:
               "" \
               ""
 
+          - name: verible
+            repo: https://github.com/chipsalliance/verible.git
+            deps: bazel=7.6.1 bison flex libfl-dev
+            path: verible
+            build: |
+              bazel build :install-binaries --//bazel:use_local_flex_bison -c opt
+            install: |
+              sudo .github/bin/simple-install.sh /usr/local/bin
+              bazel shutdown
+            version: |
+              verible --version
+            run: |
+              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
+              "verible {file}" \
+              "" \
+              "$IGNORED_ERRORS" \
+              "" \
+              ""
+          
+          - name: yosys
+            repo: https://github.com/YosysHQ/yosys.git
+            deps: build-essential clang lld bison flex libreadline-dev gawk tcl-dev libffi-dev git graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
+            path: yosys
+            build: |
+              make -j$(nproc)
+            install: |
+              sudo make install
+            version: |
+              yosys --version
+            run: |
+              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
+              "yosys -p 'read -sv {file}'" \
+              "" \
+              "$IGNORED_ERRORS" \
+              "" \
+              ""
+
+          # - name: yosys-slang
+          #   repo: https://github.com/povik/yosys-slang.git
+          #   deps: cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh uuid-dev
+          #   path: yosys-slang
+          #   build: |
+          #     git clone --recursive https://github.com/povik/yosys-slang
+          #     make -j$(nproc)
+          #   install: |
+          #     sudo make install
+
+          - name: circt
+            repo: https://github.com/llvm/circt.git
+            deps: cmake clang ninja-build lld
+            path: circt
+            build: |
+              make -j$(nproc)
+            install: |
+              sudo make install
+            version: |
+              yosys --version
+            run: |
+              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
+              "yosys -p 'read -sv {file}'" \
+              "" \
+              "$IGNORED_ERRORS" \
+              "" \
+              ""
+
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -347,7 +409,7 @@ jobs:
           path: ${{ matrix.tool.path }}
           key: ${{ matrix.tool.name }}-cache-${{ env.commit_hash }}
       - name: Add bazel repo (if needed)
-        if: ${{ contains(matrix.tool.deps, 'bazel') && steps.cache-build.outputs.cache-hit != 'true' }}
+        if: ${{ contains(matrix.tool.deps, 'bazel') }}
         run: |
           sudo apt -qq -y install apt-transport-https curl gnupg
           curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
