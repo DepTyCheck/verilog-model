@@ -378,13 +378,15 @@ jobs:
             deps: cmake clang ninja-build lld
             path: circt
             build: |
+              git submodule init
+              git submodule update
               mkdir llvm/build
               cd llvm/build
               cmake -G Ninja ../llvm \
                 -DLLVM_ENABLE_PROJECTS="mlir" \
                 -DLLVM_TARGETS_TO_BUILD="host" \
                 -DLLVM_ENABLE_ASSERTIONS=ON \
-                -DCMAKE_BUILD_TYPE=DEBUG \
+                -DCMAKE_BUILD_TYPE=RELEASE \
                 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
               ninja
               cd ..
@@ -394,7 +396,7 @@ jobs:
                 -DMLIR_DIR=$PWD/../llvm/build/lib/cmake/mlir \
                 -DLLVM_DIR=$PWD/../llvm/build/lib/cmake/llvm \
                 -DLLVM_ENABLE_ASSERTIONS=ON \
-                -DCMAKE_BUILD_TYPE=DEBUG \
+                -DCMAKE_BUILD_TYPE=RELEASE \
                 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
               ninja
             install: |
