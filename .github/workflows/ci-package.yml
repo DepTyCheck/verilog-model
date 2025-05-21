@@ -111,6 +111,25 @@ jobs:
       fail-fast: false
       matrix:
         tool:
+          # MATRIX FORMAT:
+          # - name: Just display name
+          #   repo: link to the git repo
+          #   deps: packages to install with apt
+          #   path: folder with files to build
+          #   build: build commands
+          #   install: install commands
+          #   version: command to print the version
+          #   run: command to run the tool. Note that path to the .sv file will be concatenated to the end of the command.
+          #   top_flag: flag to pass to the tool to specify the top module (if necessary)
+          #   error_regex: regex to match the error (has to be in double quotes!!)
+          #   sim_cmd: command to run the simulator (optional)
+          #   sim_error_regex: regex to match the simulator error (optional)
+          #   rust_ver: rust version to install (optional)
+          #   third_party_release_repo: link to the repo to download the release from
+          #   third_party_release_name_wildcard: wildcard to match the release name
+          #
+          #   P.S. ignored errors file should be named as <path>-ignored-errors.txt
+
           - name: icarus verilog
             repo: https://github.com/steveicarus/iverilog.git
             deps: autoconf autotools-dev bison flex libfl-dev gperf make gcc g++ cmake python3
@@ -123,13 +142,12 @@ jobs:
               sudo make install
             version: |
               iverilog -V
-            run: |
-              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "iverilog -g2012 -o a.out {file}" \
-              "(error|sorry|assert): [\S ]+$" \
-              "$IGNORED_ERRORS" \
-              "vvp a.out" \
-              "(error|sorry|vvp|assert): [\S ]+$"
+            run: iverilog -g2012 -o a.out {file}
+            error_regex: |
+              (error|sorry|assert): [\S ]+$
+            sim_cmd: vvp a.out
+            sim_error_regex: |
+              (error|sorry|vvp|assert): [\S ]+$
 
           - name: slang
             repo: https://github.com/MikePopoloski/slang.git
@@ -142,14 +160,10 @@ jobs:
               sudo cmake --install build --strip
             version: |
               slang --version
-            run: |
-              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "slang -Weverything {file}" \
-              "error: [\S ]+$" \
-              "$IGNORED_ERRORS" \
-              "" \
-              ""
-            
+            run: slang -Weverything {file}
+            error_regex: |
+              error: [\S ]+$
+
           - name: verilator
             repo: https://github.com/verilator/verilator.git
             deps: autoconf autotools-dev bison flex help2man libfl-dev libelf-dev cmake
@@ -162,13 +176,12 @@ jobs:
               sudo make install
             version: |
               verilator --version
-            run: |
-              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/verilator_testbench.cpp --timing -Wno-fatal +1800-2023ext+sv top.sv" \
-              "%Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$" \
-              "$IGNORED_ERRORS" \
-              "make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop" \
-              "%Error:[\S ]+$"
+            run: rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/verilator/testbench.cpp --timing -Wno-fatal +1800-2023ext+sv top.sv
+            error_regex: |
+              %Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$
+            sim_cmd: make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop
+            sim_error_regex: |
+              %Error:[\S ]+$
 
           - name: surelog
             repo: https://github.com/chipsalliance/Surelog.git
@@ -183,14 +196,8 @@ jobs:
               sudo make install
             version: |
               surelog --version
-            run: |
-              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "surelog -parse -nopython -sv {file}" \
-              "" \
-              "$IGNORED_ERRORS" \
-              "" \
-              ""
-          
+            run: surelog -parse -nopython -sv {file}
+
           - name: zachjs-sv2v
             repo: https://github.com/zachjs/sv2v.git
             deps: haskell-stack
@@ -202,14 +209,8 @@ jobs:
               sudo stack install --allow-different-user --local-bin-path /usr/local/bin
             version: |
               sv2v --version
-            run: |
-              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "sv2v -v {file}" \
-              "" \
-              "$IGNORED_ERRORS" \
-              "" \
-              ""
-          
+            run: sv2v -v {file}
+
           # - name: tree-sitter-systemverilog
           #   repo: https://github.com/gmlarumbe/tree-sitter-systemverilog.git
           #   deps: gcc
@@ -243,13 +244,7 @@ jobs:
               sudo make install -j$(nproc)
             version: |
               synlig --version
-            run: |
-              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "synlig read_systemverilog {file}" \
-              "" \
-              "$IGNORED_ERRORS" \
-              "" \
-              ""
+            run: synlig read_systemverilog {file}
 
           - name: sv_parser
             repo: https://github.com/dalance/sv-parser.git
@@ -259,18 +254,12 @@ jobs:
             build: |
               cargo build --release --example parse_sv
             install: |
-              sudo install -m 755 target/release/examples/parse_sv /usr/local/bin/parse_sv
+              sudo install -m 755 target/release/examples/parse_sv /usr/local/bin/
             version: |
               cd sv_parser
             # cargo pkgid
-            run: |
-              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "parse_sv {file}" \
-              "" \
-              "$IGNORED_ERRORS" \
-              "" \
-              ""
-          
+            run: parse_sv {file}
+
           - name: moore
             repo: https://github.com/stefanlippuner/moore.git # we use fork. original: https://github.com/fabianschuiki/moore
             deps: cargo
@@ -278,7 +267,7 @@ jobs:
             path: moore
             build: |
               git submodule update --init --recursive
- 
+
               # mkdir -p circt/llvm/build
               # pushd circt/llvm/build
               # cmake ../llvm \
@@ -315,13 +304,9 @@ jobs:
             version: |
               cd moore
             # cargo pkgid
-            run: |
-              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "moore -e \"$(bash .github/workflows/find_top.sh {file})\" {file}" \
-              "" \
-              "$IGNORED_ERRORS" \
-              "" \
-              ""
+            run: moore -e "{top_module}" {file}
+            third_party_release_repo: https://github.com/llvm/circt.git
+            third_party_release_name_wildcard: "circt-full-shared-linux-x64.tar.gz"
 
           - name: verible
             repo: https://github.com/chipsalliance/verible.git
@@ -336,14 +321,8 @@ jobs:
               ls /usr/local/bin
             version: |
               verible --version
-            run: |
-              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "verible {file}" \
-              "" \
-              "$IGNORED_ERRORS" \
-              "" \
-              ""
-          
+            run: verible {file}
+
           - name: yosys
             repo: https://github.com/YosysHQ/yosys.git
             deps: build-essential clang lld bison flex libreadline-dev gawk tcl-dev libffi-dev git graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
@@ -355,13 +334,7 @@ jobs:
               sudo make install
             version: |
               yosys --version
-            run: |
-              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "yosys -p 'read -sv {file}'" \
-              "" \
-              "$IGNORED_ERRORS" \
-              "" \
-              ""
+            run: yosys -p 'read -sv {file}'
 
           # - name: yosys-slang
           #   repo: https://github.com/povik/yosys-slang.git
@@ -378,38 +351,37 @@ jobs:
             deps: cmake clang ninja-build lld
             path: circt
             build: |
-              git submodule init
-              git submodule update
-              mkdir llvm/build
-              cd llvm/build
-              cmake -G Ninja ../llvm \
-                -DLLVM_ENABLE_PROJECTS="mlir" \
-                -DLLVM_TARGETS_TO_BUILD="host" \
-                -DLLVM_ENABLE_ASSERTIONS=ON \
-                -DCMAKE_BUILD_TYPE=RELEASE \
-                -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-              ninja
+              # git submodule init
+              # git submodule update
+              # mkdir llvm/build
+              # cd llvm/build
+              # cmake -G Ninja ../llvm \
+              #   -DLLVM_ENABLE_PROJECTS="mlir" \
+              #   -DLLVM_TARGETS_TO_BUILD="host" \
+              #   -DLLVM_ENABLE_ASSERTIONS=ON \
+              #   -DCMAKE_BUILD_TYPE=RELEASE \
+              #   -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+              # ninja
+              # cd ..
+              # mkdir build
+              # cd build
+              # cmake -G Ninja .. \
+              #   -DMLIR_DIR=$PWD/../llvm/build/lib/cmake/mlir \
+              #   -DLLVM_DIR=$PWD/../llvm/build/lib/cmake/llvm \
+              #   -DLLVM_ENABLE_ASSERTIONS=ON \
+              #   -DCMAKE_BUILD_TYPE=RELEASE \
+              #   -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+              # ninja
+              ls
               cd ..
-              mkdir build
-              cd build
-              cmake -G Ninja .. \
-                -DMLIR_DIR=$PWD/../llvm/build/lib/cmake/mlir \
-                -DLLVM_DIR=$PWD/../llvm/build/lib/cmake/llvm \
-                -DLLVM_ENABLE_ASSERTIONS=ON \
-                -DCMAKE_BUILD_TYPE=RELEASE \
-                -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-              ninja
+              ls
             install: |
-              sudo ninja install
+              ls
             version: |
-              yosys --version
-            run: |
-              bash .github/workflows/compile_and_run.sh "$GENERATION_DIR" \
-              "yosys -p 'read -sv {file}'" \
-              "" \
-              "$IGNORED_ERRORS" \
-              "" \
-              ""
+              pwd
+            run: ls
+            third_party_release_repo: https://github.com/llvm/circt.git
+            third_party_release_name_wildcard: "circt-full-shared-linux-x64.tar.gz"
 
 
     steps:
@@ -442,8 +414,8 @@ jobs:
           sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
           sudo echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
           sudo apt update -qq
-      - name: Install tool-specific dependencies (if needed)
-        if: ${{ matrix.tool.deps && steps.cache-build.outputs.cache-hit != 'true' }}
+      - name: Install tool-specific dependencies
+        if: ${{ matrix.tool.deps }}
         run: |
           sudo apt -qq -y install ${{ matrix.tool.deps }}
       - name: Setup Rust (if needed)
@@ -459,6 +431,13 @@ jobs:
         if: ${{ contains(matrix.tool.deps, 'haskell') && steps.cache-build.outputs.cache-hit != 'true' }}
         run: |
           stack upgrade
+      - uses: robinraju/release-downloader@v1
+        if: ${{ matrix.tool.third_party_release_repo }}
+        with:
+          repository: ${{ matrix.tool.third_party_release_repo }}
+          latest: true
+          extract: true
+          fileName: ${{ matrix.tool.third_party_release_name_wildcard }}
       - name: Build tool
         if: steps.cache-build.outputs.cache-hit != 'true'
         run : |
@@ -476,13 +455,19 @@ jobs:
           ${{ matrix.tool.install }}
       - name: Print version
         run: ${{ matrix.tool.version }}
+      - name: Install runner deps
+        run: sudo apt install -y python3
       - name: Run
         run : |
           set +e
 
-          IGNORED_ERRORS=".github/workflows/error-patterns/${{ matrix.tool.path }}-ignored-errors.txt"
-
-          ${{ matrix.tool.run }}
+          python3 .github/workflows/runner/run_tests.py \
+            --gen-path "${{ env.GENERATION_DIR }}" \
+            --tool-cmd "${{ matrix.tool.run }}" \
+            --tool-error-regex "${{ matrix.tool.error_regex }}" \
+            --sim-cmd "${{ matrix.tool.sim_cmd }}" \
+            --sim-error-regex "${{ matrix.tool.sim_error_regex }}" \
+            --errors-file ".github/workflows/error-patterns/${{ matrix.tool.path }}-ignored-errors.txt"
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then
