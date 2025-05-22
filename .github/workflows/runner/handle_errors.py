@@ -30,6 +30,10 @@ def handle_errors(
         # Find all matches of the error regex in the output
         matches = re.finditer(error_regex, output, re.MULTILINE)
         
+        if not matches:
+            print("No errors matched.")
+            return False
+
         # Check each match against ignored errors
         for match in matches:
             error_text = match.group(0)

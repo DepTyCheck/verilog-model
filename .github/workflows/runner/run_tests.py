@@ -75,7 +75,7 @@ def make_command(
     command = cmd
     if "{top_module}" in command:
         command = command.replace("{top_module}", find_top(file_content))
-    command.replace("{file}", file_path)
+    command = command.replace("{file}", file_path)
     return command
 
 def run_test(

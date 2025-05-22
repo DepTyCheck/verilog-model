@@ -125,7 +125,7 @@ jobs:
           #   sim_cmd: command to run the simulator (optional)
           #   sim_error_regex: regex to match the simulator error (optional)
           #   rust_ver: rust version to install (optional)
-          #   third_party_release_repo: link to the repo to download the release from
+          #   third_party_release_repo: link to the repo to download the release from. Format: {owner}/{repo}
           #   third_party_release_name_wildcard: wildcard to match the release name
           #
           #   P.S. ignored errors file should be named as <path>-ignored-errors.txt
@@ -176,7 +176,7 @@ jobs:
               sudo make install
             version: |
               verilator --version
-            run: rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/verilator/testbench.cpp --timing -Wno-fatal +1800-2023ext+sv top.sv
+            run: rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/conf/verilator/testbench.cpp --timing -Wno-fatal +1800-2023ext+sv top.sv
             error_regex: |
               %Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$
             sim_cmd: make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop
@@ -244,7 +244,7 @@ jobs:
               sudo make install -j$(nproc)
             version: |
               synlig --version
-            run: synlig read_systemverilog {file}
+            run: synlig read_systemverilog -nopython -parse -sverilog {file}
 
           - name: sv_parser
             repo: https://github.com/dalance/sv-parser.git
@@ -256,7 +256,7 @@ jobs:
             install: |
               sudo install -m 755 target/release/examples/parse_sv /usr/local/bin/
             version: |
-              cd sv_parser
+              parse_sv -h
             # cargo pkgid
             run: parse_sv {file}
 
@@ -266,47 +266,17 @@ jobs:
             rust_ver: "1.66"
             path: moore
             build: |
-              git submodule update --init --recursive
-
-              # mkdir -p circt/llvm/build
-              # pushd circt/llvm/build
-              # cmake ../llvm \
-              #     -DCMAKE_BUILD_TYPE=Release \
-              #     -DLLVM_BUILD_EXAMPLES=OFF \
-              #     -DLLVM_ENABLE_ASSERTIONS=ON \
-              #     -DLLVM_ENABLE_BINDINGS=OFF \
-              #     -DLLVM_ENABLE_OCAMLDOC=OFF \
-              #     -DLLVM_ENABLE_PROJECTS=mlir \
-              #     -DLLVM_INSTALL_UTILS=ON \
-              #     -DLLVM_OPTIMIZED_TABLEGEN=ON \
-              #     -DLLVM_TARGETS_TO_BUILD="host"
-              # cmake --build .
-              # popd
-
-              # mkdir -p circt/build
-              # pushd circt/build
-              # cmake .. \
-              #     -DCMAKE_BUILD_TYPE=Release \
-              #     -DMLIR_DIR=$PWD/../llvm/build/lib/cmake/mlir \
-              #     -DLLVM_DIR=$PWD/../llvm/build/lib/cmake/llvm \
-              #     -DLLVM_ENABLE_ASSERTIONS=ON
-              # cmake --build .
-              # popd
-
-              export CIRCT_SYS_CIRCT_DIR=$PWD/circt
-              export CIRCT_SYS_CIRCT_BUILD_DIR=$PWD/circt/build
-              export CIRCT_SYS_LLVM_DIR=$PWD/circt/llvm
-              export CIRCT_SYS_LLVM_BUILD_DIR=$PWD/circt/llvm/build
-
-              sudo cargo install --locked moore
+              CARGO_NET_GIT_FETCH_WITH_CLI=true
+              ls
+              mv ../.github/workflows/conf/moore/Cargo.lock ./Cargo.lock
+              sudo cargo install --locked --bin moore
+              ls
             install: |
               sudo "moore is installed"
             version: |
               cd moore
             # cargo pkgid
             run: moore -e "{top_module}" {file}
-            third_party_release_repo: https://github.com/llvm/circt.git
-            third_party_release_name_wildcard: "circt-full-shared-linux-x64.tar.gz"
 
           - name: verible
             repo: https://github.com/chipsalliance/verible.git
@@ -315,6 +285,7 @@ jobs:
             build: |
               bazel build :install-binaries --//bazel:use_local_flex_bison -c opt
             install: |
+              ls
               sudo .github/bin/simple-install.sh /usr/local/bin
               bazel shutdown
               echo $PWD
@@ -336,52 +307,41 @@ jobs:
               yosys --version
             run: yosys -p 'read -sv {file}'
 
-          # - name: yosys-slang
-          #   repo: https://github.com/povik/yosys-slang.git
-          #   deps: cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh uuid-dev
-          #   path: yosys-slang
-          #   build: |
-          #     git clone --recursive https://github.com/povik/yosys-slang
-          #     make -j$(nproc)
-          #   install: |
-          #     sudo make install
-
-          - name: circt
-            repo: https://github.com/llvm/circt.git
-            deps: cmake clang ninja-build lld
-            path: circt
+          - name: yosys-slang
+            repo: https://github.com/povik/yosys-slang.git
+            deps: cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh uuid-dev
+            path: yosys-slang
             build: |
-              # git submodule init
-              # git submodule update
-              # mkdir llvm/build
-              # cd llvm/build
-              # cmake -G Ninja ../llvm \
-              #   -DLLVM_ENABLE_PROJECTS="mlir" \
-              #   -DLLVM_TARGETS_TO_BUILD="host" \
-              #   -DLLVM_ENABLE_ASSERTIONS=ON \
-              #   -DCMAKE_BUILD_TYPE=RELEASE \
-              #   -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-              # ninja
-              # cd ..
-              # mkdir build
-              # cd build
-              # cmake -G Ninja .. \
-              #   -DMLIR_DIR=$PWD/../llvm/build/lib/cmake/mlir \
-              #   -DLLVM_DIR=$PWD/../llvm/build/lib/cmake/llvm \
-              #   -DLLVM_ENABLE_ASSERTIONS=ON \
-              #   -DCMAKE_BUILD_TYPE=RELEASE \
-              #   -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-              # ninja
-              ls
-              cd ..
-              ls
+              git clone --recursive https://github.com/povik/yosys-slang
+              make -j$(nproc)
             install: |
-              ls
-            version: |
-              pwd
-            run: ls
-            third_party_release_repo: https://github.com/llvm/circt.git
-            third_party_release_name_wildcard: "circt-full-shared-linux-x64.tar.gz"
+              sudo make install
+            third_party_release_repo: YosysHQ/yosys
+            third_party_release_name_wildcard: yosys
+
+          # - name: circt
+          #   repo: https://github.com/llvm/circt.git
+          #   deps: cmake clang ninja-build lld
+          #   path: circt
+          #   install: |
+          #     SEARCH_DIR="./"
+          #     REGEX="firtool-[0-9\.]+/bin"
+
+          #     FIRTOOL_BIN=$(find "$SEARCH_DIR" -type d | grep -E "$REGEX" | head -n 1)
+
+          #     if [[ -z "$FIRTOOL_BIN" ]]; then
+          #         echo "No matching firtool bin directory found."
+          #         exit 1
+          #     fi
+
+          #     echo "Found firtool bin directory: $FIRTOOL_BIN"
+
+          #     export PATH="$FIRTOOL_BIN:$PATH"
+
+          #     echo "New PATH: $PATH"
+          #   run: ls
+          #   third_party_release_repo: llvm/circt
+          #   third_party_release_name_wildcard: "circt-full-shared-linux-x64.tar.gz"
 
 
     steps:
@@ -419,7 +379,7 @@ jobs:
         run: |
           sudo apt -qq -y install ${{ matrix.tool.deps }}
       - name: Setup Rust (if needed)
-        if: ${{ matrix.tool.rust_ver && steps.cache-build.outputs.cache-hit != 'true' }}
+        if: ${{ matrix.tool.rust_ver }}
         run: |
           sudo apt -y install curl
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
