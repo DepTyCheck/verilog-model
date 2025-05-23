@@ -144,6 +144,8 @@ jobs:
           #   rust_ver: rust version to install (optional)
           #   third_party_release_repo: link to the repo to download the release from. Format: {owner}/{repo}
           #   third_party_release_name_wildcard: wildcard to match the release name
+          #   dep_path: path of cached dependency
+          #   dep_name: name of cached dependency
           #
           #   P.S. ignored errors file should be named as <path>-ignored-errors.txt
 
@@ -320,7 +322,7 @@ jobs:
               make -j$(nproc)
             install: |
               sudo make install
-              for file in "$GEN_PATH"/*.sv; do
+              for file in "$GENERATION_DIR"/*.sv; do
                 if [[ -f "$file" && "$file" == *,* ]]; then
                   new_name="${file//,/_}"
                   echo "Renaming: $file -> $new_name"
@@ -335,23 +337,34 @@ jobs:
             repo: https://github.com/povik/yosys-slang.git
             deps: cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh uuid-dev
             path: yosys-slang
-            build: |
-              export PATH="$PWD/oss-cad-suite/bin:$PATH"
-              echo $PATH
-              git submodule update --init --recursive
-              make -j$(nproc)
             install: |
+              cd ..
+              REGEX="oss-cad-suite-linux-x64"
+              OSS_CAD_ARCHIVE=$(find "./" -type f | grep -E "$REGEX" | head -n 1)
+              tar -xvzf OSS_CAD_ARCHIVE
               export PATH="$PWD/oss-cad-suite/bin:$PATH"
               echo $PATH
-              sudo make install
+              for file in "$GENERATION_DIR"/*.sv; do
+                if [[ -f "$file" && "$file" == *,* ]]; then
+                  new_name="${file//,/_}"
+                  echo "Renaming: $file -> $new_name"
+                  mv "$file" "$new_name"
+                fi
+              done
+            run: yosys -m slang -p 'read -sv {file}'
             third_party_release_repo: YosysHQ/oss-cad-suite-build
             third_party_release_name_wildcard: oss-cad-suite-linux-x64-*
 
           - name: circt
             repo: https://github.com/llvm/circt.git
-            deps: cmake clang ninja-build lld lsb-release wget software-properties-common gnupg
+            deps: cmake clang ninja-build lld lsb-release wget software-properties-common gnupg llvm llvm-dev libmlir-20 libmlir-20-dev mlir-20-tools
             path: circt
+            dep_path: slang
+            dep_name: slang
             build: |
+              cd ../slang
+              sudo cmake --install build --strip
+              cd ../circt
               sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
               cmake -G Ninja \
                 # -DLLVM_DIR=/usr/lib/llvm-18/lib/cmake/llvm \
@@ -363,6 +376,7 @@ jobs:
               sudo ninja install
               ls
             version: |
+              circt-verilog -h
               circt-verilog --version
             run: ls
 
@@ -381,6 +395,11 @@ jobs:
           git clone ${{ matrix.tool.repo }} ${{ matrix.tool.path }}
           cd ${{ matrix.tool.path }}
           echo "commit_hash=$(git rev-parse HEAD)" >> $GITHUB_ENV
+      - name: Restore dependency
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ matrix.tool.dep_path }}
+          key: ${{ matrix.tool.dep_name }}-cache-
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4

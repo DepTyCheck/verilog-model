@@ -10,5 +10,6 @@ Unsupported tristate port expression: VARREF '__Vcellinpt__
 Unsupported tristate construct: INITITEM
 Assigning to input\/const variable:
 V3Gate\.cpp:872: Circular logic should have been rejected by okVisitor
+Found definition of 'std' as a PACKAGE but expected a variable
 
 Settle region did not converge
