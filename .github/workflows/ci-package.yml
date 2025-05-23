@@ -67,35 +67,52 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      # - name: Update `pack-db`
-      #   run: pack update-db
-      # - name: Switch to the latest compiler, if needed
-      #   if: matrix.upstream-mode == 'bleeding-edge-compiler'
-      #   run: |
-      #     { echo; echo "[idris2]"; echo 'commit = "latest:main"'; } >> pack.toml
-      #     pack fetch
-      # - name: Switch to the latest collection
-      #   run: pack switch latest
-      # - name: Compute the package name
-      #   run: |
-      #     echo "package_name=$(sed -e 's|.*/||' -e 's/idris2\?-//' \
-      #           <<< ${{ github.repository }})" >> "$GITHUB_ENV"
-      # - name: Build `${{ env.package_name }}`
-      #   run: pack build ${{ env.package_name }}
-      # - name: Fix file system  ¯\_(ツ)_/¯
-      #   run: |
-      #     set -x +e
-      #     pack run verilog-model --coverage mcov -n 1 --seed 0,1
-      #     touch tests/printer/model-coverage/dummy
-      #     touch tests/printer/create-dir/dummy
-      # - name: Test `${{ env.package_name }}`
-      #   run: pack test ${{ env.package_name }}
-      # - name: Gen SystemVerilog modules
-      #   if: matrix.upstream-mode == 'latest-pack-collection'
-      #   run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 128 --seed-name --seed-content --coverage mcov  # Generate modules
-      # - name: Show mcov
-      #   if: matrix.upstream-mode == 'latest-pack-collection'
-      #   run : cat mcov
+      - name: Calculate cache key
+        id: cache-key
+        run: |
+          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}" >> $GITHUB_OUTPUT
+      - name: Restore from cache
+        id: cache-build
+        uses: actions/cache/restore@v4
+        with:
+          path: .build
+          key: ${{ steps.cache-key.outputs.key }}
+      - name: Update `pack-db`
+        run: pack update-db
+      - name: Switch to the latest compiler, if needed
+        if: matrix.upstream-mode == 'bleeding-edge-compiler'
+        run: |
+          { echo; echo "[idris2]"; echo 'commit = "latest:main"'; } >> pack.toml
+          pack fetch
+      - name: Switch to the latest collection
+        run: pack switch latest
+      - name: Compute the package name
+        run: |
+          echo "package_name=$(sed -e 's|.*/||' -e 's/idris2\?-//' \
+                <<< ${{ github.repository }})" >> "$GITHUB_ENV"
+      - name: Build `${{ env.package_name }}`
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: pack build ${{ env.package_name }}
+      - name: Save build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .build
+          key: ${{ steps.cache-key.outputs.key }}
+      - name: Fix file system  ¯\_(ツ)_/¯
+        run: |
+          set -x +e
+          pack run verilog-model --coverage mcov -n 1 --seed 0,1
+          touch tests/printer/model-coverage/dummy
+          touch tests/printer/create-dir/dummy
+      - name: Test `${{ env.package_name }}`
+        run: pack test ${{ env.package_name }}
+      - name: Gen SystemVerilog modules
+        if: matrix.upstream-mode == 'latest-pack-collection'
+        run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 128 --seed-name --seed-content --coverage mcov  # Generate modules
+      - name: Show mcov
+        if: matrix.upstream-mode == 'latest-pack-collection'
+        run : cat mcov
       - uses: actions/upload-artifact@v4
         if: matrix.upstream-mode == 'latest-pack-collection'
         with:
@@ -245,8 +262,7 @@ jobs:
             version: |
               synlig --version
               synlig -h
-              synlig read_systemverilog -h
-            run: synlig read_systemverilog -nopython -parse -sverilog {file}
+            run: synlig -f systemverilog -o output.blif -S {file}
 
           - name: sv_parser
             repo: https://github.com/dalance/sv-parser.git
@@ -271,9 +287,10 @@ jobs:
               CARGO_NET_GIT_FETCH_WITH_CLI=true
               git checkout 4f91804dfa6b4ba22e3f26b891b1a504308578bd       # Legacy version before circt & llvm deps
               mv ../.github/workflows/conf/moore/Cargo.lock ./Cargo.lock
+              cargo --version --verbose
               sudo cargo install --locked --path . --bin moore
             install: |
-              sudo "moore is installed"
+              ls
             version: |
               moore -h
             run: moore -e "{top_module}" {file}
@@ -285,7 +302,8 @@ jobs:
             build: |
               bazel build :install-binaries --//bazel:use_local_flex_bison -c opt
             install: |
-              ls bazel-bin
+              ls
+              ls ./bazel-bin
               sudo .github/bin/simple-install.sh /usr/local/bin
               bazel shutdown
             version: |
@@ -304,26 +322,31 @@ jobs:
               sudo make install
             version: |
               yosys --version
-            run: yosys -p 'read -sv \"{file}\"'
+            run: yosys -p 'read -sv {file}'
 
           - name: yosys-slang
             repo: https://github.com/povik/yosys-slang.git
             deps: cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh uuid-dev
             path: yosys-slang
             build: |
+              export PATH="$PWD/oss-cad-suite/bin:$PATH"
+              echo $PATH
               git submodule update --init --recursive
               make -j$(nproc)
             install: |
+              export PATH="$PWD/oss-cad-suite/bin:$PATH"
+              echo $PATH
               sudo make install
-            third_party_release_repo: YosysHQ/yosys
-            third_party_release_name_wildcard: yosys.tar.gz
+            third_party_release_repo: YosysHQ/oss-cad-suite-build
+            third_party_release_name_wildcard: oss-cad-suite-linux-x64-*
 
           - name: circt
             repo: https://github.com/llvm/circt.git
             deps: cmake clang ninja-build lld llvm-18-dev clang-18 libmlir-18-dev mlir-18-tools
             path: circt
             build: |
-              cmake .. \
+              ls /usr/lib/llvm-18/lib/cmake/llvm
+              cmake
                 -G Ninja \
                 -DLLVM_DIR=/usr/lib/llvm-18/lib/cmake/llvm \
                 -DMLIR_DIR=/usr/lib/llvm-18/lib/cmake/mlir \
