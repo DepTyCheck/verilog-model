@@ -278,22 +278,22 @@ jobs:
             # cargo pkgid
             run: parse_sv {file}
 
-          - name: moore
-            repo: https://github.com/stefanlippuner/moore.git # we use fork. original: https://github.com/fabianschuiki/moore
-            deps: cargo
-            rust_ver: "1.66"
-            path: moore
-            build: |
-              CARGO_NET_GIT_FETCH_WITH_CLI=true
-              git checkout 4f91804dfa6b4ba22e3f26b891b1a504308578bd       # Legacy version before circt & llvm deps
-              mv ../.github/workflows/conf/moore/Cargo.lock ./Cargo.lock
-              cargo --version --verbose
-              sudo cargo install --locked --path . --bin moore
-            install: |
-              ls
-            version: |
-              moore -h
-            run: moore -e "{top_module}" {file}
+          # - name: moore
+          #   repo: https://github.com/stefanlippuner/moore.git # we use fork. original: https://github.com/fabianschuiki/moore
+          #   deps: cargo
+          #   rust_ver: "1.66"
+          #   path: moore
+          #   build: |
+          #     CARGO_NET_GIT_FETCH_WITH_CLI=true
+          #     git checkout 4f91804dfa6b4ba22e3f26b891b1a504308578bd       # Legacy version before circt & llvm deps
+          #     mv ../.github/workflows/conf/moore/Cargo.lock ./Cargo.lock
+          #     cargo --version --verbose
+          #     sudo cargo install --locked --path . --bin moore
+          #   install: |
+          #     ls
+          #   version: |
+          #     moore -h
+          #   run: moore -e "{top_module}" {file}
 
           - name: verible
             repo: https://github.com/chipsalliance/verible.git
@@ -320,6 +320,13 @@ jobs:
               make -j$(nproc)
             install: |
               sudo make install
+              for file in "$GEN_PATH"/*.sv; do
+                if [[ -f "$file" && "$file" == *,* ]]; then
+                  new_name="${file//,/_}"
+                  echo "Renaming: $file -> $new_name"
+                  mv "$file" "$new_name"
+                fi
+              done
             version: |
               yosys --version
             run: yosys -p 'read -sv {file}'
@@ -342,14 +349,13 @@ jobs:
 
           - name: circt
             repo: https://github.com/llvm/circt.git
-            deps: cmake clang ninja-build lld llvm-18-dev clang-18 libmlir-18-dev mlir-18-tools
+            deps: cmake clang ninja-build lld lsb-release wget software-properties-common gnupg
             path: circt
             build: |
-              ls /usr/lib/llvm-18/lib/cmake/llvm
-              cmake
-                -G Ninja \
-                -DLLVM_DIR=/usr/lib/llvm-18/lib/cmake/llvm \
-                -DMLIR_DIR=/usr/lib/llvm-18/lib/cmake/mlir \
+              sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+              cmake -G Ninja \
+                # -DLLVM_DIR=/usr/lib/llvm-18/lib/cmake/llvm \
+                # -DMLIR_DIR=/usr/lib/llvm-18/lib/cmake/mlir \
                 -DCIRCT_SLANG_FRONTEND_ENABLED=ON \
                 -DCMAKE_BUILD_TYPE=Release
               ninja
