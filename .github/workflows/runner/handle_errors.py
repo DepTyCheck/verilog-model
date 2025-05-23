@@ -39,7 +39,7 @@ def handle_errors(
             error_text = match.group(0)
             print(f"Matched error: {error_text}")
             if not ignored_errors.match(error_text):
-                print(f"Found unignored error: {error_text}")
+                print(f"Found unignored error: {error_text}\n")
                 print_file(file_content, file_path)
                 return False
                 

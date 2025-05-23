@@ -269,7 +269,7 @@ jobs:
               CARGO_NET_GIT_FETCH_WITH_CLI=true
               ls
               mv ../.github/workflows/conf/moore/Cargo.lock ./Cargo.lock
-              sudo cargo install --locked --bin moore
+              sudo cargo install --locked --path . --bin moore
               ls
             install: |
               sudo "moore is installed"
@@ -285,6 +285,9 @@ jobs:
             build: |
               bazel build :install-binaries --//bazel:use_local_flex_bison -c opt
             install: |
+              ls
+              echo ""
+              cd bazel-bin
               ls
               sudo .github/bin/simple-install.sh /usr/local/bin
               bazel shutdown
@@ -305,7 +308,7 @@ jobs:
               sudo make install
             version: |
               yosys --version
-            run: yosys -p 'read -sv {file}'
+            run: yosys -p 'read -sv "{file}"'
 
           - name: yosys-slang
             repo: https://github.com/povik/yosys-slang.git
@@ -317,7 +320,7 @@ jobs:
             install: |
               sudo make install
             third_party_release_repo: YosysHQ/yosys
-            third_party_release_name_wildcard: yosys
+            third_party_release_name_wildcard: yosys.tar.gz
 
           # - name: circt
           #   repo: https://github.com/llvm/circt.git
