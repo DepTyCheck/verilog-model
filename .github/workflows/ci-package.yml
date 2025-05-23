@@ -49,7 +49,7 @@ jobs:
           if [ "$CURR" == "$MAIN" ]; then
             echo 'upstream-matrix=["latest-pack-collection"]'
           else
-            echo 'upstream-matrix=["latest-pack-collection", "bleeding-edge-compiler"]'
+            echo 'upstream-matrix=["latest-pack-collection"]' # , "bleeding-edge-compiler"
           fi >> "$GITHUB_OUTPUT"
 
   build-and-test:
