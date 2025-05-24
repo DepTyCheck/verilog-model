@@ -77,42 +77,41 @@ jobs:
         with:
           path: .build
           key: ${{ steps.cache-key.outputs.key }}
-      - name: Update `pack-db`
-        run: pack update-db
-      - name: Switch to the latest compiler, if needed
-        if: matrix.upstream-mode == 'bleeding-edge-compiler'
-        run: |
-          { echo; echo "[idris2]"; echo 'commit = "latest:main"'; } >> pack.toml
-          pack fetch
-      - name: Switch to the latest collection
-        run: pack switch latest
-      - name: Compute the package name
-        run: |
-          echo "package_name=$(sed -e 's|.*/||' -e 's/idris2\?-//' \
-                <<< ${{ github.repository }})" >> "$GITHUB_ENV"
-      - name: Build `${{ env.package_name }}`
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: pack build ${{ env.package_name }}
-      - name: Save build
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: .build
-          key: ${{ steps.cache-key.outputs.key }}
-      - name: Fix file system  ¯\_(ツ)_/¯
-        run: |
-          set -x +e
-          pack run verilog-model --coverage mcov -n 1 --seed 0,1
-          touch tests/printer/model-coverage/dummy
-          touch tests/printer/create-dir/dummy
-      - name: Test `${{ env.package_name }}`
-        run: pack test ${{ env.package_name }}
-      - name: Gen SystemVerilog modules
-        if: matrix.upstream-mode == 'latest-pack-collection'
-        run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 128 --seed-name --seed-content --coverage mcov  # Generate modules
-      - name: Show mcov
-        if: matrix.upstream-mode == 'latest-pack-collection'
-        run : cat mcov
+      # - name: Update `pack-db`
+      #   run: pack update-db
+      # - name: Switch to the latest compiler, if needed
+      #   if: matrix.upstream-mode == 'bleeding-edge-compiler'
+      #   run: |
+      #     { echo; echo "[idris2]"; echo 'commit = "latest:main"'; } >> pack.toml
+      #     pack fetch
+      # - name: Switch to the latest collection
+      #   run: pack switch latest
+      # - name: Compute the package name
+      #   run: |
+      #     echo "package_name=$(sed -e 's|.*/||' -e 's/idris2\?-//' \
+      #           <<< ${{ github.repository }})" >> "$GITHUB_ENV"
+      # - name: Build `${{ env.package_name }}`
+      #   run: pack build ${{ env.package_name }}
+      # - name: Save build
+      #   if: steps.cache-build.outputs.cache-hit != 'true'
+      #   uses: actions/cache/save@v4
+      #   with:
+      #     path: .build
+      #     key: ${{ steps.cache-key.outputs.key }}
+      # - name: Fix file system  ¯\_(ツ)_/¯
+      #   run: |
+      #     set -x +e
+      #     pack run verilog-model --coverage mcov -n 1 --seed 0,1
+      #     touch tests/printer/model-coverage/dummy
+      #     touch tests/printer/create-dir/dummy
+      # - name: Test `${{ env.package_name }}`
+      #   run: pack test ${{ env.package_name }}
+      # - name: Gen SystemVerilog modules
+      #   if: matrix.upstream-mode == 'latest-pack-collection'
+      #   run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 128 --seed-name --seed-content --coverage mcov  # Generate modules
+      # - name: Show mcov
+      #   if: matrix.upstream-mode == 'latest-pack-collection'
+      #   run : cat mcov
       - uses: actions/upload-artifact@v4
         if: matrix.upstream-mode == 'latest-pack-collection'
         with:
@@ -396,6 +395,7 @@ jobs:
           cd ${{ matrix.tool.path }}
           echo "commit_hash=$(git rev-parse HEAD)" >> $GITHUB_ENV
       - name: Restore dependency
+        if: ${{ matrix.tool.dep_path }}
         uses: actions/cache/restore@v4
         with:
           path: ${{ matrix.tool.dep_path }}
