@@ -235,9 +235,10 @@ jobs:
           #   path: tssv
           #   build: |
           #     cc -fPIC -c -I. src/parser.c
-          #     cc -fPIC -shared *.o -o
+          #     cc -fPIC -shared *.o -o tree-sitter-systemverilog.so
           #   install: |
           #     echo "TODO"
+          #     sudo pip3 install tree-sitter==0.21.3
           #   version: |
           #     echo "TODO"
           #   run: |
@@ -321,7 +322,9 @@ jobs:
               make -j$(nproc)
             install: |
               sudo make install
+              echo "GENERATION_DIR: $GENERATION_DIR"
               for file in "$GENERATION_DIR"/*.sv; do
+                echo "file: $file"
                 if [[ -f "$file" && "$file" == *,* ]]; then
                   new_name="${file//,/_}"
                   echo "Renaming: $file -> $new_name"
@@ -340,7 +343,7 @@ jobs:
               cd ..
               REGEX="oss-cad-suite-linux-x64"
               OSS_CAD_ARCHIVE=$(find "./" -type f | grep -E "$REGEX" | head -n 1)
-              tar -xvzf OSS_CAD_ARCHIVE
+              tar -xvzf "$OSS_CAD_ARCHIVE"
               export PATH="$PWD/oss-cad-suite/bin:$PATH"
               echo $PATH
               for file in "$GENERATION_DIR"/*.sv; do
@@ -356,13 +359,17 @@ jobs:
 
           - name: circt
             repo: https://github.com/llvm/circt.git
-            deps: cmake clang ninja-build lld lsb-release wget software-properties-common gnupg llvm llvm-dev libmlir-20 libmlir-20-dev mlir-20-tools
+            deps: cmake clang ninja-build lld lsb-release wget software-properties-common gnupg llvm llvm-dev
             path: circt
             dep_path: slang
             dep_name: slang
             build: |
               cd ../slang
               sudo cmake --install build --strip
+              wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+              sudo add-apt-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-20 main"
+              sudo apt-get update
+              sudo apt-get install -y libmlir-20-dev mlir-20-tools
               cd ../circt
               sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
               cmake -G Ninja \
@@ -457,7 +464,7 @@ jobs:
       - name: Print version
         run: ${{ matrix.tool.version }}
       - name: Install runner deps
-        run: sudo apt install -y python3
+        run: sudo apt install -y python3 python3-pip
       - name: Run
         run : |
           set +e
