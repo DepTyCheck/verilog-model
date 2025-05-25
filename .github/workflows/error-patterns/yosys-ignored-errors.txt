@@ -1,0 +1,3 @@
+syntax error, unexpected '\[', expecting ',' or '=' or '\)'
+syntax error, unexpected TOK_REAL
+syntax error, unexpected TOK_ID, expecting ',' or '=' or '\)'

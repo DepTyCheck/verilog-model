@@ -7,6 +7,7 @@ from pathlib import Path
 from find_top import find_top
 from handle_errors import handle_errors
 from ignored_errors_list import IgnoredErrorsList
+from collections import Counter
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -118,6 +119,7 @@ def main() -> None:
     gen_path = args.gen_path
     failed_files: list[str] = []
     ignored_errors = IgnoredErrorsList(args.errors_file)
+    stats = Counter()
 
     for file_path in Path(gen_path).glob("*.sv"):
         file_path_str = str(file_path)
@@ -140,6 +142,11 @@ def main() -> None:
         )
         if not cmd_handle_res:
             failed_files.append(file_path_str)
+            stats['failed'] += 1
+        elif cmd_res:
+            stats['clean'] += 1
+        else:
+            stats['handled_errors'] += 1
 
         # Run simulation if configured
         if cmd_res and args.sim_cmd:
@@ -152,6 +159,19 @@ def main() -> None:
             )
             if not sim_handle_res:
                 failed_files.append(file_path_str)
+                stats['failed'] += 1
+            elif sim_res:
+                stats['clean'] += 1
+            else:
+                stats['handled_errors'] += 1
+
+    print("\n===========================================")
+    print("Test Statistics:")
+    print(f"Clean tests:    {stats['clean']}")
+    print(f"Ignored errors: {stats['handled_errors']}")
+    print(f"Failed tests:   {stats['failed']}")
+    print(f"Total tests:    {sum(stats.values())}")
+    print("===========================================")
 
     if failed_files:
         print("\n===========================================")
