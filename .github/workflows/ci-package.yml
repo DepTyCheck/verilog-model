@@ -243,6 +243,7 @@ jobs:
                 cd ..
                 gunzip tree-sitter-linux-x64.gz
                 sudo mv tree-sitter-linux-x64 /usr/local/bin/tree-sitter-linux-x64
+                sudo chmod +x /usr/local/bin/tree-sitter-linux-x64
                 sudo apt -qq -y install curl
                 touch "$HOME/.bash_profile"
                 # From https://nodejs.org/en/download
@@ -292,61 +293,21 @@ jobs:
               parse_sv -h
             run: parse_sv {file}
 
-          # - name: moore
-          #   repo: https://github.com/stefanlippuner/moore.git # we use fork. original: https://github.com/fabianschuiki/moore
-          #   deps: cargo
-          #   rust_ver: "1.66"
-          #   path: moore
-          #   build: |
-          #     CARGO_NET_GIT_FETCH_WITH_CLI=true
-          #     git checkout 4f91804dfa6b4ba22e3f26b891b1a504308578bd       # Legacy version before circt & llvm deps
-          #     mv ../.github/workflows/conf/moore/Cargo.lock ./Cargo.lock
-          #     cargo --version --verbose
-          #     sudo cargo install --locked --path . --bin moore
-          #   install: |
-          #     ls
-          #   version: |
-          #     moore -h
-          #   run: moore -e "{top_module}" {file}
-
-          # - name: verible
-          #   repo: https://github.com/chipsalliance/verible.git
-          #   deps: bazel=7.6.1 bison flex libfl-dev
-          #   path: verible
-          #   build: |
-          #     bazel build :install-binaries --//bazel:use_local_flex_bison -c opt
-          #   install: |
-          #     ls
-          #     ls ./bazel-bin
-          #     sudo .github/bin/simple-install.sh /usr/local/bin
-          #     bazel shutdown
-          #   version: |
-          #     verible --version
-          #     verible -h
-          #   run: verible {file}
-
-          # - name: yosys
-          #   repo: https://github.com/YosysHQ/yosys.git
-          #   deps: build-essential clang lld bison flex libreadline-dev gawk tcl-dev libffi-dev git graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
-          #   path: yosys
-          #   build: |
-
-          #   install: |
-
-          #     echo "GENERATION_DIR: $GENERATION_DIR"
-          #     cd ..
-          #     for file in "$GENERATION_DIR"/*.sv; do
-          #       echo "file: $file"
-          #       if [[ -f "$file" && "$file" == *,* ]]; then
-          #         new_name="${file//,/_}"
-          #         echo "Renaming: $file -> $new_name"
-          #         mv "$file" "$new_name"
-          #       fi
-          #     done
-          #   version: yosys --version
-          #   run: yosys -p 'read -sv {file}'
-          #   error_regex: |
-          #     ERROR:[A-z0-9, "'\[\]=()]+
+          - name: yosys
+            repo: https://github.com/YosysHQ/yosys.git
+            deps: build-essential clang lld bison flex libreadline-dev gawk tcl-dev libffi-dev git graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
+            path: yosys
+            build: |
+              git submodule update --init --recursive
+              make -j$(nproc)
+            install: |
+              sudo make install
+              cd ..
+              bash .github/workflows/runner/rename_tests.sh
+            version: yosys --version
+            run: yosys -p 'read -sv2012 {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
+            error_regex: |
+              ERROR:[A-z0-9, "'\[\]=()]+
 
           - name: yosys-slang
             repo: https://github.com/povik/yosys-slang.git
@@ -367,51 +328,11 @@ jobs:
               cd ..
               sudo make install
               cd ..
-              # REGEX="oss-cad-suite-linux-x64"
-              # OSS_CAD_ARCHIVE=$(find "./" -type f | grep -E "$REGEX" | head -n 1)
-              # tar -xvzf "$OSS_CAD_ARCHIVE"
-              # export PATH="$PWD/oss-cad-suite/bin:$PATH"
-              # echo $PATH
-              for file in "$GENERATION_DIR"/*.sv; do
-                if [[ -f "$file" && "$file" == *,* ]]; then
-                  new_name="${file//,/_}"
-                  echo "Renaming: $file -> $new_name"
-                  mv "$file" "$new_name"
-                fi
-              done
+              bash .github/workflows/runner/rename_tests.sh
             version: yosys --version
-            run: yosys -m slang -p 'read -sv {file}'
-            # third_party_release_repo: YosysHQ/oss-cad-suite-build
-            # third_party_release_name_wildcard: oss-cad-suite-linux-x64-*
-
-          # - name: circt
-          #   repo: https://github.com/llvm/circt.git
-          #   deps: cmake clang ninja-build lld lsb-release wget software-properties-common gnupg llvm llvm-dev
-          #   path: circt
-          #   dep_path: slang
-          #   dep_name: slang
-          #   build: |
-          #     cd ../slang
-          #     sudo cmake --install build --strip
-          #     wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
-          #     sudo add-apt-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-20 main"
-          #     sudo apt-get update
-          #     sudo apt-get install -y libmlir-20-dev mlir-20-tools
-          #     cd ../circt
-          #     sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
-          #     cmake -G Ninja \
-          #       # -DLLVM_DIR=/usr/lib/llvm-18/lib/cmake/llvm \
-          #       # -DMLIR_DIR=/usr/lib/llvm-18/lib/cmake/mlir \
-          #       -DCIRCT_SLANG_FRONTEND_ENABLED=ON \
-          #       -DCMAKE_BUILD_TYPE=Release
-          #     ninja
-          #   install: |
-          #     sudo ninja install
-          #     ls
-          #   version: |
-          #     circt-verilog -h
-          #     circt-verilog --version
-          #   run: ls
+            run: yosys -m slang -p 'read -sv2012 {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
+            error_regex: |
+              ERROR:[A-z0-9, "'\[\]=()]+
 
     steps:
       - name: Checkout

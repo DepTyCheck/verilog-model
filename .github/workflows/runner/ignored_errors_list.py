@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import List
 import re
+import sys
 
 # Holds a list of regex patterns for errors that should be ignored
 class IgnoredErrorsList:
@@ -26,8 +27,9 @@ class IgnoredErrorsList:
                 # Read all lines and strip whitespace
                 self._errors = [line.strip() for line in file.readlines() if line.strip()]
         except FileNotFoundError:
-            print(f"Warning: Ignored errors file not found at {file_path}")
+            print(f"Error: Ignored errors file not found at {file_path}")
             self._errors = []
+            sys.exit(1)
         except Exception as e:
             print(f"Error reading ignored errors file: {e}")
             self._errors = []
