@@ -80,7 +80,9 @@ jobs:
           key: ${{ steps.cache-key.outputs.key }}
       - name: Touch files
         if: steps.cache-build.outputs.cache-hit == 'true'
-        run: find "${{ env.BUILD_DIR }}" -type f -exec touch {} +
+        run: |
+          find "${{ env.BUILD_DIR }}" -type f -exec touch {} +
+          sync
       - name: Update `pack-db`
         run: pack update-db
       - name: Switch to the latest compiler, if needed
@@ -97,7 +99,6 @@ jobs:
       - name: Build `${{ env.package_name }}`
         run: pack build ${{ env.package_name }}
       - name: Save build
-        if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: ${{ env.BUILD_DIR }}
