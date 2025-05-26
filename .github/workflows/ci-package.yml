@@ -306,8 +306,8 @@ jobs:
               bash .github/workflows/runner/rename_tests.sh
             version: yosys --version
             run: yosys -p 'read -sv2012 {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
-            error_regex: |
-              ERROR:[A-z0-9, "'\[\]=()]+
+            error_regex: >
+              ERROR:[A-z0-9, \"'\[\]=()]+
 
           - name: yosys-slang
             repo: https://github.com/povik/yosys-slang.git
@@ -331,8 +331,8 @@ jobs:
               bash .github/workflows/runner/rename_tests.sh
             version: yosys --version
             run: yosys -m slang -p 'read -sv2012 {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
-            error_regex: |
-              ERROR:[A-z0-9, "'\[\]=()]+
+            error_regex: >
+              ERROR:[A-z0-9, \"'\[\]=()]+
 
     steps:
       - name: Checkout
