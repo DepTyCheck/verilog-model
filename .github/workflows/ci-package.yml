@@ -136,7 +136,8 @@ jobs:
           #   repo: link to the git repo
           #   deps: packages to install with apt
           #   path: folder with files to build
-          #   build: build commands
+          #   pre_build: commands to run before the build
+          #   build: build commands (runs only if cache miss)
           #   install: install commands
           #   version: command to print the version
           #   run: command to run the tool. Note that path to the .sv file will be concatenated to the end of the command.
@@ -239,11 +240,12 @@ jobs:
             repo: https://github.com/gmlarumbe/tree-sitter-systemverilog.git
             deps: gcc python3
             path: tssv
+            pre_build: |
+              gunzip tree-sitter-linux-x64.gz
+              sudo mv tree-sitter-linux-x64 /usr/local/bin/tree-sitter-linux-x64
+              sudo chmod +x /usr/local/bin/tree-sitter-linux-x64
             build: |
                 cd ..
-                gunzip tree-sitter-linux-x64.gz
-                sudo mv tree-sitter-linux-x64 /usr/local/bin/tree-sitter-linux-x64
-                sudo chmod +x /usr/local/bin/tree-sitter-linux-x64
                 sudo apt -qq -y install curl
                 touch "$HOME/.bash_profile"
                 # From https://nodejs.org/en/download
@@ -394,6 +396,9 @@ jobs:
           latest: true
           extract: true
           fileName: ${{ matrix.tool.third_party_release_name_wildcard }}
+      - name: Pre-Build tool
+        run : |
+          ${{ matrix.tool.pre_build }}
       - name: Build tool
         if: steps.cache-build.outputs.cache-hit != 'true'
         run : |
