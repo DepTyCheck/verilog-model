@@ -381,6 +381,16 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : Fi
         True  => [ pre, line "" ]
         False => [ pre ] ++ map line warnings ++ [ line "" ]
 
+    ||| 23.2.1 Module header definition
+    ||| The module header defines the following:
+    ||| — The name of the module
+    ||| — The port list of the module
+    ||| — The direction and size of each port
+    ||| — The type of data passed through each port
+    ||| — The parameter constants of the module
+    ||| — A package import list of the module
+    ||| — The default lifetime (static or automatic) of subroutines defined within the module
+    ||| IEEE 1800-2023
     printSubm : (String, (Fin (length (subMs.asList)), Fin (length ms))) -> List $ Doc opts
     printSubm (instanceName, subMsIdx, msIdx) = do
       let pre : Doc opts = line (index msIdx $ toVect $ allModuleNames pms) <++> line instanceName

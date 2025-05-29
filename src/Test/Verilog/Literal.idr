@@ -9,25 +9,36 @@ import Test.DepTyCheck.Gen.Coverage
 
 %default total
 
-||| 0 or 1
-public export
-data SValue2 = Z' | O'
+namespace Logic2
 
-public export
-Show SValue2 where
-  show Z' = "0"
-  show O' = "1"
+  public export
+  data SValue2 = Z | S
 
-||| 0 or 1 or x or z
-public export
-data SValue4 = Z'' | O'' | X | H
+  public export
+  Show SValue2 where
+    show Z = "0"
+    show S = "1"
 
-public export
-Show SValue4 where
-  show Z'' = "0"
-  show O'' = "1"
-  show X   = "x"
-  show H   = "z"
+||| 6.3.1 Logic values
+||| 
+||| The SystemVerilog value set consists of the following four basic values:
+||| 0—represents a logic zero or a false condition
+||| 1—represents a logic one or a true condition
+||| x—represents an unknown logic value
+||| z—represents a high-impedance state
+||| 
+||| IEEE 1800-2023
+namespace Logic4
+  ||| 0 or 1 or x or z
+  public export
+  data SValue4 = Z | S | X | H
+
+  public export
+  Show SValue4 where
+    show Z = "0"
+    show S = "1"
+    show X   = "x"
+    show H   = "z"
 
 ||| Single bit binary literal
 public export
