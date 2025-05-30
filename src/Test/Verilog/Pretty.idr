@@ -21,6 +21,7 @@ import public Test.Verilog.Connections
 import public Test.Verilog.CtxPorts
 import public Test.Verilog.Assign
 import public Test.Verilog.Literal
+import public Test.Verilog.Warnings
 
 import Test.DepTyCheck.Gen
 import Text.PrettyPrint.Bernardy
@@ -33,7 +34,7 @@ toTotalInputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
                   (idx : Fin subMs.asList.length) ->
                   Fin (index ms (index' subMs.asList idx)).inpsCount ->
                   Fin $ totalInputs {ms} subMs
-toTotalInputsIdx {subMs=i::is} idx x with 0 (sym $ portsListAppendLen (index ms i).inputs (allInputs {ms} is))
+toTotalInputsIdx {subMs=i::is} idx x with 0 (sym $ svolistAppendLen (index ms i).inputs (allInputs {ms} is))
                                         | 0 (length ((index ms i).inputs ++ allInputs {ms} is))
   toTotalInputsIdx FZ       x | Refl | _ = indexSum $ Left x
   toTotalInputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalInputsIdx idx x
@@ -43,16 +44,16 @@ toTotalOutputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
                     (idx : Fin subMs.asList.length) ->
                     Fin (index ms $ index' subMs.asList idx).outsCount ->
                     Fin $ totalOutputs {ms} subMs
-toTotalOutputsIdx {subMs=i::is} idx x with 0 (sym $ portsListAppendLen (index ms i).outputs (allOutputs {ms} is))
+toTotalOutputsIdx {subMs=i::is} idx x with 0 (sym $ svolistAppendLen (index ms i).outputs (allOutputs {ms} is))
                                          | 0 (length ((index ms i).outputs ++ allOutputs {ms} is))
   toTotalOutputsIdx FZ       x | Refl | _ = indexSum $ Left x
   toTotalOutputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalOutputsIdx idx x
   
 public export
-connFwdRel : {ss, sk : PortsList} -> (cons: Connections ss sk b tIs) -> Vect (sk.length) $ Maybe $ Fin ss.length
+connFwdRel : {srcs, sk : SVObjList} -> {mfs : MFinsList srcs.length} -> (cons: Connections srcs sk b mfs) -> Vect (sk.length) $ Maybe $ Fin srcs.length
 connFwdRel Empty           = []
 connFwdRel (Cons sfs cs) = helper sfs :: connFwdRel cs where
-  helper : SourceForSink ss sink -> Maybe $ Fin (length ss)
+  helper : SourceForSink srcs sink mf -> Maybe $ Fin srcs.length
   helper NoSource             = Nothing
   helper (HasSource srcIdx _) = Just srcIdx
 
@@ -61,23 +62,45 @@ nothings []              = 0
 nothings (Nothing :: xs) = S (nothings xs)
 nothings (Just _  :: xs) = nothings xs
 
-
-Show SVBasic where
-  show Logic'   = "logic"
-  show Wire'    = "wire"
+Show NetType where
+  show Supply0' = "supply0"
+  show Supply1' = "Supply1"
+  show Triand'  = "triand"
+  show Trior'   = "trior"
+  show Trireg'  = "trireg"
+  show Tri0'    = "tri0"
+  show Tri1'    = "tri1"
   show Uwire'   = "uwire"
-  show Int'     = "int"
-  show Integer' = "integer"
-  show Bit'     = "bit"
-  show Real'    = "real"
+  show Wire'    = "wire"
+  show Wand'    = "wand"
+  show Wor'     = "wor"
 
-||| Prints the type's signature to the left of the name
-printVarOrPacked : SVType -> String
-printVarOrPacked $ Var bt                = "\{show bt} "
-printVarOrPacked $ Arr $ Packed t s e    = printVarOrPacked t ++ "[\{show s}:\{show e}]"
-printVarOrPacked $ Arr $ Unpacked {t, _} = printVarOrPacked t
+Show NonIntegerType where
+  show Shortreal' = "shortreal"
+  show Real'      = "real"
+  show Realtime'  = "realtime"
 
-||| Prints the type's signature to the right of the name.
+Show IntegerScalarType where
+  show Bit'   = "bit"
+  show Logic' = "logic"
+  show Reg'   = "reg"
+
+Show IntegerVectorType where
+  show Byte'     = "byte"
+  show Shortint' = "shortint"
+  show Int'      = "int"
+  show Longint'  = "longint"
+  show Integer'  = "integer"
+  show Time'     = "time"
+
+||| print name
+pn : String -> String
+pn "" = ""
+pn a = " \{show a}"
+
+||| examples:
+||| bit uP [3:0]; //1-D unpacked
+||| bit [3:0] p;  //1-D packed
 |||
 ||| 7.4.2
 ||| A fixed-size unpacked dimension may also be specified by a single positive constant integer expression to
@@ -86,26 +109,22 @@ printVarOrPacked $ Arr $ Unpacked {t, _} = printVarOrPacked t
 ||| ex:
 ||| int Array[0:7][0:31]; // array declaration using ranges
 ||| int Array[8][32];     // array declaration using sizes
-|||
-||| IEEE 1800-2023
-printUnpackedDims : SVType -> String
-printUnpackedDims $ Var _                = ""
-printUnpackedDims $ Arr $ Packed {}      = ""
-printUnpackedDims $ Arr $ Unpacked t s e = "[\{show s}:\{show e}]" ++ printUnpackedDims t
+showSVType : SVType -> (name : String) -> String
+showSVType (RVar x)                name = "\{show x}\{show $ pn name}"
+showSVType (SVar x)                name = "\{show x}\{show $ pn name}"
+showSVType (VVar x)                name = "\{show x}\{show $ pn name}"
+showSVType (PackedArr   t {p} s e) name = "\{showSVType t ""}\{space}[\{show s}:\{show e}]\{show $ pn name}" where
+  space : String
+  space = case p of
+    PS => " "
+    PA => ""
+showSVType (UnpackedArr t     s e) name = case t of
+  (UnpackedArr t' s' e') => "\{showSVType t name}[\{show s}:\{show e}]"
+  other                  => "\{showSVType t name} "
 
-||| examples:
-||| bit uP [3:0]; //1-D unpacked
-||| bit [3:0] p;  //1-D packed
-printSVArr : SVArray _ _ _ -> String -> String
-printSVArr (Packed   svt s e) name = "\{printVarOrPacked svt}[\{show s}:\{show e}] \{name}"
-printSVArr (Unpacked svt s e) name = "\{printVarOrPacked svt}\{space svt}\{name} [\{show s}:\{show e}]\{printUnpackedDims svt}" where
-  space : SVType -> String
-  space (Arr $ Packed {}) = " "
-  space _           = ""
-
-printConnType : SVType -> String -> String
-printConnType (Arr arr) name = printSVArr arr name
-printConnType (Var svt) name = "\{show svt} \{name}"
+showSVObj : SVObject -> (name : String) -> String
+showSVObj (Net nt t) name = "\{show nt} \{showSVType t name}"
+showSVObj (Var    t) name = showSVType t name
 
 ||| For standart gates in SystemVerilog only position-based connections are allowed.
 ||| For user modules, interfaces, primitives and programs both position-based and name-based connections are allowed.
@@ -152,8 +171,8 @@ allModuleNames : PrintableModules ms -> SVect ms.length
 allModuleNames []        = []
 allModuleNames (x :: xs) = x.name :: allModuleNames xs
 
-printConnections: String -> (cons: PortsList) -> Vect (cons.length) String -> List String
-printConnections keyword cons names = zipWith (\conn, name => "\{keyword} \{printConnType conn name}") (toList cons) (toList names)
+printConnections: String -> (cons: SVObjList) -> Vect (cons.length) String -> List String
+printConnections keyword cons names = zipWith (\conn, name => "\{keyword} \{showSVObj conn name}") (toList cons) (toList names)
 
 fillNames : Vect n (Maybe $ Fin srcCount) -> Vect srcCount String -> Vect x String -> Vect n String
 fillNames []                _         _               = []
@@ -176,21 +195,21 @@ resolveSinks sinks srcNames x names un = do
 ||| Net types aren't compatible with unpacked arrays. So connections to unpacked array ports must be declared explicitly.
 |||
 ||| Prints an explicit declaration for each submodule input that's not connected to any source
-resolveUnpSI : Vect sk String -> List ((Fin sk, Maybe a), SVType) -> List String
+resolveUnpSI : Vect sk String -> List ((Fin sk, Maybe a), SVObject) -> List String
 resolveUnpSI names = mapMaybe resolve' where
-  resolve' : ((Fin sk, Maybe a), SVType) -> Maybe String
-  resolve' ((finSK, Nothing), Arr u@(Unpacked {})) = Just $ printSVArr u $ index finSK names
-  resolve' _                                       = Nothing
+  resolve' : ((Fin sk, Maybe a), SVObject) -> Maybe String
+  resolve' ((finSK, Nothing), u@(Var $ UnpackedArr t s e)) = Just $ showSVObj u $ index finSK names
+  resolve' _                                               = Nothing
 
 ||| Prints an explicit declaration for each submodule output connected to a submodule input or not connected at all.
 ||| Doesn't print declaration for ports connected to top outputs
-resolveUnpSO : Foldable c => Foldable d => c String -> d (String, SVType) -> List String
+resolveUnpSO : Foldable c => Foldable d => c String -> d (String, SVObject) -> List String
 resolveUnpSO tops = flip foldr [] $ \case
-  (n, Arr u@(Unpacked {})) => if elem n tops then id else with Prelude.(::) (printSVArr u n ::)
+  (n, u@(Var $ UnpackedArr t s e)) => if elem n tops then id else with Prelude.(::) (showSVObj u n ::)
   _ => id {a=List String}
 
 ||| filter `top inputs -> top outputs` connections
-filterTITO : Vect n (Maybe (Fin ss)) -> (inps : Nat) -> Vect n (Maybe (Fin inps))
+filterTITO : Vect n (Maybe $ Fin ss) -> (inps : Nat) -> Vect n $ Maybe $ Fin inps
 filterTITO []        _    = []
 filterTITO (x :: xs) inps = tryToFit' x :: filterTITO xs inps where
   tryToFit' : Maybe (Fin from) -> Maybe $ Fin inps
@@ -220,7 +239,7 @@ resolveConAssigns v outNames inpNames = map (resolveConn outNames inpNames) $ wi
     Just finInp => Just $ printAssign (index finOut outNames) (index finInp inpNames)
 
 -- zip PortsList with List
-zipPLWList : Foldable b => b a -> PortsList -> List (a, SVType)
+zipPLWList : Foldable b => b a -> SVObjList -> List (a, SVObject)
 zipPLWList other ports = toList other `zip` toList ports
 
 ||| Line of bits
@@ -262,93 +281,19 @@ getNames : Vect l String -> (List $ Fin l) -> List String
 getNames names []        = []
 getNames names (x :: xs) = index x names :: getNames names xs
 
-typeOf' : List SVType -> Fin a -> Maybe SVType
+typeOf' : List SVObject -> Fin a -> Maybe SVObject -- UNSAFE
 typeOf' []      _      = Nothing
 typeOf' (x::xs) FZ     = Just x
 typeOf' (x::xs) (FS i) = typeOf' xs i
 
-allInputs' : ModuleSigsList -> List SVType
+allInputs' : ModuleSigsList -> List SVObject
 allInputs' []      = []
 allInputs' (m::ms) = (toList m.inputs) ++ allInputs' ms
 
-allOutputs' : ModuleSigsList -> List SVType
+allOutputs' : ModuleSigsList -> List SVObject
 allOutputs' []      = []
 allOutputs' (m::ms) = (toList m.outputs) ++ allOutputs' ms
 
-namespace Wanings
-
-  export
-  bitsCnt' : SVBasic -> Nat
-  bitsCnt' Logic'   = 1
-  bitsCnt' Wire'    = 1
-  bitsCnt' Uwire'   = 1
-  bitsCnt' Int'     = 32
-  bitsCnt' Integer' = 32
-  bitsCnt' Bit'     = 1
-  bitsCnt' Real'    = 64
-
-  export
-  bitsCnt : SVType -> Nat
-  bitsCnt (Var b)                = bitsCnt' b
-  bitsCnt (Arr $ Unpacked t _ _) = bitsCnt t
-  bitsCnt (Arr $ Packed t s e)   = S (max s e `minus` min s e) * bitsCnt t
-
-  export
-  printTruncationWarning : SVType -> String -> SVType -> String -> Maybe String
-  printTruncationWarning op on np nn = do
-    let oldb = bitsCnt op
-    let newb = bitsCnt np
-    case oldb == newb of
-      True  => Nothing
-      False => Just "// warning: implicit conversion of port connection \{specialWord oldb newb} from \{show oldb} to \{show newb} bits" where
-        specialWord : (oldb : Nat) -> (newb : Nat) -> String
-        specialWord o n =  if o > n then "truncates" else "expands"
-
-  export
-  isSigned : SVBasic -> Bool
-  isSigned Logic'   = False
-  isSigned Wire'    = False
-  isSigned Uwire'   = False
-  isSigned Int'     = True
-  isSigned Integer' = True
-  isSigned Bit'     = False
-  isSigned Real'    = True
-
-  export
-  superBasic : SVType -> SVBasic
-  superBasic (Arr (Unpacked t s e)) = superBasic t
-  superBasic (Arr (Packed t s e)) = superBasic t
-  superBasic (Var x) = x
-
-  export
-  printSignednessWarning : SVType -> String -> SVType -> String -> Maybe String
-  printSignednessWarning op on np nn = do
-    let olds = isSigned $ superBasic op
-    let news = isSigned $ superBasic np
-    case olds == news of
-      True  => Nothing
-      False => Just "// warning: implicit conversion changes signedness from \{specialWorld olds} to \{specialWorld news}" where
-        specialWorld : Bool -> String
-        specialWorld isSigned = if isSigned then "signed" else "unsigned"
-
-  export
-  states : SVBasic -> Nat
-  states Logic'   = 4
-  states Wire'    = 4
-  states Uwire'   = 4
-  states Int'     = 2
-  states Integer' = 4
-  states Bit'     = 2
-  states Real'    = 2
-
-  export
-  printStatesWarning : SVType -> String -> SVType -> String -> Maybe String
-  printStatesWarning op on np nn = do
-    let olds = states $ superBasic op
-    let news = states $ superBasic np
-    case olds == news of
-      True  => Nothing
-      False => Just "// warning: implicit conversion changes possible bit states from \{show olds}-state to \{show news}-state"
 
 parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : FinsList ms.length) (pms : PrintableModules ms) 
            (subMINames : Vect (length $ allInputs {ms} subMs) String) (subMONames : Vect (length $ allOutputs {ms} subMs) String)
@@ -356,14 +301,14 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : Fi
 
   printSubmodules : List String -> List (Fin (length (subMs.asList)), Fin (length ms)) -> List $ Doc opts
   printSubmodules  subMInstanceNames subMsIdxs = foldl (++) [] $ map printSubm $ zip subMInstanceNames subMsIdxs where
-    printImplicitCast : SVType -> String -> SVType -> String -> List String
+    printImplicitCast : SVObject -> String -> SVObject -> String -> List String
     printImplicitCast op on np nn = do
       let warnings = catMaybes [ printTruncationWarning op on np nn, printSignednessWarning op on np nn, printStatesWarning op on np nn ]
       case isNil warnings of
         True  => []
-        False => warnings ++ [ "//   \{printConnType op on} -> \{printConnType np nn}" ]
+        False => warnings ++ [ "//   \{showSVObj op on} -> \{showSVObj np nn}" ]
 
-    printAllImplicitCasts : List SVType -> List String -> List SVType -> List String -> List String
+    printAllImplicitCasts : List SVObject -> List String -> List SVObject -> List String -> List String
     printAllImplicitCasts (p::ps) (n::ns) (p'::ps') (n'::ns') = do
       let curr = printImplicitCast p n p' n'
       let rest = printAllImplicitCasts ps ns ps' ns'
@@ -371,7 +316,7 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : Fi
     printAllImplicitCasts _       _       _         _         = []
 
     printSubm' : (pre : Doc opts) -> (siNames : List String) -> (soNames : List String) -> (exM : ModuleSig) ->
-                 (ctxInps : List SVType) -> (ctxOuts : List SVType) -> (exInps : List String) -> (exOuts : List String) -> List (Doc opts)
+                 (ctxInps : List SVObject) -> (ctxOuts : List SVObject) -> (exInps : List String) -> (exOuts : List String) -> List (Doc opts)
     printSubm' pre siNames soNames exM ctxInps ctxOuts exInps exOuts = do
       let warningsSubOuts = printAllImplicitCasts (toList exM.outputs) exOuts ctxOuts soNames
       let warningsSubInps = printAllImplicitCasts ctxInps siNames (toList exM.inputs) exInps
@@ -421,12 +366,14 @@ data ExtendedModules : ModuleSigsList -> Type where
   NewCompositeModule :
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
-    (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs) False m.inpsCount) ->
-    (ssto : Connections (m.inputs ++ allOutputs {ms} subMs) (m.outputs)            True  m.inpsCount) ->
+    {sicons : MFinsList $ (m .inputs ++ allOutputs {ms} subMs).length} ->
+    {tocons : MFinsList $ (m .inputs ++ allOutputs {ms} subMs).length} ->
+    (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs) SubInps sicons) ->
+    (ssto : Connections (m.inputs ++ allOutputs {ms} subMs) (m.outputs)            TopOuts tocons) ->
     (assignsSInps : List $ Fin (allInputs {ms} subMs).length) ->
     (assignsTOuts : List $ Fin (m.outputs).length) ->
     (assignsSS : List $ Fin (m.inputs ++ allOutputs {ms} subMs).length) ->
-    {pl : PortsList} ->
+    {pl : SVObjList} ->
     (literals : LiteralsList pl) ->
     (cont : ExtendedModules $ m::ms) ->
     (ports : ModuleSigsList) ->
