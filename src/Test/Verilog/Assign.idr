@@ -14,8 +14,8 @@ import Test.DepTyCheck.Gen.Coverage
 
 namespace SD
 
-  public export
-  data SingleDrivenAssigns : FinsList n -> Type
+  -- public export
+  -- data SingleDrivenAssigns : FinsList n -> Type
   public export
   data FinNotInSD : {n : Nat} -> {fins : FinsList n} -> SingleDrivenAssigns fins -> Fin (fins.length) -> Type
 
@@ -29,16 +29,17 @@ namespace SD
   public export
   data SingleDrivenAssigns : FinsList n -> Type where
     Empty : SingleDrivenAssigns fins
-    Cons  : {n : Nat} -> {fins : FinsList n} -> (f : Fin fins.length) -> (rest : SingleDrivenAssigns fins) -> FinNotInSD rest f -> SingleDrivenAssigns fins
+    Cons  : {n : Nat} -> {fins : FinsList n} -> 
+            (f : Fin fins.length) -> (rest : SingleDrivenAssigns fins) -> FinNotInSD rest f -> SingleDrivenAssigns fins
 
   export
   genSingleDriven : Fuel -> {n : Nat} -> (fins : FinsList n) ->
-    (Fuel -> {n': Nat} -> {fins': FinsList n'} -> (rest': SingleDrivenAssigns fins') -> (f': Fin $ fins'.length) ->
-    Gen MaybeEmpty $ FinNotInSD rest' f') =>
+    -- (Fuel -> {n': Nat} -> {fins': FinsList n'} -> (rest': SingleDrivenAssigns fins') -> (f': Fin $ fins'.length) ->
+    -- Gen MaybeEmpty $ FinNotInSD rest' f') =>
     Gen MaybeEmpty $ SingleDrivenAssigns fins
 
   public export
-  toList : {sk : PortsList} -> {fins : FinsList $ sk.length} -> SingleDrivenAssigns fins -> List $ Fin $ fins.length
+  toList : {sk : SVObjList} -> {fins : FinsList $ sk.length} -> SingleDrivenAssigns fins -> List $ Fin $ fins.length
   toList Empty           = []
   toList (Cons f rest _) = f :: toList rest
 
@@ -52,18 +53,18 @@ namespace SD
       (0 _ : NotEqFin f fin) ->
       (npi : FinNotInSD rest fin) -> FinNotInSD (Cons f rest fni) fin
 
-  genFINSD' : Fuel -> {n' : Nat} -> {fins' : FinsList n'} -> (rest' : SingleDrivenAssigns fins') -> (f' : Fin (fins'.length)) ->
-            Gen MaybeEmpty $ FinNotInSD rest' f'
-  genFINSD' x Empty           _   = pure FNIEmpty
-  genFINSD' x (Cons f rest z) fin = do
-    res <- genFINSD' x rest fin
-    fne <- genFNE x f fin
-    pure $ FNICons fne res
+  -- genFINSD' : Fuel -> {n' : Nat} -> {fins' : FinsList n'} -> (rest' : SingleDrivenAssigns fins') -> (f' : Fin (fins'.length)) ->
+  --           Gen MaybeEmpty $ FinNotInSD rest' f'
+  -- genFINSD' x Empty           _   = pure FNIEmpty
+  -- genFINSD' x (Cons f rest z) fin = do
+  --   res <- genFINSD' x rest fin
+  --   fne <- genFNE x f fin
+  --   pure $ FNICons fne res
 
-  export
-  genFINSD : Fuel -> {n' : Nat} -> {fins' : FinsList n'} -> (rest' : SingleDrivenAssigns fins') -> (f' : Fin (fins'.length)) ->
-            Gen MaybeEmpty $ FinNotInSD rest' f'
-  genFINSD x rest f = withCoverage $ genFINSD' x rest f
+  -- export
+  -- genFINSD : Fuel -> {n' : Nat} -> {fins' : FinsList n'} -> (rest' : SingleDrivenAssigns fins') -> (f' : Fin (fins'.length)) ->
+  --           Gen MaybeEmpty $ FinNotInSD rest' f'
+  -- genFINSD x rest f = withCoverage $ genFINSD' x rest f
 
 namespace MD
   ||| All resolved nets are multidriven
@@ -131,30 +132,30 @@ namespace MD
     ConsSink   : (f : MultidrivenSink subInPs subConns topOuPs) ->
                  (rest : MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns) -> MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns
 
-  public export
-  toListSSs : {ss : PortsList} -> {subConns : MFinsList ss.length} -> {topConns : MFinsList ss.length} ->
-              MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns -> List $ Fin $ ss.length
-  toListSSs Empty                 = []
-  toListSSs (ConsSource f _ rest) = f :: toListSSs rest
-  toListSSs (ConsSink   f   rest) = toListSSs rest
+  -- public export
+  -- toListSSs : {ss : PortsList} -> {subConns : MFinsList ss.length} -> {topConns : MFinsList ss.length} ->
+  --             MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns -> List $ Fin $ ss.length
+  -- toListSSs Empty                 = []
+  -- toListSSs (ConsSource f _ rest) = f :: toListSSs rest
+  -- toListSSs (ConsSink   f   rest) = toListSSs rest
 
-  public export
-  toListSkSbInps : {ss : PortsList} -> {subConns : MFinsList ss.length} -> {topConns : MFinsList ss.length} ->
-                   MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns -> List $ Fin $ subInPs.length
-  toListSkSbInps Empty                 = []
-  toListSkSbInps (ConsSource f _ rest) = toListSkSbInps rest
-  toListSkSbInps (ConsSink   f   rest) = case f of
-    NoSource f' _ _ => f' :: toListSkSbInps rest
-    TopOut   _  _   => toListSkSbInps rest
+  -- public export
+  -- toListSkSbInps : {ss : PortsList} -> {subConns : MFinsList ss.length} -> {topConns : MFinsList ss.length} ->
+  --                  MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns -> List $ Fin $ subInPs.length
+  -- toListSkSbInps Empty                 = []
+  -- toListSkSbInps (ConsSource f _ rest) = toListSkSbInps rest
+  -- toListSkSbInps (ConsSink   f   rest) = case f of
+  --   NoSource f' _ _ => f' :: toListSkSbInps rest
+  --   TopOut   _  _   => toListSkSbInps rest
 
-  public export
-  toListSkTopOuts : {ss : PortsList} -> {subConns : MFinsList ss.length} -> {topConns : MFinsList ss.length} ->
-                    MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns -> List $ Fin $ topOuPs.length
-  toListSkTopOuts Empty                 = []
-  toListSkTopOuts (ConsSource f _ rest) = toListSkTopOuts rest
-  toListSkTopOuts (ConsSink   f   rest) = case f of
-    NoSource _  _ _ => toListSkTopOuts rest
-    TopOut   f' _   => f' :: toListSkTopOuts rest
+  -- public export
+  -- toListSkTopOuts : {ss : PortsList} -> {subConns : MFinsList ss.length} -> {topConns : MFinsList ss.length} ->
+  --                   MultiDrivenAssigns ss tIs subInPs subConns topOuPs topConns -> List $ Fin $ topOuPs.length
+  -- toListSkTopOuts Empty                 = []
+  -- toListSkTopOuts (ConsSource f _ rest) = toListSkTopOuts rest
+  -- toListSkTopOuts (ConsSink   f   rest) = case f of
+  --   NoSource _  _ _ => toListSkTopOuts rest
+  --   TopOut   f' _   => f' :: toListSkTopOuts rest
 
 export
 genMultiDriven : Fuel -> (ss : PortsList) -> (tIs : Nat) ->

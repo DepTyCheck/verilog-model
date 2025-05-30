@@ -22,14 +22,6 @@ public export
 data EqMaybeMFMF : Maybe (Fin a) -> Maybe (Fin a) -> Type where
   EqMFMF : EqMaybeMFMF n n
 
-public export
-data EqBool : Bool -> Bool -> Type where
-  SameB : (x : Bool) -> EqBool x x
-
-public export
-data EqNat : Nat -> Nat -> Type where
-  SameN : (x : Nat) -> EqNat x x
-
 namespace FinsList
 
   public export
@@ -89,7 +81,7 @@ namespace MFinsList
   %name FinsList fs
 
   public export
-  find : (ms : MFinsList n) -> Fin a -> Maybe (Fin n) -- TODO unsafe. make it vect.
+  find : (ms : MFinsList n) -> Fin a -> Maybe $ Fin n -- TODO unsafe. make it vect.
   find (m::_ ) FZ     = m
   find (_::ms) (FS i) = find ms i
   find []       _     = Nothing
