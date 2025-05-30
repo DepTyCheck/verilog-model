@@ -76,7 +76,6 @@ public export
 Eq NonIntegerType where
  (==) Shortreal' Shortreal' = True
  (==) Real'      Real'      = True
- (==) Realtime'  Realtime'  = True
  (==) _          _          = False
 
 public export
@@ -179,7 +178,7 @@ data SVType : Type where
   RVar : NonIntegerType -> SVType
   SVar : IntegerScalarType -> SVType
   VVar : IntegerVectorType -> SVType
-  PackedArr : {t : SVType} -> PABasic t -> Nat -> Nat -> SVType
+  PackedArr : (t : SVType) -> {p : PABasic t} -> Nat -> Nat -> SVType
   ||| The main difference between an unpacked array and a packed array is that
   ||| an unpacked array is not guaranteed to be represented as a contiguous set of bits
   |||
@@ -240,8 +239,13 @@ data SVObject : Type where
   |||   | ps_identifier
   |||   | time_literal
   |||   | 1step
-  Net : {netData : SVType} -> NetType -> AllowedNetData netData -> SVObject
+  Net : NetType -> (t : SVType) -> {ald : AllowedNetData t} -> SVObject
   Var : SVType -> SVObject
+
+public export
+valueOf : SVObject -> SVType
+valueOf (Net _ t) = t
+valueOf (Var   t) = t
 
 ||| 6.6.2 Unresolved nets
 ||| The uwire net is an unresolved or unidriver wire and is used to model nets that allow only a single driver.
@@ -273,7 +277,7 @@ public export
 data SVIntegral : SVType -> Type where
   ST : SVIntegral $ SVar t
   VT : SVIntegral $ VVar t
-  PT : {p : PABasic t} -> SVIntegral $ PackedArr p s e
+  PT : {t : SVType} -> {p : PABasic t} -> SVIntegral $ PackedArr t {p} s e
   -- Packed struct, union, enum
 
 public export
@@ -323,12 +327,7 @@ data VarOrPacked : SVType -> Type where
 
 public export
 defaultNetType : SVObject
-defaultNetType = Net Wire' $ NA {i=ST {t=Logic'}} {s=SS {t=Logic'}}
-
-namespace SVTList
-
-  public export
-  data SVTList = Nil | (::) SVType SVTList
+defaultNetType = Net Wire' (SVar Logic') {ald=NA {i=ST {t=Logic'}} {s=SS {t=Logic'}}}
 
 namespace SVObjList
 
@@ -355,13 +354,13 @@ namespace SVObjList
   toList (x :: xs) = x :: toList xs
 
   export
-  svtlistAppendLen : (xs : SVObjList) -> (ys : SVObjList) -> length xs + length ys = length (xs ++ ys)
-  svtlistAppendLen []        ys = Refl
-  svtlistAppendLen (_ :: xs) ys = rewrite svtlistAppendLen xs ys in Refl
+  svolistAppendLen : (xs : SVObjList) -> (ys : SVObjList) -> length xs + length ys = length (xs ++ ys)
+  svolistAppendLen []        ys = Refl
+  svolistAppendLen (_ :: xs) ys = rewrite svolistAppendLen xs ys in Refl
 
   export
   comPS : {0 a, b: SVObjList} -> (0 m : Nat -> Type) -> m (length a + length b) -> m (length (a ++ b))
-  comPS _ v = rewrite sym $ svtlistAppendLen a b in v
+  comPS _ v = rewrite sym $ svolistAppendLen a b in v
 
   export
   comLen : {0 a, b: SVObjList} -> Vect (length a + length b) c -> Vect (length (a ++ b)) c
@@ -414,6 +413,11 @@ namespace ModuleSig
   index : (ms : ModuleSigsList) -> Fin ms.length -> ModuleSig
   index (m::_ ) FZ     = m
   index (_::ms) (FS i) = index ms i
+
+  public export
+  (++) : ModuleSigsList -> ModuleSigsList -> ModuleSigsList
+  Nil       ++ ys = ys
+  (x :: xs) ++ ys = x :: (xs ++ ys)
 
 public export
 allInputs : {ms : ModuleSigsList} -> FinsList ms.length -> SVObjList

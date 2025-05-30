@@ -22,8 +22,8 @@ pdua : SVType -> Nat
 pdua (RVar x)              = 1
 pdua (SVar x)              = 1
 pdua (VVar x)              = 1
-pdua (PackedArr {t} _ s e) = S (max s e `minus` min s e) * pdua t
-pdua (UnpackedArr   x _ _) = pdua x
+pdua (PackedArr   x s e) = S (max s e `minus` min s e) * pdua x
+pdua (UnpackedArr x _ _) = pdua x
 
 ||| Checks if two ports have the same basic type
 |||
@@ -39,7 +39,7 @@ data EqSuperBasic : SVType -> SVType -> Type where
   RR : So (t == t') => EqSuperBasic (RVar t) (RVar t')
   SS : So (t == t') => EqSuperBasic (SVar t) (SVar t')
   VV : So (t == t') => EqSuperBasic (VVar t) (VVar t')
-  PP : EqSuperBasic t t' => EqSuperBasic (PackedArr {t} p s e) (PackedArr {t=t'} p' s' e')
+  PP : EqSuperBasic t t' => EqSuperBasic (PackedArr   t s e) (PackedArr   t' s' e')
   UU : EqSuperBasic t t' => EqSuperBasic (UnpackedArr t s e) (UnpackedArr t' s' e')
 
 ||| Checks if two unpacked arrays have the same size.
@@ -67,6 +67,9 @@ data CanConnect : SVObject -> SVObject -> Type where
   CCUnpackedUnpacked : EqSuperBasic t t' -> So (pdua t == pdua t') ->
     EqUnpackedArrSig (UnpackedArr t s e) (UnpackedArr t' s' e') -> 
     CanConnect (Var $ UnpackedArr t s e) (Var $ UnpackedArr t' s' e')
+  -- CCUnpackedUnpacked : EqSuperBasic t t' -> So (pdua t == pdua t') ->
+  --   EqUnpackedArrSig (UnpackedArr t s e) (UnpackedArr t' s' e') -> 
+  --   CanConnect (Net $ UnpackedArr t s e) (Net $ UnpackedArr t' s' e')
 
 ||| The list of sources may be empty (Nil). In this case, either an implicit net is declared or an external net declaration must exist
 |||
@@ -77,7 +80,7 @@ data CanConnect : SVObject -> SVObject -> Type where
 ||| appears or in any scope whose declarations can be directly referenced from the scope where the
 ||| instantiation appears (see 23.9), then an implicit scalar net of default net type shall be assumed.
 public export
-data SourceForSink : (srcs : SVObjList) -> (sink : SVObject) -> (srcIdx : Maybe $ Fin $ length srcs) -> Type where
+data SourceForSink : (srcs : SVObjList) -> (sink : SVObject) -> (srcIdx : MFin srcs.length) -> Type where
   NoSource  : SourceForSink srcs sink Nothing
   HasSource : (srcIdx : Fin $ length srcs) -> CanConnect (typeOf srcs srcIdx) sink -> SourceForSink srcs sink $ Just srcIdx
 
@@ -85,7 +88,7 @@ public export
 data Connections : (srcs, sinks : SVObjList) -> (cm : ConnMode) -> MFinsList (srcs.length) -> Type
 
 public export
-data NoSourceConns : {srcs : SVObjList} -> Maybe (Fin $ srcs.length) -> 
+data NoSourceConns : {srcs : SVObjList} -> MFin srcs.length -> 
                       {ids : MFinsList $ srcs.length} -> Connections srcs sinks cm ids -> Type
 
 ||| Each output maybe has connection from some input.
@@ -93,13 +96,13 @@ data NoSourceConns : {srcs : SVObjList} -> Maybe (Fin $ srcs.length) ->
 public export
 data Connections : (srcs, sinks : SVObjList) -> (cm : ConnMode) -> MFinsList (srcs.length) -> Type where
   Empty : Connections srcs [] cm []
-  Cons  : {srcs : SVObjList} -> {srcIdx : Maybe $ Fin $ length srcs} -> {ids : MFinsList $ srcs.length} ->
+  Cons  : {srcs : SVObjList} -> {srcIdx : MFin srcs.length} -> {ids : MFinsList $ srcs.length} ->
           SourceForSink srcs sink srcIdx -> (rest : Connections srcs sinks cm ids) -> 
           {nsc : NoSourceConns srcIdx rest} -> Connections srcs (sink :: sinks) cm (srcIdx::ids)
 
 ||| If Connections are indexed as Unique, then source indexes must not repeat
 public export
-data NoSourceConns : {srcs : SVObjList} -> Maybe (Fin $ srcs.length) -> 
+data NoSourceConns : {srcs : SVObjList} -> MFin srcs.length -> 
                      {ids : MFinsList $ srcs.length} -> Connections srcs sinks cm ids -> Type where
   NotUnique : {conns : Connections srcs sinks SubInps ids} -> NoSourceConns sfs conns
   ConsNoS   : {conns : Connections srcs sinks TopOuts ids} -> NoSourceConns Nothing conns

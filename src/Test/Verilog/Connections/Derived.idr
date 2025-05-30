@@ -8,6 +8,6 @@ import public Test.Verilog.Connections
 
 %logging "deptycheck" 20
 
-Test.Verilog.Connections.genNotEqFin = deriveGen
-Test.Verilog.Connections.genSourceForSink = deriveGen
+-- Test.Verilog.Connections.genNotEqFin = deriveGen
+-- Test.Verilog.Connections.genSourceForSink = deriveGen
 Test.Verilog.Connections.genModules  = deriveGen

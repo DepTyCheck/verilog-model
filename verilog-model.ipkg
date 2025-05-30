@@ -29,6 +29,7 @@ modules = Test.Common.Utils
         , Test.Verilog.CtxPorts
         , Test.Verilog.Assign
         , Test.Verilog.Literal
+        , Test.Verilog.Warnings
         , Test.Verilog.UniqueNames
         , Test.Verilog.UniqueNames.Derived
         , Test.Verilog.Connections.Derived

@@ -53,18 +53,18 @@ Show (BitState _) where
 
 public export
 is2state : SVType -> Bool
-is2state (RVar x)                = True
-is2state (SVar Bit')             = False
-is2state (SVar Logic')           = True
-is2state (SVar Reg')             = True
-is2state (VVar Byte')            = False
-is2state (VVar Shortint')        = False
-is2state (VVar Int')             = False
-is2state (VVar Longint')         = False
-is2state (VVar Integer')         = True
-is2state (VVar Time')            = True
-is2state (PackedArr   {t} p s e) = is2state t
-is2state (UnpackedArr  t    s e) = is2state t
+is2state (RVar x)             = True
+is2state (SVar Bit')          = False
+is2state (SVar Logic')        = True
+is2state (SVar Reg')          = True
+is2state (VVar Byte')         = False
+is2state (VVar Shortint')     = False
+is2state (VVar Int')          = False
+is2state (VVar Longint')      = False
+is2state (VVar Integer')      = True
+is2state (VVar Time')         = True
+is2state (PackedArr    t s e) = is2state t
+is2state (UnpackedArr  t s e) = is2state t
 
 ||| List of binary literals
 public export
@@ -74,8 +74,8 @@ data BinaryList : SVType -> Nat -> Type
 public export
 data Binary : SVType -> Type where
   Single : BitState (is2state svt) -> Binary svt
-  UArr   : BinaryList t (S $ max s e `minus` min s e) -> Binary (UnpackedArr t    s e)
-  PArr   : BinaryList t (S $ max s e `minus` min s e) -> Binary (PackedArr  {t} p s e)
+  UArr   : BinaryList t (S $ max s e `minus` min s e) -> Binary (UnpackedArr t s e)
+  PArr   : BinaryList t (S $ max s e `minus` min s e) -> Binary (PackedArr   t s e)
 
 public export
 data BinaryList : SVType -> Nat -> Type where
@@ -90,42 +90,42 @@ toList (x :: xs) = x :: toList xs
 namespace Literals
 
   public export
-  data LiteralsList : SVTList -> Type where
-    Nil : LiteralsList []
-    (::)  : {t: SVType} -> Binary t -> LiteralsList sk -> LiteralsList (t :: sk)
+  data LiteralsList : SVObjList -> Type where
+    Nil  : LiteralsList []
+    (::) : Binary (valueOf t) -> LiteralsList sk -> LiteralsList (t :: sk)
 
-genBinary' : Fuel -> (t: SVType) -> Gen MaybeEmpty $ Binary t
+genBinary' : Fuel -> (t : SVType) -> Gen MaybeEmpty $ Binary t
 
 export
-genSingleBit : Fuel -> (b: Bool) -> Gen MaybeEmpty $ BitState b
+genSingleBit : Fuel -> (b : Bool) -> Gen MaybeEmpty $ BitState b
 
--- genBinaryList : Fuel -> (t: SVType) -> (n: Nat) -> Gen MaybeEmpty $ BinaryList t n
--- genBinaryList x t Z = pure Nil
--- genBinaryList x t (S n) = do
---   rest <- genBinaryList x t n
---   bin <- genBinary' x t
---   pure $ bin :: rest
+genBinaryList : Fuel -> (t : SVType) -> (n: Nat) -> Gen MaybeEmpty $ BinaryList t n
+genBinaryList x t Z = pure Nil
+genBinaryList x t (S n) = do
+  rest <- genBinaryList x t n
+  bin <- genBinary' x t
+  pure $ bin :: rest
 
--- genBinary' x (Arr $ Unpacked t s e) = do
---   lst <- genBinaryList x t $ S $ max s e `minus` min s e
---   pure $ UArr lst
--- genBinary' x (Arr $ Packed   t s e) = do
---   lst <- genBinaryList x t $ S $ max s e `minus` min s e
---   pure $ PArr lst
--- genBinary' x (Var y) = do
---   bit <- genSingleBit x (is2state y)
---   pure $ Single bit
+genBinary' x (PackedArr t s e) = do
+  lst <- genBinaryList x t $ S $ max s e `minus` min s e
+  pure $ PArr lst 
+genBinary' x (UnpackedArr t s e) = do
+  lst <- genBinaryList x t $ S $ max s e `minus` min s e
+  pure $ UArr lst
+genBinary' x y = do
+  bit <- genSingleBit x (is2state y)
+  pure $ Single bit
 
--- genBinary : Fuel -> (t: SVType) -> Gen MaybeEmpty $ Binary t
--- genBinary x t = withCoverage $ genBinary' x t
+genBinary : Fuel -> (t : SVType) -> Gen MaybeEmpty $ Binary t
+genBinary x t = withCoverage $ genBinary' x t
 
-genLiterals' : Fuel -> (sk: SVTList) -> Gen MaybeEmpty $ LiteralsList sk
+genLiterals' : Fuel -> (sk: SVObjList) -> Gen MaybeEmpty $ LiteralsList sk
 genLiterals' _ []      = pure []
 genLiterals' x (y::ys) = do 
-  bin <- genBinary' x y
+  bin <- genBinary' x (valueOf y)
   rest <- genLiterals' x ys
   pure $ bin :: rest
 
 export
-genLiterals : Fuel -> (sk: SVTList) -> Gen MaybeEmpty $ LiteralsList sk
+genLiterals : Fuel -> (sk: SVObjList) -> Gen MaybeEmpty $ LiteralsList sk
 genLiterals x sk = withCoverage $ genLiterals' x sk

@@ -3,25 +3,6 @@ module Test.Common.Utils
 import Data.Vect
 import public Data.Fin
 
-public export
-data NotEqFin : Fin n -> Fin n -> Type where
-  ZS  : NotEqFin FZ (FS i)
-  SZ  : NotEqFin (FS i) FZ
-  Rec : NotEqFin x y -> NotEqFin (FS x) (FS y)
-
-public export
-data NotEqMaybeF : Maybe (Fin a) -> Fin a -> Type where
-  NEqMFN : NotEqMaybeF Nothing n
-  NEqMFJ : NotEqFin m n -> NotEqMaybeF (Just m) n
-
-public export
-data EqMaybeF : Maybe (Fin a) -> Fin a -> Type where
-  EqMF : EqMaybeF (Just n) n
-
-public export
-data EqMaybeMFMF : Maybe (Fin a) -> Maybe (Fin a) -> Type where
-  EqMFMF : EqMaybeMFMF n n
-
 namespace FinsList
 
   public export
@@ -32,7 +13,7 @@ namespace FinsList
   %name FinsList fs
 
   public export
-  (.asList) : FinsList n -> List (Fin n)
+  (.asList) : FinsList n -> List $ Fin n
   (.asList) []      = []
   (.asList) (x::xs) = x :: xs.asList
 
@@ -69,19 +50,42 @@ namespace FinsList
   public export
   data FinNotIn : FinsList srcs -> Fin srcs -> Type where
     FNIEmpty : FinNotIn [] f
-    FNICons  : {x, f : Fin srcs} -> (0 _ : NotEqFin x f) -> (fni: FinNotIn xs f) -> FinNotIn (x :: xs) f
+    FNICons  : {x, f : Fin srcs} -> (0 _ : So $ x /= f) -> (fni: FinNotIn xs f) -> FinNotIn (x :: xs) f
 
 namespace MFinsList
 
   public export
+  data MFin : Nat -> Type where
+    Nothing : MFin n
+    Just    : Fin n -> MFin n
+  
+  public export
+  data NotEqMaybeF : MFin a -> Fin a -> Type where
+    NEqMFN : NotEqMaybeF Nothing n
+    NEqMFJ : {m, n : Fin a} -> (0 _ : So $ m /= n) -> NotEqMaybeF (Just m) n
+
+  public export
+  data EqMaybeF : MFin a -> Fin a -> Type where
+    EqMF : EqMaybeF (Just n) n
+
+  public export
+  data EqMFMF : MFin a -> MFin a -> Type where
+    EqMFMF' : EqMFMF n n
+  
+  public export
+  fromMaybe : Maybe (Fin n) -> MFin n
+  fromMaybe Nothing  = Nothing
+  fromMaybe (Just x) = Just x
+
+  public export
   data MFinsList : Nat -> Type where
     Nil  : MFinsList n
-    (::) : Maybe (Fin n) -> MFinsList n -> MFinsList n
+    (::) : MFin n -> MFinsList n -> MFinsList n
 
   %name FinsList fs
 
   public export
-  find : (ms : MFinsList n) -> Fin a -> Maybe $ Fin n -- TODO unsafe. make it vect.
+  find : (ms : MFinsList n) -> Fin a -> MFin n -- TODO unsafe. make it vect.
   find (m::_ ) FZ     = m
   find (_::ms) (FS i) = find ms i
   find []       _     = Nothing
@@ -89,12 +93,12 @@ namespace MFinsList
   public export
   toMFL : Vect l (Maybe $ Fin r) -> MFinsList r
   toMFL []      = []
-  toMFL (x::xs) = x :: toMFL xs
+  toMFL (x::xs) = fromMaybe x :: toMFL xs
 
   public export
   data FinNotInMFL : (conns : MFinsList ss) -> (f : Fin ss) -> Type where
     Empty : FinNotInMFL [] f
-    Cons  : {c : Maybe $ Fin ss} -> NotEqMaybeF c f -> (rest : FinNotInMFL cs f) -> FinNotInMFL (c::cs) f
+    Cons  : {c : MFin ss} -> NotEqMaybeF c f -> (rest : FinNotInMFL cs f) -> FinNotInMFL (c::cs) f
   
   public export
   data FinInMFL : MFinsList ss -> Fin ss -> Type where
