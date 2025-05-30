@@ -10,101 +10,100 @@ import Test.DepTyCheck.Gen.Coverage
 
 %default total
 
-namespace ConnectionsValidation
+||| TopOuts are sinks, SubInps are sources
+public export
+data ConnMode = TopOuts | SubInps
 
---   ||| Returns the size of packed array.
---   ||| But the actual number of bits that a type stores may be different (Var SVBasic represents types of different sizes)
---   public export
---   packedSize : SVType -> Nat
---   packedSize (Var _)                = 1
---   packedSize (Arr $ Unpacked t _ _) = packedSize t
---   packedSize (Arr $ Packed   t s e) = S (max s e `minus` min s e) * packedSize t
+||| Packed Dimensions for the given Unpacked Array
+|||
+||| The actual number of bits that a type stores may be different!
+public export
+pdua : SVType -> Nat
+pdua (RVar x)              = 1
+pdua (SVar x)              = 1
+pdua (VVar x)              = 1
+pdua (PackedArr {t} _ s e) = S (max s e `minus` min s e) * pdua t
+pdua (UnpackedArr   x _ _) = pdua x
 
---   ||| Checks if two ports have the same basic type
---   |||
---   ||| Example. `EqSuperBasic` states that `a1` and `b1` share the same basic type (bit). 
---   ||| This is one of the conditions that make the connection between modules `a` and `b` valid:
---   ||| module a(output bit [9:0] a1 [3:0]);
---   ||| endmodule: a
---   ||| 
---   ||| module b(input bit [2:0][5:0] b1 [3:0]);
---   ||| endmodule: b
---   public export
---   data EqSuperBasic : SVType -> SVType -> Type where
---     EqBasicV : EqSVBasic    t t' -> EqSuperBasic (Var t)                    (Var t')
---     EqBasicP : EqSuperBasic t t' -> EqSuperBasic (Arr $ Packed   t {} @{_}) (Arr $ Packed   t' {} @{_})
---     EqBasicU : EqSuperBasic t t' -> EqSuperBasic (Arr $ Unpacked t {})      (Arr $ Unpacked t' {})
+||| Checks if two ports have the same basic type
+|||
+||| Example. `EqSuperBasic` states that `a1` and `b1` share the same basic type (bit). 
+||| This is one of the conditions that make the connection between modules `a` and `b` valid:
+||| module a(output bit [9:0] a1 [3:0]);
+||| endmodule: a
+||| 
+||| module b(input bit [2:0][5:0] b1 [3:0]);
+||| endmodule: b
+public export
+data EqSuperBasic : SVType -> SVType -> Type where
+  RR : So (t == t') => EqSuperBasic (RVar t) (RVar t')
+  SS : So (t == t') => EqSuperBasic (SVar t) (SVar t')
+  VV : So (t == t') => EqSuperBasic (VVar t) (VVar t')
+  PP : EqSuperBasic t t' => EqSuperBasic (PackedArr {t} p s e) (PackedArr {t=t'} p' s' e')
+  UU : EqSuperBasic t t' => EqSuperBasic (UnpackedArr t s e) (UnpackedArr t' s' e')
 
---   ||| Checks if two unpacked arrays have the same size.
---   |||
---   ||| Example. `EqUnpackedArrSig` states that `a1` and `b1` have the same size (3 - 0) + (2 - 0) = 5. 
---   ||| This is one of the conditions that make the connection between modules `a` and `b` valid:
---   ||| module a(output bit [9:0] a1 [3:0][0:2]);
---   ||| endmodule: a
---   ||| 
---   ||| module b(input bit [2:0][5:0] b1 [3:0][2:0]);
---   ||| endmodule: b
---   public export
---   data EqUnpackedArrSig : SVType -> SVType -> Type where
---     Other  : VarOrPacked t -> VarOrPacked t' -> EqUnpackedArrSig t t'
---     EqUArr : EqUnpackedArrSig t t' -> EqNat (max s e + min s' e') (max s' e' + min s e) ->
---       EqUnpackedArrSig (Arr $ Unpacked t s e) (Arr $ Unpacked t' s' e')
+||| Checks if two unpacked arrays have the same size.
+|||
+||| Example. `EqUnpackedArrSig` states that `a1` and `b1` have the same size (3 - 0) + (2 - 0) = 5. 
+||| This is one of the conditions that make the connection between modules `a` and `b` valid:
+||| module a(output bit [9:0] a1 [3:0][0:2]);
+||| endmodule: a
+||| 
+||| module b(input bit [2:0][5:0] b1 [3:0][2:0]);
+||| endmodule: b
+public export
+data EqUnpackedArrSig : SVType -> SVType -> Type where
+  Other  : VarOrPacked t -> VarOrPacked t' -> EqUnpackedArrSig t t'
+  EqUArr : EqUnpackedArrSig t t' -> So ((max s e + min s' e') == (max s' e' + min s e)) ->
+    EqUnpackedArrSig (UnpackedArr t s e) (UnpackedArr t' s' e')
 
---   public export
---   data CanConnect : SVType -> SVType -> Type where
---     CCVarOrPacked : VarOrPacked p1 -> VarOrPacked p2 -> CanConnect p1 p2
---     ||| 6.22.2 Equivalent types
---     ||| d) Unpacked fixed-size array types are equivalent if they have equivalent element types and equal size.
---     |||
---     ||| IEEE 1800 - 2023
---     CCUnpackedUnpacked : EqSuperBasic t t' -> EqNat (packedSize t) (packedSize t') ->
---       EqUnpackedArrSig (Arr $ Unpacked t s e) (Arr $ Unpacked t' s' e') -> CanConnect (Arr $ Unpacked t s e) (Arr $ Unpacked t' s' e')
-
-  ||| The list of sources may be empty (Nil). In this case, either an implicit net is declared or an external net declaration must exist
+public export
+data CanConnect : SVObject -> SVObject -> Type where
+  CCVarOrPacked : VarOrPacked p1 -> VarOrPacked p2 -> CanConnect (Var p1) (Var p2)
+  ||| 6.22.2 Equivalent types
+  ||| d) Unpacked fixed-size array types are equivalent if they have equivalent element types and equal size.
   |||
-  ||| 6.10 Implicit declarations
-  ||| If an identifier is used in a port expression declaration,
-  ||| then an implicit net of default net type shall be assumed, with the vector width of the port expression declaration.
-  public export
-  data SourceForSink : (srcs : SVTList) -> (sink : SVType) -> Type
---     NoSource  : SourceForSink srcs sink
---     HasSource : (srcIdx : Fin $ length srcs) -> CanConnect (typeOf srcs srcIdx) sink -> SourceForSink srcs sink
+  ||| IEEE 1800 - 2023
+  CCUnpackedUnpacked : EqSuperBasic t t' -> So (pdua t == pdua t') ->
+    EqUnpackedArrSig (UnpackedArr t s e) (UnpackedArr t' s' e') -> 
+    CanConnect (Var $ UnpackedArr t s e) (Var $ UnpackedArr t' s' e')
 
--- namespace ConnsList
+||| The list of sources may be empty (Nil). In this case, either an implicit net is declared or an external net declaration must exist
+|||
+||| 6.10 Implicit declarations
+||| If an identifier is used in the terminal list of a primitive instance or in the port connection list of a
+||| module, interface, program, or static checker instance (but not a procedural checker instance, see
+||| 17.3), and that identifier has not been declared previously in the scope where the instantiation
+||| appears or in any scope whose declarations can be directly referenced from the scope where the
+||| instantiation appears (see 23.9), then an implicit scalar net of default net type shall be assumed.
+public export
+data SourceForSink : (srcs : SVObjList) -> (sink : SVObject) -> (srcIdx : Maybe $ Fin $ length srcs) -> Type where
+  NoSource  : SourceForSink srcs sink Nothing
+  HasSource : (srcIdx : Fin $ length srcs) -> CanConnect (typeOf srcs srcIdx) sink -> SourceForSink srcs sink $ Just srcIdx
 
-  public export
-  data Connections : (srcs, sinks : SVTList) -> (topOuts : Bool) -> (tIs : Nat) -> Type
+public export
+data Connections : (srcs, sinks : SVObjList) -> (cm : ConnMode) -> MFinsList (srcs.length) -> Type
 
-  public export
-  data NoSourceConns : SourceForSink srcs sink' -> Connections srcs sinks topOuts tIs -> Type
+public export
+data NoSourceConns : {srcs : SVObjList} -> Maybe (Fin $ srcs.length) -> 
+                      {ids : MFinsList $ srcs.length} -> Connections srcs sinks cm ids -> Type
 
-  ||| Each output maybe has connection from some input.
-  ||| If topOuts then each input can go to one output. Otherwise each input can go to several outputs
-  public export
-  data Connections : (srcs, sinks : SVTList) -> (topOuts : Bool) -> (tIs : Nat) -> Type where -- change bool to mode
-    Empty : Connections srcs [] t tIs
-    Cons  : {srcs : SVTList} -> {sink : SVType} ->  (sfs : SourceForSink srcs sink) -> (rest : Connections srcs sinks t tIs) -> 
-            {nsc : NoSourceConns sfs rest} -> Connections srcs (sink :: sinks) t tIs
-  
---   public export
---   connsToMFL : Connections srcs sinks t tIs -> MFinsList (srcs.length)
---   connsToMFL Empty                            = []
---   connsToMFL (Cons NoSource             rest) = Nothing :: connsToMFL rest
---   connsToMFL (Cons (HasSource srcIdx _) rest) = Just srcIdx :: connsToMFL rest
+||| Each output maybe has connection from some input.
+||| If topOuts then each input can go to one output. Otherwise each input can go to several outputs
+public export
+data Connections : (srcs, sinks : SVObjList) -> (cm : ConnMode) -> MFinsList (srcs.length) -> Type where
+  Empty : Connections srcs [] cm []
+  Cons  : {srcs : SVObjList} -> {srcIdx : Maybe $ Fin $ length srcs} -> {ids : MFinsList $ srcs.length} ->
+          SourceForSink srcs sink srcIdx -> (rest : Connections srcs sinks cm ids) -> 
+          {nsc : NoSourceConns srcIdx rest} -> Connections srcs (sink :: sinks) cm (srcIdx::ids)
 
---   ||| List of source indexes
---   public export
---   consToFins : Connections srcs sinks t tIs -> FinsList (srcs.length)
---   consToFins Empty                              = []
---   consToFins (Cons NoSource             rest) = consToFins rest
---   consToFins (Cons (HasSource srcIdx _) rest) = srcIdx :: consToFins rest
-
---   ||| If Connections are indexed as Unique, then source indexes must not repeat
---   public export
---   data NoSourceConns : (sfs : SourceForSink srcs sink') -> (conns : Connections srcs sinks topOuts tIs) -> Type where
---     NotUnique : {conns : Connections srcs sinks False tIs} -> NoSourceConns sfs conns
---     ConsNoS   : {conns : Connections srcs sinks True  tIs} -> NoSourceConns NoSource conns
---     ConsHasS  : {conns : Connections srcs sinks True  tIs} -> FinNotIn (consToFins conns) f -> NoSourceConns (HasSource f cc) conns
+||| If Connections are indexed as Unique, then source indexes must not repeat
+public export
+data NoSourceConns : {srcs : SVObjList} -> Maybe (Fin $ srcs.length) -> 
+                     {ids : MFinsList $ srcs.length} -> Connections srcs sinks cm ids -> Type where
+  NotUnique : {conns : Connections srcs sinks SubInps ids} -> NoSourceConns sfs conns
+  ConsNoS   : {conns : Connections srcs sinks TopOuts ids} -> NoSourceConns Nothing conns
+  ConsHasS  : {conns : Connections srcs sinks TopOuts ids} -> FinNotInMFL ids srcIdx -> NoSourceConns (Just srcIdx) conns
 
 ||| 3.2 Design elements
 |||
@@ -144,8 +143,10 @@ data Modules : ModuleSigsList -> Type where
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
     -- Remember: Do not change the concatenation order of the port lists, the many features depend on it (search for m.inpsCount and tIs usages)
-    -- (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs) False m.inpsCount) ->
-    -- (ssto : Connections (m.inputs ++ allOutputs {ms} subMs) (m.outputs)            True  m.inpsCount) ->
+    {sicons : MFinsList $ (m .inputs ++ allOutputs {ms} subMs).length} ->
+    {tocons : MFinsList $ (m .inputs ++ allOutputs {ms} subMs).length} ->
+    (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs) SubInps sicons) ->
+    (ssto : Connections (m.inputs ++ allOutputs {ms} subMs) (m.outputs)            TopOuts tocons) ->
     (cont : Modules (m::ms)) ->
     Modules ms
 
@@ -190,9 +191,10 @@ data Modules : ModuleSigsList -> Type where
 --                  Gen MaybeEmpty $ Connections srcs sinks topOuts tIs
 -- genConnections x srcs sinks t tIs = withCoverage $ genConnections' x srcs sinks t tIs
 
--- export
--- genModules : Fuel -> (ms : ModuleSigsList) ->
---   (Fuel -> (srcs : PortsList) -> (sink' : SVType) -> Gen MaybeEmpty $ SourceForSink srcs sink') =>
---   (Fuel -> (srcs' : PortsList) -> (sinks' : PortsList) -> (topOuts' : Bool) -> (tIs' : Nat) -> 
---   Gen MaybeEmpty $ Connections srcs' sinks' topOuts' tIs') =>
---   Gen MaybeEmpty $ Modules ms
+export
+genModules : Fuel -> (ms : ModuleSigsList) ->
+  -- (Fuel -> (srcs : PortsList) -> (sink' : SVType) -> Gen MaybeEmpty $ SourceForSink srcs sink') =>
+  -- (Fuel -> (srcs' : PortsList) -> (sinks' : PortsList) -> (topOuts' : Bool) -> (tIs' : Nat) -> 
+  -- Gen MaybeEmpty $ Connections srcs' sinks' topOuts' tIs') =>
+  Gen MaybeEmpty $ Modules ms
+-- genModules x ms = do
