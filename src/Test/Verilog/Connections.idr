@@ -59,7 +59,7 @@ data EqUnpackedArrSig : SVType -> SVType -> Type where
 
 public export
 data CanConnect : SVObject -> SVObject -> Type where
-  CCVarOrPacked : VarOrPacked p1 -> VarOrPacked p2 -> CanConnect (Var p1) (Var p2)
+  CCVarOrPacked : VarOrPacked (valueOf p1) -> VarOrPacked (valueOf p2) -> CanConnect p1 p2
   ||| 6.22.2 Equivalent types
   ||| d) Unpacked fixed-size array types are equivalent if they have equivalent element types and equal size.
   |||
@@ -67,9 +67,9 @@ data CanConnect : SVObject -> SVObject -> Type where
   CCUnpackedUnpacked : EqSuperBasic t t' -> So (pdua t == pdua t') ->
     EqUnpackedArrSig (UnpackedArr t s e) (UnpackedArr t' s' e') -> 
     CanConnect (Var $ UnpackedArr t s e) (Var $ UnpackedArr t' s' e')
-  -- CCUnpackedUnpacked : EqSuperBasic t t' -> So (pdua t == pdua t') ->
-  --   EqUnpackedArrSig (UnpackedArr t s e) (UnpackedArr t' s' e') -> 
-  --   CanConnect (Net $ UnpackedArr t s e) (Net $ UnpackedArr t' s' e')
+  CCUnpackedUnpackedNet : EqSuperBasic t t' -> So (pdua t == pdua t') ->
+    EqUnpackedArrSig (UnpackedArr t s e) (UnpackedArr t' s' e') -> 
+    CanConnect (Net nt $ UnpackedArr t s e) (Net nt' $ UnpackedArr t' s' e')
 
 ||| The list of sources may be empty (Nil). In this case, either an implicit net is declared or an external net declaration must exist
 |||
@@ -89,7 +89,7 @@ data Connections : (srcs, sinks : SVObjList) -> (cm : ConnMode) -> MFinsList (sr
 
 public export
 data NoSourceConns : {srcs : SVObjList} -> MFin srcs.length -> 
-                      {ids : MFinsList $ srcs.length} -> Connections srcs sinks cm ids -> Type
+                     {ids : MFinsList $ srcs.length} -> Connections srcs sinks cm ids -> Type
 
 ||| Each output maybe has connection from some input.
 ||| If topOuts then each input can go to one output. Otherwise each input can go to several outputs
@@ -146,58 +146,76 @@ data Modules : ModuleSigsList -> Type where
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
     -- Remember: Do not change the concatenation order of the port lists, the many features depend on it (search for m.inpsCount and tIs usages)
-    {sicons : MFinsList $ (m .inputs ++ allOutputs {ms} subMs).length} ->
-    {tocons : MFinsList $ (m .inputs ++ allOutputs {ms} subMs).length} ->
+    {sicons : MFinsList $ (m.inputs ++ allOutputs {ms} subMs).length} ->
+    {tocons : MFinsList $ (m.inputs ++ allOutputs {ms} subMs).length} ->
     (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs) SubInps sicons) ->
     (ssto : Connections (m.inputs ++ allOutputs {ms} subMs) (m.outputs)            TopOuts tocons) ->
     (cont : Modules (m::ms)) ->
     Modules ms
 
--- export
--- genNotEqFin : Fuel -> {n : Nat} -> (a, b : Fin n) -> Gen MaybeEmpty $ NotEqFin a b
--- export
--- genSourceForSink : Fuel -> (srcs : PortsList) -> (sink' : SVType) -> Gen MaybeEmpty $ SourceForSink srcs sink'
 
--- genFinNotIn' : Fuel -> {srcs : Nat} -> (fins : FinsList srcs) -> (fin : Fin srcs) -> Gen MaybeEmpty $ FinNotIn fins fin
--- genFinNotIn' x []        fin = pure FNIEmpty
--- genFinNotIn' x (f :: fs) fin = do
---   rest <- genFinNotIn' x fs fin
---   ne <- genNotEqFin x f fin
---   pure $ FNICons ne rest
+export
+genMF : Fuel -> (srcs : Nat) -> Gen MaybeEmpty $ MFin srcs
+export
+genCC : Fuel -> (t,t' : SVObject) -> Gen MaybeEmpty $ CanConnect t t'
+export
+genFNI : Fuel -> {srcs : Nat } -> (ids : MFinsList srcs) -> (y : Fin srcs) -> Gen MaybeEmpty $ FinNotInMFL ids y
 
--- genFinNotIn : Fuel -> {srcs : Nat} -> (fins : FinsList srcs) -> (fin : Fin srcs) -> Gen MaybeEmpty $ FinNotIn fins fin
--- genFinNotIn x fins fin  = withCoverage $ genFinNotIn' x fins fin
+genNSC : Fuel -> {srcs : SVObjList} -> (srcIdx : MFin srcs.length) -> {ids : MFinsList $ srcs.length} -> {cm : ConnMode} -> (rest : Connections srcs sinks cm ids) -> 
+         Gen MaybeEmpty $ NoSourceConns srcIdx rest
+genNSC x src      {cm = SubInps} rest = pure NotUnique
+genNSC x Nothing  {cm = TopOuts} rest = pure ConsNoS
+genNSC x (Just y) {cm = TopOuts} rest = do
+  fni <- genFNI x ids y
+  pure $ ConsHasS fni
 
--- genNoSourceConns' : Fuel -> {topOuts : Bool} -> {srcs : PortsList} ->
---                    (sfs : SourceForSink srcs sink) -> (conns : Connections srcs sinks topOuts tIs) -> Gen MaybeEmpty $ NoSourceConns sfs conns
--- genNoSourceConns' x {topOuts = False} sfs conns = pure NotUnique
--- genNoSourceConns' x {topOuts = True} NoSource conns = pure ConsNoS
--- genNoSourceConns' x {topOuts = True} (HasSource srcIdx y) conns = do
---   fni <- genFinNotIn x (consToFins conns) srcIdx
---   pure $ ConsHasS fni
+genConns' : Fuel -> (srcs' : SVObjList) -> (sinks' : SVObjList) -> (cm' : ConnMode) -> 
+            Gen MaybeEmpty $ (cons' : MFinsList (srcs'.length) ** Connections srcs' sinks' cm' cons')
+genConns' x srcs []              cm = pure ([] ** Empty)
+genConns' x srcs (sink :: sinks) cm = do
+  (cons ** rest) <- genConns' x srcs sinks cm
+  mf <- genMF x srcs.length
+  nsc <- genNSC x mf rest
+  case mf of
+    Nothing       => pure (mf::cons ** Cons NoSource {nsc} rest)
+    (Just srcIdx) => do
+      cc <- genCC x (typeOf srcs srcIdx) sink
+      pure (mf::cons ** Cons (HasSource srcIdx cc) {nsc} rest)
 
--- genNoSourceConns : Fuel -> {topOuts : Bool} -> {srcs : PortsList} ->
---                    (sfs : SourceForSink srcs sink) -> (conns : Connections srcs sinks topOuts tIs) -> Gen MaybeEmpty $ NoSourceConns sfs conns
--- genNoSourceConns x sfs conns = withCoverage $ genNoSourceConns' x sfs conns
+-- Only genConns is actually used as an external generator
+export
+genConns : Fuel -> (srcs' : SVObjList) -> (sinks' : SVObjList) -> (cm' : ConnMode) -> 
+           Gen MaybeEmpty $ (cons' : MFinsList (srcs'.length) ** Connections srcs' sinks' cm' cons')
+genConns x srcs sinks cm = withCoverage $ genConns' x srcs sinks cm
 
--- genConnections' : Fuel -> (srcs : PortsList) -> (sinks : PortsList) -> (topOuts : Bool) -> (tIs : Nat) -> 
---                  Gen MaybeEmpty $ Connections srcs sinks topOuts tIs
--- genConnections' x srcs []        t tIs = pure Empty
--- genConnections' x srcs (y :: ys) t tIs = do
---   sfs <- genSourceForSink x srcs y
---   rest <- genConnections' x srcs ys t tIs
---   nsc <- genNoSourceConns x sfs rest
---   pure $ Cons sfs rest {nsc}
+genConns2' : Fuel -> (srcs'' : SVObjList) -> (sinks'' : SVObjList) -> (cm'' : ConnMode) -> (cons'' : MFinsList (srcs''.length)) ->
+             Gen MaybeEmpty $ Connections srcs'' sinks'' cm'' cons''
+genConns2' x srcs []        cm cons = case cons of
+  [] => pure Empty
+  _  => empty -- Impossible case. Remove when turn MFinsList into MFinsVect
+genConns2' x srcs (y :: ys) cm cons = case cons of
+  [] => empty -- Impossible case. Remove when turn MFinsList into MFinsVect
+  (mf::mfs)  => do
+    rest <- genConns2' x srcs ys cm mfs
+    nsc <- genNSC x mf rest
+    case mf of
+      Nothing       => pure $ Cons NoSource {nsc} rest
+      (Just srcIdx) => do
+        cc <- genCC x (typeOf srcs srcIdx) y
+        pure $ Cons (HasSource srcIdx cc) {nsc} rest
 
--- export
--- genConnections : Fuel -> (srcs : PortsList) -> (sinks : PortsList) -> (topOuts : Bool) -> (tIs : Nat) -> 
---                  Gen MaybeEmpty $ Connections srcs sinks topOuts tIs
--- genConnections x srcs sinks t tIs = withCoverage $ genConnections' x srcs sinks t tIs
+export
+genConns2 : Fuel -> (srcs'' : SVObjList) -> (sinks'' : SVObjList) -> (cm'' : ConnMode) -> (cons'' : MFinsList (srcs''.length)) ->
+            Gen MaybeEmpty $ Connections srcs'' sinks'' cm'' cons''
+genConns2 x srcs sinks cm cons = withCoverage $ genConns2' x srcs sinks cm cons
 
 export
 genModules : Fuel -> (ms : ModuleSigsList) ->
-  -- (Fuel -> (srcs : PortsList) -> (sink' : SVType) -> Gen MaybeEmpty $ SourceForSink srcs sink') =>
-  -- (Fuel -> (srcs' : PortsList) -> (sinks' : PortsList) -> (topOuts' : Bool) -> (tIs' : Nat) -> 
-  -- Gen MaybeEmpty $ Connections srcs' sinks' topOuts' tIs') =>
+  (Fuel -> (srcs''' : Nat) -> Gen MaybeEmpty $ MFin srcs''') =>
+  (Fuel -> (t, t' : SVObject) -> Gen MaybeEmpty $ CanConnect t t') =>
+  (Fuel -> {srcs'''' : Nat } -> (ids : MFinsList srcs'''') -> (y : Fin srcs'''') -> Gen MaybeEmpty $ FinNotInMFL ids y) =>
+  (Fuel -> (srcs' : SVObjList) -> (sinks' : SVObjList) -> (cm' : ConnMode) -> 
+  Gen MaybeEmpty $ (cons' : MFinsList (srcs'.length) ** Connections srcs' sinks' cm' cons')) =>
+  (Fuel -> (srcs'' : SVObjList) -> (sinks'' : SVObjList) -> (cm'' : ConnMode) -> (cons'' : MFinsList (srcs''.length)) ->
+  Gen MaybeEmpty $ Connections srcs'' sinks'' cm'' cons'') =>
   Gen MaybeEmpty $ Modules ms
--- genModules x ms = do

@@ -88,7 +88,7 @@ states'' Time'     = 4
 
 states' : SVType -> Nat
 states' (RVar x)            = 4 
-states' (SVar x)            = ?kjn_1 
+states' (SVar x)            = states''' x 
 states' (VVar x)            = states'' x 
 states' (PackedArr   t s e) = states' t 
 states' (UnpackedArr t s e) = states' t 

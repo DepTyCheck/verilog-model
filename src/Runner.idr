@@ -31,11 +31,11 @@ import System.Directory
 
 StdModules : ModuleSigsList
 StdModules =
-  [ MkModuleSig [Var Logic', Var Logic'] [Var Logic']
-  , MkModuleSig [Var Logic', Var Logic'] [Var Logic']
-  , MkModuleSig [Var Logic', Var Logic'] [Var Logic']
-  , MkModuleSig [Var Logic', Var Logic'] [Var Logic']
-  , MkModuleSig [Var Logic']             [Var Logic']
+  [ MkModuleSig [Var $ SVar Logic', Var $ SVar Logic'] [Var $ SVar Logic']
+  , MkModuleSig [Var $ SVar Logic', Var $ SVar Logic'] [Var $ SVar Logic']
+  , MkModuleSig [Var $ SVar Logic', Var $ SVar Logic'] [Var $ SVar Logic']
+  , MkModuleSig [Var $ SVar Logic', Var $ SVar Logic'] [Var $ SVar Logic']
+  , MkModuleSig [Var $ SVar Logic']                    [Var $ SVar Logic']
   ]
 
 StdModulesPV : PrintableModules StdModules
@@ -239,7 +239,7 @@ finLookup : (y: FinsList n) -> (List $ Fin $ y.length) -> List $ Fin n
 finLookup xs []        = []
 finLookup xs (y :: ys) = index xs y :: finLookup xs ys
 
-selectPorts : (ports: PortsList) -> (List $ Fin $ ports.length) -> PortsList
+selectPorts : (ports: SVObjList) -> (List $ Fin $ ports.length) -> SVObjList
 selectPorts p []        = []
 selectPorts p (x :: xs) = typeOf p x :: selectPorts p xs
 
@@ -251,7 +251,7 @@ tryToFitL (x::xs) = case tryToFit x of
 
 gen : Fuel -> Gen MaybeEmpty $ ExtendedModules StdModules
 gen x = do
-  rawMS <- genModules x StdModules @{genSourceForSink} @{genConnections}
+  rawMS <- genModules x StdModules @{genMF} @{genCC} @{genFNI} @{genConns} @{genConns2} -- @{genSourceForSink} @{genConnections}
   res <- extend x rawMS
   pure res where
     ||| Continuous assignments to singledriven types are illegal when assigned to top input ports and submodule output ports
@@ -267,28 +267,29 @@ gen x = do
 
     extend : Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
     extend _ End = pure End
-    extend x (NewCompositeModule m subMs sssi ssto cont) = do
-      let siss = connFwdRel sssi
-      let toss = connFwdRel ssto
-      -- Gen single driven assigns
-      let ptaSISS = portsToAssign siss
-      rawSInpsSD <- genSingleDriven x ptaSISS @{genFINSD}
-      let ptaTOSS = portsToAssign toss
-      rawTOutsSD <- genSingleDriven x ptaTOSS @{genFINSD}
-      -- Gen multi driven assigns
-      rawMD <- genMultiDriven x (m.inputs ++ allOutputs {ms} subMs) m.inpsCount (allInputs {ms} subMs) (toMFL siss) m.outputs (toMFL toss)
-      let assignsSS = toListSSs rawMD
-      let assignsSInps = toListSkSbInps rawMD  ++ (finLookup ptaSISS $ toList rawSInpsSD)
-      let assignsTOuts = toListSkTopOuts rawMD ++ (finLookup ptaTOSS $ toList rawTOutsSD)
-      -- Gen literals
-      literals <- genLiterals x $ selectPorts (allInputs {ms} subMs)              assignsSInps 
-                               ++ selectPorts (m.outputs)                         assignsTOuts 
-                               ++ selectPorts (m.inputs ++ allOutputs {ms} subMs) assignsSS
+    extend x modules@(NewCompositeModule m subMs sssi ssto cont) = do
+      -- let siss = connFwdRel sssi
+      -- let toss = connFwdRel ssto
+      -- -- Gen single driven assigns
+      -- let ptaSISS = portsToAssign siss
+      -- rawSInpsSD <- genSingleDriven x ptaSISS @{genFINSD}
+      -- let ptaTOSS = portsToAssign toss
+      -- rawTOutsSD <- genSingleDriven x ptaTOSS @{genFINSD}
+      -- -- Gen multi driven assigns
+      -- rawMD <- genMultiDriven x (m.inputs ++ allOutputs {ms} subMs) m.inpsCount (allInputs {ms} subMs) (toMFL siss) m.outputs (toMFL toss)
+      -- let assignsSS = toListSSs rawMD
+      -- let assignsSInps = toListSkSbInps rawMD  ++ (finLookup ptaSISS $ toList rawSInpsSD)
+      -- let assignsTOuts = toListSkTopOuts rawMD ++ (finLookup ptaTOSS $ toList rawTOutsSD)
+      -- -- Gen literals
+      -- literals <- genLiterals x $ selectPorts (allInputs {ms} subMs)              assignsSInps 
+      --                          ++ selectPorts (m.outputs)                         assignsTOuts 
+      --                          ++ selectPorts (m.inputs ++ allOutputs {ms} subMs) assignsSS
       -- Extend the rest
       contEx <- extend x cont
       -- Gen port types for current context
-      (ports ** _) <- genCtx x m ms subMs (connsToMFL sssi) (connsToMFL ssto) (allFins subMs.length)
-      pure $ NewCompositeModule m subMs sssi ssto assignsSInps assignsTOuts assignsSS literals contEx ports
+      let ports = resolveLocalCtxPortTypes modules
+      -- (ports ** _) <- genCtx x m ms subMs (connsToMFL sssi) (connsToMFL ssto) (allFins subMs.length)
+      pure $ NewCompositeModule m subMs sssi ssto [] [] [] [] contEx ports
 
 covering
 main : IO ()
@@ -305,7 +306,7 @@ main = do
     putStrLn usage
     exitSuccess
 
-  let cgi = initCoverageInfo'' [`{Modules}, `{SingleDrivenAssigns}, `{MultiDrivenAssigns}, `{LiteralsList}]
+  let cgi = initCoverageInfo'' [`{Modules}, `{LiteralsList}] -- `{SingleDrivenAssigns}, `{MultiDrivenAssigns},
 
   let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>
