@@ -82,7 +82,7 @@ namespace MFinsList
     Nil  : MFinsList n
     (::) : MFin n -> MFinsList n -> MFinsList n
 
-  %name FinsList fs
+  %name MFinsList fs
 
   public export
   find : (ms : MFinsList n) -> Fin a -> MFin n -- TODO unsafe. make it vect.

@@ -64,7 +64,7 @@ nothings (Just _  :: xs) = nothings xs
 
 Show NetType where
   show Supply0' = "supply0"
-  show Supply1' = "Supply1"
+  show Supply1' = "supply1"
   show Triand'  = "triand"
   show Trior'   = "trior"
   show Trireg'  = "trireg"
@@ -96,7 +96,7 @@ Show IntegerVectorType where
 ||| print name
 pn : String -> String
 pn "" = ""
-pn a = " \{show a}"
+pn a = " \{a}"
 
 ||| examples:
 ||| bit uP [3:0]; //1-D unpacked
@@ -110,17 +110,19 @@ pn a = " \{show a}"
 ||| int Array[0:7][0:31]; // array declaration using ranges
 ||| int Array[8][32];     // array declaration using sizes
 showSVType : SVType -> (name : String) -> String
-showSVType (RVar x)                name = "\{show x}\{show $ pn name}"
-showSVType (SVar x)                name = "\{show x}\{show $ pn name}"
-showSVType (VVar x)                name = "\{show x}\{show $ pn name}"
-showSVType (PackedArr   t {p} s e) name = "\{showSVType t ""}\{space}[\{show s}:\{show e}]\{show $ pn name}" where
+showSVType (RVar x)                name = "\{show x}\{pn name}"
+showSVType (SVar x)                name = "\{show x}\{pn name}"
+showSVType (VVar x)                name = "\{show x}\{pn name}"
+showSVType (PackedArr   t {p} s e) name = "\{showSVType t ""}\{space}[\{show s}:\{show e}]\{pn name}" where
   space : String
   space = case p of
-    PS => " "
     PA => ""
-showSVType (UnpackedArr t     s e) name = case t of
-  (UnpackedArr t' s' e') => "\{showSVType t name}[\{show s}:\{show e}]"
-  other                  => "\{showSVType t name} "
+    PS => " "
+showSVType (UnpackedArr t     s e) name = "\{showSVType t name}\{space}[\{show s}:\{show e}]" where
+  space : String
+  space = case t of
+    (UnpackedArr _ _ _) => ""
+    other => " "
 
 showSVObj : SVObject -> (name : String) -> String
 showSVObj (Net nt t) name = "\{show nt} \{showSVType t name}"
@@ -198,14 +200,16 @@ resolveSinks sinks srcNames x names un = do
 resolveUnpSI : Vect sk String -> List ((Fin sk, Maybe a), SVObject) -> List String
 resolveUnpSI names = mapMaybe resolve' where
   resolve' : ((Fin sk, Maybe a), SVObject) -> Maybe String
-  resolve' ((finSK, Nothing), u@(Var $ UnpackedArr t s e)) = Just $ showSVObj u $ index finSK names
-  resolve' _                                               = Nothing
+  resolve' (x, svobj) with (valueOf svobj)
+    resolve' ((finSK, Nothing), svobj) | (UnpackedArr _ _ _) = Just $ showSVObj svobj $ index finSK names
+    resolve' (_, _)                    | _                   = Nothing
 
 ||| Prints an explicit declaration for each submodule output connected to a submodule input or not connected at all.
 ||| Doesn't print declaration for ports connected to top outputs
 resolveUnpSO : Foldable c => Foldable d => c String -> d (String, SVObject) -> List String
 resolveUnpSO tops = flip foldr [] $ \case
-  (n, u@(Var $ UnpackedArr t s e)) => if elem n tops then id else with Prelude.(::) (showSVObj u n ::)
+  (n, u@(Net nt $ UnpackedArr t s e)) => if elem n tops then id else with Prelude.(::) (showSVObj u n ::)
+  (n, u@(Var    $ UnpackedArr t s e)) => if elem n tops then id else with Prelude.(::) (showSVObj u n ::)
   _ => id {a=List String}
 
 ||| filter `top inputs -> top outputs` connections
