@@ -1,43 +1,73 @@
 [+] Printed file newdir/newdir/1-seed_0,1.sv
 // Seed: 0,1
 
-module q
-  ( output logic [4:2][3:2] msixeyfxa
-  , output real i [4:3][3:4]
-  , output uwire pavctyy [3:4][1:0]
-  , output uwire s
-  , input bit fklz
-  , input bit wwd
+module myp
+  ( output bit [4:1] eklx
+  , output triand logic [0:0] selwds [3:0][1:0][4:3]
+  , output bit [1:3][0:2][2:1][3:1] apyk
+  , output logic [1:4][2:0][0:1] iyfcbs
+  , input logic [4:2][3:2] uwhprzic [4:3]
+  , input logic [4:3][3:4][0:4][2:0] pzscr
+  , input trior logic [4:1][0:2][0:2][1:4] xrswqxh [3:1][4:3][4:3]
+  , input realtime w
   );
   
   
-  not wqyv(fcde, s);
+  not cgtfzsb(bwqzfcwcd, aoegltqnb);
+  // warning: implicit conversion of port connection truncates from 60 to 1 bits
+  //   logic [4:3][3:4][0:4][2:0] aoegltqnb -> logic aoegltqnb
   
-  xor qozr(s, xrftgz, fcde);
+  not pqczsqmzwt(t, ictyog);
   
+  or mrswwdcmly(ic, sivx, rkldylyur);
   
-  // Top inputs -> top outputs assigns
-  assign msixeyfxa = fklz;
-  
-  // Assigns
-  assign pavctyy = '{'{'b0,'b1},'{'b1,'b0}};
-  assign i = '{'{'b0,'b0},'{'b0,'bx}};
-  assign fcde = 'b0;
-  assign fcde = 'bx;
-  assign fcde = 'bx;
-  assign fcde = 'b1;
-endmodule: q
-
-module npkwmgqlv
-  (input logic [4:4] syu [0:4], input logic o, input integer njrloeraq [1:0][3:1]);
-  
+  xor q(ictyog, pxiey, pzscr);
   
   
   // Top inputs -> top outputs assigns
+  assign iyfcbs = pzscr;
   
   // Assigns
-endmodule: npkwmgqlv
+endmodule: myp
+
+module zawqywvac
+  ();
+  
+  
+  not apnh(prypudm, prypudm);
+  
+  
+  // Top inputs -> top outputs assigns
+  
+  // Assigns
+endmodule: zawqywvac
+
+module ld
+  ( input byte ghi [0:1]
+  , input wire logic [4:2][1:2][2:1] nrr
+  , input shortreal dxornyvy
+  , input tri0 logic [2:2][0:3][0:4][3:4] xtus [2:1][4:1]
+  );
+  
+  
+  
+  // Top inputs -> top outputs assigns
+  
+  // Assigns
+endmodule: ld
+
+module cutjb
+  (input wand logic vkrhpvtnz);
+  
+  
+  and xgrurthc(wgewj, ehcyl, vkrhpvtnz);
+  
+  
+  // Top inputs -> top outputs assigns
+  
+  // Assigns
+endmodule: cutjb
 
 
 
-// Seed after: 7347,1
+// Seed after: 16049,1
