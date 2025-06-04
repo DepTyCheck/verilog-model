@@ -10,4 +10,4 @@ import public Test.Verilog.Assign
 
 -- Test.Verilog.Assign.SD.genFNE = deriveGen
 -- Test.Verilog.Assign.SD.genSingleDriven = deriveGen
--- Test.Verilog.Assign.genMultiDriven = deriveGen
+-- Test.Verilog.Assign.MD.genMDAssigns = deriveGen

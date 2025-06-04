@@ -305,25 +305,12 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : Fi
 
   printSubmodules : List String -> List (Fin (length (subMs.asList)), Fin (length ms)) -> List $ Doc opts
   printSubmodules  subMInstanceNames subMsIdxs = foldl (++) [] $ map printSubm $ zip subMInstanceNames subMsIdxs where
-    printImplicitCast : SVObject -> String -> SVObject -> String -> List String
-    printImplicitCast op on np nn = do
-      let warnings = catMaybes [ printTruncationWarning op on np nn, printSignednessWarning op on np nn, printStatesWarning op on np nn ]
-      case isNil warnings of
-        True  => []
-        False => warnings ++ [ "//   \{showSVObj op on} -> \{showSVObj np nn}" ]
-
-    printAllImplicitCasts : List SVObject -> List String -> List SVObject -> List String -> List String
-    printAllImplicitCasts (p::ps) (n::ns) (p'::ps') (n'::ns') = do
-      let curr = printImplicitCast p n p' n'
-      let rest = printAllImplicitCasts ps ns ps' ns'
-      if isNil curr || isNil rest then curr ++ rest else curr ++ ["//"] ++ rest
-    printAllImplicitCasts _       _       _         _         = []
 
     printSubm' : (pre : Doc opts) -> (siNames : List String) -> (soNames : List String) -> (exM : ModuleSig) ->
                  (ctxInps : List SVObject) -> (ctxOuts : List SVObject) -> (exInps : List String) -> (exOuts : List String) -> List (Doc opts)
     printSubm' pre siNames soNames exM ctxInps ctxOuts exInps exOuts = do
-      let warningsSubOuts = printAllImplicitCasts (toList exM.outputs) exOuts ctxOuts soNames
-      let warningsSubInps = printAllImplicitCasts ctxInps siNames (toList exM.inputs) exInps
+      let warningsSubOuts = printAllImplicitCasts showSVObj (toList exM.outputs) exOuts ctxOuts soNames
+      let warningsSubInps = printAllImplicitCasts showSVObj ctxInps siNames (toList exM.inputs) exInps  
       let warnings = if isNil warningsSubOuts || 
                         isNil warningsSubInps then warningsSubOuts ++ warningsSubInps else warningsSubOuts ++ [ "//" ] ++ warningsSubInps
       case isNil warnings of

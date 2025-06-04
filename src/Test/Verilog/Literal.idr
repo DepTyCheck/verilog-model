@@ -75,7 +75,7 @@ public export
 data Binary : SVType -> Type where
   Single : BitState (is2state svt) -> Binary svt
   UArr   : BinaryList t (S $ max s e `minus` min s e) -> Binary (UnpackedArr t s e)
-  PArr   : BinaryList t (S $ max s e `minus` min s e) -> Binary (PackedArr   t s e)
+  PArr   : BinaryList t (S $ max s e `minus` min s e) -> (p : PABasic t) => Binary (PackedArr   t s e)
 
 public export
 data BinaryList : SVType -> Nat -> Type where

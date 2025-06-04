@@ -14,14 +14,14 @@ module myp
   
   
   not cgtfzsb(bwqzfcwcd, aoegltqnb);
-  // warning: implicit conversion of port connection truncates from 60 to 1 bits
-  //   logic [4:3][3:4][0:4][2:0] aoegltqnb -> logic aoegltqnb
   
   not pqczsqmzwt(t, ictyog);
   
   or mrswwdcmly(ic, sivx, rkldylyur);
   
   xor q(ictyog, pxiey, pzscr);
+  // warning: implicit conversion of port connection truncates from 60 to 1 bits
+  //   logic [4:3][3:4][0:4][2:0] pzscr -> logic pzscr
   
   
   // Top inputs -> top outputs assigns

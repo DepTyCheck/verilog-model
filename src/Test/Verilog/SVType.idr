@@ -41,293 +41,393 @@ import public Test.Common.Utils
 public export
 data NetType = Supply0' | Supply1' | Triand' | Trior' | Trireg' | Tri0' | Tri1' | Uwire' | Wire' | Wand' | Wor'; -- Tri
 
-||| 6.9 Vector declarations
-||| A data object declared as reg, logic, or bit (or as a matching user-defined type or implicitly as logic)
-||| without a range specification shall be considered 1-bit wide and is known as a scalar. A multibit data object
-||| of one of these types shall be declared by specifying a range and is known as a vector. Vectors are packed
-||| arrays of scalars
-public export
-data IntegerVectorType = Byte' | Shortint' | Int' | Longint' | Integer' | Time';
+namespace IntegerVectorType
 
-public export
-Eq IntegerVectorType where
- (==) Byte'     Byte'     = True
- (==) Shortint' Shortint' = True
- (==) Int'      Int'      = True
- (==) Longint'  Longint'  = True
- (==) Integer'  Integer'  = True
- (==) Time'     Time'     = True
- (==) _         _         = False
+  ||| 6.9 Vector declarations
+  ||| A data object declared as reg, logic, or bit (or as a matching user-defined type or implicitly as logic)
+  ||| without a range specification shall be considered 1-bit wide and is known as a scalar. A multibit data object
+  ||| of one of these types shall be declared by specifying a range and is known as a vector. Vectors are packed
+  ||| arrays of scalars
+  public export
+  data IntegerVectorType = Byte' | Shortint' | Int' | Longint' | Integer' | Time';
 
-public export
-data IntegerScalarType = Bit' | Logic' | Reg';
+  public export
+  Eq IntegerVectorType where
+    (==) Byte'     Byte'     = True
+    (==) Shortint' Shortint' = True
+    (==) Int'      Int'      = True
+    (==) Longint'  Longint'  = True
+    (==) Integer'  Integer'  = True
+    (==) Time'     Time'     = True
+    (==) _         _         = False
 
-public export
-Eq IntegerScalarType where
- (==) Bit'   Bit'   = True
- (==) Logic' Logic' = True
- (==) Reg'   Reg'   = True
- (==) _      _      = False
+  public export
+  bitsCnt : IntegerVectorType -> Nat
+  bitsCnt Byte'     = 8
+  bitsCnt Shortint' = 16
+  bitsCnt Int'      = 32
+  bitsCnt Longint'  = 64
+  bitsCnt Integer'  = 32
+  bitsCnt Time'     = 64
 
-public export
-data NonIntegerType = Shortreal' | Real' | Realtime';
+  public export
+  isSigned : IntegerVectorType -> Bool
+  isSigned Byte'     = True
+  isSigned Shortint' = True
+  isSigned Int'      = True
+  isSigned Longint'  = True
+  isSigned Integer'  = True
+  isSigned Time'     = False
 
-public export
-Eq NonIntegerType where
- (==) Shortreal' Shortreal' = True
- (==) Real'      Real'      = True
- (==) _          _          = False
+  public export
+  states : IntegerVectorType -> Nat
+  states Byte'     = 2 
+  states Shortint' = 2 
+  states Int'      = 2 
+  states Longint'  = 2 
+  states Integer'  = 4 
+  states Time'     = 4 
 
-public export
-data SVType : Type
-public export
-data AllowedNetData : SVType -> Type
-public export
-data PABasic : SVType -> Type
+namespace IntegerScalarType
 
-||| Variable types
-|||
-||| |  Type     | Description                                                     |
-||| |-----------|-----------------------------------------------------------------|
-||| | shortint  | 2-state data type, 16-bit signed integer                        |
-||| | int       | 2-state data type, 32-bit signed integer                        |
-||| | longint   | 2-state data type, 64-bit signed integer                        |
-||| | byte      | 2-state data type, 8-bit signed integer or ASCII character      |
-||| | bit       | 2-state data type, user-defined vector size, unsigned           |
-||| | logic     | 4-state data type, user-defined vector size, unsigned           |
-||| | reg       | 4-state data type, user-defined vector size, unsigned           |
-||| | integer   | 4-state data type, 32-bit signed integer                        |
-||| | time      | 4-state data type, 64-bit unsigned integer                      |
-||| | real      | The “real” data type is 64-bit                                  |
-||| | shortreal | The “shortreal” data type is 32-bit                             |
-||| | realtime  | The “realtime” declarations is treated synonymously with “real” |
-|||
-||| Net types
-|||
-||| | Net     | Description                                             |
-||| |---------|---------------------------------------------------------|
-||| | wire    | A high impedance net; multi-driver net                  |
-||| | tri     | A high impedance net; multi-driver net                  |
-||| | tri0    | Resistive pulldown net                                  |
-||| | tri1    | Resistive pullup net                                    |
-||| | trior   | Same as “wor”; “1” wins in all cases; multi-driver net  |
-||| | triand  | Same as “wand”; “0” wins in all cases; multi-driver net |
-||| | trireg  | Models charge storage node                              |
-||| | uwire   | Unresolved type; allows only one driver on the net      |
-||| | wand    | Same as “triand”; “0” wins in all cases                 |
-||| | wor     | Same as trior; “1” wins in all cases                    |
-||| | supply0 | Net with supply strength to model “gnd”                 |
-||| | supply1 | Net with supply strength to model “power”               |
-|||
-||| Ashok B. Mehta. Introduction to SystemVerilog, 2021
-|||
-||| 6.2 Data types and data objects
-|||
-||| SystemVerilog makes a distinction between an object and its data type. A data type is a set of values and a
-||| set of operations that can be performed on those values. Data types can be used to declare data objects or to
-||| define user-defined data types that are constructed from other data types. A data object is a named entity that
-||| has a data value and a data type associated with it, such as a parameter, a variable, or a net.
-|||
-||| 6.4 Singular and aggregate types
-|||
-||| Data types are categorized as either singular or aggregate. A singular type shall be any data type except an
-||| unpacked structure, unpacked union, or unpacked array (see 7.4 on arrays). An aggregate type shall be any
-||| unpacked structure, unpacked union, or unpacked array data type. A singular variable or expression
-||| represents a single value, symbol, or handle. Aggregate expressions and variables represent a set or
-||| collection of singular values. Integral types (see 6.11.1) are always singular even though they can be sliced
-||| into multiple singular values. The string data type is singular even though a string can be indexed in a
-||| similar way to an unpacked array of bytes.
-|||
-||| Syntax 6-3—Syntax for variable declarations
-|||
-||| data_declaration ::=
-|||   [ const ] [ var ] [ lifetime ] data_type_or_implicit list_of_variable_decl_assignments ;
-|||   | ...
-||| data_type_or_implicit ::=
-|||   data_type
-|||   | implicit_data_type
-||| data_type ::=
-|||   integer_vector_type [ signing ] { packed_dimension }
-|||   | integer_atom_type [ signing ]
-|||   | non_integer_type
-|||   | struct_union [ packed [ signing ] ] { struct_union_member { struct_union_member } }
-|||     { packed_dimension }
-|||   | enum [ enum_base_type ] { enum_name_declaration { , enum_name_declaration } }
-|||     { packed_dimension }
-|||   | string
-|||   | chandle
-|||   | virtual [ interface ] interface_identifier [ parameter_value_assignment ] [ . modport_identifier ]
-|||   | [ class_scope | package_scope ] type_identifier { packed_dimension }
-|||   | class_type
-|||   | event
-|||   | ps_covergroup_identifier
-|||   | type_reference18
-||| integer_atom_type ::= byte | shortint | int | longint | integer | time
-||| integer_vector_type ::= bit | logic | reg
-||| non_integer_type ::= shortreal | real | realtime
-||| signing ::= signed | unsigned
-||| implicit_data_type ::= [ signing ] { packed_dimension }
-||| variable_decl_assignment ::=
-|||   variable_identifier { variable_dimension } [ = expression ]
-|||   | dynamic_array_variable_identifier unsized_dimension { variable_dimension }
-|||     [ = dynamic_array_new ]
-|||   | class_variable_identifier [ = class_new ]
-public export
-data SVType : Type where
-  -- Implicit : SVType -- Declare an implicit net type
-  RVar : NonIntegerType -> SVType
-  SVar : IntegerScalarType -> SVType
-  VVar : IntegerVectorType -> SVType
-  PackedArr : (t : SVType) -> {p : PABasic t} -> Nat -> Nat -> SVType
-  ||| The main difference between an unpacked array and a packed array is that
-  ||| an unpacked array is not guaranteed to be represented as a contiguous set of bits
+  public export
+  data IntegerScalarType = Bit' | Logic' | Reg';
+
+  public export
+  Eq IntegerScalarType where
+    (==) Bit'   Bit'   = True
+    (==) Logic' Logic' = True
+    (==) Reg'   Reg'   = True
+    (==) _      _      = False
+
+  public export
+  states : IntegerScalarType -> Nat
+  states Bit'   = 2
+  states Logic' = 4
+  states Reg'   = 4
+
+namespace NonIntegerType
+
+  public export
+  data NonIntegerType = Shortreal' | Real' | Realtime';
+
+  public export
+  Eq NonIntegerType where
+    (==) Shortreal' Shortreal' = True
+    (==) Real'      Real'      = True
+    (==) Realtime'  Realtime'  = True
+    (==) _          _          = False
+
+  public export
+  bitsCnt : NonIntegerType -> Nat
+  bitsCnt Shortreal' = 32 
+  bitsCnt Real'      = 64 
+  bitsCnt Realtime'  = 64
+
+namespace SVType
+
+  public export
+  data SVType : Type
+  public export
+  data AllowedNetData : SVType -> Type
+  public export
+  data PABasic : SVType -> Type
+
+  ||| Variable types
+  |||
+  ||| |  Type     | Description                                                     |
+  ||| |-----------|-----------------------------------------------------------------|
+  ||| | shortint  | 2-state data type, 16-bit signed integer                        |
+  ||| | int       | 2-state data type, 32-bit signed integer                        |
+  ||| | longint   | 2-state data type, 64-bit signed integer                        |
+  ||| | byte      | 2-state data type, 8-bit signed integer or ASCII character      |
+  ||| | bit       | 2-state data type, user-defined vector size, unsigned           |
+  ||| | logic     | 4-state data type, user-defined vector size, unsigned           |
+  ||| | reg       | 4-state data type, user-defined vector size, unsigned           |
+  ||| | integer   | 4-state data type, 32-bit signed integer                        |
+  ||| | time      | 4-state data type, 64-bit unsigned integer                      |
+  ||| | real      | The “real” data type is 64-bit                                  |
+  ||| | shortreal | The “shortreal” data type is 32-bit                             |
+  ||| | realtime  | The “realtime” declarations is treated synonymously with “real” |
+  |||
+  ||| Net types
+  |||
+  ||| | Net     | Description                                             |
+  ||| |---------|---------------------------------------------------------|
+  ||| | wire    | A high impedance net; multi-driver net                  |
+  ||| | tri     | A high impedance net; multi-driver net                  |
+  ||| | tri0    | Resistive pulldown net                                  |
+  ||| | tri1    | Resistive pullup net                                    |
+  ||| | trior   | Same as “wor”; “1” wins in all cases; multi-driver net  |
+  ||| | triand  | Same as “wand”; “0” wins in all cases; multi-driver net |
+  ||| | trireg  | Models charge storage node                              |
+  ||| | uwire   | Unresolved type; allows only one driver on the net      |
+  ||| | wand    | Same as “triand”; “0” wins in all cases                 |
+  ||| | wor     | Same as trior; “1” wins in all cases                    |
+  ||| | supply0 | Net with supply strength to model “gnd”                 |
+  ||| | supply1 | Net with supply strength to model “power”               |
   |||
   ||| Ashok B. Mehta. Introduction to SystemVerilog, 2021
   |||
-  ||| 7.4.1
-  ||| Each packed dimension in a packed array declaration shall be specified by a range specification of the form
-  ||| [ constant_expression : constant_expression ]. Each constant expression may be any integer value --
-  ||| positive, negative, or zero, with no unknown (x) or high-impedance (z) bits. The first value may be greater
-  ||| than, equal to, or less than the second value.
+  ||| 6.2 Data types and data objects
   |||
-  ||| IEEE 1800-2023
-  UnpackedArr : SVType -> Nat -> Nat -> SVType
-  -- Dynamic array
-  -- Associative array
-  -- Queue
-  -- Packed Structure
-  -- Unpacked Structure
-  -- Union
-  -- String
-  -- Chandle
-  -- Enum
-  -- Constant (parameter)
-  -- Class
-  -- Void (?)
-  -- Event
-  -- User-defined
-
-
-public export
-data SVObject : Type where
-  ||| Syntax 6-2—Syntax for net declarations
+  ||| SystemVerilog makes a distinction between an object and its data type. A data type is a set of values and a
+  ||| set of operations that can be performed on those values. Data types can be used to declare data objects or to
+  ||| define user-defined data types that are constructed from other data types. A data object is a named entity that
+  ||| has a data value and a data type associated with it, such as a parameter, a variable, or a net.
   |||
-  ||| net_declaration16 ::=
-  |||   net_type [ drive_strength | charge_strength ] [ vectored | scalared ]
-  |||     data_type_or_implicit [ delay3 ] list_of_net_decl_assignments ;
-  |||   | nettype_identifier [ delay_control ] list_of_net_decl_assignments ;
-  |||   | interconnect implicit_data_type [ # delay_value ]
-  |||     net_identifier { unpacked_dimension } [ , net_identifier { unpacked_dimension } ] ;
-  ||| net_type ::=
-  |||   supply0 | supply1 | tri | triand | trior | trireg | tri0 | tri1 | uwire | wire | wand | wor
-  ||| drive_strength ::=
-  |||   ( strength0 , strength1 )
-  |||   | ( strength1 , strength0 )
-  |||   | ( strength0 , highz1 )
-  |||   | ( strength1 , highz0 )
-  |||   | ( highz0 , strength1 )
-  |||   | ( highz1 , strength0 )
-  ||| strength0 ::= supply0 | strong0 | pull0 | weak0
-  ||| strength1 ::= supply1 | strong1 | pull1 | weak1
-  ||| charge_strength ::= ( small ) | ( medium ) | ( large )
-  ||| delay3 ::=
-  |||   # delay_value
-  |||   | # ( mintypmax_expression [ , mintypmax_expression [ , mintypmax_expression ] ] )
-  ||| delay_value ::=
-  ||| unsigned_number
-  |||   | real_number
-  |||   | ps_identifier
-  |||   | time_literal
-  |||   | 1step
-  Net : NetType -> (t : SVType) -> {ald : AllowedNetData t} -> SVObject
-  Var : SVType -> SVObject
+  ||| 6.4 Singular and aggregate types
+  |||
+  ||| Data types are categorized as either singular or aggregate. A singular type shall be any data type except an
+  ||| unpacked structure, unpacked union, or unpacked array (see 7.4 on arrays). An aggregate type shall be any
+  ||| unpacked structure, unpacked union, or unpacked array data type. A singular variable or expression
+  ||| represents a single value, symbol, or handle. Aggregate expressions and variables represent a set or
+  ||| collection of singular values. Integral types (see 6.11.1) are always singular even though they can be sliced
+  ||| into multiple singular values. The string data type is singular even though a string can be indexed in a
+  ||| similar way to an unpacked array of bytes.
+  |||
+  ||| Syntax 6-3—Syntax for variable declarations
+  |||
+  ||| data_declaration ::=
+  |||   [ const ] [ var ] [ lifetime ] data_type_or_implicit list_of_variable_decl_assignments ;
+  |||   | ...
+  ||| data_type_or_implicit ::=
+  |||   data_type
+  |||   | implicit_data_type
+  ||| data_type ::=
+  |||   integer_vector_type [ signing ] { packed_dimension }
+  |||   | integer_atom_type [ signing ]
+  |||   | non_integer_type
+  |||   | struct_union [ packed [ signing ] ] { struct_union_member { struct_union_member } }
+  |||     { packed_dimension }
+  |||   | enum [ enum_base_type ] { enum_name_declaration { , enum_name_declaration } }
+  |||     { packed_dimension }
+  |||   | string
+  |||   | chandle
+  |||   | virtual [ interface ] interface_identifier [ parameter_value_assignment ] [ . modport_identifier ]
+  |||   | [ class_scope | package_scope ] type_identifier { packed_dimension }
+  |||   | class_type
+  |||   | event
+  |||   | ps_covergroup_identifier
+  |||   | type_reference18
+  ||| integer_atom_type ::= byte | shortint | int | longint | integer | time
+  ||| integer_vector_type ::= bit | logic | reg
+  ||| non_integer_type ::= shortreal | real | realtime
+  ||| signing ::= signed | unsigned
+  ||| implicit_data_type ::= [ signing ] { packed_dimension }
+  ||| variable_decl_assignment ::=
+  |||   variable_identifier { variable_dimension } [ = expression ]
+  |||   | dynamic_array_variable_identifier unsized_dimension { variable_dimension }
+  |||     [ = dynamic_array_new ]
+  |||   | class_variable_identifier [ = class_new ]
+  |||
+  public export
+  data SVType : Type where
+    -- Implicit : SVType -- Declare an implicit net type
+    RVar : NonIntegerType -> SVType
+    SVar : IntegerScalarType -> SVType
+    VVar : IntegerVectorType -> SVType
+    PackedArr : (t : SVType) -> (p : PABasic t) => Nat -> Nat -> SVType
+    ||| The main difference between an unpacked array and a packed array is that
+    ||| an unpacked array is not guaranteed to be represented as a contiguous set of bits
+    |||
+    ||| Ashok B. Mehta. Introduction to SystemVerilog, 2021
+    |||
+    ||| 7.4.1
+    ||| Each packed dimension in a packed array declaration shall be specified by a range specification of the form
+    ||| [ constant_expression : constant_expression ]. Each constant expression may be any integer value --
+    ||| positive, negative, or zero, with no unknown (x) or high-impedance (z) bits. The first value may be greater
+    ||| than, equal to, or less than the second value.
+    |||
+    ||| IEEE 1800-2023
+    UnpackedArr : SVType -> Nat -> Nat -> SVType
+    -- Dynamic array
+    -- Associative array
+    -- Queue
+    -- Packed Structure
+    -- Unpacked Structure
+    -- Union
+    -- String
+    -- Chandle
+    -- Enum
+    -- Constant (parameter)
+    -- Class
+    -- Void (?)
+    -- Event
+    -- User-defined
+  
+  ||| 7.4.1 Packed arrays
+  ||| Packed arrays can be made of only the single bit data types (bit, logic, reg), enumerated types, and
+  ||| recursively other packed arrays and packed structures.
+  public export
+  data PABasic : SVType -> Type where
+    PS : PABasic $ SVar s
+    PA : {t : SVType} -> (p : PABasic t) => PABasic $ PackedArr t s e
 
-public export
-valueOf : SVObject -> SVType
-valueOf (Net _ t) = t
-valueOf (Var   t) = t
+  ||| 6.11.1 Integral types
+  |||
+  ||| The term integral is used throughout this standard to refer to the data types that can represent a single basic
+  ||| integer data type, packed array, packed structure, packed union, or enum.
+  public export
+  data SVIntegral : SVType -> Type where
+    ST : SVIntegral $ SVar t
+    VT : SVIntegral $ VVar t
+    PT : {t : SVType} -> (p : PABasic t) => SVIntegral $ PackedArr t s e
+    -- Packed struct, union, enum
+
+  public export
+  data State4S : IntegerScalarType -> Type where
+    S4L : State4S Logic'
+    S4R : State4S Reg'
+
+  public export
+  data State4V : IntegerVectorType -> Type where
+    V4I : State4V Integer'
+    V4T : State4V Time'
+
+  public export
+  data State4 : SVIntegral svt -> Type where
+    SS : State4S t => State4 $ ST {t}
+    SV : State4V t => State4 $ VT {t}
+    SP : {t : SVType} -> (p : PABasic t) => (i : SVIntegral t) => State4 i -> State4 $ PT {t}
+
+  ||| 6.7.1 Net declarations with built-in net types
+  ||| A lexical restriction applies to the use of the reg keyword in a net or port declaration. A net type keyword
+  ||| shall not be followed directly by the reg keyword. Thus, the following declaration is in error:
+  |||   tri reg r;
+  public export
+  data NotReg : SVIntegral svt -> Type where
+    NRSL : NotReg $ ST {t=Logic'}
+    NRSB : NotReg $ ST {t=Bit'}
+    NRPT : {t : SVType} -> (p : PABasic t) => (i : SVIntegral t) => NotReg i => NotReg $ PT {t}
+
+  ||| 6.7.1 Net declarations with built-in net types
+  ||| Certain restrictions apply to the data type of a net. A valid data type for a net shall be one of the following:
+  |||   a) A 4-state integral type, including, for example, a packed array or packed structure (see 6.11.1).
+  |||   b) A fixed-size unpacked array or unpacked structure or union, where each element has a valid data
+  |||      type for a net.
+  public export
+  data AllowedNetData : SVType -> Type where
+    -- Imp : ImplOrPacked Implicit
+    NA : (i : SVIntegral obj) => (s : State4 i) => NotReg i => AllowedNetData obj
+    NB : AllowedNetData t => AllowedNetData $ UnpackedArr t s e
+    -- TODO: unpacked structure, union
+  
+  public export
+  bitsCnt : SVType -> Nat
+  bitsCnt (RVar x)            = bitsCnt x
+  bitsCnt (SVar x)            = 1
+  bitsCnt (VVar x)            = bitsCnt x
+  bitsCnt (PackedArr   t s e) = S (max s e `minus` min s e) * bitsCnt t
+  bitsCnt (UnpackedArr t s e) = bitsCnt t
+
+  public export
+  isSigned : SVType -> Bool
+  isSigned (RVar x)            = True
+  isSigned (SVar x)            = False
+  isSigned (VVar x)            = isSigned x
+  isSigned (PackedArr   t _ _) = isSigned t
+  isSigned (UnpackedArr t _ _) = isSigned t
+
+  public export
+  states : SVType -> Nat
+  states (RVar x)            = 4 
+  states (SVar x)            = states x 
+  states (VVar x)            = states x 
+  states (PackedArr   t s e) = states t 
+  states (UnpackedArr t s e) = states t 
+
+namespace SVObject
+
+  public export
+  data SVObject : Type where
+    ||| Syntax 6-2—Syntax for net declarations
+    |||
+    ||| net_declaration16 ::=
+    |||   net_type [ drive_strength | charge_strength ] [ vectored | scalared ]
+    |||     data_type_or_implicit [ delay3 ] list_of_net_decl_assignments ;
+    |||   | nettype_identifier [ delay_control ] list_of_net_decl_assignments ;
+    |||   | interconnect implicit_data_type [ # delay_value ]
+    |||     net_identifier { unpacked_dimension } [ , net_identifier { unpacked_dimension } ] ;
+    ||| net_type ::=
+    |||   supply0 | supply1 | tri | triand | trior | trireg | tri0 | tri1 | uwire | wire | wand | wor
+    ||| drive_strength ::=
+    |||   ( strength0 , strength1 )
+    |||   | ( strength1 , strength0 )
+    |||   | ( strength0 , highz1 )
+    |||   | ( strength1 , highz0 )
+    |||   | ( highz0 , strength1 )
+    |||   | ( highz1 , strength0 )
+    ||| strength0 ::= supply0 | strong0 | pull0 | weak0
+    ||| strength1 ::= supply1 | strong1 | pull1 | weak1
+    ||| charge_strength ::= ( small ) | ( medium ) | ( large )
+    ||| delay3 ::=
+    |||   # delay_value
+    |||   | # ( mintypmax_expression [ , mintypmax_expression [ , mintypmax_expression ] ] )
+    ||| delay_value ::=
+    ||| unsigned_number
+    |||   | real_number
+    |||   | ps_identifier
+    |||   | time_literal
+    |||   | 1step
+    Net : NetType -> (t : SVType) -> (p : AllowedNetData t) => SVObject
+    Var : SVType -> SVObject
+
+  public export
+  bitsCnt : SVObject -> Nat
+  bitsCnt (Net _ t) = bitsCnt t
+  bitsCnt (Var   t) = bitsCnt t
+
+  ||| 6.8 Variable Declarations
+  |||
+  ||| The byte, shortint, int, integer, and longint types are signed types by default. Other net and
+  ||| variable types can be explicitly declared as signed.
+  public export
+  isSigned : SVObject -> Bool
+  isSigned (Net _ _) = False
+  isSigned (Var x)   = isSigned x
+
+  ||| 6.7.1 Net declarations with built-in net types
+  ||| A valid data type for a net shall be one of the following:
+  ||| a) 4-state integral type ...
+  public export
+  states : SVObject -> Nat
+  states (Net _ t) = 4
+  states (Var   t) = states t
+
+  public export
+  valueOf : SVObject -> SVType
+  valueOf (Net _ t) = t
+  valueOf (Var   t) = t
 
 ||| 6.6.2 Unresolved nets
 ||| The uwire net is an unresolved or unidriver wire and is used to model nets that allow only a single driver.
 data ResolvedNet : SVObject -> Type where
-  NS0 : ResolvedNet $ Net Supply0' v
-  NS1 : ResolvedNet $ Net Supply1' v
-  NTD : ResolvedNet $ Net Triand' v
-  NTR : ResolvedNet $ Net Trior' v
-  NTG : ResolvedNet $ Net Trireg' v
-  NT0 : ResolvedNet $ Net Tri0' v
-  NT1 : ResolvedNet $ Net Tri1' v
-  NWI : ResolvedNet $ Net Wire' v
-  NWA : ResolvedNet $ Net Wand' v
-  NWO : ResolvedNet $ Net Wor' v
-
-||| 7.4.1 Packed arrays
-||| Packed arrays can be made of only the single bit data types (bit, logic, reg), enumerated types, and
-||| recursively other packed arrays and packed structures.
-public export
-data PABasic : SVType -> Type where
-  PS : PABasic $ SVar s
-  PA : PABasic $ PackedArr p s e
-
-||| 6.11.1 Integral types
-|||
-||| The term integral is used throughout this standard to refer to the data types that can represent a single basic
-||| integer data type, packed array, packed structure, packed union, or enum.
-public export
-data SVIntegral : SVType -> Type where
-  ST : SVIntegral $ SVar t
-  VT : SVIntegral $ VVar t
-  PT : {t : SVType} -> {p : PABasic t} -> SVIntegral $ PackedArr t {p} s e
-  -- Packed struct, union, enum
-
-public export
-data State4S : IntegerScalarType -> Type where
-  S4L : State4S Logic'
-  S4R : State4S Reg'
-
-public export
-data State4V : IntegerVectorType -> Type where
-  V4I : State4V Integer'
-  V4T : State4V Time'
-
-public export
-data State4 : SVIntegral svt -> Type where
-  SS : State4S t => State4 $ ST {t}
-  SV : State4V t => State4 $ VT {t}
-  SP : {t : SVType} -> {p : PABasic t} -> (i : SVIntegral t) => State4 i -> State4 $ PT {t} {p}
-
-||| 6.7.1 Net declarations with built-in net types
-||| A lexical restriction applies to the use of the reg keyword in a net or port declaration. A net type keyword
-||| shall not be followed directly by the reg keyword. Thus, the following declaration is in error:
-|||   tri reg r;
-public export
-data NotReg : SVIntegral svt -> Type where
-  NRSL : NotReg $ ST {t=Logic'}
-  NRSB : NotReg $ ST {t=Bit'}
-  NRPT : {t : SVType} -> {p : PABasic t} -> (i : SVIntegral t) => NotReg i => NotReg $ PT {t} {p}
-
-||| 6.7.1 Net declarations with built-in net types
-||| Certain restrictions apply to the data type of a net. A valid data type for a net shall be one of the following:
-|||   a) A 4-state integral type, including, for example, a packed array or packed structure (see 6.11.1).
-|||   b) A fixed-size unpacked array or unpacked structure or union, where each element has a valid data
-|||      type for a net.
-public export
-data AllowedNetData : SVType -> Type where
-  -- Imp : ImplOrPacked Implicit
-  NA : (i : SVIntegral obj) => (s : State4 i) => NotReg i => AllowedNetData obj
-  NB : AllowedNetData t => AllowedNetData $ UnpackedArr t s e
-  -- TODO: unpacked structure, union
+  NS0 : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Supply0' t
+  NS1 : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Supply1' t
+  NTD : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Triand' t
+  NTR : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Trior' t
+  NTG : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Trireg' t
+  NT0 : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Tri0' t
+  NT1 : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Tri1' t
+  NWI : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Wire' t
+  NWA : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Wand' t
+  NWO : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Wor' t
 
 public export
 data VarOrPacked : SVType -> Type where
   VR : VarOrPacked $ RVar t
   VS : VarOrPacked $ SVar t
   VV : VarOrPacked $ VVar t
-  VP : VarOrPacked $ PackedArr p s e
+  VP : {t : SVType} -> (p : PABasic t) => VarOrPacked $ PackedArr t s e
+
+public export
+data IsUnpackedArr : SVType -> Type where
+  IUA : IsUnpackedArr $ UnpackedArr t s e
 
 public export
 defaultNetType : SVObject
-defaultNetType = Net Wire' (SVar Logic') {ald=NA {i=ST {t=Logic'}} {s=SS {t=Logic'}}}
+defaultNetType = Net Wire' (SVar Logic') {p=NA {i=ST {t=Logic'}} {s=SS {t=Logic'}}}
 
 namespace SVObjList
 
@@ -352,6 +452,15 @@ namespace SVObjList
   toList : SVObjList -> List SVObject
   toList []        = []
   toList (x :: xs) = x :: toList xs
+
+  public export
+  fromList : List SVObject -> SVObjList
+  fromList [] = []
+  fromList (x :: xs) = x :: fromList xs
+
+  public export
+  reverse : SVObjList -> SVObjList
+  reverse svl = fromList $ reverse $ toList svl
 
   export
   svolistAppendLen : (xs : SVObjList) -> (ys : SVObjList) -> length xs + length ys = length (xs ++ ys)
@@ -418,6 +527,20 @@ namespace ModuleSig
   (++) : ModuleSigsList -> ModuleSigsList -> ModuleSigsList
   Nil       ++ ys = ys
   (x :: xs) ++ ys = x :: (xs ++ ys)
+
+  public export
+  fromList : List ModuleSig -> ModuleSigsList
+  fromList [] = []
+  fromList (x :: xs) = x :: fromList xs
+
+  public export
+  toList : ModuleSigsList -> List ModuleSig
+  toList []        = []
+  toList (m :: ms) = m :: toList ms
+
+  public export
+  reverse : ModuleSigsList -> ModuleSigsList
+  reverse msl = fromList $ reverse $ toList msl
 
 public export
 allInputs : {ms : ModuleSigsList} -> FinsList ms.length -> SVObjList
