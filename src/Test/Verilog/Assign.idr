@@ -3,7 +3,7 @@ module Test.Verilog.Assign
 import public Test.Verilog.SVType
 
 import Data.Fuel
-import Data.Vect
+import Data.Vect.Extra
 import Data.Fin
 import Data.Nat
 
@@ -12,7 +12,38 @@ import Test.DepTyCheck.Gen.Coverage
 
 %default total
 
+
+-- MULTICONNECTIONS
+
 -- namespace SD
+
+--   ||| 10.3.2
+--   ||| Continuous assignments to singledriven types are illegal when assigned to top input ports and submodule output ports
+--   |||
+--   ||| So unconnected sumbodule inputs and unconnected top outputs are available for singledriven continuous assignment
+--   public export
+--   portsToAssign : Vect sk (Maybe $ Fin ss) -> FinsList sk
+--   portsToAssign v = do
+--     let (_ ** res) = catMaybes $ map resolve' $ withIndex v
+--     fromVect res where
+--     resolve': (Fin sk, Maybe $ Fin ss) -> Maybe $ Fin sk
+--     resolve' (x, Nothing) = Just x
+--     resolve' (x, (Just y)) = Nothing
+  
+--   public export
+--   data FinsToFins : {n : Nat} -> (fins : FinsList n) -> FinsList fins.length -> Type where 
+--     Nil  : FinsToFins fins []
+--     (::) : (f : Fin fins.length) -> FinsToFins fins rest -> FinNotIn rest f -> FinsToFins fins (f::rest)
+
+-- namespace MD
+
+  -- public export
+  -- data MDAssigns : (ctxPorts : ModuleSigsList) -> (subMs : FinsList (ctxPorts.length)) -> (f : FinsList (ctxPorts.length) -> SVObjList) -> Type where
+  --   Nil  : MDAssigns ctxPorts subMs f
+  --   (::) : Fin ((f subMs).length) -> MDAssigns ctxPorts subMs f -> MDAssigns ctxPorts subMs f
+
+  -- public export
+  -- genMDAssigns : Fuel -> (ctxPorts : ModuleSigsList) -> (subMs : FinsList (ctxPorts.length)) -> (f : FinsList (ctxPorts.length) -> SVObjList) -> Gen MaybeEmpty $ MDAssigns ctxPorts subMs f
 
 --   -- public export
 --   -- data SingleDrivenAssigns : FinsList n -> Type

@@ -251,20 +251,9 @@ tryToFitL (x::xs) = case tryToFit x of
 
 gen : Fuel -> Gen MaybeEmpty $ ExtendedModules StdModules
 gen x = do
-  rawMS <- genModules x StdModules @{genMF} @{genCC} @{genFNI} @{genConns} @{genConns2} -- @{genSourceForSink} @{genConnections}
+  rawMS <- genModules x StdModules @{genConns}
   res <- extend x rawMS
   pure res where
-    ||| Continuous assignments to singledriven types are illegal when assigned to top input ports and submodule output ports
-    |||
-    ||| So unconnected sumbodule inputs and unconnected top outputs are available for singledriven continuous assignment
-    portsToAssign : Vect sk (Maybe $ Fin ss) -> FinsList sk
-    portsToAssign v = do
-      let (_ ** res) = catMaybes $ map resolve' $ withIndex v
-      fromVect res where
-        resolve': (Fin sk, Maybe $ Fin ss) -> Maybe $ Fin sk
-        resolve' (x, Nothing) = Just x
-        resolve' (x, (Just y)) = Nothing
-
     extend : Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
     extend _ End = pure End
     extend x modules@(NewCompositeModule m subMs sssi ssto cont) = do

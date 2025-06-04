@@ -14,16 +14,14 @@ import Test.DepTyCheck.Gen.Coverage
 public export
 data ConnMode = TopOuts | SubInps
 
-||| Packed Dimensions for the given Unpacked Array
-|||
-||| The actual number of bits that a type stores may be different!
+||| 6.22.2 Equivalent types
+||| c) Packed arrays, packed structures, packed unions, and built-in integral types are equivalent if they
+||| contain the same number of total bits, are either all 2-state or all 4-state, and are either all signed or
+||| all unsigned.
+||| NOTE — If any bit of a packed structure or union is 4-state, the entire structure or union is considered 4-state.
 public export
-pdua : SVType -> Nat
-pdua (RVar x)              = 1
-pdua (SVar x)              = 1
-pdua (VVar x)              = 1
-pdua (PackedArr   x s e) = S (max s e `minus` min s e) * pdua x
-pdua (UnpackedArr x _ _) = pdua x
+data EquivalentSVT : SVType -> SVType -> Type where
+  ESVT : So (bitsCnt t == bitsCnt t') -> So (states t == states t') -> So (isSigned t == isSigned t') -> EquivalentSVT t t'
 
 ||| Checks if two ports have the same basic type
 |||
@@ -36,11 +34,8 @@ pdua (UnpackedArr x _ _) = pdua x
 ||| endmodule: b
 public export
 data EqSuperBasic : SVType -> SVType -> Type where
-  RR : So (t == t') => EqSuperBasic (RVar t) (RVar t')
-  SS : So (t == t') => EqSuperBasic (SVar t) (SVar t')
-  VV : So (t == t') => EqSuperBasic (VVar t) (VVar t')
-  PP : EqSuperBasic t t' => EqSuperBasic (PackedArr   t s e) (PackedArr   t' s' e')
-  UU : EqSuperBasic t t' => EqSuperBasic (UnpackedArr t s e) (UnpackedArr t' s' e')
+  VV : VarOrPacked t -> VarOrPacked t' -> EquivalentSVT t t' -> EqSuperBasic t t'
+  UU : EqSuperBasic t t' -> EqSuperBasic (UnpackedArr t s e) (UnpackedArr t' s' e')
 
 ||| Checks if two unpacked arrays have the same size.
 |||
@@ -58,18 +53,15 @@ data EqUnpackedArrSig : SVType -> SVType -> Type where
     EqUnpackedArrSig (UnpackedArr t s e) (UnpackedArr t' s' e')
 
 public export
-data CanConnect : SVObject -> SVObject -> Type where
-  CCVarOrPacked : VarOrPacked (valueOf p1) -> VarOrPacked (valueOf p2) -> CanConnect p1 p2
+data CanConnect : SVType -> SVType -> Type where
+  CCVarOrPacked : VarOrPacked p1 -> VarOrPacked p2 -> CanConnect p1 p2
   ||| 6.22.2 Equivalent types
   ||| d) Unpacked fixed-size array types are equivalent if they have equivalent element types and equal size.
   |||
   ||| IEEE 1800 - 2023
-  CCUnpackedUnpacked : EqSuperBasic t t' -> So (pdua t == pdua t') ->
-    EqUnpackedArrSig (UnpackedArr t s e) (UnpackedArr t' s' e') -> 
-    CanConnect (Var $ UnpackedArr t s e) (Var $ UnpackedArr t' s' e')
-  CCUnpackedUnpackedNet : EqSuperBasic t t' -> So (pdua t == pdua t') ->
-    EqUnpackedArrSig (UnpackedArr t s e) (UnpackedArr t' s' e') -> 
-    CanConnect (Net nt $ UnpackedArr t s e) (Net nt' $ UnpackedArr t' s' e')
+  CCUnpackedUnpacked : IsUnpackedArr t -> IsUnpackedArr t' ->
+    EqSuperBasic t t' -> EqUnpackedArrSig t t' ->
+    CanConnect t t'
 
 ||| The list of sources may be empty (Nil). In this case, either an implicit net is declared or an external net declaration must exist
 |||
@@ -82,7 +74,7 @@ data CanConnect : SVObject -> SVObject -> Type where
 public export
 data SourceForSink : (srcs : SVObjList) -> (sink : SVObject) -> (srcIdx : MFin srcs.length) -> Type where
   NoSource  : SourceForSink srcs sink Nothing
-  HasSource : (srcIdx : Fin $ length srcs) -> CanConnect (typeOf srcs srcIdx) sink -> SourceForSink srcs sink $ Just srcIdx
+  HasSource : (srcIdx : Fin $ length srcs) -> CanConnect (valueOf $ typeOf srcs srcIdx) (valueOf sink) -> SourceForSink srcs sink $ Just srcIdx
 
 public export
 data Connections : (srcs, sinks : SVObjList) -> (cm : ConnMode) -> MFinsList (srcs.length) -> Type
@@ -157,7 +149,7 @@ data Modules : ModuleSigsList -> Type where
 export
 genMF : Fuel -> (srcs : Nat) -> Gen MaybeEmpty $ MFin srcs
 export
-genCC : Fuel -> (t,t' : SVObject) -> Gen MaybeEmpty $ CanConnect t t'
+genCC : Fuel -> (t,t' : SVType) -> Gen MaybeEmpty $ CanConnect t t'
 export
 genFNI : Fuel -> {srcs : Nat } -> (ids : MFinsList srcs) -> (y : Fin srcs) -> Gen MaybeEmpty $ FinNotInMFL ids y
 
@@ -179,7 +171,7 @@ genConns' x srcs (sink :: sinks) cm = do
   case mf of
     Nothing       => pure (mf::cons ** Cons NoSource {nsc} rest)
     (Just srcIdx) => do
-      cc <- genCC x (typeOf srcs srcIdx) sink
+      cc <- genCC x (valueOf $ typeOf srcs srcIdx) (valueOf sink)
       pure (mf::cons ** Cons (HasSource srcIdx cc) {nsc} rest)
 
 -- Only genConns is actually used as an external generator
@@ -188,34 +180,8 @@ genConns : Fuel -> (srcs' : SVObjList) -> (sinks' : SVObjList) -> (cm' : ConnMod
            Gen MaybeEmpty $ (cons' : MFinsList (srcs'.length) ** Connections srcs' sinks' cm' cons')
 genConns x srcs sinks cm = withCoverage $ genConns' x srcs sinks cm
 
-genConns2' : Fuel -> (srcs'' : SVObjList) -> (sinks'' : SVObjList) -> (cm'' : ConnMode) -> (cons'' : MFinsList (srcs''.length)) ->
-             Gen MaybeEmpty $ Connections srcs'' sinks'' cm'' cons''
-genConns2' x srcs []        cm cons = case cons of
-  [] => pure Empty
-  _  => empty -- Impossible case. Remove when turn MFinsList into MFinsVect
-genConns2' x srcs (y :: ys) cm cons = case cons of
-  [] => empty -- Impossible case. Remove when turn MFinsList into MFinsVect
-  (mf::mfs)  => do
-    rest <- genConns2' x srcs ys cm mfs
-    nsc <- genNSC x mf rest
-    case mf of
-      Nothing       => pure $ Cons NoSource {nsc} rest
-      (Just srcIdx) => do
-        cc <- genCC x (typeOf srcs srcIdx) y
-        pure $ Cons (HasSource srcIdx cc) {nsc} rest
-
-export
-genConns2 : Fuel -> (srcs'' : SVObjList) -> (sinks'' : SVObjList) -> (cm'' : ConnMode) -> (cons'' : MFinsList (srcs''.length)) ->
-            Gen MaybeEmpty $ Connections srcs'' sinks'' cm'' cons''
-genConns2 x srcs sinks cm cons = withCoverage $ genConns2' x srcs sinks cm cons
-
 export
 genModules : Fuel -> (ms : ModuleSigsList) ->
-  (Fuel -> (srcs''' : Nat) -> Gen MaybeEmpty $ MFin srcs''') =>
-  (Fuel -> (t, t' : SVObject) -> Gen MaybeEmpty $ CanConnect t t') =>
-  (Fuel -> {srcs'''' : Nat } -> (ids : MFinsList srcs'''') -> (y : Fin srcs'''') -> Gen MaybeEmpty $ FinNotInMFL ids y) =>
   (Fuel -> (srcs' : SVObjList) -> (sinks' : SVObjList) -> (cm' : ConnMode) -> 
   Gen MaybeEmpty $ (cons' : MFinsList (srcs'.length) ** Connections srcs' sinks' cm' cons')) =>
-  (Fuel -> (srcs'' : SVObjList) -> (sinks'' : SVObjList) -> (cm'' : ConnMode) -> (cons'' : MFinsList (srcs''.length)) ->
-  Gen MaybeEmpty $ Connections srcs'' sinks'' cm'' cons'') =>
   Gen MaybeEmpty $ Modules ms
