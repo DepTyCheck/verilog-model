@@ -8,5 +8,5 @@ import public Test.Verilog.CtxPorts
 
 %logging "deptycheck" 20
 
-Test.Verilog.CtxPorts.genSinkType = deriveGen
-Test.Verilog.CtxPorts.genSourceType = deriveGen
+-- Test.Verilog.CtxPorts.genSinkType = deriveGen
+-- Test.Verilog.CtxPorts.genSourceType = deriveGen
