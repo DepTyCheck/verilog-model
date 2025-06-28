@@ -50,7 +50,8 @@ toTotalOutputsIdx {subMs=i::is} idx x with 0 (sym $ svolistAppendLen (index ms i
   toTotalOutputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalOutputsIdx idx x
   
 public export
-connFwdRel : {srcs, sk : SVObjList} -> {mfs : MFinsList srcs.length} -> (cons: Connections srcs sk b mfs) -> Vect (sk.length) $ Maybe $ Fin srcs.length
+connFwdRel : {srcs, sk : SVObjList} -> {mfs : MFinsList sk.length srcs.length} -> (cons: Connections srcs sk b mfs) -> 
+             Vect (sk.length) $ Maybe $ Fin srcs.length
 connFwdRel Empty           = []
 connFwdRel (Cons sfs cs) = helper sfs :: connFwdRel cs where
   helper : SourceForSink srcs sink mf -> Maybe $ Fin srcs.length
@@ -72,6 +73,7 @@ Show NetType where
   show Tri1'    = "tri1"
   show Uwire'   = "uwire"
   show Wire'    = "wire"
+  show Tri'     = "tri"
   show Wand'    = "wand"
   show Wor'     = "wor"
 
@@ -80,12 +82,12 @@ Show NonIntegerType where
   show Real'      = "real"
   show Realtime'  = "realtime"
 
-Show IntegerScalarType where
+Show IntegerVectorType where
   show Bit'   = "bit"
   show Logic' = "logic"
   show Reg'   = "reg"
 
-Show IntegerVectorType where
+Show IntegerAtomType where
   show Byte'     = "byte"
   show Shortint' = "shortint"
   show Int'      = "int"
@@ -300,7 +302,7 @@ allOutputs' (m::ms) = (toList m.outputs) ++ allOutputs' ms
 
 
 parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : FinsList ms.length) (pms : PrintableModules ms) 
-           (subMINames : Vect (length $ allInputs {ms} subMs) String) (subMONames : Vect (length $ allOutputs {ms} subMs) String)
+           (subMINames : Vect (totalInputs {ms} subMs) String) (subMONames : Vect (length $ allOutputs {ms} subMs) String)
            (ports : ModuleSigsList)
 
   printSubmodules : List String -> List (Fin (length (subMs.asList)), Fin (length ms)) -> List $ Doc opts
@@ -357,13 +359,13 @@ data ExtendedModules : ModuleSigsList -> Type where
   NewCompositeModule :
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
-    {sicons : MFinsList $ (m .inputs ++ allOutputs {ms} subMs).length} ->
-    {tocons : MFinsList $ (m .inputs ++ allOutputs {ms} subMs).length} ->
-    (sssi : Connections (m.inputs ++ allOutputs {ms} subMs) (allInputs {ms} subMs) SubInps sicons) ->
-    (ssto : Connections (m.inputs ++ allOutputs {ms} subMs) (m.outputs)            TopOuts tocons) ->
-    (assignsSInps : List $ Fin (allInputs {ms} subMs).length) ->
+    {sicons : MFinsList (totalInputs {ms} subMs) $ allSrcsLen m ms subMs} ->
+    {tocons : MFinsList (m.outsCount) $ allSrcsLen m ms subMs} ->
+    (sssi : Connections (allSrcs m ms subMs) (allInputs {ms} subMs) SubInps sicons) ->
+    (ssto : Connections (allSrcs m ms subMs) (m.outputs)            TopOuts tocons) ->
+    (assignsSInps : List $ Fin $ totalInputs {ms} subMs) ->
     (assignsTOuts : List $ Fin (m.outputs).length) ->
-    (assignsSS : List $ Fin (m.inputs ++ allOutputs {ms} subMs).length) ->
+    (assignsSS : List $ Fin $ allSrcsLen m ms subMs) ->
     {pl : SVObjList} ->
     (literals : LiteralsList pl) ->
     (cont : ExtendedModules $ m::ms) ->

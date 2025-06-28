@@ -47,16 +47,8 @@ import Data.Fin.Split -- indexSum
 -- ||| 6. Unconnected submodule source              | 1 cast  (default_net_type -> sink type)  -- calculated in Pretty
 
 public export
-totalInputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
-totalInputs = length . allInputs
-
-public export
-totalOutputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
-totalOutputs = length . allOutputs
-
-public export
 fixSSFin : (m : ModuleSig) -> (ms : ModuleSigsList) -> (subMs : FinsList ms.length) -> Fin (totalOutputs {ms} subMs) ->
-            Fin (m.inputs ++ allOutputs {ms} subMs).length
+            Fin $ allSrcsLen m ms subMs
 fixSSFin m ms subMs f = comFin $ shift m.inpsCount f
 
 toTotalInputsIdx' : {ms : _} -> {subMs : FinsList ms.length} ->
@@ -102,26 +94,26 @@ isUnpacked : SVObject -> Bool
 isUnpacked (Net _ t) = isUnpacked' t
 isUnpacked (Var   t) = isUnpacked' t
 
-tryFindTopPort : (d : SVObjList) ->  MFinsList (d.length) -> Fin (d.length) -> Maybe SVObject
+tryFindTopPort : (d : SVObjList) ->  MFinsList l (d.length) -> Fin (d.length) -> Maybe SVObject
 tryFindTopPort _ []               f = Nothing
 tryFindTopPort d (Nothing  :: xs) f = tryFindTopPort d xs f
 tryFindTopPort d ((Just x) :: xs) f = if x == f then Just (typeOf d f) else tryFindTopPort d xs f
 
-finInMFL : MFinsList n -> Fin n -> Bool
+finInMFL : MFinsList l n -> Fin n -> Bool
 finInMFL []               f = False
 finInMFL (Nothing  :: xs) f = finInMFL xs f
 finInMFL ((Just x) :: xs) f = if x == f then True else finInMFL xs f
 
 export
 resolveLocalCtxPortTypes : {ms : _} -> Modules ms -> ModuleSigsList
-resolveLocalCtxPortTypes End                                                          = []
-resolveLocalCtxPortTypes {ms} (NewCompositeModule m subMs {sicons} {tocons} _ _ cont) = 
+resolveLocalCtxPortTypes End                                                       = []
+resolveLocalCtxPortTypes {ms} (NewCompositeModule m subMs {sicons} {tocons} _ _ _) = 
   reverse $ foldl (\acc,x => resolve' x :: acc) [] $ List.allFins subMs.length where
 
   sources : SVObjList
-  sources = m.inputs ++ allOutputs {ms} subMs
+  sources = allSrcs m ms subMs
 
-  resolveSink : Fin (length $ allInputs {ms} subMs) -> SVObject
+  resolveSink : Fin (totalInputs {ms} subMs) -> SVObject
   resolveSink subInp = do 
     let outerCtxType = typeOf (allInputs {ms} subMs) subInp
     case isUnpacked outerCtxType of

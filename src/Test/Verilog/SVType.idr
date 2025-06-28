@@ -39,9 +39,9 @@ import public Test.Common.Utils
 ||| The supply0 and supply1 nets can be used to model the power supplies in a circuit. These nets shall have
 ||| supply strengths.
 public export
-data NetType = Supply0' | Supply1' | Triand' | Trior' | Trireg' | Tri0' | Tri1' | Uwire' | Wire' | Wand' | Wor'; -- Tri
+data NetType = Supply0' | Supply1' | Triand' | Trior' | Trireg' | Tri0' | Tri1' | Tri' | Uwire' | Wire' | Wand' | Wor';
 
-namespace IntegerVectorType
+namespace IntegerAtomType
 
   ||| 6.9 Vector declarations
   ||| A data object declared as reg, logic, or bit (or as a matching user-defined type or implicitly as logic)
@@ -49,10 +49,10 @@ namespace IntegerVectorType
   ||| of one of these types shall be declared by specifying a range and is known as a vector. Vectors are packed
   ||| arrays of scalars
   public export
-  data IntegerVectorType = Byte' | Shortint' | Int' | Longint' | Integer' | Time';
+  data IntegerAtomType = Byte' | Shortint' | Int' | Longint' | Integer' | Time';
 
   public export
-  Eq IntegerVectorType where
+  Eq IntegerAtomType where
     (==) Byte'     Byte'     = True
     (==) Shortint' Shortint' = True
     (==) Int'      Int'      = True
@@ -62,7 +62,7 @@ namespace IntegerVectorType
     (==) _         _         = False
 
   public export
-  bitsCnt : IntegerVectorType -> Nat
+  bitsCnt : IntegerAtomType -> Nat
   bitsCnt Byte'     = 8
   bitsCnt Shortint' = 16
   bitsCnt Int'      = 32
@@ -71,7 +71,7 @@ namespace IntegerVectorType
   bitsCnt Time'     = 64
 
   public export
-  isSigned : IntegerVectorType -> Bool
+  isSigned : IntegerAtomType -> Bool
   isSigned Byte'     = True
   isSigned Shortint' = True
   isSigned Int'      = True
@@ -80,28 +80,28 @@ namespace IntegerVectorType
   isSigned Time'     = False
 
   public export
-  states : IntegerVectorType -> Nat
-  states Byte'     = 2 
-  states Shortint' = 2 
-  states Int'      = 2 
-  states Longint'  = 2 
-  states Integer'  = 4 
-  states Time'     = 4 
+  states : IntegerAtomType -> Nat
+  states Byte'     = 2
+  states Shortint' = 2
+  states Int'      = 2
+  states Longint'  = 2
+  states Integer'  = 4
+  states Time'     = 4
 
-namespace IntegerScalarType
-
-  public export
-  data IntegerScalarType = Bit' | Logic' | Reg';
+namespace IntegerVectorType
 
   public export
-  Eq IntegerScalarType where
+  data IntegerVectorType = Bit' | Logic' | Reg';
+
+  public export
+  Eq IntegerVectorType where
     (==) Bit'   Bit'   = True
     (==) Logic' Logic' = True
     (==) Reg'   Reg'   = True
     (==) _      _      = False
 
   public export
-  states : IntegerScalarType -> Nat
+  states : IntegerVectorType -> Nat
   states Bit'   = 2
   states Logic' = 4
   states Reg'   = 4
@@ -225,8 +225,8 @@ namespace SVType
   data SVType : Type where
     -- Implicit : SVType -- Declare an implicit net type
     RVar : NonIntegerType -> SVType
-    SVar : IntegerScalarType -> SVType
-    VVar : IntegerVectorType -> SVType
+    SVar : IntegerVectorType -> SVType
+    VVar : IntegerAtomType -> SVType
     PackedArr : (t : SVType) -> (p : PABasic t) => Nat -> Nat -> SVType
     ||| The main difference between an unpacked array and a packed array is that
     ||| an unpacked array is not guaranteed to be represented as a contiguous set of bits
@@ -276,12 +276,12 @@ namespace SVType
     -- Packed struct, union, enum
 
   public export
-  data State4S : IntegerScalarType -> Type where
+  data State4S : IntegerVectorType -> Type where
     S4L : State4S Logic'
     S4R : State4S Reg'
 
   public export
-  data State4V : IntegerVectorType -> Type where
+  data State4V : IntegerAtomType -> Type where
     V4I : State4V Integer'
     V4T : State4V Time'
 
@@ -411,6 +411,7 @@ data ResolvedNet : SVObject -> Type where
   NT0 : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Tri0' t
   NT1 : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Tri1' t
   NWI : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Wire' t
+  NTI : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Tri' t
   NWA : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Wand' t
   NWO : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Wor' t
 
@@ -427,7 +428,7 @@ data IsUnpackedArr : SVType -> Type where
 
 public export
 defaultNetType : SVObject
-defaultNetType = Net Wire' (SVar Logic') {p=NA {i=ST {t=Logic'}} {s=SS {t=Logic'}}}
+defaultNetType = Net Wire' (SVar Logic') -- {p=NA {i=ST {t=Logic'}} {s=SS {t=Logic'}}}
 
 namespace SVObjList
 
@@ -551,3 +552,19 @@ public export
 allOutputs : {ms : ModuleSigsList} -> FinsList ms.length -> SVObjList
 allOutputs []      = []
 allOutputs (i::is) = (index ms i).outputs ++ allOutputs is
+
+public export
+totalInputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
+totalInputs = length . allInputs
+
+public export
+totalOutputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
+totalOutputs = length . allOutputs
+
+public export
+allSrcs : (m : ModuleSig) -> (ms : ModuleSigsList) -> (subMs : FinsList ms.length) -> SVObjList
+allSrcs m ms subMs = m.inputs ++ allOutputs {ms} subMs
+
+public export
+allSrcsLen : (m : ModuleSig) -> (ms : ModuleSigsList) -> (subMs : FinsList ms.length) -> Nat
+allSrcsLen m ms subMs = length $ allSrcs m ms subMs

@@ -30,10 +30,20 @@ import Test.DepTyCheck.Gen.Coverage
 --     resolve' (x, Nothing) = Just x
 --     resolve' (x, (Just y)) = Nothing
   
---   public export
---   data FinsToFins : {n : Nat} -> (fins : FinsList n) -> FinsList fins.length -> Type where 
---     Nil  : FinsToFins fins []
---     (::) : (f : Fin fins.length) -> FinsToFins fins rest -> FinNotIn rest f -> FinsToFins fins (f::rest)
+-- (.length) : MFinsList n -> Nat
+
+-- data CanDriveSD : MFinsList n -> Fin n -> Type
+
+-- --   public export
+-- data SDAssigns : {n : Nat} -> (fins : MFinsList n) -> FinsList n -> Type where 
+--   Nil  : SDAssigns fins []
+--   (::) : (f : Fin n) -> CanDriveSD fins f => FinNotIn rest f => SDAssigns fins rest -> SDAssigns fins (f::rest)
+
+-- data CanDriveMD : MFinsList n -> Fin n -> Type
+
+-- data MDAssigns : {n : Nat} -> (fins : MFinsList n) -> FinsList n -> Type where 
+--   Nil  : MDAssigns fins []
+--   (::) : (f : Fin n) -> CanDriveMD fins f => MDAssigns fins rest -> MDAssigns fins (f::rest)
 
 -- namespace MD
 
