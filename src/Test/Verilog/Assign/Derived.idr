@@ -8,6 +8,5 @@ import public Test.Verilog.Assign
 
 %logging "deptycheck" 20
 
--- Test.Verilog.Assign.SD.genFNE = deriveGen
--- Test.Verilog.Assign.SD.genSingleDriven = deriveGen
--- Test.Verilog.Assign.MD.genMDAssigns = deriveGen
+Test.Verilog.Assign.SD.genUniqueFins = deriveGen
+Test.Verilog.Assign.MD.genMDAssigns = deriveGen

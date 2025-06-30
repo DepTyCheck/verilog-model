@@ -369,6 +369,7 @@ data ExtendedModules : ModuleSigsList -> Type where
     {pl : SVObjList} ->
     (literals : LiteralsList pl) ->
     (cont : ExtendedModules $ m::ms) ->
+    -- (mcs : MultiConnectionsVect mcsl $ NewCompositeModule m {ms} subMs {sicons} {tocons} sssi ssto cont) ->
     (ports : ModuleSigsList) ->
     ExtendedModules ms
 

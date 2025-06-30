@@ -139,7 +139,7 @@ data Modules : ModuleSigsList -> Type where
     (subMs : FinsList ms.length) ->
     -- Remember: Do not change the concatenation order of the port lists, the many features depend on it (search for m.inpsCount and tIs usages)
     {sicons : MFinsList (totalInputs {ms} subMs) $ allSrcsLen m ms subMs} ->
-    {tocons : MFinsList (m.outsCount) $ allSrcsLen m ms subMs} ->
+    {tocons : MFinsList (m.outsCount)            $ allSrcsLen m ms subMs} ->
     (sssi : Connections (allSrcs m ms subMs) (allInputs {ms} subMs) SubInps sicons) ->
     (ssto : Connections (allSrcs m ms subMs) (m.outputs)            TopOuts tocons) ->
     (cont : Modules (m::ms)) ->

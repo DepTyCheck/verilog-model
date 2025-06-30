@@ -34,7 +34,6 @@ modules = Test.Common.Utils
         , Test.Verilog.UniqueNames
         , Test.Verilog.UniqueNames.Derived
         , Test.Verilog.Connections.Derived
-        , Test.Verilog.CtxPorts.Derived
         , Test.Verilog.Assign.Derived
         , Test.Verilog.Literal.Derived
         , Test.Verilog.Pretty

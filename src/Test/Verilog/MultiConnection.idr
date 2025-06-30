@@ -4,23 +4,62 @@ import public Test.Verilog.Connections
 
 import Data.Vect
 import Data.Vect.Extra
+import Data.List
+
+-- data SimplifiedConns : Type where
+--   SC : (ms : ModuleSigsList) ->
+--        (m : ModuleSig) ->
+--        (subMs : FinsList ms.length) ->
+--        {sicons : MFinsList (totalInputs {ms} subMs) $ allSrcsLen m ms subMs} ->
+--        {tocons : MFinsList (m.outsCount)            $ allSrcsLen m ms subMs} ->
+--        SimplifiedConns
 
 public export
 data MultiConnection : {ms : ModuleSigsList} -> Modules ms -> Type where
   NoMC : MultiConnection End
-  MkMC  : (subInps : FinsList (totalInputs {ms} subMs)) -> (topOuts : FinsList m.outsCount) -> 
+  MkMC  : (subInps : List $ Fin $ totalInputs {ms} subMs) -> (topOuts : MFin m.outsCount) -> 
           (source : MFin $ allSrcsLen m ms subMs) -> (type : SVObject) -> 
           MultiConnection $ NewCompositeModule m {ms} subMs {sicons} {tocons} sssi ssto cont
 
-public export
-data MultiConnectionsList : Modules ms -> Type where
-  Nil  : MultiConnectionsList m
-  (::) : MultiConnection m -> MultiConnectionsList m -> MultiConnectionsList m
+namespace MultiConnectionsVect
 
-public export
-(++) : MultiConnectionsList m -> MultiConnectionsList m -> MultiConnectionsList m
-[]        ++ ys = ys
-(x :: xs) ++ ys = x :: (xs ++ ys)
+  public export
+  data MultiConnectionsVect : Nat -> Modules ms -> Type where
+    Nil  : MultiConnectionsVect 0 m
+    (::) : MultiConnection m -> MultiConnectionsVect n m -> MultiConnectionsVect (S n) m
+
+  public export
+  (.length) : MultiConnectionsVect n m -> Nat
+  (.length) []      = 0
+  (.length) (x::xs) = S xs.length
+
+  public export
+  fromList : List (MultiConnection m) -> (n : Nat ** MultiConnectionsVect n m)
+  fromList []      = (0 ** [])
+  fromList (x::xs) = do
+    let (r ** est) = MultiConnectionsVect.fromList xs
+    (S r ** x::est)
+
+  public export
+  toList : MultiConnectionsVect l n -> List $ MultiConnection n
+  toList []      = []
+  toList (x::xs) = x :: toList xs
+
+  public export
+  data MSVObject : Type where
+    Nothing : MSVObject
+    Just    : SVObject -> MSVObject
+
+  public export
+  toVect : MultiConnectionsVect l n -> Vect l $ MultiConnection n
+  toVect []      = []
+  toVect (x::xs) = x :: toVect xs
+
+  public export
+  find : (mcs : MultiConnectionsVect l md) -> Fin l -> MSVObject
+  find ((NoMC)           ::_ ) FZ     = Nothing
+  find ((MkMC _ _ _ type)::_ ) FZ     = Just $ type
+  find (_                ::fs) (FS i) = find fs i
 
 ||| Possible connections:
 ||| 1. TopInp -> SubInp -- sicons
@@ -28,86 +67,92 @@ public export
 ||| 3. TopInp -> TopOut -- tocons
 ||| 4. SubOut -> TopOut -- tocons
 |||
-||| Possible situations when a new item added in MultiConnectionsList:
+||| Possible situations when a new item added in MultiConnectionsVect:
 ||| 1. SubSink <- SubSource
 ||| 2. SubSink <- SubSource -> SubSink
 ||| 3. SubSink <- SubSource -> TopSink
 ||| 4. TopSink <- SubSource
-||| 4. SubSink <- TopSource
-||| 2. SubSink <- TopSource -> SubSink
-||| 5. Nothing <- Source
-||| 6. Sink <- Nothing
+||| 5. SubSink <- TopSource
+||| 6. SubSink <- TopSource -> SubSink
+||| 7. Nothing <- Source
+||| 8. Sink <- Nothing
 export
-resolveMultiConnections : {ms : ModuleSigsList} -> (m : Modules ms) -> MultiConnectionsList m
-resolveMultiConnections End                                                     = []
-resolveMultiConnections md@(NewCompositeModule m subMs {sicons} {tocons} _ _ _) = resolveWithSource 
-                                                                               ++ resolveNoSource where
-
- --     findSks : Fin (srcs.length) -> List (Fin sk, Maybe $ Fin $ srcs.length) -> FinsList sk
---     findSks fss []                   = []
---     findSks fss ((_, Nothing) :: xs) = findSks fss xs
---     findSks fss ((fsk, Just fss') :: xs) with (decEq fss fss')
---       findSks fss ((fsk, Just fss') :: xs) | Yes _ = fsk :: findSks fss xs
---       findSks fss ((fsk, Just fss') :: xs) | No _  = findSks fss xs 
-
---     fsToMC : Fin (srcs.length) -> MultiConnection allInps allOuts
---     fsToMC fss = do
---       let sis = findSks fss $ toList $ withIndex $ toVect allInps
---       let tos = findSks fss $ toList $ withIndex $ toVect allOuts
---       let t   = typeOf srcs fss
---       MkMultiConnection sis tos t
+resolveMultiConnections : {ms : ModuleSigsList} -> (m : Modules ms) -> (n : Nat ** MultiConnectionsVect n m)
+resolveMultiConnections End                                                              = (0 ** [])
+resolveMultiConnections md@(NewCompositeModule m subMs {sicons} {tocons} sssi ssto cont) = do
+  let (_ ** rs) = resolveWithSource 
+  let (_ ** rn) = resolveNoSource
+  let rsl = toList rs
+  let rnl = toList rn
+  fromList $ rsl ++ rnl
+  where
 
     findTopSink : Fin (allSrcsLen m ms subMs) -> MFin m.outsCount
-    findSubSinks : Fin (allSrcsLen m ms subMs) -> FinsList (totalInputs {ms} subMs)
+    findTopSink f = find $ toList $ withIndex $ toVect tocons where
+      find : List ((Fin m.outsCount), MFin (allSrcsLen m ms subMs)) -> MFin m.outsCount
+      find []                       = Nothing
+      find ((_, Nothing)::xs)       = find xs
+      find ((fsk, (Just fsrc))::xs) = if f == fsrc then Just fsk else find xs
 
+    findSubSinks : Fin (allSrcsLen m ms subMs) -> List $ Fin $ totalInputs {ms} subMs
+    findSubSinks f = find $ toList $ withIndex $ toVect sicons where
+      find : List ((Fin $ totalInputs {ms} subMs), MFin $ allSrcsLen m ms subMs) -> List $ Fin $ totalInputs {ms} subMs
+      find []                       = []
+      find ((_, Nothing)::xs)       = find xs
+      find ((fsk, (Just fsrc))::xs) = if fsrc == f then fsk :: find xs else find xs
 
-    resolveSource : Fin (allSrcsLen m ms subMs) -> MultiConnection md
---   resolveSource subOut with (isUnpacked $ typeOf (allOutputs {ms} subMs) subOut)
---     resolveSource subOut | True  = typeOf (allOutputs {ms} subMs) subOut -- The port is unpacked and thus explicitly declared
---     resolveSource subOut | False with (finInMFL tocons $ fixSSFin m ms subMs subOut)
---       resolveSource subOut | False | True = case tryFindTopPort sources tocons (fixSSFin m ms subMs subOut) of -- Source is connected to top output
---         Nothing => defaultNetType -- IMPOSSIBLE CASE. REFACTOR
---         (Just topOutType) => topOutType
---       resolveSource subOut | False | False = defaultNetType -- Source is NOT connected to any sink OR connected to a submodule input
+    isUnpackedList : List (Fin $ totalInputs {ms} subMs) -> Maybe SVObject
+    isUnpackedList []      = Nothing
+    isUnpackedList (x::xs) = case isUnpacked (typeOf (allInputs {ms} subMs) x) of
+      False => isUnpackedList xs
+      True  => Just (typeOf (allInputs {ms} subMs) x)
+    
+    unpOrGiven : (munp : Maybe SVObject) -> SVObject
+    unpOrGiven (Just munp) = if isUnpacked munp then munp else defaultNetType
+    unpOrGiven Nothing     = defaultNetType
+    
+    resolveSource : Fin (allSrcsLen m ms subMs) -> Maybe $ MultiConnection md
+    resolveSource f with (findSubSinks f) | (findTopSink f)
+      resolveSource f | ss | ts with (m.inpsCount > finToNat f)
+        resolveSource f | []         | Nothing    | False = Just $ MkMC [] Nothing    (Just f) $ unpOrGiven $ Just $ typeOf (allSrcs m ms subMs) f
+        resolveSource f | []         | Nothing    | True  = Just $ MkMC [] Nothing    (Just f) $ typeOf (allSrcs m ms subMs) f
+        resolveSource f | []         | (Just fts) | False = Just $ MkMC [] (Just fts) (Just f) $ typeOf (m.outputs) fts
+        resolveSource f | []         | (Just fts) | True  = Nothing -- TopSink <- TopSource
+        resolveSource f | ss@(x::xs) | Nothing    | False = Just $ MkMC ss Nothing    (Just f) $ unpOrGiven $ isUnpackedList ss
+        resolveSource f | ss@(x::xs) | Nothing    | True  = Just $ MkMC ss Nothing    (Just f) $ typeOf (allSrcs m ms subMs) f
+        resolveSource f | ss@(x::xs) | (Just fts) | False = Just $ MkMC ss (Just fts) (Just f) $ typeOf (m.outputs) fts
+        resolveSource f | ss@(x::xs) | (Just fts) | True  = Nothing -- TopSink <- TopSource P.S. I hope such case is impossible
 
-    ||| Situation 1
-    resolveWithSource : MultiConnectionsList md
-    resolveWithSource = foldl (\acc,x => resolveSource x :: acc) [] $ List.allFins $ (allSrcsLen m ms subMs)
+    resolveWithSource : (n : Nat ** MultiConnectionsVect n md)
+    resolveWithSource = fromList $ catMaybes $ map resolveSource $ List.allFins $ (allSrcsLen m ms subMs) -- (\acc,x => resolveSource x :: acc)
 
+    -- noSourceInps : (Fin $ totalInputs {ms} subMs, MFin $ allSrcsLen m ms subMs) -> Maybe $ MultiConnection md
+    -- noSourceInps (fsk, Nothing) = Just $ MkMC [ fsk ] Nothing Nothing $ typeOf (allInputs {ms} subMs) fsk
+    -- noSourceInps (_  , _      ) = Nothing
 
+    -- noSourceOuts : (Fin m.outsCount, MFin src) -> Maybe $ MultiConnection md
+    -- noSourceOuts (fsk, Nothing) = Just $ MkMC [] (Just fsk) Nothing $ typeOf m.outputs fsk
+    -- noSourceOuts (_  , _      ) = Nothing
 
+    -- routine : MFinsList a b -> ((Fin a, MFin b) -> Maybe $ MultiConnection md) -> List $ Maybe $ MultiConnection md
+    -- routine mfin f = toList $ map f $ withIndex $ toVect mfin
 
-  -- let mcsWithSource = resolveWithSource fs
-  -- let mcsNoSource = resolveNoSource
-  -- mcsWithSource ++ mcsNoSource 
+    -- ||| Sink <- Nothing
+    -- resolveNoSource : (n : Nat ** MultiConnectionsVect n md)
+    -- resolveNoSource = fromList $ catMaybes $ (routine sicons noSourceInps) ++ (routine tocons noSourceOuts)
 
---     resolveWithSource srcsAllFins = foldl (\acc,finSrc => (fsToMC finSrc) :: acc) [] srcsAllFins
+    noSourceInps : (Fin $ totalInputs {ms} subMs, MFin $ allSrcsLen m ms subMs) -> 
+                   Maybe $ MultiConnection (NewCompositeModule m {ms} subMs {sicons} {tocons} sssi ssto cont)
+    noSourceInps (fsk, Nothing) = Just $ MkMC [ fsk ] Nothing Nothing $ typeOf (allInputs {ms} subMs) fsk
+    noSourceInps (_  , _      ) = Nothing
 
-    noSourceInps : MultiConnectionsList md -> (Fin $ totalInputs {ms} subMs, MFin $ allSrcsLen m ms subMs) -> MultiConnectionsList md
-    noSourceInps acc (fsk, Nothing) = MkMC [ fsk ] [] Nothing (typeOf (allInputs {ms} subMs) fsk) :: acc
-    noSourceInps acc (_  , _      ) = acc
+    noSourceOuts : (Fin m.outsCount, MFin src) -> Maybe $ MultiConnection (NewCompositeModule m {ms} subMs {sicons} {tocons} sssi ssto cont)
+    noSourceOuts (fsk, Nothing) = Just $ MkMC [] (Just fsk) Nothing $ typeOf m.outputs fsk
+    noSourceOuts (_  , _      ) = Nothing
 
-    noSourceOuts : MultiConnectionsList md -> (Fin m.outsCount, MFin $ allSrcsLen m ms subMs) -> MultiConnectionsList md
-    noSourceOuts acc (fsk, Nothing) = MkMC [] [ fsk ] Nothing (typeOf m.outputs fsk) :: acc
-    noSourceOuts acc (_  , _      ) = acc
+    routine : MFinsList a b -> ((Fin a, MFin b) -> Maybe $ MultiConnection md) -> List $ Maybe $ MultiConnection md
+    routine mfin f = toList $ map f $ withIndex $ toVect mfin
 
-    ||| Situation 2
-    resolveNoSource : MultiConnectionsList md
-    resolveNoSource = foldl noSourceOuts [] (withIndex $ toVect tocons) ++
-                      foldl noSourceInps [] (withIndex $ toVect sicons)
-
-    -- unusedSources : List (MFin $ allSrcsLen m ms subMs) -> List $ Fin $ allSrcsLen m ms subMs
-    -- unusedSources sources = let lens = List.allFins (allSrcsLen m ms subMs) in foldl resolve [] lens where
-    --   contains : List (MFin srcs) -> Fin srcs -> Bool
-    --   contains []             f = False
-    --   contains (Nothing ::xs) f = contains xs f
-    --   contains ((Just x)::xs) f = case x == f of
-    --     False => contains xs f
-    --     True  => True
-
-    --   resolve : List (Fin $ allSrcsLen m ms subMs) -> Fin (allSrcsLen m ms subMs) -> List $ Fin $ allSrcsLen m ms subMs
-    --   resolve acc x = if contains sources x then x::acc else acc
-
-    -- ||| Situation 3
-    -- resolveNoSink : MultiConnectionsList md
-    -- resolveNoSink = foldl (\acc,x => MkMC [] [] (f2mf x) (typeOf (allSrcs m ms subMs) x) :: acc) [] $ unusedSources $ toList tocons ++ toList sicons
+    ||| Sink <- Nothing
+    resolveNoSource : (n : Nat ** MultiConnectionsVect n (NewCompositeModule m {ms} subMs {sicons} {tocons} sssi ssto cont))
+    resolveNoSource = fromList $ catMaybes $ (routine sicons noSourceInps) ++ (routine tocons noSourceOuts)

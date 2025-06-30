@@ -402,6 +402,7 @@ namespace SVObject
 
 ||| 6.6.2 Unresolved nets
 ||| The uwire net is an unresolved or unidriver wire and is used to model nets that allow only a single driver.
+public export
 data ResolvedNet : SVObject -> Type where
   NS0 : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Supply0' t
   NS1 : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Supply1' t
@@ -568,3 +569,13 @@ allSrcs m ms subMs = m.inputs ++ allOutputs {ms} subMs
 public export
 allSrcsLen : (m : ModuleSig) -> (ms : ModuleSigsList) -> (subMs : FinsList ms.length) -> Nat
 allSrcsLen m ms subMs = length $ allSrcs m ms subMs
+
+public export
+isUnpacked' : SVType -> Bool
+isUnpacked' (UnpackedArr _ _ _) = True
+isUnpacked' _                   = False
+
+public export
+isUnpacked : SVObject -> Bool
+isUnpacked (Net _ t) = isUnpacked' t
+isUnpacked (Var   t) = isUnpacked' t

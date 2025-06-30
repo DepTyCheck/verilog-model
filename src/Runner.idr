@@ -12,7 +12,6 @@ import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
 
 import Test.Verilog.Connections.Derived
-import Test.Verilog.CtxPorts.Derived
 import Test.Verilog.Assign.Derived
 import Test.Verilog.Literal.Derived
 
@@ -273,6 +272,14 @@ gen x = do
       -- literals <- genLiterals x $ selectPorts (allInputs {ms} subMs)              assignsSInps 
       --                          ++ selectPorts (m.outputs)                         assignsTOuts 
       --                          ++ selectPorts (m.inputs ++ allOutputs {ms} subMs) assignsSS
+
+      
+      -- let (l ** mcs) = resolveMultiConnections modules
+      -- let sdmcs = portsToAssign mcs
+      -- sdAssigns <- genUniqueFins x (sdmcs.length) []
+      -- mdAssigns <- genMDAssigns x mcs
+      -- literals <- genLiterals x ?dsafds
+
       -- Extend the rest
       contEx <- extend x cont
       -- Gen port types for current context

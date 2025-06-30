@@ -85,15 +85,6 @@ outsTotalFins' : (ms : ModuleSigsList) -> (subMs : FinsList ms.length) ->
                  (Fin $ subMs.length) -> FinsList (totalOutputs {ms} subMs)
 outsTotalFins' ms subMs subMsIdx = fromList $ outsTotalFins ms subMs subMsIdx
 
-
-isUnpacked' : SVType -> Bool
-isUnpacked' (UnpackedArr _ _ _) = True
-isUnpacked' _                   = False
-
-isUnpacked : SVObject -> Bool
-isUnpacked (Net _ t) = isUnpacked' t
-isUnpacked (Var   t) = isUnpacked' t
-
 tryFindTopPort : (d : SVObjList) ->  MFinsList l (d.length) -> Fin (d.length) -> Maybe SVObject
 tryFindTopPort _ []               f = Nothing
 tryFindTopPort d (Nothing  :: xs) f = tryFindTopPort d xs f
