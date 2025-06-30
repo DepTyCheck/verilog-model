@@ -234,15 +234,15 @@ printMCov cgi path = do
   Right () <- writeFile path $ show @{Colourful} cgi | Left err => die "Couldn't write the model coverage to file: \{show err}"
   pure ()
 
-finLookup : (y: FinsList n) -> (List $ Fin $ y.length) -> List $ Fin n
+finLookup : (y : FinsList n) -> (List $ Fin $ y.length) -> List $ Fin n
 finLookup xs []        = []
 finLookup xs (y :: ys) = index xs y :: finLookup xs ys
 
-selectPorts : (ports: SVObjList) -> (List $ Fin $ ports.length) -> SVObjList
-selectPorts p []        = []
-selectPorts p (x :: xs) = typeOf p x :: selectPorts p xs
+selectPorts' : {mc : _} -> (mcs : MultiConnectionsVect l mc) -> List (Fin l) -> SVObjList
+selectPorts' p []        = []
+selectPorts' p (x :: xs) = find p x :: selectPorts' p xs
 
-tryToFitL : {to: _} -> List (Fin a) -> List (Fin to)
+tryToFitL : {to : _} -> List (Fin a) -> List (Fin to)
 tryToFitL []      = []
 tryToFitL (x::xs) = case tryToFit x of
   Nothing => tryToFitL xs
@@ -255,37 +255,28 @@ gen x = do
   pure res where
     extend : Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
     extend _ End = pure End
-    extend x modules@(NewCompositeModule m subMs sssi ssto cont) = do
-      -- let siss = connFwdRel sssi
-      -- let toss = connFwdRel ssto
-      -- -- Gen single driven assigns
-      -- let ptaSISS = portsToAssign siss
-      -- rawSInpsSD <- genSingleDriven x ptaSISS @{genFINSD}
-      -- let ptaTOSS = portsToAssign toss
-      -- rawTOutsSD <- genSingleDriven x ptaTOSS @{genFINSD}
-      -- -- Gen multi driven assigns
-      -- rawMD <- genMultiDriven x (m.inputs ++ allOutputs {ms} subMs) m.inpsCount (allInputs {ms} subMs) (toMFL siss) m.outputs (toMFL toss)
-      -- let assignsSS = toListSSs rawMD
-      -- let assignsSInps = toListSkSbInps rawMD  ++ (finLookup ptaSISS $ toList rawSInpsSD)
-      -- let assignsTOuts = toListSkTopOuts rawMD ++ (finLookup ptaTOSS $ toList rawTOutsSD)
-      -- -- Gen literals
-      -- literals <- genLiterals x $ selectPorts (allInputs {ms} subMs)              assignsSInps 
-      --                          ++ selectPorts (m.outputs)                         assignsTOuts 
-      --                          ++ selectPorts (m.inputs ++ allOutputs {ms} subMs) assignsSS
+    extend x modules@(NewCompositeModule m {ms} subMs {sicons} {tocons} sssi ssto cont) = do
+      -- Resolve mcs
+      let (l ** mcs) = resolveMultiConnections $ SC ms m subMs sicons tocons
 
-      
-      -- let (l ** mcs) = resolveMultiConnections modules
-      -- let sdmcs = portsToAssign mcs
-      -- sdAssigns <- genUniqueFins x (sdmcs.length) []
-      -- mdAssigns <- genMDAssigns x mcs
-      -- literals <- genLiterals x ?dsafds
+      -- Gen Assigns
+      let sdmcs = portsToAssign mcs
+      (rawSdAssigns ** uf) <- genUniqueFins x (sdmcs.length)
+      let sdAssigns = finLookup sdmcs rawSdAssigns.asList
+      rawMdAssigns <- genMDAssigns x mcs
+      let mdAssigns = (toFinsList rawMdAssigns).asList
+
+      -- Gen literals
+      sdLiterals <- genLiterals x $ selectPorts' mcs sdAssigns
+      mdLiterals <- genLiterals x $ selectPorts' mcs mdAssigns
 
       -- Extend the rest
       contEx <- extend x cont
+
       -- Gen port types for current context
       let ports = resolveLocalCtxPortTypes modules
-      -- (ports ** _) <- genCtx x m ms subMs (connsToMFL sssi) (connsToMFL ssto) (allFins subMs.length)
-      pure $ NewCompositeModule m subMs sssi ssto [] [] [] [] contEx ports
+
+      pure $ NewCompositeModule m subMs sssi ssto mcs sdAssigns sdLiterals mdAssigns mdLiterals ports contEx
 
 covering
 main : IO ()

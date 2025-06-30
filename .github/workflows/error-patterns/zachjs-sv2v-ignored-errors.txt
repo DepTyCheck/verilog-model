@@ -1,1 +1,1 @@
-non-vector type real cannot have packed dimesions
+non-vector type \w+ cannot have packed dimesions

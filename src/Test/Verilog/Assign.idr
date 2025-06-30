@@ -20,15 +20,15 @@ namespace SD
   |||
   ||| So unconnected sumbodule inputs and unconnected top outputs are available for singledriven continuous assignment
   export
-  portsToAssign : {m : Modules ms} -> MultiConnectionsVect l m -> FinsList l
+  portsToAssign : {m : ModuleConns} -> MultiConnectionsVect l m -> FinsList l
   portsToAssign v = do
     let (_ ** res) = catMaybes $ map resolve $ withIndex $ toVect v
     fromVect res where
-      noSource : {m : Modules ms} -> MultiConnection m -> Bool
-      noSource {m = (NewCompositeModule m _ _ _ _)} (MkMC _ _ Nothing _) = True
-      noSource _                                                         = False
+      noSource : {m : ModuleConns} -> MultiConnection m -> Bool
+      noSource {m = (SC _ _ _ _ _)} (MC _ _ Nothing _) = True
+      noSource _                                       = False
 
-      resolve : {m : Modules ms} -> (Fin l, MultiConnection m) -> Maybe (Fin l)
+      resolve : {m : ModuleConns} -> (Fin l, MultiConnection m) -> Maybe (Fin l)
       resolve (fsk, fss) = if noSource fss then Just fsk else Nothing  
 
   public export
@@ -46,15 +46,15 @@ namespace MD
   ||| and continuous assignments.
   ||| IEEE 1800-2023
   public export
-  data Multidriven : MSVObject -> Type where
-    RN : ResolvedNet sv => Multidriven (Just sv)
+  data Multidriven : SVObject -> Type where
+    RN : ResolvedNet sv => Multidriven sv
 
   public export
-  data CanDriveMD : {ms : ModuleSigsList} -> {m : Modules ms} -> (mcs : MultiConnectionsVect l m) -> Fin l -> Type where
+  data CanDriveMD : {m : ModuleConns} -> (mcs : MultiConnectionsVect l m) -> Fin l -> Type where
     Can : Multidriven (find mcs f) -> CanDriveMD mcs f
 
   public export
-  data MDAssigns : {ms : ModuleSigsList} -> {m : Modules ms} -> (mcs : MultiConnectionsVect l m) -> Type where 
+  data MDAssigns : {m : ModuleConns} -> (mcs : MultiConnectionsVect l m) -> Type where 
     Nil  : MDAssigns mcs
     (::) : {mcs : MultiConnectionsVect l m} -> (f : Fin l) -> CanDriveMD mcs f => MDAssigns mcs -> MDAssigns mcs
   
@@ -64,5 +64,5 @@ namespace MD
   toFinsList (x::xs) = x :: toFinsList xs
 
   export
-  genMDAssigns : Fuel -> {l : Nat} -> {ms : ModuleSigsList} -> {m : Modules ms} -> (mcs : MultiConnectionsVect l m) -> 
-    Gen MaybeEmpty $ MDAssigns {l} {ms} {m} mcs
+  genMDAssigns : Fuel -> {l : Nat} -> {m : ModuleConns} -> (mcs : MultiConnectionsVect l m) -> 
+    Gen MaybeEmpty $ MDAssigns {l} {m} mcs

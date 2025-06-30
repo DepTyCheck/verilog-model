@@ -1,3 +1,6 @@
 syntax error, unexpected '\[', expecting ',' or '=' or '\)'
 syntax error, unexpected TOK_REAL
 syntax error, unexpected TOK_ID, expecting ',' or '=' or '\)'
+syntax error, unexpected TOK_SUPPLY0
+syntax error, unexpected TOK_SUPPLY1
+syntax error, unexpected TOK_LOGIC, expecting ',' or '=' or '\)'

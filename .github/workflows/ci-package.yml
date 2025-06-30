@@ -168,10 +168,10 @@ jobs:
               iverilog -V
             run: iverilog -g2012 -o a.out {file}
             error_regex: |
-              (error|sorry|assert): [\S ]+$
+              (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
             sim_cmd: vvp a.out
             sim_error_regex: |
-              (error|sorry|vvp|assert): [\S ]+$
+              (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
 
           - name: slang
             repo: https://github.com/MikePopoloski/slang.git
@@ -333,7 +333,7 @@ jobs:
               cd ..
               bash .github/workflows/runner/rename_tests.sh
             version: yosys --version
-            run: yosys -m slang -p 'read -sv2012 {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
+            run: yosys -m slang -p 'read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
             error_regex: >
               ERROR:[A-z0-9, \"'\[\]=()]+
 

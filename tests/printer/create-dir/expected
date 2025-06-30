@@ -1,73 +1,85 @@
 [+] Printed file newdir/newdir/1-seed_0,1.sv
 // Seed: 0,1
 
-module myp
-  ( output bit [4:1] eklx
-  , output triand logic [0:0] selwds [3:0][1:0][4:3]
-  , output bit [1:3][0:2][2:1][3:1] apyk
-  , output logic [1:4][2:0][0:1] iyfcbs
-  , input logic [4:2][3:2] uwhprzic [4:3]
-  , input logic [4:3][3:4][0:4][2:0] pzscr
-  , input trior logic [4:1][0:2][0:2][1:4] xrswqxh [3:1][4:3][4:3]
-  , input realtime w
+module rskx
+  (input trior logic [0:2][1:2][3:0] vpo [3:1][0:1][1:4]);
+  
+  
+  not ekvkdjgu(ttjwedykr, ocxlxbs);
+  
+  not k(e, e);
+  
+  
+  // Top inputs -> top outputs assigns
+  
+  // Single-driven assigns
+  
+  // Multi-driven assigns
+  assign ttjwedykr = 'b1;
+endmodule: rskx
+
+module houutjaz
+  ( output realtime dbtlu [0:2]
+  , output tri1 logic [0:0][2:0] vt
+  , output trior logic bqll
+  , input reg [0:2][3:3] todu
+  , input bit [3:1][3:0] jimxma [2:4][2:2]
+  , input trior logic aokk [0:4][1:1]
   );
   
+  trior logic [0:2][1:2][3:0] yo [3:1][0:1][1:4];
+  trior logic [0:2][1:2][3:0] njnbol [3:1][0:1][1:4];
   
-  not cgtfzsb(bwqzfcwcd, aoegltqnb);
+  rskx zxeouopt(.vpo(yo));
   
-  not pqczsqmzwt(t, ictyog);
+  and vfsq(dspeqtr, sqxy, vt);
   
-  or mrswwdcmly(ic, sivx, rkldylyur);
+  rskx syssmnknh(.vpo(njnbol));
   
-  xor q(ictyog, pxiey, pzscr);
-  // warning: implicit conversion of port connection truncates from 60 to 1 bits
-  //   logic [4:3][3:4][0:4][2:0] pzscr -> logic pzscr
-  
-  
-  // Top inputs -> top outputs assigns
-  assign iyfcbs = pzscr;
-  
-  // Assigns
-endmodule: myp
-
-module zawqywvac
-  ();
-  
-  
-  not apnh(prypudm, prypudm);
+  xor ssgodso(vt, vt, vt);
   
   
   // Top inputs -> top outputs assigns
   
-  // Assigns
-endmodule: zawqywvac
+  // Single-driven assigns
+  assign njnbol = '{'{'{'b111000100101001110011000,'b100101011010111011010101,'b011110101111010110001011},'{'b001011011101000100011110,'b101001111001000001101111,'b101000100100101111101111}},'{'{'b100011000100111000110000,'b101110011110001111100100,'b001011100010101011101011},'{'b011000100010010101000100,'b110100010110101010111001,'b110100010000010011010100}},'{'{'b011111111100101000011001,'b001111011100100000111100,'b010101001010100001000011},'{'b001111110010100101100101,'b000001000000101100000001,'b000100100100001011111000}},'{'{'b111111100111010011111100,'b000101001111011000100001,'b010010010001010111000101},'{'b101000001111110001110101,'b000001000011100111101000,'b011011000011110101110101}}};
+  assign dbtlu = '{'b1,'b0,'b0};
+  assign sqxy = 'b0;
+  assign bqll = 'b1;
+  
+  // Multi-driven assigns
+  assign bqll = 'b1;
+  assign dspeqtr = 'b1;
+  assign bqll = 'b0;
+endmodule: houutjaz
 
-module ld
-  ( input byte ghi [0:1]
-  , input wire logic [4:2][1:2][2:1] nrr
-  , input shortreal dxornyvy
-  , input tri0 logic [2:2][0:3][0:4][3:4] xtus [2:1][4:1]
+module ihvbmzxo
+  ( output uwire logic [3:3][3:3][2:1] dhayxveqi
+  , output uwire logic gj [2:2][2:4][1:4]
+  , output wand logic ebycqcelw [3:4][1:4][4:0]
+  , input reg potcetn
+  , input reg [1:0][1:4] xrc
   );
   
+  trior logic [0:2][1:2][3:0] u [3:1][0:1][1:4];
+  
+  rskx asmuhldsc(.vpo(u));
+  
+  not ymfve(fkstbwtuco, fkstbwtuco);
   
   
   // Top inputs -> top outputs assigns
   
-  // Assigns
-endmodule: ld
-
-module cutjb
-  (input wand logic vkrhpvtnz);
+  // Single-driven assigns
+  assign ebycqcelw = '{'{'{'b1,'b1},'{'b0,'b0},'{'b1,'b1},'{'b1,'b1}},'{'{'b1,'b1},'{'b1,'b1},'{'b0,'b1},'{'b0,'b1}},'{'{'b0,'b0},'{'b0,'b1},'{'b0,'b0},'{'b1,'b1}},'{'{'b0,'b0},'{'b0,'b0},'{'b1,'b1},'{'b0,'b1}},'{'{'b1,'b0},'{'b0,'b0},'{'b1,'b1},'{'b0,'b0}}};
+  assign u = '{'{'{'b101011001101110110110000,'b011111011100000010001111,'b000110100100010000000001},'{'b100010011001000001001011,'b110110100000111100111100,'b100000101110101100101100}},'{'{'b110000000001000101010010,'b010000100111101111010010,'b001101011000111111000011},'{'b011010010011100000000001,'b011001011111010011001100,'b000001100010001100101010}},'{'{'b111011011011001110001001,'b111001110011011101111000,'b110110100011101110010011},'{'b001111000010001000011101,'b111111101100100101000111,'b000000101011100011011100}},'{'{'b111101101000101001011101,'b011111000110100110011110,'b110010010100000101111101},'{'b001001100110011010101000,'b110010000011010100000010,'b010001010110011000101010}}};
+  assign dhayxveqi = 'b01;
+  assign gj = '{'{'{'b0},'{'b0},'{'b1}},'{'{'b0},'{'b1},'{'b0}},'{'{'b0},'{'b1},'{'b0}},'{'{'b0},'{'b1},'{'b1}}};
   
-  
-  and xgrurthc(wgewj, ehcyl, vkrhpvtnz);
-  
-  
-  // Top inputs -> top outputs assigns
-  
-  // Assigns
-endmodule: cutjb
+  // Multi-driven assigns
+  assign u = '{'{'{'b111000111111010001111000,'b001011110110101001111101,'b110101011000101111111000},'{'b001000011101010111100000,'b011100010001010111000011,'b111111101001111110010011}},'{'{'b101000010101010111000001,'b010111111110110100111100,'b111000000011000101001000},'{'b010101010010001110011111,'b000110101000100111011100,'b100001010111111001101101}},'{'{'b110100100000001101001000,'b100011001011000110011001,'b111110011000010011000010},'{'b111001100000101011011010,'b111111000101101101100000,'b011111100001001001111110}},'{'{'b011101100011010011100010,'b110000001111111001110111,'b010100010010010101011001},'{'b000011111111010111010011,'b001100000011000100110100,'b101000001010100111000001}}};
+endmodule: ihvbmzxo
 
 
 
-// Seed after: 16049,1
+// Seed after: 28968,1

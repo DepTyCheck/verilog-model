@@ -283,7 +283,7 @@ printLiterals : LiteralsList ls -> List String
 printLiterals []        = []
 printLiterals (b :: xs) = printBinary b :: printLiterals xs
 
-getNames : Vect l String -> (List $ Fin l) -> List String
+getNames : Vect l String -> List (Fin l) -> List String
 getNames names []        = []
 getNames names (x :: xs) = index x names :: getNames names xs
 
@@ -351,6 +351,23 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : Fi
 
           printSubm' (pre <+> concatInpsOuts inpsJoined outsJoined) siNames soNames (index ms msIdx) ctxInps ctxOuts (toList exInps) (toList exOuts)
 
+giveNamesMCS : {ms : ModuleSigsList} ->
+               {m : ModuleSig} ->
+               {subMs : FinsList ms.length} ->
+               {sicons : MFinsList (totalInputs {ms} subMs) $ allSrcsLen m ms subMs} ->
+               {tocons : MFinsList (m.outsCount)            $ allSrcsLen m ms subMs} ->
+               Vect (totalInputs {ms} subMs) String ->
+               Vect (m.outsCount) String ->
+               Vect (allSrcsLen m ms subMs) String ->
+               MultiConnectionsVect mcsl (SC ms m subMs sicons tocons) -> Vect mcsl String
+giveNamesMCS _       _       _        []      = []
+giveNamesMCS siNames toNames srcNames (x::xs) = giveName x :: giveNamesMCS siNames toNames srcNames xs where
+  giveName : MultiConnection (SC ms m subMs sicons tocons) -> String
+  giveName (MC []      Nothing   Nothing _)   = "impossible case"
+  giveName (MC (si::_) Nothing   Nothing _)   = index si siNames
+  giveName (MC subInps (Just ts) Nothing _)   = index ts toNames
+  giveName (MC subInps topOuts   (Just ss) _) = index ss srcNames
+
 public export
 data ExtendedModules : ModuleSigsList -> Type where
 
@@ -363,21 +380,23 @@ data ExtendedModules : ModuleSigsList -> Type where
     {tocons : MFinsList (m.outsCount) $ allSrcsLen m ms subMs} ->
     (sssi : Connections (allSrcs m ms subMs) (allInputs {ms} subMs) SubInps sicons) ->
     (ssto : Connections (allSrcs m ms subMs) (m.outputs)            TopOuts tocons) ->
-    (assignsSInps : List $ Fin $ totalInputs {ms} subMs) ->
-    (assignsTOuts : List $ Fin (m.outputs).length) ->
-    (assignsSS : List $ Fin $ allSrcsLen m ms subMs) ->
-    {pl : SVObjList} ->
-    (literals : LiteralsList pl) ->
-    (cont : ExtendedModules $ m::ms) ->
-    -- (mcs : MultiConnectionsVect mcsl $ NewCompositeModule m {ms} subMs {sicons} {tocons} sssi ssto cont) ->
+    {mcsl : Nat} ->
+    (mcs : MultiConnectionsVect mcsl $ SC ms m subMs sicons tocons) ->
+    (sdAssigns : List $ Fin mcsl) ->
+    {spl : SVObjList} ->
+    (sdLiterals : LiteralsList spl) ->
+    (mdAssigns : List $ Fin mcsl) ->
+    {mpl : SVObjList} ->
+    (mdLiterals : LiteralsList mpl) ->
     (ports : ModuleSigsList) ->
+    (cont : ExtendedModules $ m::ms) ->
     ExtendedModules ms
 
 export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
                 (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => ExtendedModules ms -> Gen0 $ Doc opts
 prettyModules x _         End = pure empty
-prettyModules x pms @{un} (NewCompositeModule m subMs sssi ssto assignsSInps assignsTOuts assignsSS literals cont ports) = do
+prettyModules x pms @{un} (NewCompositeModule m subMs sssi ssto mcs sdAssigns sdLiterals mdAssigns mdLiterals ports cont) = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} (allModuleNames pms) un
 
@@ -404,10 +423,11 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi ssto assignsSInps ass
   let unpackedDecls = resolveUnpSI subMINames (withIndex siss `zipPLWList` allInputs {ms} subMs)
                    ++ resolveUnpSO outputNames (subMONames `zipPLWList` allOutputs {ms} subMs)
 
+  -- Resolve mcs names
+  let mcsNames = giveNamesMCS subMINames outputNames (comLen $ inputNames ++ subMONames) mcs
   -- Resolve assigns
-  let assignments = printAssigns $ zip (getNames subMINames  assignsSInps
-                                     ++ getNames outputNames assignsTOuts
-                                     ++ getNames (comLen $ inputNames ++ subMONames) assignsSS) $ printLiterals literals
+  let sdAssignments = printAssigns $ zip (getNames mcsNames sdAssigns) $ printLiterals sdLiterals
+  let mdAssignments = printAssigns $ zip (getNames mcsNames mdAssigns) $ printLiterals mdLiterals
 
   -- Save generated names
   let generatedPrintableInfo : ?
@@ -424,7 +444,8 @@ prettyModules x pms @{un} (NewCompositeModule m subMs sssi ssto assignsSInps ass
       (unpackedDecls <&> \(unp) : String => line unp <+> symbol ';') ++ [ line "" ] ++
       printSubmodules m ms subMs pms subMINames subMONames ports (toList subMInstanceNames) (withIndex subMs.asList) ++
       [ line "", line "// Top inputs -> top outputs assigns" ] ++ (map line $ toList tito) ++
-      [ line "", line "// Assigns" ] ++ (map line assignments)
+      [ line "", line "// Single-driven assigns" ] ++ (map line sdAssignments) ++
+      [ line "", line "// Multi-driven assigns" ] ++ (map line mdAssignments)
     , line ""
     , recur
     ]

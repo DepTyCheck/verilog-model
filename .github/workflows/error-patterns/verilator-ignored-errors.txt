@@ -11,5 +11,12 @@ Unsupported tristate construct: INITITEM
 Assigning to input\/const variable:
 V3Gate\.cpp:872: Circular logic should have been rejected by okVisitor
 Found definition of 'std' as a PACKAGE but expected a variable
+CONST .* is not an unpacked array, but is in an unpacked array context
+CONST .* unexpected in assignment to unpacked array
+Input port connection .* to inout signal requires .* bits, but connection's VARREF .* generates .* bits\.
+Output port connection .* to inout signal requires .* bits, but connection's VARREF .* generates .* bits\.
+Slices of arrays in assignments have different unpacked dimensions, .* versus .*
+Unsupported: trireg
+VARREF .* is not an unpacked array, but is in an unpacked array context
 
 Settle region did not converge
