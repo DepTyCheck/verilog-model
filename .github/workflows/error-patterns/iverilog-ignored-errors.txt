@@ -11,7 +11,7 @@ Code generation had \d+ error\(s\)
 Array \w+ needs an array index here\.
 uwire "\w+" must have a single driver, found \(\d+\)
 Unable to elaborate r-value: [A-z]+
-elaborate\.cc:1662: failed assertion prts\[0\]->unpacked_dimensions\(\)==0
+elaborate\.cc:[0-9]+: failed assertion prts\[0\]->unpacked_dimensions\(\)==0
 variable .* cannot be driven by a primitive or continuous assignment with non-default strength\.
 
 t-dll-api\.cc:2501: ivl_nexus_s\* ivl_signal_nex\(ivl_signal_t, unsigned int\): Assertion `net->type_ == IVL_SIT_REG' failed\.
