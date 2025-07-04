@@ -176,7 +176,7 @@ showSVType pa@(PackedArr   t {p} s e) name = "\{showPackedSVT t}\{space}[\{show 
   space = case p of
     PA => ""
     PS => " "
-showSVType ua@(UnpackedArr t     s e) name = "\{showPackedSVT $ basic t} \{name} \{unpDimensions t}" where
+showSVType ua@(UnpackedArr t     s e) name = "\{showPackedSVT $ basic t} \{name} [\{show s}:\{show e}]\{unpDimensions t}" where
   basic : SVType -> SVType
   basic (UnpackedArr t _ _) = basic t
   basic t                   = t

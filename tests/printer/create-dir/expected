@@ -5,7 +5,7 @@ module fy
   ( output reg [2:4][1:1][0:0] jwxswprsvl
   , input logic [4:2][3:2] mubqerumi [4:3]
   , input logic [4:3][3:4][0:4][2:0] rrj
-  , input wor logic [4:1][0:2][0:2][1:4] vuklsps [3:1][4:3][4:3]
+  , input wor logic [4:1][0:2][0:2][1:4] vuklsps [4:3][4:3][3:1]
   , input realtime dkfwwkm [3:0]
   );
   
@@ -28,12 +28,12 @@ endmodule: fy
 module f
   ( output tri0 logic in
   , output reg [2:1][0:2][1:0] mjamcqjix
-  , output tri0 logic [1:4][1:0] phxlo [4:2][1:0][2:2]
+  , output tri0 logic [1:4][1:0] phxlo [2:2][1:0][4:2]
   , output bit [3:2][0:4] o [0:3]
   , input uwire logic [2:0][0:3] h [1:4]
   , input wire logic wwnrzyljn [4:4]
   , input int toed
-  , input wor logic [3:0][1:3] lvdqstzalb [2:1][1:0]
+  , input wor logic [3:0][1:3] lvdqstzalb [1:0][2:1]
   );
   
   
