@@ -5,6 +5,11 @@ import Data.List
 import Test.Verilog.SVType
 
 export
+Show State where
+  show S2 = "2"
+  show S4 = "4"
+
+export
 printTruncationWarning : SVObject -> String -> SVObject -> String -> Maybe String
 printTruncationWarning op on np nn = do
   let oldb = bitsCnt op

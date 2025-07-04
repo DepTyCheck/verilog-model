@@ -95,6 +95,51 @@ Show IntegerAtomType where
   show Integer'  = "integer"
   show Time'     = "time"
 
+Show S2Value where
+  show Z = "0"
+  show S = "1"
+
+Show S4Value where
+  show Z = "0"
+  show S = "1"
+  show X = "x"
+  show H = "z"
+
+Show (Binary s) where
+  show (B2 b) = show b
+  show (B4 b) = show b
+
+Show (BinaryVect l s) where
+  show bv = "'b\{showLinear bv}" where
+    showLinear : BinaryVect l' s -> String
+    showLinear []        = ""
+    showLinear (x :: xs) = show x ++ showLinear xs 
+
+Show (TypeLiteralVect l t)
+
+||| Single bit example:
+||| logic m;
+||| assign m = 'b1;
+||| TODO: print literals of different random lengths
+||| TODO: print the length of literal sometimes
+|||
+||| UAL x example:
+||| logic m [1:0][4:0];
+||| assign m = '{'{'b1,'b0,'b1,'b0,'b1},'{'b0,'b1,'b0,'b1,'b0}};
+|||
+||| PAL x example:
+||| logic [1:0][4:0] m;
+||| assign m = 'b01010101;
+Show (TypeLiteral sv) where
+  show (RL  x) = show x
+  show (SL  x) = show x
+  show (VL  x) = show x
+  show (PAL x) = show x
+  show (UAL x) = show x
+
+Show (TypeLiteralVect l t) where
+  show x = "'{\{joinBy "," $ map show $ toList x}}"
+
 ||| print name
 pn : String -> String
 pn "" = ""
@@ -248,40 +293,9 @@ resolveConAssigns v outNames inpNames = map (resolveConn outNames inpNames) $ wi
 zipPLWList : Foldable b => b a -> SVObjList -> List (a, SVObject)
 zipPLWList other ports = toList other `zip` toList ports
 
-||| Line of bits
-printLinear : BinaryList t l -> String
-printLinear [] = ""
-printLinear (x :: xs) = printLinear' x ++ printLinear xs where
-  printLinear' : Binary t' -> String
-  printLinear' (Single y) = show y
-  printLinear' (PArr y) = printLinear y
-  printLinear' (UArr y) = printLinear y
-
-toListStr : BinaryList t l -> (Binary t -> String) -> List String
-toListStr []        _ = []
-toListStr (x :: xs) f = f x :: toListStr xs f
-
-||| Single x example:
-||| logic m;
-||| assign m = 'b1;
-||| TODO: print literals of different random lengths
-||| TODO: print the length of literal sometimes
-|||
-||| UArr x example:
-||| logic m [1:0][4:0];
-||| assign m = '{'{'b1,'b0,'b1,'b0,'b1},'{'b0,'b1,'b0,'b1,'b0}};
-|||
-||| PArr x example:
-||| logic [1:0][4:0] m;
-||| assign m = 'b01010101;
-printBinary: Binary t -> String
-printBinary (Single x) = "'b\{show x}"
-printBinary (UArr   x) = "'{\{joinBy "," $ toListStr x printBinary}}"
-printBinary (PArr   x) = "'b\{printLinear x}"
-
 printLiterals : LiteralsList ls -> List String
 printLiterals []        = []
-printLiterals (b :: xs) = printBinary b :: printLiterals xs
+printLiterals (b :: xs) = show b :: printLiterals xs
 
 getNames : Vect l String -> List (Fin l) -> List String
 getNames names []        = []

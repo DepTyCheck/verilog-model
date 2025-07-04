@@ -41,6 +41,41 @@ import public Test.Common.Utils
 public export
 data NetType = Supply0' | Supply1' | Triand' | Trior' | Trireg' | Tri0' | Tri1' | Tri' | Uwire' | Wire' | Wand' | Wor';
 
+namespace States
+  ||| 6.3.1 Logic values
+  ||| 
+  ||| The SystemVerilog value set consists of the following four basic values:
+  ||| 0—represents a logic zero or a false condition
+  ||| 1—represents a logic one or a true condition
+  ||| x—represents an unknown logic value
+  ||| z—represents a high-impedance state
+  ||| 
+  ||| IEEE 1800-2023
+  namespace Logic4
+    ||| 0 or 1 or x or z
+    public export
+    data S4Value = Z | S | X | H
+  
+  namespace Logic2
+    ||| 0 or 1
+    public export
+    data S2Value = Z | S
+  
+  ||| 6.3.1 Logic values
+  |||
+  ||| Several SystemVerilog data types are 4-state types, which can store all four logic values. All bits of 4-state
+  ||| vectors can be independently set to one of the four basic values. Some SystemVerilog data types are 2-state,
+  ||| and only store 0 or 1 values in each bit of a vector. Other exceptions are the event type (see 6.17), which has
+  ||| no storage, and the real types (see 6.12).
+  public export
+  data State = S2 | S4
+
+  public export
+  Eq State where
+    (==) S2 S2 = True
+    (==) S4 S4 = True
+    (==) _  _  = False
+
 namespace IntegerAtomType
 
   ||| 6.9 Vector declarations
@@ -80,13 +115,13 @@ namespace IntegerAtomType
   isSigned Time'     = False
 
   public export
-  states : IntegerAtomType -> Nat
-  states Byte'     = 2
-  states Shortint' = 2
-  states Int'      = 2
-  states Longint'  = 2
-  states Integer'  = 4
-  states Time'     = 4
+  states : IntegerAtomType -> State
+  states Byte'     = S2
+  states Shortint' = S2
+  states Int'      = S2
+  states Longint'  = S2
+  states Integer'  = S4
+  states Time'     = S4
 
 namespace IntegerVectorType
 
@@ -101,10 +136,10 @@ namespace IntegerVectorType
     (==) _      _      = False
 
   public export
-  states : IntegerVectorType -> Nat
-  states Bit'   = 2
-  states Logic' = 4
-  states Reg'   = 4
+  states : IntegerVectorType -> State
+  states Bit'   = S2
+  states Logic' = S4
+  states Reg'   = S4
 
 namespace NonIntegerType
 
@@ -241,6 +276,7 @@ namespace SVType
     |||
     ||| IEEE 1800-2023
     UnpackedArr : SVType -> Nat -> Nat -> SVType
+    -- TODO: Add constructors to `TypeLiteral` when add new types to SVType
     -- Dynamic array
     -- Associative array
     -- Queue
@@ -330,8 +366,8 @@ namespace SVType
   isSigned (UnpackedArr t _ _) = isSigned t
 
   public export
-  states : SVType -> Nat
-  states (RVar x)            = 4 
+  states : SVType -> State
+  states (RVar x)            = S4
   states (SVar x)            = states x 
   states (VVar x)            = states x 
   states (PackedArr   t s e) = states t 
@@ -391,8 +427,8 @@ namespace SVObject
   ||| A valid data type for a net shall be one of the following:
   ||| a) 4-state integral type ...
   public export
-  states : SVObject -> Nat
-  states (Net _ t) = 4
+  states : SVObject -> State
+  states (Net _ t) = S4
   states (Var   t) = states t
 
   public export

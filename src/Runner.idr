@@ -267,8 +267,8 @@ gen x = do
       let mdAssigns = (toFinsList rawMdAssigns).asList
 
       -- Gen literals
-      sdLiterals <- genLiterals x $ selectPorts' mcs sdAssigns
-      mdLiterals <- genLiterals x $ selectPorts' mcs mdAssigns
+      sdLiterals <- genLiterals @{genBinVect} x $ selectPorts' mcs sdAssigns
+      mdLiterals <- genLiterals @{genBinVect} x $ selectPorts' mcs mdAssigns
 
       -- Extend the rest
       contEx <- extend x cont

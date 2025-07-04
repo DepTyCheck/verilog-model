@@ -8,4 +8,5 @@ import public Test.Verilog.Literal
 
 %logging "deptycheck" 20
 
-Test.Verilog.Literal.genSingleBit  = deriveGen
+Test.Verilog.Literal.genBinary   = deriveGen
+Test.Verilog.Literal.genLiterals = deriveGen
