@@ -145,6 +145,17 @@ pn : String -> String
 pn "" = ""
 pn a = " \{a}"
 
+showPackedSVT : SVType -> String
+showPackedSVT (RVar x)              = show x
+showPackedSVT (SVar x)              = show x
+showPackedSVT (VVar x)              = show x
+showPackedSVT (PackedArr t {p} s e) = "\{showPackedSVT t}\{space}[\{show s}:\{show e}]" where
+  space : String
+  space = case p of
+    PA => ""
+    PS => " "
+showPackedSVT (UnpackedArr t   s e) = ""
+
 ||| examples:
 ||| bit uP [3:0]; //1-D unpacked
 ||| bit [3:0] p;  //1-D packed
@@ -157,19 +168,22 @@ pn a = " \{a}"
 ||| int Array[0:7][0:31]; // array declaration using ranges
 ||| int Array[8][32];     // array declaration using sizes
 showSVType : SVType -> (name : String) -> String
-showSVType (RVar x)                name = "\{show x}\{pn name}"
-showSVType (SVar x)                name = "\{show x}\{pn name}"
-showSVType (VVar x)                name = "\{show x}\{pn name}"
-showSVType (PackedArr   t {p} s e) name = "\{showSVType t ""}\{space}[\{show s}:\{show e}]\{pn name}" where
+showSVType rv@(RVar x)                name = "\{showPackedSVT rv}\{pn name}"
+showSVType sv@(SVar x)                name = "\{showPackedSVT sv}\{pn name}"
+showSVType vv@(VVar x)                name = "\{showPackedSVT vv}\{pn name}"
+showSVType pa@(PackedArr   t {p} s e) name = "\{showPackedSVT t}\{space}[\{show s}:\{show e}]\{pn name}" where
   space : String
   space = case p of
     PA => ""
     PS => " "
-showSVType (UnpackedArr t     s e) name = "\{showSVType t name}\{space}[\{show s}:\{show e}]" where
-  space : String
-  space = case t of
-    (UnpackedArr _ _ _) => ""
-    other => " "
+showSVType ua@(UnpackedArr t     s e) name = "\{showPackedSVT $ basic t} \{name} \{unpDimensions t}" where
+  basic : SVType -> SVType
+  basic (UnpackedArr t _ _) = basic t
+  basic t                   = t
+  
+  unpDimensions : SVType -> String
+  unpDimensions (UnpackedArr t s e) = "[\{show s}:\{show e}]" ++ unpDimensions t
+  unpDimensions _                   = ""
 
 showSVObj : SVObject -> (name : String) -> String
 showSVObj (Net nt t) name = "\{show nt} \{showSVType t name}"
