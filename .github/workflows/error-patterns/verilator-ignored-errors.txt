@@ -20,6 +20,6 @@ Unsupported: trireg
 VARREF .* is not an unpacked array, but is in an unpacked array context
 Unsupported tristate construct \(in graph; not converted\): CONST .*
 (AND|NOT) unexpected in assignment to unpacked array
-Unsupported tristate construct \(not in propagation graph\): OR
+Unsupported tristate construct \(not in propagation graph\): (OR|ASSIGNW)
 
 Settle region did not converge
