@@ -18,6 +18,6 @@ Output port connection .* to inout signal requires .* bits, but connection's VAR
 Slices of arrays in assignments have different unpacked dimensions, .* versus .*
 Unsupported: trireg
 VARREF .* is not an unpacked array, but is in an unpacked array context
-Unsupported tristate construct (in graph; not converted): CONST .*
+Unsupported tristate construct \(in graph; not converted\): CONST .*
 
 Settle region did not converge
