@@ -1,59 +1,59 @@
 [+] Printed file newdir/newdir/1-seed_0,1.sv
 // Seed: 0,1
 
-module fy
-  ( output reg [2:4][1:1][0:0] jwxswprsvl
-  , input logic [4:2][3:2] mubqerumi [4:3]
-  , input logic [4:3][3:4][0:4][2:0] rrj
-  , input wor logic [4:1][0:2][0:2][1:4] vuklsps [4:3][4:3][3:1]
-  , input realtime dkfwwkm [3:0]
+module rp
+  ( output reg [2:4][1:1][0:0] vt
+  , input logic [4:2][3:2] hbwkk [4:3]
+  , input logic [4:3][3:4][0:4][2:0] bu
+  , input wor logic [4:1][0:2][0:2][1:4] b [4:3][4:3][3:1]
+  , input realtime jbvnjqeirl [3:0]
   );
   
   
-  or gud(ovz, jrng, rjnoymog);
+  or g(lxbfosu, gluhqznvfm, qzc);
   
-  nand xsgzhw(rjnoymog, fmxrbckl, rjnoymog);
+  nand uvksjvtcf(qzc, zkkwjo, qzc);
   
   
   // Top inputs -> top outputs assigns
   
   // Single-driven assigns
-  assign fmxrbckl = 'b1;
+  assign zkkwjo = 'b1;
   
   // Multi-driven assigns
-  assign rjnoymog = 'b0;
-  assign rjnoymog = 'bz;
-endmodule: fy
+  assign qzc = 'b0;
+  assign qzc = 'bz;
+endmodule: rp
 
-module f
-  ( output tri0 logic in
-  , output reg [2:1][0:2][1:0] mjamcqjix
-  , output tri0 logic [1:4][1:0] phxlo [2:2][1:0][4:2]
-  , output bit [3:2][0:4] o [0:3]
-  , input uwire logic [2:0][0:3] h [1:4]
-  , input wire logic wwnrzyljn [4:4]
-  , input int toed
-  , input wor logic [3:0][1:3] lvdqstzalb [1:0][2:1]
+module oltt
+  ( output tri0 logic djgrv
+  , output reg [2:1][0:2][1:0] k
+  , output tri0 logic [1:4][1:0] irgz [2:2][1:0][4:2]
+  , output bit [3:2][0:4] yfvbrtdptx [0:3]
+  , input uwire logic [2:0][0:3] vrtulmhea [1:4]
+  , input wire logic jc [4:4]
+  , input int hscdayitog
+  , input wor logic [3:0][1:3] kqrkegki [1:0][2:1]
   );
   
   
-  nand bmjduzreu(nbyoa, nbyoa, jvkb);
+  nand yaoxqlg(f, f, xlwras);
   
-  and shhkfi(in, nbyoa, plkzo);
+  and oatq(djgrv, f, ebswt);
   
   
   // Top inputs -> top outputs assigns
   
   // Single-driven assigns
-  assign o = '{'b10001011,'b01000100,'b10100000,'b11100111};
-  assign phxlo = '{'{'{'bxzz10zxx,'b110x0x10,'bzx111x0z},'{'b110111zz,'bxxzx0zx1,'bzz1x1z0z}}};
-  assign plkzo = 'bx;
+  assign yfvbrtdptx = '{'b1,'b0,'b0,'b1};
+  assign irgz = '{'{'{'bz,'b1,'bx},'{'b0,'bz,'b0}}};
+  assign ebswt = 'b1;
   
   // Multi-driven assigns
-  assign lvdqstzalb = '{'{'b0xzx0z11,'b0z011x0z},'{'bxz1xzzxx,'bz1x1z0z0}};
-  assign phxlo = '{'{'{'b0011xz0x,'bx01zx011,'bxxx0x10x},'{'bzz0x0z0z,'b0x00z101,'b110x1xz1}}};
-endmodule: f
+  assign kqrkegki = '{'{'bz,'bz},'{'b1,'b1}};
+  assign irgz = '{'{'{'b1,'b1,'b0},'{'b1,'bx,'bz}}};
+endmodule: oltt
 
 
 
-// Seed after: 13629,1
+// Seed after: 13424,1

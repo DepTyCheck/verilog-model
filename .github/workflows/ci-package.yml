@@ -71,7 +71,7 @@ jobs:
       - name: Calculate cache key
         id: cache-key
         run: |
-          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ fromJSON(needs.get-upstream-matrix.outputs.upstream-matrix) }}" >> $GITHUB_OUTPUT
+          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ matrix.upstream-mode }}" >> $GITHUB_OUTPUT
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
