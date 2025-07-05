@@ -56,7 +56,7 @@ jobs:
   build-and-test:
     name: Build and test `${{ github.repository }}`
     needs: get-upstream-matrix
-    timeout-minutes: 128
+    timeout-minutes: 228
     runs-on: ubuntu-latest
     container: ghcr.io/stefan-hoeck/idris2-pack:latest
     outputs:
@@ -71,7 +71,7 @@ jobs:
       - name: Calculate cache key
         id: cache-key
         run: |
-          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}" >> $GITHUB_OUTPUT
+          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ fromJSON(needs.get-upstream-matrix.outputs.upstream-matrix) }}" >> $GITHUB_OUTPUT
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4

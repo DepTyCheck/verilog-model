@@ -52,17 +52,11 @@ namespace TypeLiteralVect
   toList (x::xs) = x :: toList xs
 
   public export
-  limitBits : SVType -> Nat
-  limitBits t = let bits = bitsCnt t in case bits > 8 of
-    False => bits
-    True  => 8
-
-  public export
   data TypeLiteral : SVType -> Type where
     RL  : BinaryVect 1 S4 -> TypeLiteral $ RVar t
     SL  : BinaryVect 1 (states t) -> TypeLiteral $ SVar t
     VL  : BinaryVect 1 (states t) -> TypeLiteral $ VVar t
-    PAL : {t : SVType} -> (p : PABasic t) => BinaryVect (limitBits $ PackedArr t s e) (states t) -> TypeLiteral $ PackedArr t s e
+    PAL : {t : SVType} -> (p : PABasic t) => BinaryVect 1 (states t) -> TypeLiteral $ PackedArr t s e -- (bitsCnt $ PackedArr t s e)
     UAL : TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ UnpackedArr t s e
 
 namespace LiteralsList
