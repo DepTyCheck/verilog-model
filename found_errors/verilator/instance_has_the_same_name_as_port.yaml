@@ -1,0 +1,41 @@
+stage: syntesis
+tool: verilator
+id: instance_has_the_same_name_as_port
+title: Instance has the same name as port
+examples:
+  - instance_has_the_same_name_as_port_v1:
+      first_found: 17.12.2024
+      full_error: |
+        %Error: top.sv:1:8: Unsupported in C: Instance has the same name as port: 'p'
+      full_example: |
+        module xkkf
+          (output wire hk, output bit sekew, output bit frqhrnh, output wire pwkkdczkw, input logic p, input wire vfuvoh);
+          
+          assign hk = vfuvoh;
+          assign sekew = vfuvoh;
+          assign frqhrnh = p;
+          assign pwkkdczkw = vfuvoh;
+        endmodule: xkkf
+
+        module p
+          (output wire avbsmmkv, output wire uxeit);
+          
+          or jlnzrbasnv(uxeit, uxeit, uxeit);
+          
+          assign avbsmmkv = uxeit;
+        endmodule: p
+
+        module quxrwlxgk
+          (input logic a, input uwire xhc, input int qtwwqyp, input real qw);
+          
+          or mbakoem(bttmnvylhq, a, a);
+          and ptnkgc(ucxkqd, qtwwqyp, bttmnvylhq);
+          
+        endmodule: quxrwlxgk
+
+        module tbjwaeog
+          (input bit u, input integer vzhlr, input wire iwgcoh);
+          
+        endmodule: tbjwaeog
+
+

@@ -1,0 +1,131 @@
+stage: syntesis
+tool: verilator
+id: found_definition_of_std_as_a_package
+title: Found definition of 'std' as a PACKAGE but expected a variable
+examples:
+  - found_definition_of_std_as_a_package_v1:
+      first_found: 23.05.2025
+      full_error: |
+        %Error: top.sv:63:12: Found definition of 'std' as a PACKAGE but expected a variable
+      full_example: |
+        // Seed: 17893618609510015087,916015381980724009
+
+        module ejs
+          (output logic [3:2] tbbwfhcm, output bit [0:3] dhgx [0:2], output real efze, output bit mzvgqebnfz [2:4], input integer zntgawcih);
+
+          not gypktezccv(pblzns, zntgawcih);
+          // warning: implicit conversion of port connection truncates from 32 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          // integer zntgawcih -> logic zntgawcih
+
+          not losa(tvrywttluy, pblzns);
+
+          not cksfqvmh(efze, wwwdnqtzp);
+          // warning: implicit conversion of port connection expands from 1 to 64 bits
+          // warning: implicit conversion changes signedness from unsigned to signed
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          // logic efze -> real efze
+
+          // Top inputs -> top outputs assigns
+
+          assign tbbwfhcm = zntgawcih;
+
+          // Assigns
+          assign wwwdnqtzp = 'bx;
+          assign wwwdnqtzp = 'b0;
+          assign wwwdnqtzp = 'bz;
+          assign tvrywttluy = 'b1;
+          assign tvrywttluy = 'b1;
+        endmodule: ejs
+
+        module huey
+          (output int dspea, input bit [3:2] rchwcc);
+
+          and igd(dspea, hjbl, teiqhcpbq);
+          // warning: implicit conversion of port connection expands from 1 to 32 bits
+          // warning: implicit conversion changes signedness from unsigned to signed
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          // logic dspea -> int dspea
+
+          nand kwmqfivl(sfuzxjqtm, tow, byfybrwlq);
+
+          nand looi(byfybrwlq, byfybrwlq, sfuzxjqtm);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: huey
+
+        module zjnbm
+          ( output int jfc
+          , output bit [0:0] wxmxvt [4:1]
+          , input logic [2:0][3:1] zjgpsfuzhy
+          , input logic [0:2] m [0:4]
+          , input logic [2:3] tixmxyc [0:3]
+          );
+
+          bit [0:3] i [0:2];
+
+          bit xadilddcr [2:4];
+
+          xor mkic(std, tgt, svlopbk);
+
+          ejs bgycnj(.tbbwfhcm(tgt), .dhgx(i), .efze(vbzdcreye), .mzvgqebnfz(xadilddcr), .zntgawcih(tgt));
+          // warning: implicit conversion of port connection truncates from 2 to 1 bits
+          // logic [3:2] tbbwfhcm -> wire tgt
+          //
+          // warning: implicit conversion of port connection truncates from 64 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          // real efze -> wire vbzdcreye
+          //
+          // warning: implicit conversion of port connection expands from 1 to 32 bits
+          // warning: implicit conversion changes signedness from unsigned to signed
+          // wire tgt -> integer zntgawcih
+
+          and jlbmypbta(rl, ussdgyuxum, vbzdcreye);
+
+          not xzf(ussdgyuxum, rl);
+
+          // Top inputs -> top outputs assigns
+          assign jfc = zjgpsfuzhy;
+
+          // Assigns
+          assign svlopbk = 'b1;
+          assign svlopbk = 'b1;
+          assign wxmxvt = '{'b1,'b0,'b1,'b0};
+          assign tgt = 'b1z;
+          assign ussdgyuxum = 'b1;
+          assign tgt = 'bxz;
+        endmodule: zjnbm
+
+        module skayqjijk
+          (output logic [2:3] hrnqul, output logic [0:3][3:1] cnne, input bit [0:0][4:0] jwwdqn, input real rrqhz [0:2][4:4]);
+
+          nand glommnd(deisilvdwj, alqoxtal, tcpmy);
+
+          nand hwqpwxva(jxhgpb, ehimu, hrnqul);
+          // warning: implicit conversion of port connection truncates from 2 to 1 bits
+          // logic [2:3] hrnqul -> logic hrnqul
+
+          or waovvgjf(hrnqul, hrnqul, hg);
+          // warning: implicit conversion of port connection expands from 1 to 2 bits
+          // logic hrnqul -> logic [2:3] hrnqul
+          //
+          // warning: implicit conversion of port connection truncates from 2 to 1 bits
+          // logic [2:3] hrnqul -> logic hrnqul
+
+          not pvbx(rfsb, xd);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+          assign xd = 'b1;
+          assign xd = 'b0;
+          assign hg = 'b1;
+          assign cnne = 'bzzxz010z0xxx;
+          assign deisilvdwj = 'bx;
+          assign deisilvdwj = 'b1;
+        endmodule: skayqjijk

@@ -1,0 +1,91 @@
+stage: syntesis
+tool: icarus
+id: invalid_module_item
+title: Invalid module item
+examples:
+  - invalid_module_item_v1:
+      first_found: 01.06.2025
+      full_error: |
+        generated-modules/97-seed_14860280421552192959,5268399088297407135.sv:31: syntax error
+        generated-modules/97-seed_14860280421552192959,5268399088297407135.sv:31: error: Invalid module item.
+      full_example: |
+        // Seed: 14860280421552192959,5268399088297407135
+
+        module i
+        ( output trior logic [2:2][0:3] cat [0:0][4:3][1:3]
+        , output trireg logic [2:0][3:4][3:4] rxidsk [4:0][2:0][2:4]
+        , input logic j [4:0]
+        , input uwire logic ab [3:1][1:0][2:1][1:0]
+        , input tri0 logic [3:1][4:2][2:1] fsrhyzkckp
+        , input wire logic [4:4][3:3][1:1] no [2:2][0:2][3:1]
+        );
+
+        // Top inputs -> top outputs assigns
+        // Assigns
+        endmodule: i
+
+        module gjynarp
+        ( output trior logic [1:2][3:3] atxmtgmmlo
+        , output bit wdwxkg [4:1][1:3]
+        , output wand logic [3:1][3:3] b [3:1][2:1][3:2][1:2]
+        , output logic [4:1] rrgtvsi [1:3]
+        , input supply0 logic [0:1][3:4][0:1] wjhyuvwr [0:0][0:1][2:0]
+        );
+
+        logic nogr [4:0];
+        uwire logic mgqgz [3:1][1:0][2:1][1:0];
+        wire logic [4:4][3:3][1:1] eebismoo [2:2][0:2][3:1];
+        trior logic [2:2][0:3] zdhbl [0:0][4:3][1:3];
+        trireg logic [2:0][3:4][3:4] wvdcxyzi [4:0][2:0][2:4];
+        xor ch(dgpbeaju, kypo, atxmtgmmlo);
+
+        // warning: implicit conversion of port connection expands from 1 to 12 bits
+        // logic dgpbeaju -> trireg logic [2:0][3:4][3:4] dgpbeaju [4:0][2:0][2:4]
+
+        not s(xlvmhkdzsz, atxmtgmmlo);
+        // warning: implicit conversion of port connection expands from 1 to 4 bits
+        // logic xlvmhkdzsz -> trior logic [2:2][0:3] xlvmhkdzsz [0:0][4:3][1:3]
+
+        and l(atxmtgmmlo, atxmtgmmlo, shqih);
+        i vpctmycakj(.cat(zdhbl), .rxidsk(wvdcxyzi), .j(nogr), .ab(mgqgz), .fsrhyzkckp(wnkwajvykw), .no(eebismoo));
+        // warning: implicit conversion of port connection truncates from 4 to 1 bits
+        // trior logic [2:2][0:3] cat [0:0][4:3][1:3] -> wire logic zdhbl
+        //
+        // warning: implicit conversion of port connection truncates from 12 to 1 bits
+        // trireg logic [2:0][3:4][3:4] rxidsk [4:0][2:0][2:4] -> wire logic wvdcxyzi
+        //
+
+        // warning: implicit conversion of port connection expands from 1 to 18 bits
+        // logic wnkwajvykw -> tri0 logic [3:1][4:2][2:1] fsrhyzkckp
+
+        // Top inputs -> top outputs assigns
+        // Assigns
+        endmodule: gjynarp
+
+        module bbsg
+        ( output logic [0:0] hbyvofmb
+        , output supply1 logic [0:3] novdqsyao [3:3][2:1][4:2]
+        , output trior logic [3:0][4:4][2:4] coawnlv [1:3]
+        , output byte dd [2:0][2:2][0:3]
+        , input bit [4:0] opobrcyehd
+        );
+
+        // Top inputs -> top outputs assigns
+        assign hbyvofmb = opobrcyehd;
+
+        // Assigns
+        endmodule: bbsg  
+
+        module v
+        (input logic jpqwp [1:4], input reg [4:4] ftfbvveygw [0:2], input trior logic [3:3][3:1][2:2][3:3] vzx [4:1][0:4][1:2][4:0]);
+
+        xor py(erhet, zjeir, dmvei);
+        not zgc(be, rqivv);
+        and dhdxkdpo(utya, be, bbruvkfdgq);
+        not qxbzztzgis(dmvei, cd);
+
+        // Top inputs -> top outputs assigns
+        // Assigns
+        endmodule: v
+
+        // Seed after: 7080572195401457244,5268399088297407135

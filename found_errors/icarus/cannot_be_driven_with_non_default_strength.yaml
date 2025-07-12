@@ -1,0 +1,51 @@
+stage: syntesis
+tool: icarus
+id: cannot_be_driven_with_non_default_strength
+title: Cannot be driven with non default strength
+examples:
+  - cannot_be_driven_with_non_default_strength_v1:
+      first_found: 02.07.2025
+      full_error: |
+        error: variable lbrkx; cannot be driven by a primitive or continuous assignment with non-default strength.
+      full_example: |
+        // Seed: 12348576575492672505,10002677915001445999
+
+        module iul
+          (output logic lbrkx, output logic [2:3] cvawpgb, output logic xnhyjs [4:3]);
+          
+          xor al(lbrkx, eyezhdj, eyezhdj);
+          
+          not ctwm(eyezhdj, lbrkx);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign cvawpgb = 'b1x;
+          assign xnhyjs = '{'b1,'bx};
+          assign eyezhdj = 'b1;
+          assign eyezhdj = 'bx;
+        endmodule: iul
+
+        module xvicefqhnc
+          (output logic [2:0] mi, output logic [3:3] o);
+          
+          
+          not iiqhh(mgzexopir, dlg);
+          
+          xor ttvhm(dlg, lzi, pyw);
+          
+          and yyxdxc(lzi, dlg, okjrcx);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign okjrcx = 'bz;
+          assign okjrcx = 'b0;
+          assign okjrcx = 'b1;
+          assign okjrcx = 'b0;
+          assign o = 'bz;
+          assign mi = 'bxx1;
+          assign dlg = 'b0;
+        endmodule: xvicefqhnc
+
+        // Seed after: 4925075022431791883,10002677915001445999

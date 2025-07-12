@@ -1,0 +1,58 @@
+stage: syntesis
+tool: verilator
+id: slices_of_arrays_in_assignments_have_different_unpacked_dimensions
+title: Slices of arrays in assignments have different unpacked dimensions
+examples:
+  - slices_of_arrays_in_assignments_have_different_unpacked_dimensions_v1:
+      first_found: 01.06.2025
+      full_error: |
+        %Error: top.sv:39:29: Slices of arrays in assignments have different unpacked dimensions, 4 versus 2
+          39 | ( output tri0 logic [0:4] hsxniwmvoq [1:2][4:1]
+      full_example: |
+        module gsha
+          (input logic [0:3][4:4] cqfmkxy, input reg [2:2][3:0][4:1][2:0] tuandlau);
+
+          or nxoixb(fedewp, fedewp, tuandlau);
+          // warning: implicit conversion of port connection truncates from 48 to 1 bits
+          // reg [2:2][3:0][4:1][2:0] fedewp -> logic fedewp
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: gsha
+
+        module drzpuza
+          ( output logic [2:4][1:4][1:4][1:1] i
+          , output uwire logic [1:2][0:3] gpskj
+          , output uwire logic [1:2][1:1][0:4][2:1] lokzl [0:0]
+          , input time imijbzrb [2:2]
+          , input real emtzmqiiq
+          , input logic [0:0][0:2] uzxwa
+          , input logic [1:0][0:0][1:4] yepbbdeuls
+          );
+
+          or jfnbnuewmr(vjcpmamhq, uzxwa, mwxbotd);
+          // warning: implicit conversion of port connection truncates from 3 to 1 bits
+          // logic [0:0][0:2] mwxbotd -> logic mwxbotd
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: drzpuza
+
+        module tovn
+          ( output tri0 logic [0:4] hsxniwmvoq [1:2][4:1]
+          , output tri0 logic ujyq [3:2][3:0][3:2][3:3]
+          , input tri1 logic [0:3][2:0][2:3] wup [0:2][3:3][1:4]
+          , input wand logic [2:4][2:3][2:2][1:4] dbbalmko [2:3][1:0][2:1][0:2]
+          );
+
+          not darbmui(ncjazspd, ncjazspd);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: tovn

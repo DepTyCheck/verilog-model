@@ -1,0 +1,27 @@
+stage: syntesis
+tool: verilator
+id: const_unexpected_in_assignment_to_unpacked_array
+title: CONST unexpected in assignment to unpacked array
+examples:
+  - const_unexpected_in_assignment_to_unpacked_array_v1:
+      first_found: 01.06.2025
+      full_error: |
+        %Error: top.sv:5:44: CONST '32'hffffffff' unexpected in assignment to unpacked array
+        5 | , output tri1 logic [1:4][2:3][3:2][0:1] vmt [3:3]
+      full_example: |
+        module tdclodrzjb
+          ( output bit oyyxqhvbmj
+          , output tri1 logic [1:4][2:3][3:2][0:1] vmt [3:3]
+          , input int vdm
+          , input logic [0:2][3:2] bc [3:3]
+          , input logic [1:4][0:2] waqzr [3:0]
+          );
+
+          or yqdffodp(ovyizzu, d, d);
+          not zcmlhvevv(d, qqiy);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: tdclodrzjb

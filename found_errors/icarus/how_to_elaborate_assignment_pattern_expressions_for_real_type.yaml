@@ -1,0 +1,24 @@
+stage: syntesis
+tool: icarus
+id: how_to_elaborate_assignment_pattern_expressions_for_real_type
+title: I don't know how to elaborate assignment for real type
+examples:
+  - how_to_elaborate_assignment_pattern_expressions_for_real_type_v1:
+      first_found: 03.04.2025
+      full_error: |
+        sorry: I don't know how to elaborate assignment_pattern expressions for real type yet.
+             : Expression is: '{'d1}
+        error: Unable to elaborate r-value: '{'d1}
+      full_example: |
+        // Seed: 13146146607886611362,17421924455848648743
+
+        module hjf
+          (output wire lig, output real mhuyoy [4:0][2:4], output real irrpjsuiui [0:0], output logic [0:1] xylvvl [2:1]);
+          
+          // Top inputs -> top outputs assigs
+          
+          // Assigns
+          assign irrpjsuiui = '{'b1};
+        endmodule: hjf
+
+        // Seed after: 14170142877157805317,17421924455848648743

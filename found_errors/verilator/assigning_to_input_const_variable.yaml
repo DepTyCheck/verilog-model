@@ -1,0 +1,68 @@
+stage: syntesis
+tool: verilator
+id: assigning_to_input_const_variable
+title: >
+  Assigning to input/const variable
+issue_status: reported
+issue_link: https://github.com/verilator/verilator/issues/5875
+examples:
+  - assigning_to_input_const_variable_v1:
+      first_found: 09.03.2025
+      minified_example: |
+        module a(input wire i1);
+          assign i1 = 'b1;
+        endmodule: a
+      full_error: |
+        Error-ASSIGNIN: top.sv:14:10: Assigning to input/const variable: 'drc'
+      full_example: |
+        // Seed: 5709767390009413768,8352879869878179961
+
+        module jn
+          (output bit [1:0][2:0] aubiwpou, input uwire jxhofdsh [1:1], input logic gw [1:4][4:2], input wire drc, input bit [4:2][2:2] kgpfjywh);
+          
+          and kzttv(wbnfem, wbnfem, ffuaxvnksu);
+          
+          // Top inputs -> top outputs assigns
+          assign aubiwpou = kgpfjywh;
+          
+          // Assigns
+          assign ffuaxvnksu = 'bz;
+          assign drc = 'b1;
+        endmodule: jn
+
+        module bi
+          ( output wire g [0:0][2:2]
+          , output bit [2:0][3:2] szpm
+          , output bit [3:0] uyvhpsnvf
+          , output uwire tu [3:4]
+          , input bit [0:1][1:2] ozyamnzl
+          , input bit [3:3] hwdlgj [4:2]
+          , input real ohzkfeqe
+          );
+          
+          // Top inputs -> top outputs assigns
+          assign uyvhpsnvf = ohzkfeqe;
+          
+          // Assigns
+          assign tu = '{'b0,'b0};
+        endmodule: bi
+
+        module thapdh
+          ();
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+        endmodule: thapdh
+
+        module nyihp
+          (input bit [2:2][1:1][3:3] jcbanqguua, input logic y [4:1], input logic [1:0] hmrdiw [3:4], input uwire vud [4:3][2:4]);
+            
+          or doyri(wbyuob, wbyuob, krufjuzxzh);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+        endmodule: nyihp
+
+        // Seed after: 14467438248031629679,8352879869878179961

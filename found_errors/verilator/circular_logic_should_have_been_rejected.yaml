@@ -1,0 +1,63 @@
+stage: syntesis
+tool: verilator
+id: circular_logic_should_have_been_rejected
+title: V3Gate.cpp Circular logic should have been rejected by okVisitor
+examples:
+  - circular_logic_should_have_been_rejected_v1:
+      first_found: 07.04.2025
+      minified_example: |
+        module a(input i1);
+          and gate(w1, w1, i1);
+        endmodule: a
+
+        module b();
+          a a_inst( .i1(w2));
+
+          assign w2 = 'bz;
+          assign w2 = 'b0;
+        endmodule: b
+      full_error: |
+        %Error: Internal Error: top.sv:5:7: ../V3Gate.cpp:830: Circular logic should have been rejected by okVisitor
+      full_example: |
+        module mzxezxdaal
+          (input real eishvgggc [4:4], input logic [2:4] qj, input bit [4:3][3:3] vxnszjw);
+          
+          and hoho(kwqhzrlhiq, kwqhzrlhiq, qj);
+          not veuj(weqyzpy, rkjj);
+          or oyj(vetraym, wab, uuouiikc);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign rkjj = 'b1;
+        endmodule: mzxezxdaal
+
+        module pljholvq
+          (output bit [0:0] e [1:3]);
+
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign e = '{'b0,'b1,'b1};
+        endmodule: pljholvq
+
+        module cwvvyg
+          (output logic [4:4][0:0] lyvgarhcl, output integer mzncji);
+          
+          real jlptusin [4:4];
+          
+          nand xolueipow(lyvgarhcl, pyrdsb, lyvgarhcl);
+          mzxezxdaal lulvrcwfzj(.eishvgggc(jlptusin), .qj(ostshtea), .vxnszjw(lyvgarhcl));
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign pyrdsb = 'bz;
+          assign ostshtea = 'bx1z;
+          assign ostshtea = 'bxx0;
+          assign pyrdsb = 'bx;
+          assign pyrdsb = 'b0;
+          assign ostshtea = 'bz0x;
+          assign jlptusin = '{'b1};
+          assign mzncji = 'b1;
+        endmodule: cwvvyg

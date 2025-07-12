@@ -1,0 +1,34 @@
+stage: syntesis
+tool: verilator
+id: expected_integral_input_to_gate
+title: Expected integral input to gate
+issue_status: reported
+issue_link: https://github.com/verilator/verilator/issues/5876
+examples:
+  - expected_integral_input_to_gate_v1:
+      first_found: 10.12.2024
+      minified_example: |
+        module a(input real i1);
+          and gate(o2, i1, i2);
+        endmodule: a
+      full_error: |
+        %Error: top.sv:13:21: Expected integral (non-'real') input to AND
+          : ... note: In instance 'pbibmboprf'
+          13 | and pwtdahni(euw, kmf, awmkkjzvik);
+      full_example: |
+        module bohobpsjzp
+          (output int offd, output int kvqorcm, output wire jy, input int pwih, input int iccv, input logic gjdhea, input real ayhpgynurl);
+          
+          assign offd = pwih;
+          assign kvqorcm = iccv;
+          assign jy = ayhpgynurl;
+        endmodule: bohobpsjzp
+
+        module pbibmboprf
+          (output int egvndv, output integer tlxvyasrr, input bit kezyfqh, input uwire awmkkjzvik, input real kmf, input int yeu);
+          
+          and pwtdahni(euw, kmf, awmkkjzvik);
+          
+          assign egvndv = yeu;
+          assign tlxvyasrr = kezyfqh;
+        endmodule: pbibmboprf

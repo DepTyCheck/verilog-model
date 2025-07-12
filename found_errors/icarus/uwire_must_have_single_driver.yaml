@@ -1,0 +1,206 @@
+stage: syntesis
+short_desc: (implicit) uwire <name> must have a single driver, found <num>
+tool: icarus
+id: uwire_must_have_single_driver
+title: Uwire must have single driver
+examples:
+  - implicit_uwire_must_have_single_driver:
+      first_found: 03.04.2025
+      minified_example: |
+        module a(output bit a1);
+          or zlsdkl(a1, a1, w1);
+        endmodule: a
+
+        module b();
+
+          a a_inst(.a1(b1));
+
+          assign b1 = 'b0;
+          assign b1 = 'b0;
+
+        endmodule: b
+      minified_error: >
+        vvp.tgt error: (implicit) uwire "b1" must have a single driver, found (3).
+      full_error: >
+        error: (implicit) uwire "qpqlbpygsh" must have a single driver, found (3).
+      full_example: |
+        module bdaodpsf
+          (output bit clgyzohvz, output logic hzo [0:4][0:2]);
+          
+          
+          or zlsdkl(clgyzohvz, clgyzohvz, atbnehnw);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign atbnehnw = 'b0;
+          assign hzo = '{'{'b0,'bx,'bx},'{'b1,'b1,'b0},'{'b0,'bz,'bx},'{'b1,'bz,'bx},'{'bz,'bz,'bz}};
+        endmodule: bdaodpsf
+
+        module zorm
+          (output integer ufqubxhuxl, input wire nr [3:4][3:2], input logic [4:1] r);
+          
+          logic s [0:4][0:2];
+          
+          or xkqdjlbiqd(eozw, rxadmiqii, gy);
+          bdaodpsf lmjvjkhxr(.clgyzohvz(rxadmiqii), .hzo(s));
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign gy = 'b0;
+        endmodule: zorm
+
+        module ly
+          ( output bit [1:1] usgt [4:0]
+          , output logic [0:2] ik
+          , output int ejuzdxugxb
+          , input logic [3:1][4:3][4:1] ywlchwplkp
+          , input int z
+          , input wire dpseqfo
+          , input logic [0:4] fravs
+          );
+          
+          logic zaz [0:4][0:2];
+          logic rmmead [0:4][0:2];
+          
+          bdaodpsf ht(.clgyzohvz(qpqlbpygsh), .hzo(zaz));
+          bdaodpsf cihddeut(.clgyzohvz(mjv), .hzo(rmmead));
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign ik = 'bzz0;
+          assign ejuzdxugxb = 'b1;
+          assign usgt = '{'b0,'b0,'b1,'b1,'b1};
+          assign dpseqfo = 'b1;
+          assign qpqlbpygsh = 'b0;
+          assign qpqlbpygsh = 'b0;
+        endmodule: ly
+
+        module ofdvh
+          ( output logic [3:1] yw
+          , output logic [0:0][2:0][4:0] atf
+          , output int cechaeibm [0:1]
+          , input bit [3:4] wj
+          , input bit wfyyslk [3:1][0:3]
+          , input logic [2:0] em [4:3]
+          , input bit nvhxl [0:1]
+          );
+          
+          logic iwizhrmspm [0:4][0:2];
+          
+          bdaodpsf k(.clgyzohvz(yw), .hzo(iwizhrmspm));
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign cechaeibm = '{'b0,'b1};
+          assign atf = 'b110z1011z01x110;
+        endmodule: ofdvh
+  - explicit_uwire_must_have_single_driver:
+    first_found: 11.04.2025
+    minified_error: >
+      vvp.tgt error: uwire "logic_b" must have a single driver, found (2).
+    minified_example: |
+      module a(output wire wire_a);
+
+      assign wire_a = 'b0;
+      assign wire_a = 'b0;
+
+      endmodule: a
+
+      module b(output logic logic_b);
+
+      a ixtiaryxx(.wire_a(logic_b));
+      and quhh(w1, logic_b, w2);
+
+      endmodule: b
+    full_error: >
+      vvp.tgt error: uwire "qwxtubwydz" must have a single driver, found (3).
+    full_example: |
+      // Seed: 11839031070210974510,14186438219062418103
+
+      module vv
+        ( output logic [0:1] mwxt [3:1]
+        , output bit [1:2][2:2] cr
+        , output real nn
+        , output uwire bfzltt [3:4]
+        , input logic [0:0][2:1] kymxa
+        , input logic jzpnoniz
+        , input bit [0:3] ne
+        );
+        
+        
+        nand lapedc(tfmgnotlfr, kymxa, ne);
+        not rj(ymamkybxj, ymamkybxj);
+        not nzppo(zhbaa, ne);
+        or yjef(ody, tfmgnotlfr, ymamkybxj);
+        
+        // Top inputs -> top outputs assigns
+        assign cr = ne;
+        assign nn = kymxa;
+        
+        // Assigns
+        assign mwxt = '{'b01,'bx1,'bz0};
+      endmodule: vv
+
+      module b
+        (output wire qghiphzqmc, output bit [0:3] om, output bit [4:3][1:3][1:0] zp, output logic [0:0] mkdyjtbf, input bit [4:1] kam);
+        
+        logic [0:1] soaa [3:1];
+        uwire aefjsxosif [3:4];
+        
+        vv iuyu(.mwxt(soaa), .cr(om), .nn(zp), .bfzltt(aefjsxosif), .kymxa(zp), .jzpnoniz(zp), .ne(zp));
+        nand iqooxdk(mwwzb, zp, om);
+        nand ggxst(dhojvrjdu, xwqla, wzqesd);
+        
+        // Top inputs -> top outputs assigns
+        
+        // Assigns
+        assign xwqla = 'bz;
+        assign qghiphzqmc = 'b0;
+        assign qghiphzqmc = 'b0;
+        assign qghiphzqmc = 'b0;
+        assign mkdyjtbf = 'bz;
+      endmodule: b
+
+      module xsordikq
+        (output wire oryz, output logic [3:0] rslgu, input uwire gotm, input logic [3:1] jcrix, input logic [3:4] ynpvxr);
+        
+        
+        nand ovkoksy(v, ze, jcrix);
+        
+        // Top inputs -> top outputs assigns
+        
+        // Assigns
+        assign ze = 'b1;
+        assign ze = 'b1;
+        assign ze = 'bz;
+        assign oryz = 'b0;
+        assign rslgu = 'b1xxx;
+        assign v = 'b1;
+      endmodule: xsordikq
+
+      module ahszrxtym
+        (output uwire l [1:2][3:3], output logic [2:2] qwxtubwydz, output bit [2:4] blce [0:2]);
+        
+        
+        b lmemc(.qghiphzqmc(e), .om(qpfnbi), .zp(ww), .mkdyjtbf(vrnnhzca), .kam(nwkoeen));
+        b ixtiaryxx(.qghiphzqmc(qwxtubwydz), .om(t), .zp(pbf), .mkdyjtbf(pvf), .kam(e));
+        and quhh(lnsyrbg, qwxtubwydz, mtbsnvkts);
+        
+        // Top inputs -> top outputs assigns
+        
+        // Assigns
+        assign mtbsnvkts = 'bz;
+        assign mtbsnvkts = 'bz;
+        assign mtbsnvkts = 'b1;
+        assign nwkoeen = 'b0001;
+        assign vrnnhzca = 'b0;
+        assign qpfnbi = 'b0010;
+      endmodule: ahszrxtym
+
+
+
+      // Seed after: 7415663828183734803,14186438219062418103
