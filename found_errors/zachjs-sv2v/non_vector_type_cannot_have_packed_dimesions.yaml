@@ -1,0 +1,141 @@
+stage: parsing
+tool: zachjs-sv2v
+id: non_vector_type_cannot_have_packed_dimesions
+title: non-vector type real cannot have packed dimesions
+examples:
+  - non_vector_type_real_cannot_have_packed_dimesions:
+      first_found: 24.05.2025
+      full_error: |
+        sv2v: non-vector type real cannot have packed dimesions:[(2,1)]
+        CallStack (from HasCallStack):
+          error, called at src/Language/SystemVerilog/AST/Type.hs:118:14 in main:Language.SystemVerilog.AST.Type
+      full_example: |
+        // Seed: 18347911916735053405,2426731264514140405
+
+        module zbjft
+          (output real hftsz [2:1], output bit rhqocjml [1:1], output int dyhck);
+          
+          xor bauagpzq(mmchqmwvv, ctophjw, vh);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign vh = 'bx;
+          assign ctophjw = 'b0;
+          assign hftsz = '{'bx,'bx};
+          assign mmchqmwvv = 'b0;
+          assign mmchqmwvv = 'b1;
+        endmodule: zbjft
+
+        module agxj
+          ( output integer uvujoem [1:0]
+          , output wire cgpe [4:1]
+          , output logic pwhnwwmffv [4:3]
+          , output bit [2:1][3:3] w
+          , input real cesmyxprke
+          , input logic [2:3] ajkuhiz
+          , input bit [4:0] yjjdnwp
+          , input uwire ue
+          );
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign w = 'b10;
+          assign pwhnwwmffv = '{'b0,'bx};
+          assign uvujoem = '{'b0,'b0};
+          assign cgpe = '{'b0,'b0,'b0,'b0};
+        endmodule: agxj
+
+        // Seed after: 12155394080032148100,2426731264514140405
+
+  - non_vector_type_realtime_cannot_have_packed_dimesions:
+      first_found: 01.06.2025
+      full_error: |
+        sv2v: non-vector type realtime cannot have packed dimesions:[(4,4)]
+        CallStack (from HasCallStack):
+          error, called at src/Language/SystemVerilog/AST/Type.hs:118:14 in main:Language.SystemVerilog.AST.Type
+      full_example: |
+        // Seed: 9129291793660916310,5268399088297407135
+
+        module zgwhybsiiv
+        ( output logic [1:1] usueqavn [4:1]
+        , output reg [4:2][0:4][0:2][1:3] lyfqlxq
+        , input bit [0:0][2:1][3:1][4:2] vtyxcj
+        , input trior logic [3:0][0:0] tjygbyt [4:3][0:2]
+        , input wire logic [1:0][0:0][1:2][0:2] ynujgqck [3:2][4:1]
+        , input reg [2:0][4:3] lceto
+        );
+
+        not rjfc(lyfqlxq, gqh);
+
+        // Top inputs -> top outputs assigns
+        // Assigns
+
+        endmodule: zgwhybsiiv
+
+        module vzzxjchd
+        ( output realtime hznep [4:4]
+        , output tri1 logic bpwwh [4:2]
+        , input tri1 logic [4:1][2:0][2:4][2:2] otd
+        , input reg [4:3][0:1] ahhmip
+        , input shortreal uxshnflsk
+        );
+
+        not zljnggis(uz, jhto);
+
+        xor jymnphi(belkyh, uz, gnbtcgqlh);
+
+        // Top inputs -> top outputs assigns
+
+        // Assigns
+
+        endmodule: vzzxjchd
+
+        module q
+        ( output bit [3:1][4:0][4:3][4:2] woypymshv
+        , output realtime ufq [0:1]
+        , output shortreal ezbnsrmxs
+        , input tri0 logic [3:1][0:2][0:0] pxzh [3:4][4:0][4:0][2:3]
+        );
+
+        xor jlzskmccyv(woypymshv, xtdapw, p);
+
+        // Top inputs -> top outputs assigns
+
+        // Assigns
+
+        endmodule: q
+
+        // Seed after: 5729559856547299097,5268399088297407135
+
+  - non_vector_type_time_cannot_have_packed_dimesions:
+      first_found: 01.06.2025
+      full_example: |
+        // Seed: 16701481279964727923,5268399088297407135
+
+        module ajkegxt
+        (output realtime de, output logic [0:2][2:0][2:1] izt, input tri1 logic drz, input tri0 logic rg [1:4][4:1]);
+
+        not qybfgnj(de, ugzdmq);
+        xor dan(izt, de, izt);
+
+        // Top inputs -> top outputs assigns
+        // Assigns
+
+        endmodule: ajkegxt
+
+        module hpiyt
+        ( output bit [4:2] vvbwpzicm
+        , input shortreal fjnlpmw
+        , input reg z [4:3][3:4]
+        , input time asvvfehav [2:4][2:1]
+        , input trireg logic jco
+        );
+
+        // Top inputs -> top outputs assigns
+        // Assigns
+
+        endmodule: hpiyt
+
+        // Seed after: 8858891727543941605,5268399088297407135

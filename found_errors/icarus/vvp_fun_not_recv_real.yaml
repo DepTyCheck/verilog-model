@@ -1,0 +1,79 @@
+stage: simulation
+tool: icarus
+id: vvp_fun_not_recv_real
+title: >
+  vvp_fun_not: recv_real not implemented
+examples:
+  - 10vvp_fun_or_recv_real(0.000000)_not_implemented:
+      first_found: 10.12.2024
+      full_example: |
+        module kcqr
+          (output bit ebu [0:4][4:3], input real ipxklfobj, input bit [3:3] ymhbaxeupm);
+          
+          and biyiqwmtkm(nlgbyfzn, hhjq, hhjq);
+          or jcitexyr(hhjq, ipxklfobj, ymhbaxeupm);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign ebu = '{'{'b1,'b0},'{'b1,'b0},'{'b0,'b0},'{'b1,'b1},'{'b1,'b0}};
+        endmodule: kcqr
+  - 11vvp_fun_not_recv_real(1.000000)_not_implemented:
+      first_found: 16.04.2025
+      full_error: |
+        internal error: 11vvp_fun_not: recv_real(1.000000) not implemented
+        vvp: vvp_net.cc:3347: virtual void vvp_net_fun_t::recv_real(vvp_net_ptr_t, double, vvp_context_t): Assertion `0' failed.
+      full_example: |
+        module cnafaw
+          (output uwire taskuqsxv, output integer zekjov [1:0]);
+          
+          
+          and bdc(c, bcqyqlj, wuybdlhu);
+          not gygxf(avyao, hrylu);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign wuybdlhu = 'bx;
+          assign zekjov = '{'b0,'b0};
+        endmodule: cnafaw
+
+        module hkgmvffhr
+          (output logic gvxkrm [4:0][1:0], input bit [1:2] fmgalgfwvp, input real rhlumwdl, input bit [0:2] jttnkdthy);
+          
+          
+          not mwau(decl, rhlumwdl);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign decl = 'b1;
+          assign decl = 'bz;
+          assign decl = 'b0;
+        endmodule: hkgmvffhr
+
+        module nhezszy
+          ( output uwire qdjxxbbs [2:4]
+          , input bit [3:1] gfceainnht
+          , input bit [0:1][0:0] pbd
+          , input logic squnqm
+          , input integer uuooojb [0:1]
+          );
+          
+          logic u [4:0][1:0];
+          
+          not nsqzsbey(xlfloniydg, xlfloniydg);
+          hkgmvffhr haizuj(.gvxkrm(u), .fmgalgfwvp(zdqqzlc), .rhlumwdl(bzacszzvbl), .jttnkdthy(gfceainnht));
+          or oaeziv(bzacszzvbl, an, bzacszzvbl);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign an = 'bz;
+          assign an = 'b0;
+          assign an = 'bz;
+          assign zdqqzlc = 'b11;
+          assign an = 'bz;
+          assign qdjxxbbs = '{'b0,'b0,'b0};
+          assign bzacszzvbl = 'b1;
+        endmodule: nhezszy

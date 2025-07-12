@@ -1,0 +1,40 @@
+stage: syntesis
+tool: verilator
+id: output_port_connection_connects_real_to_non_real
+title: Output port connection connects real to non-real
+examples:
+  - output_port_connection_connects_real_to_non_real_v1:
+      first_found: 10.12.2024
+      full_error: |
+        %Error-UNSUPPORTED: top.sv:23:35: Unsupported: Output port connection 'gsannnig' connects real to non-real
+      full_example: |
+        module fojwmn
+          (output bit [3:2] mixclycjhf, output int qxzaoklel, input int xkyya, input logic [3:4] ykfrocmze, input bit [3:3][1:2][4:1] grhl);
+          
+          xor i(re, grhl, ykfrocmze);
+          
+        endmodule: fojwmn
+
+        module vtykdzw
+          (output logic ilwebga, output real gsannnig, input bit [2:2] fwiwccuwf, input wire ulgiuqez);
+          
+          nand hq(yso, bm, ulgiuqez);
+          
+        endmodule: vtykdzw
+
+        module hjivk
+          ();
+
+          vtykdzw haczawgmd(.ilwebga(y), .gsannnig(yrmdv), .fwiwccuwf(snhm), .ulgiuqez(twvoqkqrl));
+          
+        endmodule: hjivk
+
+        module k
+          (output logic [1:1] f, output integer p [4:4][3:4], output logic [0:4][3:1] id, output wire zckbjl, input integer brutctvlvj [0:4][3:3]);
+          
+          
+          hjivk xyh();
+          hjivk zxroj();
+          hjivk fbwh();
+          
+        endmodule: k

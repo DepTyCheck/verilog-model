@@ -1,0 +1,88 @@
+stage: simulation
+tool: icarus
+id: vvp_net_fun_t_recv_real
+title: >
+  virtual void vvp_net_fun_t recv_real(vvp_net_ptr_t, double, vvp_context_t)
+examples:
+  - vvp_net_fun_t_recv_real_v1:
+      first_found: 16.04.2025
+      full_error: |
+        virtual void vvp_net_fun_t recv_real(vvp_net_ptr_t, double, vvp_context_t)
+        Assertion 0 failed
+      full_example: |
+        // Seed: 2991302349595909584,17506386418243051159
+
+        module hdjihl
+          (output real avk, output bit [4:2][4:2] ip);
+          
+          not ovszaxlkqx(avk, avk);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign ip = 'b111111000;
+        endmodule: hdjihl
+
+        module i
+          (output real olwf, output logic [3:3][0:4] ohxfehldp, output logic neoxdc, output logic dzubc [4:3]);
+          
+          or qpp(lfcda, kupiupc, olwf);
+          not bskm(olwf, lfcda);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign kupiupc = 'b0;
+          assign kupiupc = 'bz;
+          assign kupiupc = 'b1;
+          assign neoxdc = 'b0;
+          assign dzubc = '{'bx,'b0};
+          assign lfcda = 'bx;
+          assign lfcda = 'bz;
+        endmodule: i
+
+        module hvstjgbh
+          ( output bit dsbyqkh [3:3]
+          , output wire yvaxtf [2:4][3:4]
+          , output bit oklukbprx [1:1]
+          , output integer mwtyzpa
+          , input bit [0:1][4:2][0:4] etyzlq
+          , input logic [2:0][1:4] l
+          );
+          
+          logic evfo [4:3];
+          
+          not z(vwbnzzrzb, gngam);
+          i qorio(.olwf(ebknvanp), .ohxfehldp(eaqiogdm), .neoxdc(ckcgjhbpr), .dzubc(evfo));
+          xor saqwmazl(avpamusm, rvpf, jsnaswocy);
+          and dckfpbel(gngam, etyzlq, sdxqwlft);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign sdxqwlft = 'b1;
+          assign sdxqwlft = 'bz;
+          assign mwtyzpa = 'b1;
+        endmodule: hvstjgbh
+
+        module f
+          ( output integer qwuzpt
+          , output logic [0:1] ne [2:0]
+          , output bit [1:1] arynsmt
+          , output logic [3:0][2:3] jnsorqt
+          , input int wrf [1:2]
+          , input bit [4:2] da [0:0]
+          , input logic [4:4] pghlva
+          , input bit [0:1][2:0] kvsdzlkcvo
+          );
+
+          // Top inputs -> top outputs assigns
+          assign qwuzpt = kvsdzlkcvo;
+          
+          // Assigns
+          assign jnsorqt = 'b0x11xz11;
+          assign arynsmt = 'b1;
+        endmodule: f
+
+        // Seed after: 4036331525392959525,17506386418243051159
+        

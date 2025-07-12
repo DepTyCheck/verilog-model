@@ -1,0 +1,31 @@
+stage: syntesis
+tool: verilator
+id: wire_inputs_its_own_output
+title: Wire inputs its own output, creating circular logic
+issue_status: reported
+issue_link: https://github.com/verilator/verilator/issues/5878
+examples:
+  - wire_inputs_its_own_output_v1:
+      first_found: 10.12.2024
+      minified_example: |
+        module a();
+          or b(j, j, j);
+        endmodule: a
+      full_error: |
+        %Error: top.sv:4:6: Wire inputs its own output, creating circular logic (wire x=x)
+          4 | or xiqyjro(j, j, j);
+      full_example: |
+        module ug
+          (input logic vdaev, input wire gl, input int skf, input bit xnyyueprwu);
+          
+          or xiqyjro(j, j, j);
+          
+        endmodule: ug
+
+        module sifgljh
+          ();
+          
+          nand xhuhnk(cuczaubtei, mtqinoh, cuczaubtei);
+          nand rowvzfvz(mtqinoh, mtqinoh, mtqinoh);
+          
+        endmodule: sifgljh

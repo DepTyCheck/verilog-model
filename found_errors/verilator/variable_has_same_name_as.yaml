@@ -1,0 +1,38 @@
+stage: syntesis
+tool: verilator
+id: variable_has_same_name_as
+title: Variable has same name as ...
+examples:
+  - variable_has_same_name_as_celline:
+      first_found: 04.03.2025
+      full_error: |
+        %Error: top.sv:23:23: Unsupported in C: Variable has same name as instance: 'ef'
+      full_example: |
+        // Seed: 5349598728013900351,8152328585638401619
+
+        module ohtszg
+          ( output bit [0:1] kaq [1:3]
+          , output bit [2:2][0:4] cmg
+          , output logic [4:4][4:3] rwa
+          , output logic [1:4] epj
+          , input uwire mtkfp [2:0][3:3]
+          , input logic [0:1][2:1] tq
+          , input integer tqqnq
+          );
+          
+          
+          
+        endmodule: ohtszg
+
+        module ef
+          ( output logic [4:0] xwoqmtv [3:0]
+          , output logic [1:3] phhrmshprm [4:2]
+          , output logic [4:3][3:3] ldpqipdf
+          , input logic [1:2] cwb
+          , input bit [0:3] llwc
+          , input logic [0:2] ef
+          );
+          
+        endmodule: ef
+  - variable_has_same_name_as_instance:
+      first_found: 04.03.2025

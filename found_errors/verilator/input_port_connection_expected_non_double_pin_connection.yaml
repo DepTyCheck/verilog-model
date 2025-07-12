@@ -1,0 +1,62 @@
+stage: syntesis
+tool: verilator
+id: input_port_connection_expected_non_double_pin_connection
+title: Input port connection expected non-complex non-double pin connection
+issue_status: reported
+issue_link: https://github.com/verilator/verilator/issues/5877
+examples:
+  - input_port_connection_expected_non_double_pin_connection_v1:
+      first_found: 15.02.2025
+      minified_example: |
+        module a(input real i1 [0:4]);
+        endmodule: a
+
+        module b(input real i2 [4:0]);
+          a a_inst(.i1(i2));
+        endmodule: b
+      full_error: |
+        %Error: top.sv:37:58: Input port connection 'ebjo' expected non-complex non-double pin connection in width check
+      full_example: |
+        // Seed: 9244119237703911260,5862439558234323861
+
+        module lk
+          (output logic mctib [2:0][4:0], output bit uik);
+          
+          xor qd(yd, iujusnzwb, yd);
+          
+        endmodule: lk
+
+        module lvjlzokfzt
+          ( output integer pvkstguxxi
+          , output bit [1:4] ws [4:1]
+          , input real ebjo [0:4]
+          , input bit [1:0] abx
+          , input logic [0:0] zsdymu
+          , input logic [3:0] a
+          );
+          
+          logic eqjy [2:0][4:0];
+          logic aioudsapf [2:0][4:0];
+          
+          xor dgwwyi(uqivq, a, gsumffuuo);
+          lk cgje(.mctib(eqjy), .uik(ehqypibnx));
+          lk wjciaknap(.mctib(aioudsapf), .uik(vsulqrbzb));
+          
+        endmodule: lvjlzokfzt
+
+        module xmdsw
+          (input real lcypuam [4:0], input real g [3:2], input logic [1:3] hvufqklf [0:2]);
+          
+          bit [1:4] fsjanxl [4:1];
+          logic tgpg [2:0][4:0];
+          logic iandbid [2:0][4:0];
+          logic ksufhljtri [2:0][4:0];
+          
+          lvjlzokfzt lwysi(.pvkstguxxi(pckjhhwh), .ws(fsjanxl), .ebjo(lcypuam), .abx(wolnh), .zsdymu(gxknhxc), .a(pckjhhwh));
+          lk b(.mctib(tgpg), .uik(qymzy));
+          lk dqtoh(.mctib(iandbid), .uik(es));
+          lk uli(.mctib(ksufhljtri), .uik(ergknrqefw));
+          
+        endmodule: xmdsw
+
+        // Seed after: 846548215004790608,5862439558234323861

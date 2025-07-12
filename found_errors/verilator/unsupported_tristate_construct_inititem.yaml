@@ -1,0 +1,23 @@
+stage: syntesis
+tool: verilator
+id: unsupported_tristate_construct_inititem
+title: Unsupported tristate construct INITITEM
+examples:
+  - unsupported_tristate_construct_inititem_v1:
+      first_found: 04.03.2025
+      full_error: |
+        %Error-UNSUPPORTED: top.sv:13:18: Unsupported tristate construct: INITITEM
+        : ... note: In instance 'bnwdulpdjo'
+        13 | assign ifdnp = '{'b0, 'bz};
+      full_example: |
+        module bnwdulpdjo
+          (output int uasic, output wire pd, output int ifdnp [3:2], input wire qvqo [2:3]);
+
+          not nyz(uasic, uasic);
+
+          // Top inputs -> top outputs assigs
+
+          // Assigns
+          assign pd = 'b0;
+          assign ifdnp = '{'b0, 'bz};
+        endmodule: bnwdulpdjo

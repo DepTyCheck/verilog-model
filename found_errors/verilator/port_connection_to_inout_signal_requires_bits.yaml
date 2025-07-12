@@ -1,0 +1,203 @@
+stage: syntesis
+tool: verilator
+id: port_connection_to_inout_signal_requires_bits
+title: Port connection to inout signal requires X bits, but ... generates Y bits.
+examples:
+  - input_port_connection_to_inout_signal_requires_bits:
+      first_found: 01.06.2025
+      full_error: |
+        %Error-UNSUPPORTED: top.sv:76:72: Unsupported: Input port connection 't' to inout signal requires 20 bits, but connection's VARREF 'lkq' generates 1 bits.
+      full_example: |
+        module cnsmz
+          (output reg [0:4][0:4] icnr, output triand logic [3:0][3:1] sd [4:3][2:4][0:4], output uwire logic ikjmuj [3:4][2:2][0:0][2:1]);
+
+          and jy(cyunihcw, cyunihcw, icnr);
+
+          and ywumrkwke(ygqfxwwwq, icnr, wyoi);
+
+          and jewcl(icnr, ygqfxwwwq, gamlrnko);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: cnsmz
+
+        module oakudnwy
+          ( output integer kycyza
+          , output bit [2:0] iixzf [1:0]
+          , output reg [1:3][2:2] ypkx [2:1]
+          , input tri0 logic [0:4][1:0][2:2][2:1] t
+          , input logic [4:4] mjvnizix [0:0][4:4]
+          , input time nywj
+          , input tri1 logic [4:4][0:0][1:4] y [3:2][2:4][1:2]
+          );
+
+          triand logic [3:0][3:1] bzwouxgn [4:3][2:4][0:4];
+
+          uwire logic oirbmb [3:4][2:2][0:0][2:1];
+
+          cnsmz sep(.icnr(kycyza), .sd(bzwouxgn), .ikjmuj(oirbmb));
+          // warning: implicit conversion of port connection truncates from 25 to 1 bits
+          // reg [0:4][0:4] icnr -> uwire logic kycyza [3:4][2:2][0:0][2:1]
+          //
+          // warning: implicit conversion of port connection expands from 1 to 25 bits
+          // uwire logic ikjmuj [3:4][2:2][0:0][2:1] -> reg [0:4][0:4] oirbmb
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+          endmodule: oakudnwy
+
+          module injit
+          ( output tri1 logic [4:2] bsuxdxuphq
+          , output time yoephran
+          , input shortint tzcmxtmzk
+          , input trior logic [0:4][3:1][3:0][0:3] hntzz [0:2][0:1][2:1][3:3]
+          , input logic [1:1][2:1][4:2] o [3:0]
+          );
+
+          // Top inputs -> top outputs assigns
+          assign yoephran = tzcmxtmzk;
+
+          // Assigns
+
+        endmodule: injit
+
+        module ov
+          ( output supply1 logic [2:1][3:4] fo [2:1][3:2][2:3][4:0]
+          , output wand logic [4:3][2:4][2:2][4:3] d [3:4]
+          , output uwire logic [1:0][2:0][0:2][3:2] pmyfk [3:0][4:3][4:3][2:4]
+          , output wire logic lkq
+          , input trior logic [3:1][2:2][4:1] vlj [4:0][0:2]
+          , input logic [4:1] ir [0:0]
+          , input wand logic dllhevhie
+          );
+
+          logic [4:4] oacfbd [0:0][4:4];
+
+          tri1 logic [4:4][0:0][1:4] asmwhvakpb [3:2][2:4][1:2];
+
+          bit [2:0] dhoxwthfxh [1:0];
+
+          reg [1:3][2:2] nrkztu [2:1];
+
+          oakudnwy rb(.kycyza(jbgoxwjdyu), .iixzf(dhoxwthfxh), .ypkx(nrkztu), .t(lkq), .mjvnizix(oacfbd), .nywj(rpdnwthsos), .y(asmwhvakpb));
+          // warning: implicit conversion of port connection truncates from 32 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          // integer kycyza -> logic jbgoxwjdyu
+          //
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          // bit [2:0] iixzf [1:0] -> reg [1:3][2:2] dhoxwthfxh [2:1]
+          //
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          // reg [1:3][2:2] ypkx [2:1] -> bit [2:0] nrkztu [1:0]
+          //
+          // warning: implicit conversion of port connection expands from 1 to 20 bits
+          // wire logic lkq -> tri0 logic [0:4][1:0][2:2][2:1] t
+          //
+          // warning: implicit conversion of port connection truncates from 4 to 1 bits
+          // tri1 logic [4:4][0:0][1:4] oacfbd [3:2][2:4][1:2] -> logic [4:4] mjvnizix [0:0][4:4]
+          //
+          // warning: implicit conversion of port connection expands from 1 to 64 bits
+          // wire logic rpdnwthsos -> time nywj
+          //
+          // warning: implicit conversion of port connection expands from 1 to 4 bits
+          // logic [4:4] asmwhvakpb [0:0][4:4] -> tri1 logic [4:4][0:0][1:4] y [3:2][2:4][1:2]
+
+          not at(lkq, argpbq);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: ov
+  - output_port_connection_to_inout_signal_requires_bits:
+      first_found: 01.06.2025
+      full_error: |
+        %Error-UNSUPPORTED: top.sv:52:25: Unsupported: Output port connection 'mdhusbbwa' to inout signal requires 3 bits, but connection's VARREF 'j' generates 1 bits.
+          : ... note: In instance 'd'
+          52 | ukkjwlngu axobjyezk( .mdhusbbwa(j)
+      full_example: |
+        module ukkjwlngu
+          ( output tri0 logic [2:4] mdhusbbwa
+          , output reg [4:0] vymhoh [0:2]
+          , output shortint pcviuvwep
+          , input wor logic eshxdtw [4:2]
+          , input realtime nbg [0:2]
+          , input real mnvvwuty [2:4]
+          , input wire logic [2:3][3:4][1:3][1:2] fplkvczkdt [1:2]
+          );
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: ukkjwlngu
+
+        module ladazmrs
+          ( output wand logic [1:0][3:2][2:1] sajicoa
+          , input logic [1:0] tru [1:2]
+          , input reg dtyvyivtr
+          , input reg [4:3][3:2] eoxrfnlwvd
+          , input int cnns [4:4][3:3]
+          );
+
+          not fk(hjonzx, hsk);
+          // warning: implicit conversion of port connection truncates from 4 to 1 bits
+          // reg [4:3][3:2] hsk -> logic hsk
+
+          not ta(dozzv, eoxrfnlwvd);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: ladazmrs
+
+        module d
+          ();
+
+          wor logic phh [4:2];
+
+          realtime beqrg [0:2];
+
+          real dlsp [2:4];
+
+          wire logic [2:3][3:4][1:3][1:2] udfqrrufj [1:2];
+
+          reg [4:0] dzfz [0:2];
+
+          not qv(xvpnoloome, zjsqljmyd);
+
+          ukkjwlngu axobjyezk( .mdhusbbwa(j)
+          , .vymhoh(dzfz)
+          , .pcviuvwep(zwqdcyh)
+          , .eshxdtw(phh)
+          , .nbg(beqrg)
+          , .mnvvwuty(dlsp)
+          , .fplkvczkdt(udfqrrufj)
+          );
+
+          // warning: implicit conversion of port connection truncates from 3 to 1 bits
+          // tri0 logic [2:4] mdhusbbwa -> wire logic j
+          //
+          // warning: implicit conversion of port connection truncates from 16 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          // shortint pcviuvwep -> wire logic zwqdcyh
+          //
+          // warning: implicit conversion of port connection truncates from 24 to 1 bits
+          // wire logic [2:3][3:4][1:3][1:2] phh [1:2] -> wor logic eshxdtw [4:2]
+          //
+          // warning: implicit conversion of port connection expands from 1 to 24 bits
+          // wor logic udfqrrufj [4:2] -> wire logic [2:3][3:4][1:3][1:2] fplkvczkdt [1:2]
+
+          not h(lirxsdrmky, ztuvu);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: d

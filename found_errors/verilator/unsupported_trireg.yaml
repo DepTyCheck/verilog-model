@@ -1,0 +1,60 @@
+stage: syntesis
+tool: verilator
+id: unsupported_trireg
+title: Unsupported trireg
+examples:
+  - unsupported_trireg_v1:
+      first_found: 01.06.2025
+      full_error: |
+        %Error-UNSUPPORTED: top.sv:41:11: Unsupported: trireg
+          41 | , input trireg logic lzwyxd
+      full_example: |
+        module xdg
+          ( output logic [2:3][0:4][4:4] latxfuads
+          , input reg [0:4][0:0][0:1] ige
+          , input logic bgmgf
+          , input reg [1:2][0:4][1:1] nhrwo [3:0]
+          , input tri1 logic [2:4][4:1][0:0] pbvdoh [0:4][2:3][2:4][1:1]
+          );
+
+          not nzl(xyy, twgqbua);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: xdg
+
+        module kz
+          ( input logic [1:1] catrzhm [1:1]
+          , input bit [2:0] epcmnctgt
+          , input bit [2:1][0:0] miqa
+          , input supply0 logic [2:1][2:2] uuwhxzje [3:4][4:2]
+          );
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: kz
+
+        module w
+          ( output trior logic [3:0] hbgzph
+          , output logic [4:3][4:3] ycf [4:4][1:2]
+          , output logic [1:3][1:2][0:1] vnpq
+          , output reg [3:1][2:4][1:2] wo
+          , input realtime ypbup
+          , input real sdtgcjne [4:2]
+          , input trireg logic lzwyxd
+          , input supply0 logic [1:0][4:1][3:2] zsiqmdee [2:1][4:4][0:0][0:1]
+          );
+
+          not yxsqtdq(tpypxvhr, zxyosgsb);
+
+          xor atjgvxkqpa(lvmywhvdyj, jmgpowigt, lzwyxd);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: w
