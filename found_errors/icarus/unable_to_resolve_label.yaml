@@ -1,0 +1,39 @@
+issue_status: reported
+issue_link: https://github.com/steveicarus/iverilog/issues/1218
+stage: simulation
+tool: icarus
+short_desc: Simulation of a continuous assignment of an unpacked array throws error
+id: unable_to_resolve_label
+title: Unable to resolve label
+examples:
+  - unable_to_resolve_label_v1:
+      first_found: 04.03.2025
+      minified_example: |
+        module a (output logic b [2:1]);
+          assign b = '{'b1,'bz};
+        endmodule: a
+      full_error: |
+        Unable to resolve label v0x55a8dad28e10_0
+        compile_cleanup: 1 unresolved items
+        a.out: Program not runnable, 1 errors.
+      full_example: |
+        // Seed: 14318809588400357211,13712862608348962075
+
+        module bonufropgc
+          ( output bit haroct [1:2][2:1]
+          , output integer hlvvwzhwsh
+          , output logic y [2:1]
+          , input bit go
+          , input bit [2:2] vrqmu [1:0]
+          , input integer nffbpbbong [2:4]
+          , input bit [4:2][1:0] ec
+          );
+          
+          // Top inputs -> top outputs assigs
+          assign hlvvwzhwsh = ec;
+          
+          // Assigns
+          assign y = '{'b1,'bz};
+        endmodule: bonufropgc
+
+        // Seed after: 12068331556777782645,13712862608348962075

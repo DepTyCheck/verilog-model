@@ -1,0 +1,96 @@
+stage: syntesis
+tool: icarus
+id: array_needs_an_array_index_here
+title: Array needs an array index here
+examples:
+  - array_needs_an_array_index_here_v1:
+      first_found: 07.04.2025
+      minified_example: |
+        module a(output o1 [0:0], input i1 [0:0]);
+          assign o1 = i1;
+        endmodule: a
+      full_example: |
+        // Seed: 9805389099535758122,11656690212121374065
+
+        module pwamcpunge
+          ( output bit [3:0] yylmdiec
+          , output real b [3:4]
+          , output bit [1:4] xkmgn
+          , output bit [4:0] fld
+          , input logic taqfhggt [3:1][1:4]
+          , input wire hm [3:2]
+          );
+          
+          
+          not pssd(yylmdiec, yylmdiec);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign fld = 'b10001;
+          assign b = '{'b0,'bx};
+          assign xkmgn = 'b0111;
+        endmodule: pwamcpunge
+
+        module jfliepplh
+          (output logic [1:1] whoywxhzh, output logic [0:1][0:3] dz, output uwire pm [2:0][0:3], output logic qfykkdy [3:2]);
+          
+          
+          nand tl(euidwkrlpl, idgw, nfwo);
+          and ihsncrglpm(xyk, xyk, euidwkrlpl);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign nfwo = 'b0;
+          assign idgw = 'b1;
+          assign qfykkdy = '{'bx,'b1};
+          assign dz = 'bzzx1zz1z;
+          assign xyk = 'b0;
+          assign xyk = 'b0;
+          assign xyk = 'bz;
+        endmodule: jfliepplh
+
+        module slmdxhpsir
+          ( output bit [4:2] ffeziq [0:0]
+          , input bit [2:4] b [1:1]
+          , input logic [1:3][1:1] hacbtll
+          , input logic [4:2] ngjmnvtkzx [0:2]
+          , input integer xi [1:2][0:0]
+          );
+          
+          
+          nand epcoibz(fjrbwrhbj, alnqbdq, lfyk);
+          nand ysyr(em, xfyxjybzr, fjrbwrhbj);
+          
+          // Top inputs -> top outputs assigns
+          assign ffeziq = b;
+          
+          // Assigns
+          assign lfyk = 'bx;
+          assign alnqbdq = 'b0;
+          assign fjrbwrhbj = 'b0;
+          assign fjrbwrhbj = 'bx;
+        endmodule: slmdxhpsir
+
+        module ptfqv
+          (output wire uvgwd [4:1], output bit [1:2][3:4][2:4] qbj, output logic [3:4] ybmjrducq, input integer mhhd);
+          
+          uwire bdizhyz [2:0][0:3];
+          logic muo [3:2];
+          
+          jfliepplh fwbn(.whoywxhzh(f), .dz(xwgcbuc), .pm(bdizhyz), .qfykkdy(muo));
+          
+          // Top inputs -> top outputs assigns
+          assign ybmjrducq = mhhd;
+          
+          // Assigns
+          assign uvgwd = '{'b0,'b1,'b0,'b0};
+          assign qbj = 'b101000010000;
+          assign xwgcbuc = 'b0xxxz1zz;
+          assign xwgcbuc = 'b10x1z01x;
+        endmodule: ptfqv
+
+
+
+        // Seed after: 9086973419989400924,11656690212121374065

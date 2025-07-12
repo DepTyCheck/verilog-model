@@ -1,0 +1,18 @@
+short_desc: The first simulation tick runs indefinitely
+tool: icarus
+id: infinity_zero_tick
+title: Infinity zero tick
+examples:
+  - infinity_zero_tick_v1:
+      minified_example: |
+        module one (output integer o1,  input bit i1);
+          assign o1 = i1;
+        endmodule: one
+
+        module two (output logic o2);
+
+          one oneInst(.o1(someWire), .i1(o2));
+          nand nandInst(o2, o2, someWire);
+
+        endmodule: two
+      

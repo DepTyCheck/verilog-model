@@ -1,0 +1,44 @@
+issue_status: reported
+issue_link: https://github.com/steveicarus/iverilog/issues/1221
+stage: syntesis
+tool: icarus
+id: expression_width_does_not_match_width
+title: Expression width does not match width
+examples:
+  - expression_width_does_not_match_width_v1:
+      first_found: 10.12.2024
+      minified_example: |
+        module a(output integer o1, input int i1, input integer i2);
+          or gate(o1, i1, i2);
+        endmodule: a
+      full_example: |
+        module tfft
+          ( output logic eiezecp
+          , output uwire kjagrfjq
+          , output int jbfwqxka
+          , output int ouafrjd
+          , input int wx
+          , input real bftmsuv
+          , input wire i
+          , input integer gymw
+          );
+          
+          
+          assign eiezecp = wx;
+          assign kjagrfjq = gymw;
+          assign jbfwqxka = wx;
+          assign ouafrjd = i;
+        endmodule: tfft
+
+        module wecazlcleg
+          (output integer yqnzybrx, output uwire xp, input int pypt, input int jqujyzt, input integer g);
+          
+          or rg(yqnzybrx, pypt, g);
+          
+          assign xp = g;
+        endmodule: wecazlcleg
+
+        module qzczsyeanw
+          (input real ov, input integer dftixk, input int lvxtzb, input uwire qu);
+          
+        endmodule: qzczsyeanw

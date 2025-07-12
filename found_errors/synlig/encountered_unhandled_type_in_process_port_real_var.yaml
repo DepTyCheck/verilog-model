@@ -1,0 +1,87 @@
+stage: syntesis
+tool: synlig
+id: encountered_unhandled_type_in_process_port_real_var
+title: >
+  Encountered unhandled type in process_port: real_var
+examples:
+  - encountered_unhandled_type_in_process_port_real_var_v1:
+      first_found: 24.05.2025
+      full_error: >
+        ERROR: Encountered unhandled type in process_port: real_var
+      full_example: |
+        // Seed: 12155394080032148100,2426731264514140405
+
+        module cjcbbn
+          ( output logic ongg
+          , output wire xzkunvy [2:4]
+          , output real yltdauz [4:3][2:4]
+          , input bit [2:4] hfkcmovudd
+          , input bit [4:2] pfqdfc [2:1]
+          );
+          
+          and eglowkxpgw(ongg, dp, hfkcmovudd);
+          // warning: implicit conversion of port connection truncates from 3 to 1 bits
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   bit [2:4] hfkcmovudd -> logic hfkcmovudd
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign dp = 'bx;
+          assign xzkunvy = '{'b1,'b1,'b0};
+          assign xzkunvy = '{'b0,'b0,'b1};
+          assign yltdauz = '{'{'b0,'b1,'bz},'{'bx,'b1,'bx}};
+        endmodule: cjcbbn
+
+        module y
+          ( output bit [0:3] iodmfscj
+          , output bit [1:4] hgdmtyhad [3:3]
+          , input integer njiobdayo
+          , input real ph
+          , input bit [0:4] taagvcaj
+          , input bit [3:0][3:1] nwswsdfli
+          );
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign iodmfscj = 'b0111;
+          assign hgdmtyhad = '{'b0001};
+        endmodule: y
+
+        module aa
+          ( output logic [1:2][3:3] l
+          , output bit [0:3][3:4][4:0] v
+          , output wire vpikzldy
+          , output logic [0:0] qwtmzuhi [3:0]
+          , input logic [0:2] jpxlkbv [0:4]
+          , input logic [0:1][4:2][2:1] sewbhdsu
+          , input wire fhcbpa [4:1][4:3]
+          );
+          
+          or rlzl(tkuti, dcmmofz, shric);
+          
+          and ewniwtur(fzmmwmzg, xl, fzmmwmzg);
+          
+          and wxuxnoai(xl, tkuti, xl);
+          
+          // Top inputs -> top outputs assigns
+          assign v = sewbhdsu;
+          
+          // Assigns
+          assign shric = 'b0;
+          assign dcmmofz = 'bz;
+          assign l = 'b1x;
+          assign fhcbpa = '{'{'b0,'b0},'{'b1,'b1},'{'b0,'b0},'{'b1,'b0}};
+        endmodule: aa
+
+        module isknojrfq
+          (output real fvmu);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign fvmu = 'b0;
+        endmodule: isknojrfq
+
+        // Seed after: 18199170163325466416,2426731264514140405

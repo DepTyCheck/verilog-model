@@ -1,0 +1,62 @@
+stage: simulation
+tool: icarus
+id: vvp_net_fun_t_recv_vec4
+title: >
+   virtual void vvp_net_fun_t recv_vec4(vvp_net_ptr_t, const vvp_vector4_t&, vvp_context_t)
+examples:
+  - vvp_net_fun_t_recv_vec4_v1:
+      first_found: 16.04.2025
+      full_error: |
+        virtual void vvp_net_fun_t recv_vec4(vvp_net_ptr_t, const vvp_vector4_t&, vvp_context_t)
+        Assertion 0 failed
+      full_example: |
+        // Seed: 14943627156215915369,13754077948813451937
+
+        module ineevirhw
+          (output bit mzfelix, output integer yyajvllzvd, output real ip, input integer qhhgok [2:3]);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign yyajvllzvd = 'b0;
+          assign ip = 'bx;
+        endmodule: ineevirhw
+
+        module sipgjpjnb
+          (output real qqdzy, output logic sx, input bit [4:2] puw, input wire crse, input bit [1:4][4:0][0:0] iqt);
+          
+          integer likoclv [2:3];
+          
+          not alodqkmzgw(vb, q);
+          ineevirhw kjfgzk(.mzfelix(lnalgpgi), .yyajvllzvd(c), .ip(zstueif), .qhhgok(likoclv));
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign q = 'b1;
+          assign q = 'b0;
+          assign likoclv = '{'b0,'b0};
+          assign q = 'b1;
+          assign qqdzy = 'b0;
+          assign sx = 'bx;
+          assign vb = 'bx;
+          assign c = 'b0;
+        endmodule: sipgjpjnb
+
+        module d
+          (output bit [4:4] ojrqrukvrp [3:0], input wire spj, input integer qwpd, input logic [2:3][2:4] withf, input bit [1:1][0:4] w);
+          
+          
+          and ggajck(zouywlo, yw, qncj);
+          sipgjpjnb ihijdqc(.qqdzy(yw), .sx(keafsjan), .puw(keafsjan), .crse(lfzqxyi), .iqt(vf));
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign lfzqxyi = 'b1;
+          assign lfzqxyi = 'b1;
+          assign vf = 'b10111101100101001010;
+          assign qncj = 'bz;
+        endmodule: d
+
+        // Seed after: 13158812625808371457,13754077948813451937

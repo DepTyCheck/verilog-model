@@ -1,0 +1,153 @@
+issue_status: reported
+issue_link: https://github.com/steveicarus/iverilog/issues/1217
+stage: syntesis
+tool: icarus
+short_desc: A continuously assigned unpacked array literal is parsed wrong
+id: scalar_type_is_not_a_valid_context_for_assignment_pattern
+title: Scalar type is not a valid context for assignment pattern
+examples:
+  - scalar_type_is_not_a_valid_context_for_assignment_pattern_v1:
+      first_found: 04.03.2025
+      minified_example: |
+        module a(output bit b [0:0]);
+          assign b = '{'b0};
+        endmodule: a
+      full_error: |
+        error: scalar type is not a valid context for assignment pattern.
+        error: Unable to elaborate r-value: '{'{'d0}}
+      full_example: |
+        // Seed: 13030752297893083809,8846961402350338489
+
+        module ytfkwsta
+          ();
+          
+          not zbp(pftgbi, pftgbi);
+          
+          // Top inputs -> top outputs assigs
+          
+          // Assigns
+        endmodule: ytfkwsta
+
+        module ytxv
+          ( output bit myjjpdk
+          , output bit [1:1] iaphkidkmw [3:4]
+          , output uwire ypwj [3:1]
+          , output bit iaw [3:3][3:3]
+          , input int fzxsscchkk
+          , input bit [2:0] ca [1:0]
+          , input int qgbutvmv [4:3][3:0]
+          );
+          
+          ytfkwsta vbrlnkif();
+          ytfkwsta ivnmqkuj();
+          ytfkwsta wb();
+          
+          // Top inputs -> top outputs assigs
+          assign myjjpdk = fzxsscchkk;
+          
+          // Assigns
+          assign iaw = '{'{'b0}};
+        endmodule: ytxv
+
+        module rqrzqcfp
+          ( output logic woupma [2:3]
+          , output uwire vdrlzcs [0:4]
+          , output real dpiqoatra
+          , input logic [2:1] sgob [4:0]
+          , input bit [2:2] hdlbxab [4:1]
+          , input uwire owa [2:2][2:1]
+          );
+          
+          
+          ytfkwsta hgnw();
+          ytfkwsta jjkjodvd();
+          ytfkwsta fbpphqztol();
+          ytfkwsta po();
+          
+          // Top inputs -> top outputs assigs
+          
+          // Assigns
+        endmodule: rqrzqcfp
+
+        // Seed after: 6587817683497405930,8846961402350338489
+
+  - scalar_type_is_not_a_valid_context_for_assignment_pattern_v2:
+      full_error: |
+        error: scalar type is not a valid context for assignment pattern.
+        error: Unable to elaborate r-value: '{'bz}
+      full_example: |
+        // Seed: 578962042012857023,8352879869878179961
+
+        module v
+          ( output logic [4:2] zm [3:4]
+          , output logic [3:4] wvvw [2:1]
+          , output logic [4:4] o
+          , output logic uhgidcxia [2:2]
+          , input bit [2:1][3:3] om
+          , input bit [0:2][0:0] agclap
+          );
+          
+          
+          
+          // Top inputs -> top outputs assigns
+          assign o = agclap;
+          
+          // Assigns
+          assign uhgidcxia = '{'bz};
+        endmodule: v
+
+
+
+        // Seed after: 11804619105400156331,8352879869878179961
+
+  - scalar_type_is_not_a_valid_context_for_assignment_pattern_v3:
+      full_error: |
+        error: scalar type is not a valid context for assignment pattern.
+        error: Unable to elaborate r-value: '{'bx}
+      full_example: |
+        // Seed: 2706590906824897658,1821645297014569385
+
+        module htgh
+          ( output bit [2:2] pf [2:0]
+          , output logic [1:2][4:2][2:3] kseakjaqge
+          , output logic [3:2] jbgep [0:2]
+          , input logic [1:0][0:2] modjhh
+          , input bit [0:3][4:4] bypta
+          , input logic [4:3] a [0:3]
+          );
+          
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign pf = '{'b0,'b0,'b1};
+        endmodule: htgh
+
+        module pjunhle
+          (output int tez [4:1][3:2], output real h [0:0][4:4], output int tz, output bit [1:4] hqykveqbbw, input integer pbodvp [1:3]);
+          
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+        endmodule: pjunhle
+
+        module xkmwnqaduh
+          (output bit [2:3] a [3:2], output logic jvbuffuq [0:0], output uwire tmbz, output integer y);
+          
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Assigns
+          assign y = 'b1;
+          assign tmbz = 'b0;
+          assign jvbuffuq = '{'bx};
+          assign a = '{'b10,'b11};
+        endmodule: xkmwnqaduh
+
+
+
+        // Seed after: 17951437587477541294,1821645297014569385
