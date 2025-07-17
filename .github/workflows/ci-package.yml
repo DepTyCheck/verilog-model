@@ -29,6 +29,7 @@ env:
   PACK_DIR: /root/.pack
   GENERATION_DIR: 'generated-modules'
   BUILD_DIR: '.build'
+  PACKAGE_NAME: verilog-model
 
 jobs:
 
@@ -92,12 +93,8 @@ jobs:
           pack fetch
       - name: Switch to the latest collection
         run: pack switch latest
-      - name: Compute the package name
-        run: |
-          echo "package_name=$(sed -e 's|.*/||' -e 's/idris2\?-//' \
-                <<< ${{ github.repository }})" >> "$GITHUB_ENV"
-      - name: Build `${{ env.package_name }}`
-        run: pack build ${{ env.package_name }}
+      - name: Build `${{ env.PACKAGE_NAME }}`
+        run: pack build ${{ env.PACKAGE_NAME }}
       - name: Save build
         uses: actions/cache/save@v4
         with:
@@ -109,11 +106,11 @@ jobs:
           pack run verilog-model --coverage mcov -n 1 --seed 0,1
           touch tests/printer/model-coverage/dummy
           touch tests/printer/create-dir/dummy
-      - name: Test `${{ env.package_name }}`
-        run: pack test ${{ env.package_name }}
+      - name: Test `${{ env.PACKAGE_NAME }}`
+        run: pack test ${{ env.PACKAGE_NAME }}
       - name: Gen SystemVerilog modules
         if: matrix.upstream-mode == 'latest-pack-collection'
-        run : pack run ${{ env.package_name }} --to "${{ env.GENERATION_DIR }}" -n 128 --seed-name --seed-content --coverage mcov  # Generate modules
+        run : pack run ${{ env.PACKAGE_NAME }} --to "${{ env.GENERATION_DIR }}" -n 128 --seed-name --seed-content --coverage mcov  # Generate modules
       - name: Show mcov
         if: matrix.upstream-mode == 'latest-pack-collection'
         run : cat mcov
