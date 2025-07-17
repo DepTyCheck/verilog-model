@@ -45,13 +45,9 @@ class IgnoredErrorsList:
             bool: True if any pattern matches, False otherwise
         """
         for pattern in self._errors:
-            try:
-                if re.search(pattern, input_text, re.MULTILINE):
-                    print(f"Found ignored error. Pattern: {pattern}")
-                    return True
-            except re.error as e:
-                print(f"Warning: Invalid regex pattern '{pattern}': {e}")
-                continue
+            if re.search(pattern, input_text, re.MULTILINE):
+                print(f"Found ignored error. Pattern: {pattern}\n")
+                return True
         return False
 
     @property

@@ -1,18 +1,10 @@
 import re
 from ignored_errors_list import IgnoredErrorsList
 
-def print_file(file_content: str, file_path: str) -> None:
-    """Print the contents of a file."""
-    print(f"\nThe entire content of {file_path}:")
-    print(file_content)
-    print("")
-
 def handle_errors(
     output: str,
     error_regex: str,
     ignored_errors: IgnoredErrorsList,
-    file_content: str,
-    file_path: str,
 ) -> bool:
     """
     Handle errors in the output by checking against ignored error patterns.
@@ -26,25 +18,21 @@ def handle_errors(
     Returns:
         bool: True if all errors are ignored, False otherwise
     """
-    try:
-        # Find all matches of the error regex in the output
-        matches = re.finditer(error_regex, output, re.MULTILINE)
-        
-        if not matches:
-            print("No errors matched.")
-            return False
-
-        # Check each match against ignored errors
-        for match in matches:
-            error_text = match.group(0)
-            print(f"Matched error: {error_text}")
-            if not ignored_errors.match(error_text):
-                print(f"Found unignored error: {error_text}\n")
-                print_file(file_content, file_path)
-                return False
-                
-        return True
-        
-    except re.error as e:
-        print(f"Error in error regex pattern: {e}")
+    # Find all matches of the error regex in the output
+    matches = re.finditer(error_regex, output, re.MULTILINE)
+    
+    if not matches:
+        print("No errors matched.")
         return False
+
+    all_errors_ignored = True
+
+    # Check each match against ignored errors
+    for match in matches:
+        error_text = match.group(0)
+        print(f"Matched error: {error_text}")
+        if not ignored_errors.match(error_text):
+            print(f"\033[91mFound unexpected error: {error_text}\033[0m\n")
+            all_errors_ignored = False
+            
+    return all_errors_ignored

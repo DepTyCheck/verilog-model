@@ -15,10 +15,10 @@ def parse_args():
     )
 
     parser.add_argument('--gen-path', type=str, help="Path to generated modules", required=True)
-    parser.add_argument('--tool-cmd', type=str, help="Analysis tool command (e.g., 'iverilog -Wall')", required=True)
+    parser.add_argument('--tool-cmd', type=str, help="Analysis tool command", required=True)
     parser.add_argument('--tool-error-regex', type=str, help="Regex for analysis errors", required=True)
 
-    parser.add_argument('--sim-cmd', type=str, help="Simulator command (e.g., 'vvp -n')", required=False)
+    parser.add_argument('--sim-cmd', type=str, help="Simulator command", required=False)
     parser.add_argument('--sim-error-regex', type=str, help="Regex for simulation errors", required=False)
 
     parser.add_argument('--errors-file', type=str, help="Path to regex file with allowed errors", required=True)
@@ -79,6 +79,12 @@ def make_command(
     command = command.replace("{file}", file_path)
     return command
 
+def print_file(file_content: str, file_path: str) -> None:
+    """Print the contents of a file."""
+    print(f"\nThe entire content of {file_path}:")
+    print(file_content)
+    print("")
+
 def run_test(
     cmd: str,
     file_content: str,
@@ -103,14 +109,16 @@ def run_test(
     output, exit_code = execute_command(cmd)
 
     if exit_code != 0:
-        handle_res = handle_errors(
+        all_errors_ignored = handle_errors(
             output,
             error_regex,
             ignored_errors,
-            file_content,
-            file_path
         )
-        return False, handle_res
+        
+        if not all_errors_ignored:
+            print_file(file_content, file_path)
+
+        return False, all_errors_ignored
     return True, True
 
 def main() -> None:
