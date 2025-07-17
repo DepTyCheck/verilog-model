@@ -9,6 +9,9 @@ from handle_errors import handle_errors
 from ignored_errors_list import IgnoredErrorsList
 from collections import Counter
 
+COMMAND_TIMEOUT_MINUTES = 7
+COMMAND_TIMEOUT_SECONDS = COMMAND_TIMEOUT_MINUTES*60
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Run analysis and simulation tests over generated modules."
@@ -48,11 +51,15 @@ def execute_command(cmd: str) -> tuple[str, int]:
             cmd,
             shell=True,
             capture_output=True,
-            text=True
+            text=True,
+            timeout=COMMAND_TIMEOUT_SECONDS
         )
         output = result.stdout + result.stderr
         print(f"Exit code: {result.returncode}. Output:\n{output}")
         return output, result.returncode
+    except subprocess.TimeoutExpired as timeout_error:
+        print(f"Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}")
+        return f"Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}", 1
     except Exception as error:
         print(f"Command execution failed: {error}")
         return str(error), 1
