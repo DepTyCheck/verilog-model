@@ -30,6 +30,7 @@ env:
   GENERATION_DIR: 'generated-modules'
   BUILD_DIR: '.build'
   PACKAGE_NAME: verilog-model
+  ERROR_DISTANCES_IMG: error_distances.png
 
 jobs:
 
@@ -415,7 +416,7 @@ jobs:
       - name: Print version
         run: ${{ matrix.tool.version }}
       - name: Install runner deps
-        run: sudo apt install -y python3 python3-pip
+        run: sudo apt install -y bc python3 python3-pip python3-matplotlib python3-sklearn python3-numpy
       - name: Run
         run : |
           set +e
@@ -426,12 +427,19 @@ jobs:
             --tool-error-regex "${{ matrix.tool.error_regex }}" \
             --sim-cmd "${{ matrix.tool.sim_cmd }}" \
             --sim-error-regex "${{ matrix.tool.sim_error_regex }}" \
-            --errors-file ".github/workflows/error-patterns/${{ matrix.tool.path }}-ignored-errors.txt"
+            --errors-file ".github/workflows/error-patterns/${{ matrix.tool.path }}-ignored-errors.txt" \
+            --error-distances-img "$ERROR_DISTANCES_IMG"
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then
                 exit 1
           fi
+      - name: Upload error distances artifact
+        if: always() && hashFiles('error_distances.png') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: error-distances-${{ matrix.tool.name }}
+          path: ${{ env.ERROR_DISTANCES_IMG }}
 
   create-issue-on-failure:
     name: Create an issue on failure
