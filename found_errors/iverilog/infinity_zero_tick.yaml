@@ -1,3 +1,4 @@
+stage: simulation
 short_desc: The first simulation tick runs indefinitely
 tool: iverilog
 id: infinity_zero_tick

@@ -20,6 +20,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 9805389099535758122,11656690212121374065\n\nmodule pwamcpunge\n  ( output bit [3:0] yylmdiec\n  , output real b [3:4]\n  , output bit [1:4] xkmgn\n  , output bit [4:0] fld\n  , input logic taqfhggt [3:1][1:4]\n  , input wire hm [3:2]\n  );\n  \n  \n  not pssd(yylmdiec, yylmdiec);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign fld = 'b10001;\n  assign b = '{'b0,'bx};\n  assign xkmgn = 'b0111;\nendmodule: pwamcpunge\n\nmodule jfliepplh\n  (output logic [1:1] whoywxhzh, output logic [0:1][0:3] dz, output uwire pm [2:0][0:3], output logic qfykkdy [3:2]);\n  \n  \n  nand tl(euidwkrlpl, idgw, nfwo);\n  and ihsncrglpm(xyk, xyk, euidwkrlpl);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign nfwo = 'b0;\n  assign idgw = 'b1;\n  assign qfykkdy = '{'bx,'b1};\n  assign dz = 'bzzx1zz1z;\n  assign xyk = 'b0;\n  assign xyk = 'b0;\n  assign xyk = 'bz;\nendmodule: jfliepplh\n\nmodule slmdxhpsir\n  ( output bit [4:2] ffeziq [0:0]\n  , input bit [2:4] b [1:1]\n  , input logic [1:3][1:1] hacbtll\n  , input logic [4:2] ngjmnvtkzx [0:2]\n  , input integer xi [1:2][0:0]\n  );\n  \n  \n  nand epcoibz(fjrbwrhbj, alnqbdq, lfyk);\n  nand ysyr(em, xfyxjybzr, fjrbwrhbj);\n  \n  // Top inputs -> top outputs assigns\n  assign ffeziq = b;\n  \n  // Assigns\n  assign lfyk = 'bx;\n  assign alnqbdq = 'b0;\n  assign fjrbwrhbj = 'b0;\n  assign fjrbwrhbj = 'bx;\nendmodule: slmdxhpsir\n\nmodule ptfqv\n  (output wire uvgwd [4:1], output bit [1:2][3:4][2:4] qbj, output logic [3:4] ybmjrducq, input integer mhhd);\n  \n  uwire bdizhyz [2:0][0:3];\n  logic muo [3:2];\n  \n  jfliepplh fwbn(.whoywxhzh(f), .dz(xwgcbuc), .pm(bdizhyz), .qfykkdy(muo));\n  \n  // Top inputs -> top outputs assigns\n  assign ybmjrducq = mhhd;\n  \n  // Assigns\n  assign uvgwd = '{'b0,'b1,'b0,'b0};\n  assign qbj = 'b101000010000;\n  assign xwgcbuc = 'b0xxxz1zz;\n  assign xwgcbuc = 'b10x1z01x;\nendmodule: ptfqv\n\n\n\n// Seed after: 9086973419989400924,11656690212121374065\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -46,9 +47,11 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module pauht\n  ( output supply1 logic [2:1][4:3][4:4] wheupuag [3:1][4:3][2:0][0:1]\n  , output integer bfcpcps [1:2]\n  , output bit [1:0][4:4][3:4][1:0] nm\n  , output triand logic [4:0][4:3] jvlvzxp [0:1][4:4][2:2][4:1]\n  , input wor logic [1:2][0:0][4:0][2:3] nfywtz [3:0]\n  , input shortreal emg\n  , input byte dy\n  );\n  \n  \n  not rrtzpp(nm, xewuwwev);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign bfcpcps = '{'b0,'b1};\n  assign xewuwwev = 'b0;\n  assign wheupuag = '{'{'{'{'bz,'b0},'{'bz,'bz},'{'b1,'bz}},'{'{'bz,'b1},'{'bx,'b0},'{'b0,'b0}}},'{'{'{'bx,'bz},'{'b0,'b1},'{'bz,'bx}},'{'{'b0,'b1},'{'bx,'b0},'{'b1,'b1}}},'{'{'{'bx,'b0},'{'bz,'bz},'{'bx,'b0}},'{'{'bz,'b0},'{'b0,'b1},'{'bz,'b0}}}};\n  assign jvlvzxp = '{'{'{'{'bx,'bz,'b0,'bz}}},'{'{'{'b1,'b0,'bx,'b0}}}};\n  \n  // Multi-driven assigns\nendmodule: pauht\n\nmodule sjmhw\n  (input supply1 logic [0:3][1:2] svkeknmyib [4:3][3:2], input bit [1:2][3:0][2:3] ohyhcc);\n  \n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  \n  // Multi-driven assigns\n  assign svkeknmyib = '{'{'b0,'bx},'{'b1,'bx}};\nendmodule: sjmhw\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
+    "stage": "syntesis",
     "tool": "iverilog",
     "id": "errors_in_port_declarations",
     "title": "Errors in port declarations",
@@ -63,6 +66,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 14860280421552192959,5268399088297407135\n\nmodule i\n( output trior logic [2:2][0:3] cat [0:0][4:3][1:3]\n, output trireg logic [2:0][3:4][3:4] rxidsk [4:0][2:0][2:4]\n, input logic j [4:0]\n, input uwire logic ab [3:1][1:0][2:1][1:0]\n, input tri0 logic [3:1][4:2][2:1] fsrhyzkckp\n, input wire logic [4:4][3:3][1:1] no [2:2][0:2][3:1]\n);\n\n// Top inputs -> top outputs assigns\n// Assigns\nendmodule: i\n\nmodule gjynarp\n( output trior logic [1:2][3:3] atxmtgmmlo\n, output bit wdwxkg [4:1][1:3]\n, output wand logic [3:1][3:3] b [3:1][2:1][3:2][1:2]\n, output logic [4:1] rrgtvsi [1:3]\n, input supply0 logic [0:1][3:4][0:1] wjhyuvwr [0:0][0:1][2:0]\n);\n\nlogic nogr [4:0];\nuwire logic mgqgz [3:1][1:0][2:1][1:0];\nwire logic [4:4][3:3][1:1] eebismoo [2:2][0:2][3:1];\ntrior logic [2:2][0:3] zdhbl [0:0][4:3][1:3];\ntrireg logic [2:0][3:4][3:4] wvdcxyzi [4:0][2:0][2:4];\nxor ch(dgpbeaju, kypo, atxmtgmmlo);\n\n// warning: implicit conversion of port connection expands from 1 to 12 bits\n// logic dgpbeaju -> trireg logic [2:0][3:4][3:4] dgpbeaju [4:0][2:0][2:4]\n\nnot s(xlvmhkdzsz, atxmtgmmlo);\n// warning: implicit conversion of port connection expands from 1 to 4 bits\n// logic xlvmhkdzsz -> trior logic [2:2][0:3] xlvmhkdzsz [0:0][4:3][1:3]\n\nand l(atxmtgmmlo, atxmtgmmlo, shqih);\ni vpctmycakj(.cat(zdhbl), .rxidsk(wvdcxyzi), .j(nogr), .ab(mgqgz), .fsrhyzkckp(wnkwajvykw), .no(eebismoo));\n// warning: implicit conversion of port connection truncates from 4 to 1 bits\n// trior logic [2:2][0:3] cat [0:0][4:3][1:3] -> wire logic zdhbl\n//\n// warning: implicit conversion of port connection truncates from 12 to 1 bits\n// trireg logic [2:0][3:4][3:4] rxidsk [4:0][2:0][2:4] -> wire logic wvdcxyzi\n//\n\n// warning: implicit conversion of port connection expands from 1 to 18 bits\n// logic wnkwajvykw -> tri0 logic [3:1][4:2][2:1] fsrhyzkckp\n\n// Top inputs -> top outputs assigns\n// Assigns\nendmodule: gjynarp\n\nmodule bbsg\n( output logic [0:0] hbyvofmb\n, output supply1 logic [0:3] novdqsyao [3:3][2:1][4:2]\n, output trior logic [3:0][4:4][2:4] coawnlv [1:3]\n, output byte dd [2:0][2:2][0:3]\n, input bit [4:0] opobrcyehd\n);\n\n// Top inputs -> top outputs assigns\nassign hbyvofmb = opobrcyehd;\n\n// Assigns\nendmodule: bbsg  \n\nmodule v\n(input logic jpqwp [1:4], input reg [4:4] ftfbvveygw [0:2], input trior logic [3:3][3:1][2:2][3:3] vzx [4:1][0:4][1:2][4:0]);\n\nxor py(erhet, zjeir, dmvei);\nnot zgc(be, rqivv);\nand dhdxkdpo(utya, be, bbruvkfdgq);\nnot qxbzztzgis(dmvei, cd);\n\n// Top inputs -> top outputs assigns\n// Assigns\nendmodule: v\n\n// Seed after: 7080572195401457244,5268399088297407135\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -81,9 +85,11 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module tfft\n  ( output logic eiezecp\n  , output uwire kjagrfjq\n  , output int jbfwqxka\n  , output int ouafrjd\n  , input int wx\n  , input real bftmsuv\n  , input wire i\n  , input integer gymw\n  );\n  \n  \n  assign eiezecp = wx;\n  assign kjagrfjq = gymw;\n  assign jbfwqxka = wx;\n  assign ouafrjd = i;\nendmodule: tfft\n\nmodule wecazlcleg\n  (output integer yqnzybrx, output uwire xp, input int pypt, input int jqujyzt, input integer g);\n  \n  or rg(yqnzybrx, pypt, g);\n  \n  assign xp = g;\nendmodule: wecazlcleg\n\nmodule qzczsyeanw\n  (input real ov, input integer dftixk, input int lvxtzb, input uwire qu);\n  \nendmodule: qzczsyeanw\n"
       }
     ],
+    "issue_status": "reported",
     "issue_link": "https://github.com/steveicarus/iverilog/issues/1221"
   },
   {
+    "stage": "syntesis",
     "tool": "iverilog",
     "id": "failed_assertion_prts_unpacked_dimensions",
     "title": "failed assertion prts[0]->unpacked_dimensions()==0",
@@ -114,7 +120,27 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 13965131667319788158,14865787408525461641\n\nmodule nh\n  (output bit [4:2] socv, input integer hruyko [3:2], input logic [0:3][1:3][4:1] hguwg, input wire vyjh [0:3][2:0]);\n  \n  \n  not jabsepvph(jjivwpnzr, kpfl);\n  \n  and zax(lumokkrv, socv, socv);\n  // warning: implicit conversion of port connection truncates from 3 to 1 bits\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  //   bit [4:2] socv -> logic socv\n  //\n  // warning: implicit conversion of port connection truncates from 3 to 1 bits\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  //   bit [4:2] socv -> logic socv\n  \n  not ttq(socv, socv);\n  // warning: implicit conversion of port connection expands from 1 to 3 bits\n  // warning: implicit conversion changes possible bit states from 4-state to 2-state\n  //   logic socv -> bit [4:2] socv\n  //\n  // warning: implicit conversion of port connection truncates from 3 to 1 bits\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  //   bit [4:2] socv -> logic socv\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign kpfl = 'bz;\n  assign lumokkrv = 'b1;\n  assign vyjh = '{'{'b1,'b0,'b1},'{'b0,'b1,'b1},'{'b1,'b1,'b1},'{'b0,'b1,'b0}};\nendmodule: nh\n\nmodule jvrbtyy\n  (input uwire p [0:2][1:4], input integer mvuekky [2:1][1:4], input logic [4:1] bklnx);\n  \n  integer ljztmasvs [3:2];\n  wire bxqdrhkv [0:3][2:0];\n  integer xhlv [3:2];\n  wire a [0:3][2:0];\n  \n  nh kacbezspy(.socv(su), .hruyko(ljztmasvs), .hguwg(xa), .vyjh(bxqdrhkv));\n  // warning: implicit conversion of port connection truncates from 3 to 1 bits\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  //   bit [4:2] socv -> wire su\n  //\n  // warning: implicit conversion of port connection expands from 1 to 48 bits\n  //   wire xa -> logic [0:3][1:3][4:1] hguwg\n  \n  nh valll(.socv(xa), .hruyko(xhlv), .hguwg(yjnlfkl), .vyjh(a));\n  // warning: implicit conversion of port connection truncates from 3 to 1 bits\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  //   bit [4:2] socv -> wire xa\n  //\n  // warning: implicit conversion of port connection expands from 1 to 48 bits\n  //   wire yjnlfkl -> logic [0:3][1:3][4:1] hguwg\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign xhlv = '{'b0,'b0};\n  assign ljztmasvs = '{'b0,'b1};\nendmodule: jvrbtyy\n\nmodule xen\n  (output uwire ffokjy [4:0], output logic [0:0][2:4] qtjgxxnhd, input bit [4:3] ykjtxamk, input logic mcobdgrcf [1:4]);\n  \n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign ffokjy = '{'b1,'b0,'b0,'b0,'b1};\n  assign qtjgxxnhd = 'b10x;\nendmodule: xen\n\nmodule frxmmsmuij\n  (output logic [3:4] prmyf, input integer llvrlzdvv, input wire ezesnh);\n  \n  logic rywnjsg [1:4];\n  uwire cvzn [4:0];\n  \n  xor pojahneyg(gnkyfiqf, vybiwu, prmyf);\n  // warning: implicit conversion of port connection truncates from 2 to 1 bits\n  //   logic [3:4] prmyf -> logic prmyf\n  \n  xen r(.ffokjy(cvzn), .qtjgxxnhd(prmyf), .ykjtxamk(mquwxsnpy), .mcobdgrcf(rywnjsg));\n  // warning: implicit conversion of port connection truncates from 3 to 2 bits\n  //   logic [0:0][2:4] qtjgxxnhd -> logic [3:4] prmyf\n  //\n  // warning: implicit conversion of port connection expands from 1 to 2 bits\n  // warning: implicit conversion changes possible bit states from 4-state to 2-state\n  //   wire mquwxsnpy -> bit [4:3] ykjtxamk\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign mquwxsnpy = 'b10;\n  assign rywnjsg = '{'bz,'bz,'bx,'b1};\n  assign vybiwu = 'bz;\nendmodule: frxmmsmuij\n\n\n// Seed after: 8890095644694070872,14865787408525461641\n"
       }
     ],
+    "issue_status": "reported",
     "issue_link": "https://github.com/steveicarus/iverilog/issues/1231"
+  },
+  {
+    "stage": "syntesis",
+    "tool": "iverilog",
+    "id": "failed_to_elaborate_primitive_output_expression",
+    "title": "Failed to elaborate primitive output expression",
+    "short_desc": null,
+    "examples": [
+      {
+        "id": "failed_to_elaborate_primitive_output_expression_v1",
+        "first_found": "2025-07-19T00:00:00.000Z",
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": "error: Failed to elaborate primitive output expression omuyouc.xyanlrg.\n",
+        "full_example": "module omuyouc\n  ( output tri1 logic [0:1][0:3] j [0:3]\n  , output reg otcyh [4:3]\n  , output real nw\n  , output integer xyanlrg\n  , input trior logic [0:0] cuo [1:3][4:3]\n  );\n  \n  \n  not daf(m, xyanlrg);\n  \n  not pgxvlfxwmv(xyanlrg, nw);\n  \n  not ivpogsdaah(nw, nw);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  \n  // Multi-driven assigns\n  assign cuo = '{'{'bz,'bx},'{'b0,'bz},'{'b0,'bx}};\n  assign j = '{'bz,'b0,'bx,'b1};\nendmodule: omuyouc\n"
+      }
+    ],
+    "issue_status": null,
+    "issue_link": null
   },
   {
     "stage": "syntesis",
@@ -132,9 +158,11 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 13146146607886611362,17421924455848648743\n\nmodule hjf\n  (output wire lig, output real mhuyoy [4:0][2:4], output real irrpjsuiui [0:0], output logic [0:1] xylvvl [2:1]);\n  \n  // Top inputs -> top outputs assigs\n  \n  // Assigns\n  assign irrpjsuiui = '{'b1};\nendmodule: hjf\n\n// Seed after: 14170142877157805317,17421924455848648743\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
+    "stage": "simulation",
     "tool": "iverilog",
     "id": "infinity_zero_tick",
     "title": "Infinity zero tick",
@@ -149,6 +177,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": null
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -167,6 +196,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 14860280421552192959,5268399088297407135\n\nmodule i\n( output trior logic [2:2][0:3] cat [0:0][4:3][1:3]\n, output trireg logic [2:0][3:4][3:4] rxidsk [4:0][2:0][2:4]\n, input logic j [4:0]\n, input uwire logic ab [3:1][1:0][2:1][1:0]\n, input tri0 logic [3:1][4:2][2:1] fsrhyzkckp\n, input wire logic [4:4][3:3][1:1] no [2:2][0:2][3:1]\n);\n\n// Top inputs -> top outputs assigns\n// Assigns\nendmodule: i\n\nmodule gjynarp\n( output trior logic [1:2][3:3] atxmtgmmlo\n, output bit wdwxkg [4:1][1:3]\n, output wand logic [3:1][3:3] b [3:1][2:1][3:2][1:2]\n, output logic [4:1] rrgtvsi [1:3]\n, input supply0 logic [0:1][3:4][0:1] wjhyuvwr [0:0][0:1][2:0]\n);\n\nlogic nogr [4:0];\nuwire logic mgqgz [3:1][1:0][2:1][1:0];\nwire logic [4:4][3:3][1:1] eebismoo [2:2][0:2][3:1];\ntrior logic [2:2][0:3] zdhbl [0:0][4:3][1:3];\ntrireg logic [2:0][3:4][3:4] wvdcxyzi [4:0][2:0][2:4];\nxor ch(dgpbeaju, kypo, atxmtgmmlo);\n\n// warning: implicit conversion of port connection expands from 1 to 12 bits\n// logic dgpbeaju -> trireg logic [2:0][3:4][3:4] dgpbeaju [4:0][2:0][2:4]\n\nnot s(xlvmhkdzsz, atxmtgmmlo);\n// warning: implicit conversion of port connection expands from 1 to 4 bits\n// logic xlvmhkdzsz -> trior logic [2:2][0:3] xlvmhkdzsz [0:0][4:3][1:3]\n\nand l(atxmtgmmlo, atxmtgmmlo, shqih);\ni vpctmycakj(.cat(zdhbl), .rxidsk(wvdcxyzi), .j(nogr), .ab(mgqgz), .fsrhyzkckp(wnkwajvykw), .no(eebismoo));\n// warning: implicit conversion of port connection truncates from 4 to 1 bits\n// trior logic [2:2][0:3] cat [0:0][4:3][1:3] -> wire logic zdhbl\n//\n// warning: implicit conversion of port connection truncates from 12 to 1 bits\n// trireg logic [2:0][3:4][3:4] rxidsk [4:0][2:0][2:4] -> wire logic wvdcxyzi\n//\n\n// warning: implicit conversion of port connection expands from 1 to 18 bits\n// logic wnkwajvykw -> tri0 logic [3:1][4:2][2:1] fsrhyzkckp\n\n// Top inputs -> top outputs assigns\n// Assigns\nendmodule: gjynarp\n\nmodule bbsg\n( output logic [0:0] hbyvofmb\n, output supply1 logic [0:3] novdqsyao [3:3][2:1][4:2]\n, output trior logic [3:0][4:4][2:4] coawnlv [1:3]\n, output byte dd [2:0][2:2][0:3]\n, input bit [4:0] opobrcyehd\n);\n\n// Top inputs -> top outputs assigns\nassign hbyvofmb = opobrcyehd;\n\n// Assigns\nendmodule: bbsg  \n\nmodule v\n(input logic jpqwp [1:4], input reg [4:4] ftfbvveygw [0:2], input trior logic [3:3][3:1][2:2][3:3] vzx [4:1][0:4][1:2][4:0]);\n\nxor py(erhet, zjeir, dmvei);\nnot zgc(be, rqivv);\nand dhdxkdpo(utya, be, bbruvkfdgq);\nnot qxbzztzgis(dmvei, cd);\n\n// Top inputs -> top outputs assigns\n// Assigns\nendmodule: v\n\n// Seed after: 7080572195401457244,5268399088297407135\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -193,6 +223,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 14915608053220662598,14732534206656503631\n\nmodule dezagwgu\n  (output uwire llvafqeyiy, output int djvbra [0:0]);\n  \n  \n  not lji(oialfexbh, jrvm);\n  not nfyvtut(llvafqeyiy, oialfexbh);\n  \n  // Top inputs -> top outputs assigs\n  \n  // Assigns\n  assign djvbra = '{'b1};\nendmodule: dezagwgu\n\nmodule jllbeivu\n  ( output int gwxutaovkx [1:4]\n  , output logic [4:2][4:0] jbmh\n  , output uwire mgqmszmm [2:0]\n  , input logic [1:0][1:1] oftohzel\n  , input bit zalqdg\n  , input int s\n  );\n  \n  int mhvp [0:0];\n  \n  dezagwgu yth(.llvafqeyiy(ncfjx), .djvbra(mhvp));\n  \n  // Top inputs -> top outputs assigs\n  \n  // Assigns\nendmodule: jllbeivu\n\nmodule szrueludz\n  ( output bit [2:2] iz\n  , output logic jfqncy\n  , output wire x\n  , output bit [3:3] zp\n  , input logic [3:0] fbevawcvjt [2:2]\n  , input logic [1:4] jnxzeju\n  );\n  \n  int udl [0:0];\n  int nmhdnefld [0:0];\n  int pghd [0:0];\n  \n  dezagwgu wvdcim(.llvafqeyiy(zwm), .djvbra(udl));\n  dezagwgu qoyl(.llvafqeyiy(zp), .djvbra(nmhdnefld));\n  dezagwgu liiof(.llvafqeyiy(dtvtqsfypa), .djvbra(pghd));\n  \n  // Top inputs -> top outputs assigs\n  \n  // Assigns\n  assign jfqncy = 'bx;\n  assign x = 'b1;\nendmodule: szrueludz\n\nmodule hgcdhhv\n  ( output wire ms\n  , output bit [0:2] zu [2:4]\n  , output logic [4:2] jehm\n  , input logic [3:2] gpkbpevrrk\n  , input logic [1:3] lfbwc\n  , input uwire vgcqn\n  , input logic [1:3][3:0] fggkja\n  );\n  \n  int sytpgyhfuo [0:0];\n  \n  dezagwgu lwjribmyim(.llvafqeyiy(ms), .djvbra(sytpgyhfuo));\n  \n  // Top inputs -> top outputs assigs\n  \n  // Assigns\nendmodule: hgcdhhv\n\n// Seed after: 8189762551118901864,14732534206656503631\n"
       }
     ],
+    "issue_status": "reported",
     "issue_link": "https://github.com/steveicarus/iverilog/issues/1224"
   },
   {
@@ -227,6 +258,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 2706590906824897658,1821645297014569385\n\nmodule htgh\n  ( output bit [2:2] pf [2:0]\n  , output logic [1:2][4:2][2:3] kseakjaqge\n  , output logic [3:2] jbgep [0:2]\n  , input logic [1:0][0:2] modjhh\n  , input bit [0:3][4:4] bypta\n  , input logic [4:3] a [0:3]\n  );\n  \n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign pf = '{'b0,'b0,'b1};\nendmodule: htgh\n\nmodule pjunhle\n  (output int tez [4:1][3:2], output real h [0:0][4:4], output int tz, output bit [1:4] hqykveqbbw, input integer pbodvp [1:3]);\n  \n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\nendmodule: pjunhle\n\nmodule xkmwnqaduh\n  (output bit [2:3] a [3:2], output logic jvbuffuq [0:0], output uwire tmbz, output integer y);\n  \n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign y = 'b1;\n  assign tmbz = 'b0;\n  assign jvbuffuq = '{'bx};\n  assign a = '{'b10,'b11};\nendmodule: xkmwnqaduh\n\n\n\n// Seed after: 17951437587477541294,1821645297014569385\n"
       }
     ],
+    "issue_status": "reported",
     "issue_link": "https://github.com/steveicarus/iverilog/issues/1217"
   },
   {
@@ -245,6 +277,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module mbzhgmns\n  ( output integer zvqtocqjzz [1:1]\n  , output uwire jowbejdgpo\n  , input logic purq\n  , input logic [2:4] ycvsy\n  , input bit [3:3] moxbzqfhq\n  , input logic [3:0] iw\n  );\n  \n  or grrpeuzcx(rvhemuimn, purq, qmttde);\n  \nendmodule: mbzhgmns\n\nmodule cbac\n  (output logic u, output real shgfq);\n\n  or jqlavwrelr(cyjhwmr, cyjhwmr, y);\n  \nendmodule: cbac\n\nmodule lilblj\n  (output wire fj, output uwire oohqf [2:3], output bit [2:0] bkxlygvty, output integer zayn);\n\nendmodule: lilblj\n"
       }
     ],
+    "issue_status": "reported",
     "issue_link": "https://github.com/steveicarus/iverilog/issues/1213"
   },
   {
@@ -263,6 +296,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 14318809588400357211,13712862608348962075\n\nmodule bonufropgc\n  ( output bit haroct [1:2][2:1]\n  , output integer hlvvwzhwsh\n  , output logic y [2:1]\n  , input bit go\n  , input bit [2:2] vrqmu [1:0]\n  , input integer nffbpbbong [2:4]\n  , input bit [4:2][1:0] ec\n  );\n  \n  // Top inputs -> top outputs assigs\n  assign hlvvwzhwsh = ec;\n  \n  // Assigns\n  assign y = '{'b1,'bz};\nendmodule: bonufropgc\n\n// Seed after: 12068331556777782645,13712862608348962075\n"
       }
     ],
+    "issue_status": "reported",
     "issue_link": "https://github.com/steveicarus/iverilog/issues/1218"
   },
   {
@@ -289,6 +323,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": null
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -307,6 +342,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": null
       }
     ],
+    "issue_status": "reported",
     "issue_link": "https://github.com/steveicarus/iverilog/issues/1222"
   },
   {
@@ -333,6 +369,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module cnafaw\n  (output uwire taskuqsxv, output integer zekjov [1:0]);\n  \n  \n  and bdc(c, bcqyqlj, wuybdlhu);\n  not gygxf(avyao, hrylu);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign wuybdlhu = 'bx;\n  assign zekjov = '{'b0,'b0};\nendmodule: cnafaw\n\nmodule hkgmvffhr\n  (output logic gvxkrm [4:0][1:0], input bit [1:2] fmgalgfwvp, input real rhlumwdl, input bit [0:2] jttnkdthy);\n  \n  \n  not mwau(decl, rhlumwdl);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign decl = 'b1;\n  assign decl = 'bz;\n  assign decl = 'b0;\nendmodule: hkgmvffhr\n\nmodule nhezszy\n  ( output uwire qdjxxbbs [2:4]\n  , input bit [3:1] gfceainnht\n  , input bit [0:1][0:0] pbd\n  , input logic squnqm\n  , input integer uuooojb [0:1]\n  );\n  \n  logic u [4:0][1:0];\n  \n  not nsqzsbey(xlfloniydg, xlfloniydg);\n  hkgmvffhr haizuj(.gvxkrm(u), .fmgalgfwvp(zdqqzlc), .rhlumwdl(bzacszzvbl), .jttnkdthy(gfceainnht));\n  or oaeziv(bzacszzvbl, an, bzacszzvbl);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign an = 'bz;\n  assign an = 'b0;\n  assign an = 'bz;\n  assign zdqqzlc = 'b11;\n  assign an = 'bz;\n  assign qdjxxbbs = '{'b0,'b0,'b0};\n  assign bzacszzvbl = 'b1;\nendmodule: nhezszy\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -351,6 +388,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 2991302349595909584,17506386418243051159\n\nmodule hdjihl\n  (output real avk, output bit [4:2][4:2] ip);\n  \n  not ovszaxlkqx(avk, avk);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign ip = 'b111111000;\nendmodule: hdjihl\n\nmodule i\n  (output real olwf, output logic [3:3][0:4] ohxfehldp, output logic neoxdc, output logic dzubc [4:3]);\n  \n  or qpp(lfcda, kupiupc, olwf);\n  not bskm(olwf, lfcda);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign kupiupc = 'b0;\n  assign kupiupc = 'bz;\n  assign kupiupc = 'b1;\n  assign neoxdc = 'b0;\n  assign dzubc = '{'bx,'b0};\n  assign lfcda = 'bx;\n  assign lfcda = 'bz;\nendmodule: i\n\nmodule hvstjgbh\n  ( output bit dsbyqkh [3:3]\n  , output wire yvaxtf [2:4][3:4]\n  , output bit oklukbprx [1:1]\n  , output integer mwtyzpa\n  , input bit [0:1][4:2][0:4] etyzlq\n  , input logic [2:0][1:4] l\n  );\n  \n  logic evfo [4:3];\n  \n  not z(vwbnzzrzb, gngam);\n  i qorio(.olwf(ebknvanp), .ohxfehldp(eaqiogdm), .neoxdc(ckcgjhbpr), .dzubc(evfo));\n  xor saqwmazl(avpamusm, rvpf, jsnaswocy);\n  and dckfpbel(gngam, etyzlq, sdxqwlft);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign sdxqwlft = 'b1;\n  assign sdxqwlft = 'bz;\n  assign mwtyzpa = 'b1;\nendmodule: hvstjgbh\n\nmodule f\n  ( output integer qwuzpt\n  , output logic [0:1] ne [2:0]\n  , output bit [1:1] arynsmt\n  , output logic [3:0][2:3] jnsorqt\n  , input int wrf [1:2]\n  , input bit [4:2] da [0:0]\n  , input logic [4:4] pghlva\n  , input bit [0:1][2:0] kvsdzlkcvo\n  );\n\n  // Top inputs -> top outputs assigns\n  assign qwuzpt = kvsdzlkcvo;\n  \n  // Assigns\n  assign jnsorqt = 'b0x11xz11;\n  assign arynsmt = 'b1;\nendmodule: f\n\n// Seed after: 4036331525392959525,17506386418243051159\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -369,6 +407,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 14943627156215915369,13754077948813451937\n\nmodule ineevirhw\n  (output bit mzfelix, output integer yyajvllzvd, output real ip, input integer qhhgok [2:3]);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign yyajvllzvd = 'b0;\n  assign ip = 'bx;\nendmodule: ineevirhw\n\nmodule sipgjpjnb\n  (output real qqdzy, output logic sx, input bit [4:2] puw, input wire crse, input bit [1:4][4:0][0:0] iqt);\n  \n  integer likoclv [2:3];\n  \n  not alodqkmzgw(vb, q);\n  ineevirhw kjfgzk(.mzfelix(lnalgpgi), .yyajvllzvd(c), .ip(zstueif), .qhhgok(likoclv));\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign q = 'b1;\n  assign q = 'b0;\n  assign likoclv = '{'b0,'b0};\n  assign q = 'b1;\n  assign qqdzy = 'b0;\n  assign sx = 'bx;\n  assign vb = 'bx;\n  assign c = 'b0;\nendmodule: sipgjpjnb\n\nmodule d\n  (output bit [4:4] ojrqrukvrp [3:0], input wire spj, input integer qwpd, input logic [2:3][2:4] withf, input bit [1:1][0:4] w);\n  \n  \n  and ggajck(zouywlo, yw, qncj);\n  sipgjpjnb ihijdqc(.qqdzy(yw), .sx(keafsjan), .puw(keafsjan), .crse(lfzqxyi), .iqt(vf));\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign lfzqxyi = 'b1;\n  assign lfzqxyi = 'b1;\n  assign vf = 'b10111101100101001010;\n  assign qncj = 'bz;\nendmodule: d\n\n// Seed after: 13158812625808371457,13754077948813451937\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -387,6 +426,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 12155394080032148100,2426731264514140405\n\nmodule cjcbbn\n  ( output logic ongg\n  , output wire xzkunvy [2:4]\n  , output real yltdauz [4:3][2:4]\n  , input bit [2:4] hfkcmovudd\n  , input bit [4:2] pfqdfc [2:1]\n  );\n  \n  and eglowkxpgw(ongg, dp, hfkcmovudd);\n  // warning: implicit conversion of port connection truncates from 3 to 1 bits\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  //   bit [2:4] hfkcmovudd -> logic hfkcmovudd\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign dp = 'bx;\n  assign xzkunvy = '{'b1,'b1,'b0};\n  assign xzkunvy = '{'b0,'b0,'b1};\n  assign yltdauz = '{'{'b0,'b1,'bz},'{'bx,'b1,'bx}};\nendmodule: cjcbbn\n\nmodule y\n  ( output bit [0:3] iodmfscj\n  , output bit [1:4] hgdmtyhad [3:3]\n  , input integer njiobdayo\n  , input real ph\n  , input bit [0:4] taagvcaj\n  , input bit [3:0][3:1] nwswsdfli\n  );\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign iodmfscj = 'b0111;\n  assign hgdmtyhad = '{'b0001};\nendmodule: y\n\nmodule aa\n  ( output logic [1:2][3:3] l\n  , output bit [0:3][3:4][4:0] v\n  , output wire vpikzldy\n  , output logic [0:0] qwtmzuhi [3:0]\n  , input logic [0:2] jpxlkbv [0:4]\n  , input logic [0:1][4:2][2:1] sewbhdsu\n  , input wire fhcbpa [4:1][4:3]\n  );\n  \n  or rlzl(tkuti, dcmmofz, shric);\n  \n  and ewniwtur(fzmmwmzg, xl, fzmmwmzg);\n  \n  and wxuxnoai(xl, tkuti, xl);\n  \n  // Top inputs -> top outputs assigns\n  assign v = sewbhdsu;\n  \n  // Assigns\n  assign shric = 'b0;\n  assign dcmmofz = 'bz;\n  assign l = 'b1x;\n  assign fhcbpa = '{'{'b0,'b0},'{'b1,'b1},'{'b0,'b0},'{'b1,'b0}};\nendmodule: aa\n\nmodule isknojrfq\n  (output real fvmu);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign fvmu = 'b0;\nendmodule: isknojrfq\n\n// Seed after: 18199170163325466416,2426731264514140405\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -405,6 +445,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module htlcim\n  (output triand logic g [3:3][1:2], output logic [1:4] zksvacmlv, output reg [2:3][2:1][4:4] pb);\n  \n  and retsvgumxk(zksvacmlv, vbkonmvke, vbkonmvke);\n  \n  xor tzfgmhfdi(vbkonmvke, vqxtghdfa, bahed);\n  \n  or tkehq(nxoxzhxcp, vbkonmvke, nxoxzhxcp);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign pb = 'bx;\n  assign vqxtghdfa = 'b0;\n  assign bahed = 'bx;\n  assign g = '{'{'b0,'bx}};\n  \n  // Multi-driven assigns\n  assign g = '{'{'bx,'bx}};\n  assign g = '{'{'b0,'b0}};\nendmodule: htlcim\n\nmodule j\n  ( output bit [0:0] fwtd [0:0]\n  , output uwire logic [4:1][1:1][4:1] snzxazx [0:1][4:2]\n  , output shortint rrj\n  , input reg [1:1][1:2] ymqvoispex\n  , input logic wbnbqckbgo [4:3]\n  , input reg naa [3:4]\n  );\n  \n  not tflzftcu(snhgmy, spafcoxmp);\n  \n  not zrezvwoanv(epp, udzuga);\n  \n  not cr(spafcoxmp, efpz);\n  \n  and sjusbng(udzuga, epp, u);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign rrj = 'b0;\n  \n  // Multi-driven assigns\nendmodule: j\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -423,6 +464,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 5709767390009413768,8352879869878179961\n\nmodule jn\n  (output bit [1:0][2:0] aubiwpou, input uwire jxhofdsh [1:1], input logic gw [1:4][4:2], input wire drc, input bit [4:2][2:2] kgpfjywh);\n  \n  and kzttv(wbnfem, wbnfem, ffuaxvnksu);\n  \n  // Top inputs -> top outputs assigns\n  assign aubiwpou = kgpfjywh;\n  \n  // Assigns\n  assign ffuaxvnksu = 'bz;\n  assign drc = 'b1;\nendmodule: jn\n\nmodule bi\n  ( output wire g [0:0][2:2]\n  , output bit [2:0][3:2] szpm\n  , output bit [3:0] uyvhpsnvf\n  , output uwire tu [3:4]\n  , input bit [0:1][1:2] ozyamnzl\n  , input bit [3:3] hwdlgj [4:2]\n  , input real ohzkfeqe\n  );\n  \n  // Top inputs -> top outputs assigns\n  assign uyvhpsnvf = ohzkfeqe;\n  \n  // Assigns\n  assign tu = '{'b0,'b0};\nendmodule: bi\n\nmodule thapdh\n  ();\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\nendmodule: thapdh\n\nmodule nyihp\n  (input bit [2:2][1:1][3:3] jcbanqguua, input logic y [4:1], input logic [1:0] hmrdiw [3:4], input uwire vud [4:3][2:4]);\n    \n  or doyri(wbyuob, wbyuob, krufjuzxzh);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\nendmodule: nyihp\n\n// Seed after: 14467438248031629679,8352879869878179961\n"
       }
     ],
+    "issue_status": "reported",
     "issue_link": "https://github.com/verilator/verilator/issues/5875"
   },
   {
@@ -441,6 +483,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module mzxezxdaal\n  (input real eishvgggc [4:4], input logic [2:4] qj, input bit [4:3][3:3] vxnszjw);\n  \n  and hoho(kwqhzrlhiq, kwqhzrlhiq, qj);\n  not veuj(weqyzpy, rkjj);\n  or oyj(vetraym, wab, uuouiikc);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign rkjj = 'b1;\nendmodule: mzxezxdaal\n\nmodule pljholvq\n  (output bit [0:0] e [1:3]);\n\n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign e = '{'b0,'b1,'b1};\nendmodule: pljholvq\n\nmodule cwvvyg\n  (output logic [4:4][0:0] lyvgarhcl, output integer mzncji);\n  \n  real jlptusin [4:4];\n  \n  nand xolueipow(lyvgarhcl, pyrdsb, lyvgarhcl);\n  mzxezxdaal lulvrcwfzj(.eishvgggc(jlptusin), .qj(ostshtea), .vxnszjw(lyvgarhcl));\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign pyrdsb = 'bz;\n  assign ostshtea = 'bx1z;\n  assign ostshtea = 'bxx0;\n  assign pyrdsb = 'bx;\n  assign pyrdsb = 'b0;\n  assign ostshtea = 'bz0x;\n  assign jlptusin = '{'b1};\n  assign mzncji = 'b1;\nendmodule: cwvvyg\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -459,6 +502,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module tdclodrzjb\n  ( output bit oyyxqhvbmj\n  , output tri1 logic [1:4][2:3][3:2][0:1] vmt [3:3]\n  , input int vdm\n  , input logic [0:2][3:2] bc [3:3]\n  , input logic [1:4][0:2] waqzr [3:0]\n  );\n\n  or yqdffodp(ovyizzu, d, d);\n  not zcmlhvevv(d, qqiy);\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: tdclodrzjb\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -477,6 +521,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module bohobpsjzp\n  (output int offd, output int kvqorcm, output wire jy, input int pwih, input int iccv, input logic gjdhea, input real ayhpgynurl);\n  \n  assign offd = pwih;\n  assign kvqorcm = iccv;\n  assign jy = ayhpgynurl;\nendmodule: bohobpsjzp\n\nmodule pbibmboprf\n  (output int egvndv, output integer tlxvyasrr, input bit kezyfqh, input uwire awmkkjzvik, input real kmf, input int yeu);\n  \n  and pwtdahni(euw, kmf, awmkkjzvik);\n  \n  assign egvndv = yeu;\n  assign tlxvyasrr = kezyfqh;\nendmodule: pbibmboprf\n"
       }
     ],
+    "issue_status": "reported",
     "issue_link": "https://github.com/verilator/verilator/issues/5876"
   },
   {
@@ -495,6 +540,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 17893618609510015087,916015381980724009\n\nmodule ejs\n  (output logic [3:2] tbbwfhcm, output bit [0:3] dhgx [0:2], output real efze, output bit mzvgqebnfz [2:4], input integer zntgawcih);\n\n  not gypktezccv(pblzns, zntgawcih);\n  // warning: implicit conversion of port connection truncates from 32 to 1 bits\n  // warning: implicit conversion changes signedness from signed to unsigned\n  // integer zntgawcih -> logic zntgawcih\n\n  not losa(tvrywttluy, pblzns);\n\n  not cksfqvmh(efze, wwwdnqtzp);\n  // warning: implicit conversion of port connection expands from 1 to 64 bits\n  // warning: implicit conversion changes signedness from unsigned to signed\n  // warning: implicit conversion changes possible bit states from 4-state to 2-state\n  // logic efze -> real efze\n\n  // Top inputs -> top outputs assigns\n\n  assign tbbwfhcm = zntgawcih;\n\n  // Assigns\n  assign wwwdnqtzp = 'bx;\n  assign wwwdnqtzp = 'b0;\n  assign wwwdnqtzp = 'bz;\n  assign tvrywttluy = 'b1;\n  assign tvrywttluy = 'b1;\nendmodule: ejs\n\nmodule huey\n  (output int dspea, input bit [3:2] rchwcc);\n\n  and igd(dspea, hjbl, teiqhcpbq);\n  // warning: implicit conversion of port connection expands from 1 to 32 bits\n  // warning: implicit conversion changes signedness from unsigned to signed\n  // warning: implicit conversion changes possible bit states from 4-state to 2-state\n  // logic dspea -> int dspea\n\n  nand kwmqfivl(sfuzxjqtm, tow, byfybrwlq);\n\n  nand looi(byfybrwlq, byfybrwlq, sfuzxjqtm);\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: huey\n\nmodule zjnbm\n  ( output int jfc\n  , output bit [0:0] wxmxvt [4:1]\n  , input logic [2:0][3:1] zjgpsfuzhy\n  , input logic [0:2] m [0:4]\n  , input logic [2:3] tixmxyc [0:3]\n  );\n\n  bit [0:3] i [0:2];\n\n  bit xadilddcr [2:4];\n\n  xor mkic(std, tgt, svlopbk);\n\n  ejs bgycnj(.tbbwfhcm(tgt), .dhgx(i), .efze(vbzdcreye), .mzvgqebnfz(xadilddcr), .zntgawcih(tgt));\n  // warning: implicit conversion of port connection truncates from 2 to 1 bits\n  // logic [3:2] tbbwfhcm -> wire tgt\n  //\n  // warning: implicit conversion of port connection truncates from 64 to 1 bits\n  // warning: implicit conversion changes signedness from signed to unsigned\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  // real efze -> wire vbzdcreye\n  //\n  // warning: implicit conversion of port connection expands from 1 to 32 bits\n  // warning: implicit conversion changes signedness from unsigned to signed\n  // wire tgt -> integer zntgawcih\n\n  and jlbmypbta(rl, ussdgyuxum, vbzdcreye);\n\n  not xzf(ussdgyuxum, rl);\n\n  // Top inputs -> top outputs assigns\n  assign jfc = zjgpsfuzhy;\n\n  // Assigns\n  assign svlopbk = 'b1;\n  assign svlopbk = 'b1;\n  assign wxmxvt = '{'b1,'b0,'b1,'b0};\n  assign tgt = 'b1z;\n  assign ussdgyuxum = 'b1;\n  assign tgt = 'bxz;\nendmodule: zjnbm\n\nmodule skayqjijk\n  (output logic [2:3] hrnqul, output logic [0:3][3:1] cnne, input bit [0:0][4:0] jwwdqn, input real rrqhz [0:2][4:4]);\n\n  nand glommnd(deisilvdwj, alqoxtal, tcpmy);\n\n  nand hwqpwxva(jxhgpb, ehimu, hrnqul);\n  // warning: implicit conversion of port connection truncates from 2 to 1 bits\n  // logic [2:3] hrnqul -> logic hrnqul\n\n  or waovvgjf(hrnqul, hrnqul, hg);\n  // warning: implicit conversion of port connection expands from 1 to 2 bits\n  // logic hrnqul -> logic [2:3] hrnqul\n  //\n  // warning: implicit conversion of port connection truncates from 2 to 1 bits\n  // logic [2:3] hrnqul -> logic hrnqul\n\n  not pvbx(rfsb, xd);\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\n  assign xd = 'b1;\n  assign xd = 'b0;\n  assign hg = 'b1;\n  assign cnne = 'bzzxz010z0xxx;\n  assign deisilvdwj = 'bx;\n  assign deisilvdwj = 'b1;\nendmodule: skayqjijk\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -529,6 +575,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module sxdacremp\n  ( output wor logic [3:4][1:3][4:1] gcnyqckkj [1:1]\n  , output real bvpvzwlmit\n  , input logic [0:1][3:1][1:4] rrlwjumtw\n  , input bit [3:2][3:2][3:4][4:2] vmvq\n  , input byte ilepf [4:0]\n  );\n  \n  not jid(cnwpa, s);\n  \n  and hqjsbvpfme(aujsjlk, sgphzw, txjdiwe);\n  \n  nand sawiduvruu(s, pygpwestgo, zbrwcqoe);\n  \n  or hihikcy(sgphzw, knszzvhnma, iiu);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign bvpvzwlmit = 'bx;\n  \n  // Multi-driven assigns\n  assign sgphzw = 'b0;\n  assign gcnyqckkj = '{'b0};\n  assign gcnyqckkj = '{'b1};\n  assign sgphzw = 'b0;\nendmodule: sxdacremp\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -547,6 +594,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 9244119237703911260,5862439558234323861\n\nmodule lk\n  (output logic mctib [2:0][4:0], output bit uik);\n  \n  xor qd(yd, iujusnzwb, yd);\n  \nendmodule: lk\n\nmodule lvjlzokfzt\n  ( output integer pvkstguxxi\n  , output bit [1:4] ws [4:1]\n  , input real ebjo [0:4]\n  , input bit [1:0] abx\n  , input logic [0:0] zsdymu\n  , input logic [3:0] a\n  );\n  \n  logic eqjy [2:0][4:0];\n  logic aioudsapf [2:0][4:0];\n  \n  xor dgwwyi(uqivq, a, gsumffuuo);\n  lk cgje(.mctib(eqjy), .uik(ehqypibnx));\n  lk wjciaknap(.mctib(aioudsapf), .uik(vsulqrbzb));\n  \nendmodule: lvjlzokfzt\n\nmodule xmdsw\n  (input real lcypuam [4:0], input real g [3:2], input logic [1:3] hvufqklf [0:2]);\n  \n  bit [1:4] fsjanxl [4:1];\n  logic tgpg [2:0][4:0];\n  logic iandbid [2:0][4:0];\n  logic ksufhljtri [2:0][4:0];\n  \n  lvjlzokfzt lwysi(.pvkstguxxi(pckjhhwh), .ws(fsjanxl), .ebjo(lcypuam), .abx(wolnh), .zsdymu(gxknhxc), .a(pckjhhwh));\n  lk b(.mctib(tgpg), .uik(qymzy));\n  lk dqtoh(.mctib(iandbid), .uik(es));\n  lk uli(.mctib(ksufhljtri), .uik(ergknrqefw));\n  \nendmodule: xmdsw\n\n// Seed after: 846548215004790608,5862439558234323861\n"
       }
     ],
+    "issue_status": "reported",
     "issue_link": "https://github.com/verilator/verilator/issues/5877"
   },
   {
@@ -565,6 +613,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module xkkf\n  (output wire hk, output bit sekew, output bit frqhrnh, output wire pwkkdczkw, input logic p, input wire vfuvoh);\n  \n  assign hk = vfuvoh;\n  assign sekew = vfuvoh;\n  assign frqhrnh = p;\n  assign pwkkdczkw = vfuvoh;\nendmodule: xkkf\n\nmodule p\n  (output wire avbsmmkv, output wire uxeit);\n  \n  or jlnzrbasnv(uxeit, uxeit, uxeit);\n  \n  assign avbsmmkv = uxeit;\nendmodule: p\n\nmodule quxrwlxgk\n  (input logic a, input uwire xhc, input int qtwwqyp, input real qw);\n  \n  or mbakoem(bttmnvylhq, a, a);\n  and ptnkgc(ucxkqd, qtwwqyp, bttmnvylhq);\n  \nendmodule: quxrwlxgk\n\nmodule tbjwaeog\n  (input bit u, input integer vzhlr, input wire iwgcoh);\n  \nendmodule: tbjwaeog\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -591,6 +640,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module gsha\n  (input logic [0:3][4:4] cqfmkxy, input reg [2:2][3:0][4:1][2:0] tuandlau);\n\n  or nxoixb(fedewp, fedewp, tuandlau);\n  // warning: implicit conversion of port connection truncates from 48 to 1 bits\n  // reg [2:2][3:0][4:1][2:0] fedewp -> logic fedewp\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: gsha\n\nmodule drzpuza\n  ( output logic [2:4][1:4][1:4][1:1] i\n  , output uwire logic [1:2][0:3] gpskj\n  , output uwire logic [1:2][1:1][0:4][2:1] lokzl [0:0]\n  , input time imijbzrb [2:2]\n  , input real emtzmqiiq\n  , input logic [0:0][0:2] uzxwa\n  , input logic [1:0][0:0][1:4] yepbbdeuls\n  );\n\n  or jfnbnuewmr(vjcpmamhq, uzxwa, mwxbotd);\n  // warning: implicit conversion of port connection truncates from 3 to 1 bits\n  // logic [0:0][0:2] mwxbotd -> logic mwxbotd\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: drzpuza\n\nmodule tovn\n  ( output tri0 logic [0:4] hsxniwmvoq [1:2][4:1]\n  , output tri0 logic ujyq [3:2][3:0][3:2][3:3]\n  , input tri1 logic [0:3][2:0][2:3] wup [0:2][3:3][1:4]\n  , input wand logic [2:4][2:3][2:2][1:4] dbbalmko [2:3][1:0][2:1][0:2]\n  );\n\n  not darbmui(ncjazspd, ncjazspd);\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: tovn\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -609,6 +659,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module qha\n  (output real evqvvq [2:4], input wire jnrihwxdls [4:2], input logic [2:2] aanpt, input integer utf [3:2]);\n  \nendmodule: qha\n\nmodule wifydq\n  (output bit sbiajs [1:3], output logic [2:2] jwzrezf, output int tlhxiuang [2:3], input integer qky, input bit [0:1] t);\n  \nendmodule: wifydq\n\nmodule zam\n  (output logic qkdqpmd [2:0], output real qidcicusw, input real y);\n  \n  \n  or xtfwrlwqi(vhrlq, vhrlq, kinpjls);\n  \nendmodule: zam\n\nmodule xlvqeibu\n  (output wire zsymsud [4:2], output real dl [3:0], output real txzrzek, input real ydp [4:1]);\n  \n  logic bepuq [2:0];\n  \n  zam b(.qkdqpmd(bepuq), .qidcicusw(gf), .y(gf));\n  \n  assign dl = ydp;\nendmodule: xlvqeibu\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -627,6 +678,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module fojwmn\n  (output bit [3:2] mixclycjhf, output int qxzaoklel, input int xkyya, input logic [3:4] ykfrocmze, input bit [3:3][1:2][4:1] grhl);\n  \n  xor i(re, grhl, ykfrocmze);\n  \nendmodule: fojwmn\n\nmodule vtykdzw\n  (output logic ilwebga, output real gsannnig, input bit [2:2] fwiwccuwf, input wire ulgiuqez);\n  \n  nand hq(yso, bm, ulgiuqez);\n  \nendmodule: vtykdzw\n\nmodule hjivk\n  ();\n\n  vtykdzw haczawgmd(.ilwebga(y), .gsannnig(yrmdv), .fwiwccuwf(snhm), .ulgiuqez(twvoqkqrl));\n  \nendmodule: hjivk\n\nmodule k\n  (output logic [1:1] f, output integer p [4:4][3:4], output logic [0:4][3:1] id, output wire zckbjl, input integer brutctvlvj [0:4][3:3]);\n  \n  \n  hjivk xyh();\n  hjivk zxroj();\n  hjivk fbwh();\n  \nendmodule: k\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -653,6 +705,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module ukkjwlngu\n  ( output tri0 logic [2:4] mdhusbbwa\n  , output reg [4:0] vymhoh [0:2]\n  , output shortint pcviuvwep\n  , input wor logic eshxdtw [4:2]\n  , input realtime nbg [0:2]\n  , input real mnvvwuty [2:4]\n  , input wire logic [2:3][3:4][1:3][1:2] fplkvczkdt [1:2]\n  );\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: ukkjwlngu\n\nmodule ladazmrs\n  ( output wand logic [1:0][3:2][2:1] sajicoa\n  , input logic [1:0] tru [1:2]\n  , input reg dtyvyivtr\n  , input reg [4:3][3:2] eoxrfnlwvd\n  , input int cnns [4:4][3:3]\n  );\n\n  not fk(hjonzx, hsk);\n  // warning: implicit conversion of port connection truncates from 4 to 1 bits\n  // reg [4:3][3:2] hsk -> logic hsk\n\n  not ta(dozzv, eoxrfnlwvd);\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: ladazmrs\n\nmodule d\n  ();\n\n  wor logic phh [4:2];\n\n  realtime beqrg [0:2];\n\n  real dlsp [2:4];\n\n  wire logic [2:3][3:4][1:3][1:2] udfqrrufj [1:2];\n\n  reg [4:0] dzfz [0:2];\n\n  not qv(xvpnoloome, zjsqljmyd);\n\n  ukkjwlngu axobjyezk( .mdhusbbwa(j)\n  , .vymhoh(dzfz)\n  , .pcviuvwep(zwqdcyh)\n  , .eshxdtw(phh)\n  , .nbg(beqrg)\n  , .mnvvwuty(dlsp)\n  , .fplkvczkdt(udfqrrufj)\n  );\n\n  // warning: implicit conversion of port connection truncates from 3 to 1 bits\n  // tri0 logic [2:4] mdhusbbwa -> wire logic j\n  //\n  // warning: implicit conversion of port connection truncates from 16 to 1 bits\n  // warning: implicit conversion changes signedness from signed to unsigned\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  // shortint pcviuvwep -> wire logic zwqdcyh\n  //\n  // warning: implicit conversion of port connection truncates from 24 to 1 bits\n  // wire logic [2:3][3:4][1:3][1:2] phh [1:2] -> wor logic eshxdtw [4:2]\n  //\n  // warning: implicit conversion of port connection expands from 1 to 24 bits\n  // wor logic udfqrrufj [4:2] -> wire logic [2:3][3:4][1:3][1:2] fplkvczkdt [1:2]\n\n  not h(lirxsdrmky, ztuvu);\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: d\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -671,6 +724,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module k\n  (output bit [3:0] w, output integer mqutvy [1:3][2:3], input bit [1:0] ngudydmn [3:3], input logic [0:2] fcdsbpubz);\n  \n  xor puymgiy(brw, fcdsbpubz, jq);\n  \nendmodule: k\n\nmodule cbez\n  (output int zqgmgv, input integer cu [0:1]);\n  \n  nand lx(zqgmgv, zqgmgv, zqgmgv);\n  \nendmodule: cbez\n\nmodule mpluunotd\n  (output bit [1:3] joujyru, output int tkxui, output logic vzm [3:3][0:1], output logic [0:2][2:3] eidpbxyp);\n    \nendmodule: mpluunotd\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -689,6 +743,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module gsha\n  (input logic [0:3][4:4] cqfmkxy, input reg [2:2][3:0][4:1][2:0] tuandlau);\n\n  or nxoixb(fedewp, fedewp, tuandlau);\n  // warning: implicit conversion of port connection truncates from 48 to 1 bits\n  // reg [2:2][3:0][4:1][2:0] fedewp -> logic fedewp\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: gsha\n\nmodule drzpuza\n  ( output logic [2:4][1:4][1:4][1:1] i\n  , output uwire logic [1:2][0:3] gpskj\n  , output uwire logic [1:2][1:1][0:4][2:1] lokzl [0:0]\n  , input time imijbzrb [2:2]\n  , input real emtzmqiiq\n  , input logic [0:0][0:2] uzxwa\n  , input logic [1:0][0:0][1:4] yepbbdeuls\n  );\n\n  or jfnbnuewmr(vjcpmamhq, uzxwa, mwxbotd);\n  // warning: implicit conversion of port connection truncates from 3 to 1 bits\n  // logic [0:0][0:2] mwxbotd -> logic mwxbotd\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: drzpuza\n\nmodule tovn\n  ( output tri0 logic [0:4] hsxniwmvoq [1:2][4:1]\n  , output tri0 logic ujyq [3:2][3:0][3:2][3:3]\n  , input tri1 logic [0:3][2:0][2:3] wup [0:2][3:3][1:4]\n  , input wand logic [2:4][2:3][2:2][1:4] dbbalmko [2:3][1:0][2:1][0:2]\n  );\n\n  not darbmui(ncjazspd, ncjazspd);\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: tovn\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -707,6 +762,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module xdg\n  ( output logic [2:3][0:4][4:4] latxfuads\n  , input reg [0:4][0:0][0:1] ige\n  , input logic bgmgf\n  , input reg [1:2][0:4][1:1] nhrwo [3:0]\n  , input tri1 logic [2:4][4:1][0:0] pbvdoh [0:4][2:3][2:4][1:1]\n  );\n\n  not nzl(xyy, twgqbua);\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: xdg\n\nmodule kz\n  ( input logic [1:1] catrzhm [1:1]\n  , input bit [2:0] epcmnctgt\n  , input bit [2:1][0:0] miqa\n  , input supply0 logic [2:1][2:2] uuwhxzje [3:4][4:2]\n  );\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: kz\n\nmodule w\n  ( output trior logic [3:0] hbgzph\n  , output logic [4:3][4:3] ycf [4:4][1:2]\n  , output logic [1:3][1:2][0:1] vnpq\n  , output reg [3:1][2:4][1:2] wo\n  , input realtime ypbup\n  , input real sdtgcjne [4:2]\n  , input trireg logic lzwyxd\n  , input supply0 logic [1:0][4:1][3:2] zsiqmdee [2:1][4:4][0:0][0:1]\n  );\n\n  not yxsqtdq(tpypxvhr, zxyosgsb);\n\n  xor atjgvxkqpa(lvmywhvdyj, jmgpowigt, lzwyxd);\n\n  // Top inputs -> top outputs assigns\n\n  // Assigns\n\nendmodule: w\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -725,6 +781,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module bnwdulpdjo\n  (output int uasic, output wire pd, output int ifdnp [3:2], input wire qvqo [2:3]);\n\n  not nyz(uasic, uasic);\n\n  // Top inputs -> top outputs assigs\n\n  // Assigns\n  assign pd = 'b0;\n  assign ifdnp = '{'b0, 'bz};\nendmodule: bnwdulpdjo\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -751,6 +808,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module bds\n  ( output wand logic [0:0][3:3][0:3][1:2] gkwggxbkpt [3:0][0:3][0:2][2:4]\n  , output tri1 logic [2:3][4:0][0:2][3:4] zgjwvrbva [0:4]\n  , output tri logic eu [3:2]\n  , output realtime pmake\n  , input time royrmsw\n  , input bit [4:3][4:4][0:1] ltsbgechj\n  );\n  \n  \n  xor fzgfje(ofwq, royrmsw, mbpuk);\n  // warning: implicit conversion of port connection truncates from 64 to 1 bits\n  //   time royrmsw -> logic royrmsw\n  \n  not pmqxbxvkb(blyyln, jrynh);\n  \n  not vrr(jrynh, ozjl);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign zgjwvrbva = '{'bz,'bx,'bx,'b0,'bz};\n  assign eu = '{'bz,'bz};\n  assign mbpuk = 'b1;\n  \n  // Multi-driven assigns\nendmodule: bds\n\nmodule gkokmqe\n  ( output shortint t\n  , output triand logic [0:0][3:3] fyruvy\n  , output shortreal pbj [0:3][2:4]\n  , input wor logic [3:4][1:2][2:1] rter [0:0][0:0][0:0][2:4]\n  , input wire logic [3:3][1:3][1:0][4:1] gcdb [0:3][3:2][1:1]\n  , input bit [3:3][4:0][4:2][0:0] zuqrabpmi\n  , input triand logic [3:0][0:1][2:4][0:1] maggdh [1:0][1:3][1:4][2:2]\n  );\n  \n  \n  xor hiu(nqpbvsucu, jhap, eikwcpsn);\n  \n  nand xvn(jvdhk, bmmcnxvke, b);\n  \n  not giny(vwrbiev, qozv);\n  \n  or yea(t, t, cro);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign pbj = '{'{'b0,'bx,'b0},'{'bz,'bx,'bz},'{'b0,'b1,'b0},'{'bz,'bx,'bx}};\n  assign cro = 'b1;\n  assign qozv = 'bx;\n  assign fyruvy = 'bz;\n  assign b = 'bx;\n  \n  // Multi-driven assigns\n  assign fyruvy = 'b0;\n  assign fyruvy = 'bx;\n  assign jvdhk = 'b0;\n  assign fyruvy = 'bx;\nendmodule: gkokmqe\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -793,6 +851,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module hd\n  ( output tri1 logic [4:2][1:4][3:1][4:4] vcywaeuib\n  , output tri0 logic [4:3] hye [0:4][1:1]\n  , output shortreal iofkeszq [0:3]\n  , input shortint dnv\n  );\n  \n  not hcdkwoyvyx(qrvop, oio);\n  \n  or qxorikis(tdnzpr, dnv, tdnzpr);\n  // warning: implicit conversion of port connection truncates from 16 to 1 bits\n  // warning: implicit conversion changes signedness from signed to unsigned\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  //   shortint dnv -> logic dnv\n  \n  // Top inputs -> top outputs assigns\n  assign vcywaeuib = dnv;\n  \n  // Single-driven assigns\n  assign oio = 'b0;\n  \n  // Multi-driven assigns\n  assign hye = '{'{'bx},'{'bz},'{'bz},'{'b1},'{'bz}};\n  assign hye = '{'{'bz},'{'bz},'{'b0},'{'b1},'{'bz}};\n  assign hye = '{'{'bz},'{'bx},'{'bz},'{'b1},'{'b0}};\nendmodule: hd\n\nmodule zmevhqq\n  (output triand logic [4:0][3:4] jbpy, output bit [2:3][3:1][2:4][0:4] ekj);\n  \n  \n  or ztb(qw, qw, nypxc);\n  \n  not qe(dzhx, zjxb);\n  \n  not vt(jzad, dzhx);\n  \n  and tbfuq(ekj, qw, kkvgt);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign jbpy = 'b1;\n  assign nypxc = 'b0;\n  assign kkvgt = 'b1;\n  \n  // Multi-driven assigns\n  assign jbpy = 'bz;\n  assign jbpy = 'bz;\nendmodule: zmevhqq\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -811,6 +870,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module phgqb\n  (output bit [2:0] jsl, output real lzbajzqmr [1:0][0:0], output bit [1:3] epd [1:1], output logic [2:0] uyocdlqy);\n  \n  // Top inputs -> top outputs assigs\n  \n  // Assigns\n  assign uyocdlqy = 'bxxz;\nendmodule: phgqb\n\nmodule nkuz\n  (output uwire winadayzaf [2:4][2:3]);\n  \n  real w [1:0][0:0];\n  bit [1:3] jmdosgxs [1:1];\n  \n  and dqhopqrikt(oou, vnho, trpqu);\n  phgqb udraazisl(.jsl(pclmizjztv), .lzbajzqmr(w), .epd(jmdosgxs), .uyocdlqy(y));\n  \n  // Top inputs -> top outputs assigs\n  \n  // Assigns\n  assign trpqu = 'bz;\nendmodule: nkuz\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -837,6 +897,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": null
       }
     ],
+    "issue_status": null,
     "issue_link": null
   },
   {
@@ -855,7 +916,46 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "module ug\n  (input logic vdaev, input wire gl, input int skf, input bit xnyyueprwu);\n  \n  or xiqyjro(j, j, j);\n  \nendmodule: ug\n\nmodule sifgljh\n  ();\n  \n  nand xhuhnk(cuczaubtei, mtqinoh, cuczaubtei);\n  nand rowvzfvz(mtqinoh, mtqinoh, mtqinoh);\n  \nendmodule: sifgljh\n"
       }
     ],
+    "issue_status": "reported",
     "issue_link": "https://github.com/verilator/verilator/issues/5878"
+  },
+  {
+    "stage": "parsing",
+    "tool": "yosys-slang",
+    "id": "abort_in_181",
+    "title": "Abort in slang_frontend.cc:181",
+    "short_desc": null,
+    "examples": [
+      {
+        "id": "abort_in_181_v1",
+        "first_found": "2025-07-19T00:00:00.000Z",
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": "ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:181.\n",
+        "full_example": "module cxkwwv\n  ( input bit [1:4][3:3] ajjevafj\n  , input uwire logic [0:1][0:2][4:4] mdnyba [1:0][2:1][1:0]\n  , input reg [4:4][3:1] a\n  , input wor logic [4:2][3:0][0:2][3:2] dbmsvpty [4:4]\n  );\n  \n  \n  or o(ixiwcmrk, fm, ixiwcmrk);\n  \n  not jb(crev, yzksybsfoi);\n  \n  not kzx(j, a);\n  // warning: implicit conversion of port connection truncates from 3 to 1 bits\n  //   reg [4:4][3:1] a -> logic a\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign yzksybsfoi = 'b1;\n  \n  // Multi-driven assigns\nendmodule: cxkwwv\n\nmodule ryz\n  ( output longint yjy\n  , output tri0 logic [0:1] dstgumnmza [1:1]\n  , input supply1 logic pcegsiuj\n  , input shortint yslxoj\n  , input reg lo [4:3]\n  , input bit [2:3][2:0][4:0][4:0] g\n  );\n  \n  \n  not ytvstdout(numzlvh, ty);\n  \n  \n  // Top inputs -> top outputs assigns\n  assign yjy = yslxoj;\n  \n  // Single-driven assigns\n  assign dstgumnmza = '{'b1};\n  assign ty = 'bx;\n  \n  // Multi-driven assigns\n  assign dstgumnmza = '{'bx};\nendmodule: ryz\n\nmodule sjwtqzdhon\n  ( output tri logic [3:3][4:3][4:0] tjy [4:3][3:0]\n  , output supply0 logic [2:2] bns\n  , output reg [2:3][1:4][0:4] woaa\n  , input shortreal ykbw\n  , input wire logic [2:2] yxwp [2:0]\n  );\n  \n  reg wzfgspok [4:3];\n  tri0 logic [0:1] swgxe [1:1];\n  \n  and mcrpv(bns, bns, nb);\n  \n  not q(yjkup, rydi);\n  \n  ryz kdstyzceff(.yjy(nb), .dstgumnmza(swgxe), .pcegsiuj(xvv), .yslxoj(uavf), .lo(wzfgspok), .g(uavf));\n  // warning: implicit conversion of port connection truncates from 64 to 1 bits\n  // warning: implicit conversion changes signedness from signed to unsigned\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  //   longint yjy -> wire logic nb\n  //\n  // warning: implicit conversion of port connection expands from 1 to 16 bits\n  // warning: implicit conversion changes signedness from unsigned to signed\n  // warning: implicit conversion changes possible bit states from 4-state to 2-state\n  //   wire logic uavf -> shortint yslxoj\n  //\n  // warning: implicit conversion of port connection expands from 1 to 150 bits\n  // warning: implicit conversion changes possible bit states from 4-state to 2-state\n  //   wire logic uavf -> bit [2:3][2:0][4:0][4:0] g\n  \n  or exxobc(uavf, uavf, uavf);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  \n  // Multi-driven assigns\nendmodule: sjwtqzdhon\n\nmodule rf\n  ( output wor logic [1:3][2:0][3:2] twegvdyko\n  , output triand logic [3:2][2:4] yojsgcygvv [2:2][4:0]\n  , input triand logic rknpthau [1:1][4:0][2:1]\n  , input wire logic [4:4] sbije\n  );\n  \n  uwire logic [0:1][0:2][4:4] kid [1:0][2:1][1:0];\n  wor logic [4:2][3:0][0:2][3:2] t [4:4];\n  reg qu [4:3];\n  tri0 logic [0:1] frj [1:1];\n  \n  cxkwwv vqicrvb(.ajjevafj(jghwrkvun), .mdnyba(kid), .a(wsmc), .dbmsvpty(t));\n  // warning: implicit conversion of port connection expands from 1 to 4 bits\n  // warning: implicit conversion changes possible bit states from 4-state to 2-state\n  //   wire logic jghwrkvun -> bit [1:4][3:3] ajjevafj\n  //\n  // warning: implicit conversion of port connection expands from 1 to 3 bits\n  //   wire logic wsmc -> reg [4:4][3:1] a\n  \n  xor yygtdxzzdx(jghwrkvun, wsmc, wsmc);\n  \n  ryz rvaapwdg(.yjy(wsmc), .dstgumnmza(frj), .pcegsiuj(wsmc), .yslxoj(jghwrkvun), .lo(qu), .g(kjyhhes));\n  // warning: implicit conversion of port connection truncates from 64 to 1 bits\n  // warning: implicit conversion changes signedness from signed to unsigned\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  //   longint yjy -> wire logic wsmc\n  //\n  // warning: implicit conversion of port connection expands from 1 to 16 bits\n  // warning: implicit conversion changes signedness from unsigned to signed\n  // warning: implicit conversion changes possible bit states from 4-state to 2-state\n  //   wire logic jghwrkvun -> shortint yslxoj\n  //\n  // warning: implicit conversion of port connection expands from 1 to 150 bits\n  // warning: implicit conversion changes possible bit states from 4-state to 2-state\n  //   wire logic kjyhhes -> bit [2:3][2:0][4:0][4:0] g\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign yojsgcygvv = '{'{'b0,'bx,'b0,'b0,'b1}};\n  assign t = '{'b1};\n  assign kid = '{'{'{'bx,'bx},'{'bz,'bz}},'{'{'bx,'b0},'{'bz,'bz}}};\n  assign qu = '{'bx,'bz};\n  assign twegvdyko = 'b1;\n  \n  // Multi-driven assigns\n  assign sbije = 'bz;\n  assign yojsgcygvv = '{'{'b0,'b1,'b0,'bx,'b0}};\n  assign yojsgcygvv = '{'{'b0,'b1,'bx,'b1,'b1}};\n  assign twegvdyko = 'b1;\nendmodule: rf\n"
+      }
+    ],
+    "issue_status": null,
+    "issue_link": null
+  },
+  {
+    "stage": "parsing",
+    "tool": "yosys-slang",
+    "id": "feature_unimplemented_see_ast",
+    "title": "Real is not supported",
+    "short_desc": null,
+    "examples": [
+      {
+        "id": "feature_unimplemented_see_ast_v1",
+        "first_found": "2025-07-19T00:00:00.000Z",
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": "Source line generated-modules/67-seed_14137937824704098027_8217928765404351501.sv:100:49:   bnrnmje umywnnmn(.iqhnitgm(pvhnw), .rferwqwnm(ug), .ufjod(jgbhxcfkrz), .lio(pcsnkkc));\nERROR: Feature unimplemented at /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:1379, see AST and code line dump above\n",
+        "full_example": "module bnrnmje\n  ( input supply1 logic [2:2][3:3] iqhnitgm [1:4][1:4]\n  , input shortreal rferwqwnm\n  , input trior logic [1:3][2:1] ufjod [1:2][0:1][1:4]\n  , input wand logic lio [2:3][1:1]\n  );\n  \n  xor matvodduo(ii, dzzvxtvoz, q);\n  \n  and rs(q, fczqu, uzxtrnx);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign uzxtrnx = 'b0;\n  assign dzzvxtvoz = 'bx;\n  assign fczqu = 'bz;\n  \n  // Multi-driven assigns\n  assign iqhnitgm = '{'{'b0,'bz,'b1,'bx},'{'bx,'b0,'bz,'bz},'{'b1,'b1,'b1,'bz},'{'bz,'bx,'b0,'b1}};\nendmodule: bnrnmje\n\nmodule nnlfjltlfz\n  ( output bit [3:1] kfamkla\n  , output trior logic [4:1] zccd [2:1][1:2]\n  , input wor logic [3:1][0:1][2:3] tavfl [1:1][0:3]\n  , input tri logic [1:3] pmwcb [0:4][3:4]\n  , input bit [3:0] qhbidas [4:4]\n  , input int lty\n  );\n  \n  \n  not fautlzt(gdir, kfamkla);\n  \n  not grn(kfamkla, kfamkla);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign zccd = '{'{'b1,'b0},'{'bz,'b1}};\n  \n  // Multi-driven assigns\n  assign zccd = '{'{'bz,'b0},'{'b1,'b1}};\n  assign gdir = 'bz;\n  assign zccd = '{'{'bz,'b1},'{'b0,'b0}};\nendmodule: nnlfjltlfz\n\nmodule zritqw\n  ( output logic [2:3][4:3][4:4][0:1] ozokmpr\n  , output reg q [1:2]\n  , input time jekm\n  , input tri1 logic [0:4][2:4] urkciltby [4:1][4:0][2:1]\n  , input tri0 logic [0:3][0:2][3:2][0:4] hpugai\n  , input shortreal lbn [4:1]\n  );\n  \n  \n  and xpsg(fapit, ozokmpr, fapit);\n  \n  not krygltfcl(gcaoek, ltfwihxe);\n  \n  not mb(ozokmpr, xjfldjhmld);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign q = '{'b1,'bz};\n  assign ltfwihxe = 'bz;\n  assign xjfldjhmld = 'bx;\n  \n  // Multi-driven assigns\n  assign gcaoek = 'bz;\n  assign fapit = 'b1;\n  assign gcaoek = 'b0;\n  assign fapit = 'bx;\nendmodule: zritqw\n\nmodule tnieawpwht\n  ( output wor logic [2:3] hxabz [4:1][2:1][2:2][1:4]\n  , output tri1 logic [1:4][1:1] gdqbmlpjw\n  , output reg [2:0] sbtmfozx\n  , input trior logic [4:1][1:2][0:2] q [4:2][3:3][3:3][0:0]\n  , input logic [2:1][4:1][4:2][4:4] rmdmentb\n  );\n  \n  supply1 logic [2:2][3:3] pvhnw [1:4][1:4];\n  trior logic [1:3][2:1] jgbhxcfkrz [1:2][0:1][1:4];\n  wand logic pcsnkkc [2:3][1:1];\n  \n  xor iv(dbfecmneec, mut, wksl);\n  \n  not jgyjqmtn(ikaiuxfbw, xlkgy);\n  \n  bnrnmje umywnnmn(.iqhnitgm(pvhnw), .rferwqwnm(ug), .ufjod(jgbhxcfkrz), .lio(pcsnkkc));\n  // warning: implicit conversion of port connection expands from 1 to 32 bits\n  // warning: implicit conversion changes signedness from unsigned to signed\n  //   wire logic ug -> shortreal rferwqwnm\n  \n  xor usdsymi(mut, ikaiuxfbw, rmdmentb);\n  // warning: implicit conversion of port connection truncates from 24 to 1 bits\n  //   logic [2:1][4:1][4:2][4:4] rmdmentb -> logic rmdmentb\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  \n  // Multi-driven assigns\n  assign q = '{'{'{'{'b1}}},'{'{'{'b1}}},'{'{'{'bx}}}};\n  assign ikaiuxfbw = 'bz;\nendmodule: tnieawpwht\n"
+      }
+    ],
+    "issue_status": "already_known",
+    "issue_link": "https://github.com/povik/yosys-slang/issues/181"
   },
   {
     "stage": "parsing",
@@ -889,6 +989,7 @@ export const allFoundErrors: FoundError[] = [
         "full_example": "// Seed: 16701481279964727923,5268399088297407135\n\nmodule ajkegxt\n(output realtime de, output logic [0:2][2:0][2:1] izt, input tri1 logic drz, input tri0 logic rg [1:4][4:1]);\n\nnot qybfgnj(de, ugzdmq);\nxor dan(izt, de, izt);\n\n// Top inputs -> top outputs assigns\n// Assigns\n\nendmodule: ajkegxt\n\nmodule hpiyt\n( output bit [4:2] vvbwpzicm\n, input shortreal fjnlpmw\n, input reg z [4:3][3:4]\n, input time asvvfehav [2:4][2:1]\n, input trireg logic jco\n);\n\n// Top inputs -> top outputs assigns\n// Assigns\n\nendmodule: hpiyt\n\n// Seed after: 8858891727543941605,5268399088297407135\n"
       }
     ],
+    "issue_status": null,
     "issue_link": null
   }
 ];
