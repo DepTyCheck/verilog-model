@@ -171,7 +171,8 @@ jobs:
             sim_cmd: vvp a.out
             sim_error_regex: |
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
-            extra_ignored_regexes: "Unable to elaborate r-value: ['{}d0-9]+"
+            extra_ignored_regexes: 
+              - "Unable to elaborate r-value: ['{}d0-9]+"
 
           - name: slang
             repo: https://github.com/MikePopoloski/slang.git
@@ -433,7 +434,7 @@ jobs:
             --sim-error-regex "${{ matrix.tool.sim_error_regex }}" \
             --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
             --error-distances-img "$ERROR_DISTANCES_IMG" \
-            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
+            --extra-ignored-regexes ${{ join(matrix.tool.extra_ignored_regexes, ' ') }}
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then
