@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { Button, Dropdown, Checkbox, TableBody, TableBodyCell, TableBodyRow, Table, TableHead, TableHeadCell, Card, Heading, A } from 'flowbite-svelte';
+    import { Button, Dropdown, Checkbox, TableBody, TableBodyCell, TableBodyRow, Table, TableHead, Card, Heading, A } from 'flowbite-svelte';
+    import TableHeadCellSortable from './TableHeadCellSortable.svelte';
     import { FilterSolid, ArrowRightOutline } from 'flowbite-svelte-icons';
-    import { type CheckBoxChoice } from '$lib/core';
+    import { type CheckBoxChoice, type SortableColumn } from '$lib/core';
     import { githubUrl, depTyCheckGithubUrl } from '$lib/consts';
     import { allFoundErrors } from '$lib/generated/errors_data';
-    import { formatDateDMY, getFirstFound } from '$lib/index';
+    import { formatDateDMY, getFirstFound, displayIssueStatus } from '$lib/index';
     import { page } from '$app/state';
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
@@ -14,7 +15,6 @@
           .sort()
           .map(tool => ({ value: tool, label: tool }));
     let group: string[] = [];
-    type SortableColumn = 'tool' | 'firstFound' | 'title' | 'stage' | 'issue_link';
     let sortColumn: SortableColumn = 'title';
     let sortAsc = true;
 
@@ -31,7 +31,7 @@
       const toolsParam = url.searchParams.get('tools');
       group = toolsParam ? toolsParam.split(',') : [];
       const sortParam = url.searchParams.get('sort');
-      if (sortParam && ['tool','firstFound','title','stage','issue_link'].includes(sortParam)) {
+      if (sortParam && ['tool','firstFound','title','stage','issue_link','issue_status'].includes(sortParam)) {
         sortColumn = sortParam as SortableColumn;
       }
       const ascParam = url.searchParams.get('asc');
@@ -70,6 +70,12 @@
       if (browser) updateQueryParams();
     }
 
+    function getIssueNumberFromLink(link: string | null | undefined): string | null {
+      if (!link) return null;
+      const match = link.match(/\/issues\/(\d+)$/);
+      return match ? match[1] : null;
+    }
+
     // Update query params when filter changes
     $: if (browser && group) updateQueryParams();
   </script>
@@ -101,41 +107,54 @@
     </div>
     <Table hoverable={true} class="mt-6 min-w-full divide-y divide-gray-200 dark:divide-gray-600">
       <TableHead>
-        <TableHeadCell
-          class="px-4 py-3 w-12 text-gray-400"
-          scope="col">
-          №
-        </TableHeadCell>
-        <TableHeadCell
-          onclick={() => setSort('title')}
-          class="px-4 py-3 w-64"
-          scope="col">
-          Title {sortColumn === 'title' ? (sortAsc ? '▲' : '▼') : ''}
-        </TableHeadCell>
-        <TableHeadCell
-          scope="col"
-          class="px-4 py-3 w-32"
-          onclick={() => setSort('tool')}>
-          Tool {sortColumn === 'tool' ? (sortAsc ? '▲' : '▼') : ''}
-        </TableHeadCell>
-        <TableHeadCell
-          scope="col"
-          class="px-4 py-3 w-32"
-          onclick={() => setSort('stage')}>
-          Stage {sortColumn === 'stage' ? (sortAsc ? '▲' : '▼') : ''}
-        </TableHeadCell>
-        <TableHeadCell
-          scope="col"
-          class="px-4 py-3 w-32"
-          onclick={() => setSort('firstFound')}>
-          First Found {sortColumn === 'firstFound' ? (sortAsc ? '▲' : '▼') : ''}
-        </TableHeadCell>
-        <TableHeadCell
-          scope="col"
-          class="px-4 py-3 w-32"
-          onclick={() => setSort('issue_link')}>
-          Issue {sortColumn === 'issue_link' ? (sortAsc ? '▲' : '▼') : ''}
-        </TableHeadCell>
+        <TableHeadCellSortable
+          label="№"
+          widthClass="px-4 py-3 w-12"
+          extraClass="text-gray-400"
+        />
+        <TableHeadCellSortable
+          label="Title"
+          sortKey="title"
+          {sortColumn}
+          {sortAsc}
+          {setSort}
+          widthClass="px-4 py-3 w-64"
+        />
+        <TableHeadCellSortable
+          label="Tool"
+          sortKey="tool"
+          {sortColumn}
+          {sortAsc}
+          {setSort}
+        />
+        <TableHeadCellSortable
+          label="Stage"
+          sortKey="stage"
+          {sortColumn}
+          {sortAsc}
+          {setSort}
+        />
+        <TableHeadCellSortable
+          label="First Found"
+          sortKey="firstFound"
+          {sortColumn}
+          {sortAsc}
+          {setSort}
+        />
+        <TableHeadCellSortable
+          label="Status"
+          sortKey="issue_status"
+          {sortColumn}
+          {sortAsc}
+          {setSort}
+        />
+        <TableHeadCellSortable
+          label="Link"
+          sortKey="issue_link"
+          {sortColumn}
+          {sortAsc}
+          {setSort}
+        />
       </TableHead>
       <TableBody>
         {#each sortedErrors as item, i}
@@ -147,9 +166,18 @@
             <TableBodyCell class="px-4 py-3 w-32">{item.tool}</TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-32">{item.stage}</TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-32">{formatDateDMY(getFirstFound(item))}</TableBodyCell>
+            <TableBodyCell class="px-4 py-3 w-32">{displayIssueStatus(item.issue_status)}</TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-32">
               {#if item.issue_link && item.issue_link.trim() !== ''}
-                <A href={item.issue_link} target="_blank" rel="noopener noreferrer">github <ArrowRightOutline class="ms-1 h-5 w-5" /></A>
+                {#if getIssueNumberFromLink(item.issue_link)}
+                  <A href={item.issue_link} target="_blank" rel="noopener noreferrer">
+                    Issue#{getIssueNumberFromLink(item.issue_link)}
+                  </A>
+                {:else}
+                  <A href={item.issue_link} target="_blank" rel="noopener noreferrer">
+                    <ArrowRightOutline class="ms-1 h-5 w-5" />
+                  </A>
+                {/if}
               {/if}
             </TableBodyCell>
           </TableBodyRow>

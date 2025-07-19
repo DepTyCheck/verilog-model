@@ -20,4 +20,7 @@ export type FoundError = {
 	short_desc?: string | null;
 	examples: FoundErrorExample[];
 	issue_link?: string | null;
+	issue_status?: string | null;
 };
+
+export type SortableColumn = 'tool' | 'firstFound' | 'title' | 'stage' | 'issue_link' | 'issue_status';
