@@ -171,8 +171,8 @@ jobs:
             sim_cmd: vvp a.out
             sim_error_regex: |
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
-            extra_ignored_regexes: 
-              - "Unable to elaborate r-value: ['{}d0-9]+"
+            extra_ignored_regexes: >
+              "Unable to elaborate r-value: ['{}d0-9]+"
 
           - name: slang
             repo: https://github.com/MikePopoloski/slang.git
@@ -336,7 +336,7 @@ jobs:
             version: yosys --version
             run: yosys -m slang -p 'read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
             error_regex: >
-              ERROR:[A-z0-9, \"'\[\]=()]+
+              ERROR:.*$
 
     steps:
       - name: Checkout
