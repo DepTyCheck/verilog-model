@@ -1,5 +1,5 @@
 stage: syntesis
-tool: icarus
+tool: iverilog
 id: cannot_be_driven_with_non_default_strength
 title: Cannot be driven with non default strength
 regex: >

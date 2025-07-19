@@ -1,5 +1,5 @@
 
-tool: icarus
+tool: iverilog
 id: errors_in_port_declarations
 title: Errors in port declarations
 regex: >

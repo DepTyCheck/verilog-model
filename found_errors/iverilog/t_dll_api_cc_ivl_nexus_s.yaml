@@ -1,7 +1,7 @@
 issue_status: reported
 issue_link: https://github.com/steveicarus/iverilog/issues/1213
 stage: syntesis
-tool: icarus
+tool: iverilog
 short_desc: Assertion failure in ivl_signal_nex with uwire array port
 id: t_dll_api_cc_ivl_nexus_s
 title: ivl_nexus_s* ivl_signal_nex ... Assertion failed

@@ -1,7 +1,7 @@
 issue_status: reported
 issue_link: https://github.com/steveicarus/iverilog/issues/1221
 stage: syntesis
-tool: icarus
+tool: iverilog
 id: expression_width_does_not_match_width
 title: Expression width does not match width
 regex: >
