@@ -15,4 +15,5 @@ Keys:
     - minified_error: The error message produced by the minimal example.
     - full_error: The complete error message from the tool.
     - full_example: The full code example that triggers the error.
+    - commit_hash: The commit hash of the tool version used
     - version: The version of the tool in which the error was found or tested.
