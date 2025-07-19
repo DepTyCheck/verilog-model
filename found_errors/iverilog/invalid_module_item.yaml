@@ -1,5 +1,5 @@
 stage: syntesis
-tool: icarus
+tool: iverilog
 id: invalid_module_item
 title: Invalid module item
 regex: >

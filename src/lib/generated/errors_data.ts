@@ -6,7 +6,7 @@ import type { FoundError } from '$lib/core';
 export const allFoundErrors: FoundError[] = [
   {
     "stage": "syntesis",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "array_needs_an_array_index_here",
     "title": "Array needs an array index here",
     "short_desc": null,
@@ -24,7 +24,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "syntesis",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "cannot_be_driven_with_non_default_strength",
     "title": "Cannot be driven with non default strength",
     "short_desc": null,
@@ -49,7 +49,7 @@ export const allFoundErrors: FoundError[] = [
     "issue_link": null
   },
   {
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "errors_in_port_declarations",
     "title": "Errors in port declarations",
     "short_desc": null,
@@ -67,7 +67,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "syntesis",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "expression_width_does_not_match_width",
     "title": "Expression width does not match width",
     "short_desc": null,
@@ -84,7 +84,7 @@ export const allFoundErrors: FoundError[] = [
     "issue_link": "https://github.com/steveicarus/iverilog/issues/1221"
   },
   {
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "failed_assertion_prts_unpacked_dimensions",
     "title": "failed assertion prts[0]->unpacked_dimensions()==0",
     "short_desc": null,
@@ -118,7 +118,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "syntesis",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "how_to_elaborate_assignment_pattern_expressions_for_real_type",
     "title": "I don't know how to elaborate assignment for real type",
     "short_desc": null,
@@ -135,7 +135,7 @@ export const allFoundErrors: FoundError[] = [
     "issue_link": null
   },
   {
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "infinity_zero_tick",
     "title": "Infinity zero tick",
     "short_desc": "The first simulation tick runs indefinitely",
@@ -153,7 +153,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "syntesis",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "invalid_module_item",
     "title": "Invalid module item",
     "short_desc": null,
@@ -171,7 +171,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "syntesis",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "packed_array_assignment_pattern_expects_elements_in_this_context",
     "title": "Packed array assignment pattern expects <num> element(s) in this context",
     "short_desc": null,
@@ -197,7 +197,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "syntesis",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "scalar_type_is_not_a_valid_context_for_assignment_pattern",
     "title": "Scalar type is not a valid context for assignment pattern",
     "short_desc": "A continuously assigned unpacked array literal is parsed wrong",
@@ -231,7 +231,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "syntesis",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "t_dll_api_cc_ivl_nexus_s",
     "title": "ivl_nexus_s* ivl_signal_nex ... Assertion failed",
     "short_desc": "Assertion failure in ivl_signal_nex with uwire array port",
@@ -249,7 +249,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "simulation",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "unable_to_resolve_label",
     "title": "Unable to resolve label",
     "short_desc": "Simulation of a continuous assignment of an unpacked array throws error",
@@ -267,7 +267,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "syntesis",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "uwire_must_have_single_driver",
     "title": "Uwire must have single driver",
     "short_desc": "(implicit) uwire <name> must have a single driver, found <num>",
@@ -293,7 +293,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "simulation",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "vvp_arith_cast_int_recv_vec4",
     "title": "18vvp_arith_cast_int: recv_vec4 not implemented\n",
     "short_desc": "Some functions are not implemented",
@@ -311,7 +311,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "simulation",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "vvp_fun_not_recv_real",
     "title": "vvp_fun_not: recv_real not implemented\n",
     "short_desc": null,
@@ -337,7 +337,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "simulation",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "vvp_net_fun_t_recv_real",
     "title": "virtual void vvp_net_fun_t recv_real(vvp_net_ptr_t, double, vvp_context_t)\n",
     "short_desc": null,
@@ -355,7 +355,7 @@ export const allFoundErrors: FoundError[] = [
   },
   {
     "stage": "simulation",
-    "tool": "icarus",
+    "tool": "iverilog",
     "id": "vvp_net_fun_t_recv_vec4",
     "title": "virtual void vvp_net_fun_t recv_vec4(vvp_net_ptr_t, const vvp_vector4_t&, vvp_context_t)\n",
     "short_desc": null,

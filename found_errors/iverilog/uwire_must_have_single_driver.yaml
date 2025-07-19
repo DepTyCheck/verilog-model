@@ -1,6 +1,6 @@
 stage: syntesis
 short_desc: (implicit) uwire <name> must have a single driver, found <num>
-tool: icarus
+tool: iverilog
 id: uwire_must_have_single_driver
 title: Uwire must have single driver
 regex: >

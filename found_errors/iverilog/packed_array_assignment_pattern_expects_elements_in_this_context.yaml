@@ -1,7 +1,7 @@
 issue_status: reported
 issue_link: https://github.com/steveicarus/iverilog/issues/1224
 stage: syntesis
-tool: icarus
+tool: iverilog
 id: packed_array_assignment_pattern_expects_elements_in_this_context
 title: Packed array assignment pattern expects <num> element(s) in this context
 regex: >

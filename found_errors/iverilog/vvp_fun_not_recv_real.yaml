@@ -1,5 +1,5 @@
 stage: simulation
-tool: icarus
+tool: iverilog
 id: vvp_fun_not_recv_real
 title: >
   vvp_fun_not: recv_real not implemented

@@ -1,5 +1,5 @@
 short_desc: The first simulation tick runs indefinitely
-tool: icarus
+tool: iverilog
 id: infinity_zero_tick
 title: Infinity zero tick
 examples:

@@ -1,7 +1,7 @@
 issue_status: reported
 issue_link: https://github.com/steveicarus/iverilog/issues/1222
 stage: simulation
-tool: icarus
+tool: iverilog
 short_desc: Some functions are not implemented
 id: vvp_arith_cast_int_recv_vec4
 title: >
