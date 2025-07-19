@@ -4,6 +4,8 @@ id: wire_inputs_its_own_output
 title: Wire inputs its own output, creating circular logic
 issue_status: reported
 issue_link: https://github.com/verilator/verilator/issues/5878
+regex: >
+  Wire inputs its own output, creating circular logic
 examples:
   - wire_inputs_its_own_output_v1:
       first_found: 10.12.2024

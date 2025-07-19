@@ -5,6 +5,8 @@ tool: icarus
 short_desc: A continuously assigned unpacked array literal is parsed wrong
 id: scalar_type_is_not_a_valid_context_for_assignment_pattern
 title: Scalar type is not a valid context for assignment pattern
+regex: >
+  scalar type is not a valid context for assignment pattern
 examples:
   - scalar_type_is_not_a_valid_context_for_assignment_pattern_v1:
       first_found: 04.03.2025

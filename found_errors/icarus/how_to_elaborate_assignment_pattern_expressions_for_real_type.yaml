@@ -2,6 +2,8 @@ stage: syntesis
 tool: icarus
 id: how_to_elaborate_assignment_pattern_expressions_for_real_type
 title: I don't know how to elaborate assignment for real type
+regex: >
+  I don't know how to elaborate assignment_pattern expressions for real type yet
 examples:
   - how_to_elaborate_assignment_pattern_expressions_for_real_type_v1:
       first_found: 03.04.2025

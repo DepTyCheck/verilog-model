@@ -2,6 +2,8 @@ stage: syntesis
 tool: verilator
 id: found_definition_of_std_as_a_package
 title: Found definition of 'std' as a PACKAGE but expected a variable
+regex: >
+  Found definition of 'std' as a PACKAGE but expected a variable
 examples:
   - found_definition_of_std_as_a_package_v1:
       first_found: 23.05.2025

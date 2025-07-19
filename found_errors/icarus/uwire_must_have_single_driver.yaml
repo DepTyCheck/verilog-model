@@ -3,6 +3,8 @@ short_desc: (implicit) uwire <name> must have a single driver, found <num>
 tool: icarus
 id: uwire_must_have_single_driver
 title: Uwire must have single driver
+regex: >
+  (\(implicit\) |)uwire "\w+" must have a single driver, found \(\d+\)
 examples:
   - implicit_uwire_must_have_single_driver:
       first_found: 03.04.2025

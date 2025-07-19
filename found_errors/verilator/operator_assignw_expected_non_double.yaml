@@ -2,6 +2,8 @@ stage: syntesis
 tool: verilator
 id: operator_assignw_expected_non_double
 title: Operator ASSIGNW expected non-complex non-double
+regex: >
+  Operator ASSIGNW expected non-complex non-double Assign RHS in width check
 examples:
   - operator_assignw_expected_non_double_v1:
       first_found: 03.02.2025

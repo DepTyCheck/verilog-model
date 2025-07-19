@@ -2,6 +2,8 @@
 tool: icarus
 id: errors_in_port_declarations
 title: Errors in port declarations
+regex: >
+  syntax error\W[A-z-\/0-9,.:]+ .*Errors in port declarations\.$
 examples:
   - errors_in_port_declarations_v1:
       first_found: 01.06.2025

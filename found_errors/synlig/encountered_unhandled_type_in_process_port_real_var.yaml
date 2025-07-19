@@ -3,6 +3,8 @@ tool: synlig
 id: encountered_unhandled_type_in_process_port_real_var
 title: >
   Encountered unhandled type in process_port: real_var
+regex: >
+  Encountered unhandled type in process_port: real_var
 examples:
   - encountered_unhandled_type_in_process_port_real_var_v1:
       first_found: 24.05.2025

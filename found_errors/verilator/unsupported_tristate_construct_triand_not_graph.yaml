@@ -2,6 +2,8 @@ stage: syntesis
 tool: verilator
 id: unsupported_tristate_construct_triand_not_graph
 title: Unsupported tristate construct (not in propagation graph)
+regex: >
+  Unsupported tristate construct \(not in propagation graph\): (OR|ASSIGNW|VARREF)
 examples:
   - unsupported_tristate_construct_triand_not_graph_or:
       first_found: 05.07.2025

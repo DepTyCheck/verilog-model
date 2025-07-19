@@ -2,6 +2,8 @@ stage: syntesis
 tool: verilator
 id: instance_has_the_same_name_as_port
 title: Instance has the same name as port
+regex: >
+  Instance has the same name as port
 examples:
   - instance_has_the_same_name_as_port_v1:
       first_found: 17.12.2024

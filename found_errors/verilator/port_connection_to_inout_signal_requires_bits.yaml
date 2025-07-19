@@ -2,6 +2,8 @@ stage: syntesis
 tool: verilator
 id: port_connection_to_inout_signal_requires_bits
 title: Port connection to inout signal requires X bits, but ... generates Y bits.
+regex: >
+  (Input|Output) port connection .* to inout signal requires .* bits, but connection's VARREF .* generates .* bits
 examples:
   - input_port_connection_to_inout_signal_requires_bits:
       first_found: 01.06.2025

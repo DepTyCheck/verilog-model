@@ -2,6 +2,8 @@ stage: syntesis
 tool: verilator
 id: unsupported_tristate_port_expression_varref
 title: Unsupported tristate port expression VARREF
+regex: >
+  Unsupported tristate port expression: VARREF '__Vcellinpt__
 examples:
   - unsupported_tristate_port_expression_varref_v1:
       first_found: 04.03.2025
