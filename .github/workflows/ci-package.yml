@@ -31,6 +31,7 @@ env:
   BUILD_DIR: '.build'
   PACKAGE_NAME: verilog-model
   ERROR_DISTANCES_IMG: error_distances.png
+  GH_PAGES_PATH: verilog-gh-pages
 
 jobs:
 
@@ -170,6 +171,7 @@ jobs:
             sim_cmd: vvp a.out
             sim_error_regex: |
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
+            extra_ignored_regexes: "Unable to elaborate r-value: ['{}d0-9]+"
 
           - name: slang
             repo: https://github.com/MikePopoloski/slang.git
@@ -294,21 +296,21 @@ jobs:
               parse_sv -h
             run: parse_sv {file}
 
-          - name: yosys
-            repo: https://github.com/YosysHQ/yosys.git
-            deps: build-essential clang lld bison flex libreadline-dev gawk tcl-dev libffi-dev git graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
-            path: yosys
-            build: |
-              git submodule update --init --recursive
-              make -j$(nproc)
-            install: |
-              sudo make install
-              cd ..
-              bash .github/workflows/runner/rename_tests.sh
-            version: yosys --version
-            run: yosys -p 'read -sv2012 {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
-            error_regex: >
-              ERROR:[A-z0-9, \"'\[\]=()]+
+          # - name: yosys
+          #   repo: https://github.com/YosysHQ/yosys.git
+          #   deps: build-essential clang lld bison flex libreadline-dev gawk tcl-dev libffi-dev git graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
+          #   path: yosys
+          #   build: |
+          #     git submodule update --init --recursive
+          #     make -j$(nproc)
+          #   install: |
+          #     sudo make install
+          #     cd ..
+          #     bash .github/workflows/runner/rename_tests.sh
+          #   version: yosys --version
+          #   run: yosys -p 'read -sv2012 {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
+          #   error_regex: >
+          #     ERROR:[A-z0-9, \"'\[\]=()]+
 
           - name: yosys-slang
             repo: https://github.com/povik/yosys-slang.git
@@ -421,14 +423,17 @@ jobs:
         run : |
           set +e
 
-          python3 .github/workflows/runner/run_tests.py \
+          git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
+
+          python3 .github/workflows/runner/main.py \
             --gen-path "${{ env.GENERATION_DIR }}" \
             --tool-cmd "${{ matrix.tool.run }}" \
             --tool-error-regex "${{ matrix.tool.error_regex }}" \
             --sim-cmd "${{ matrix.tool.sim_cmd }}" \
             --sim-error-regex "${{ matrix.tool.sim_error_regex }}" \
-            --errors-file ".github/workflows/error-patterns/${{ matrix.tool.path }}-ignored-errors.txt" \
-            --error-distances-img "$ERROR_DISTANCES_IMG"
+            --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
+            --error-distances-img "$ERROR_DISTANCES_IMG" \
+            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then

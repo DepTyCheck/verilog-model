@@ -13,4 +13,5 @@ def find_top(file_content: str) -> str:
     matches = re.findall(r'(?<=module )[A-z]+', file_content, re.MULTILINE)
     if matches:
         return matches[-1]
-    return None
+
+    raise Exception('No top module found')

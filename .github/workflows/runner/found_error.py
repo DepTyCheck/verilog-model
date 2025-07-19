@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.manifold import MDS
 import re
-
+from utils import print_pretty
 
 class FoundError:
     def __init__(self, text: str, file_name: str):
@@ -58,6 +58,9 @@ def plot_error_distances_mds(errors: List[FoundError], distances: Dict[Tuple[int
     The image is saved to output_path.
     """
     n = len(errors)
+    if n < 2:
+        print_pretty(["Not enough errors to plot MDS."])
+        return
     # Build the full distance matrix
     dist_matrix = np.zeros((n, n))
     for (i, j), dist in distances.items():
@@ -87,4 +90,4 @@ def plot_error_distances_mds(errors: List[FoundError], distances: Dict[Tuple[int
     plt.tight_layout()
     plt.savefig(output_path)
     plt.close()
-    print(f"MDS plot saved to {output_path}")
+    print_pretty([f"MDS plot saved to {output_path}"])
