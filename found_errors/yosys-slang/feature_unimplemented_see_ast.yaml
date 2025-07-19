@@ -1,0 +1,127 @@
+stage: parsing
+tool: yosys-slang
+id: feature_unimplemented_see_ast
+title: Feature unimplemented, see AST
+regex: >
+  Feature unimplemented at [\/A-z0-9-]+slang_frontend\.cc:1379, see AST and code line dump above
+examples:
+  - feature_unimplemented_see_ast_v1:
+      first_found: 19.07.2025
+      full_error: |
+        Source line generated-modules/67-seed_14137937824704098027_8217928765404351501.sv:100:49:   bnrnmje umywnnmn(.iqhnitgm(pvhnw), .rferwqwnm(ug), .ufjod(jgbhxcfkrz), .lio(pcsnkkc));
+        ERROR: Feature unimplemented at /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:1379, see AST and code line dump above
+      full_example: |
+        module bnrnmje
+          ( input supply1 logic [2:2][3:3] iqhnitgm [1:4][1:4]
+          , input shortreal rferwqwnm
+          , input trior logic [1:3][2:1] ufjod [1:2][0:1][1:4]
+          , input wand logic lio [2:3][1:1]
+          );
+          
+          xor matvodduo(ii, dzzvxtvoz, q);
+          
+          and rs(q, fczqu, uzxtrnx);
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign uzxtrnx = 'b0;
+          assign dzzvxtvoz = 'bx;
+          assign fczqu = 'bz;
+          
+          // Multi-driven assigns
+          assign iqhnitgm = '{'{'b0,'bz,'b1,'bx},'{'bx,'b0,'bz,'bz},'{'b1,'b1,'b1,'bz},'{'bz,'bx,'b0,'b1}};
+        endmodule: bnrnmje
+
+        module nnlfjltlfz
+          ( output bit [3:1] kfamkla
+          , output trior logic [4:1] zccd [2:1][1:2]
+          , input wor logic [3:1][0:1][2:3] tavfl [1:1][0:3]
+          , input tri logic [1:3] pmwcb [0:4][3:4]
+          , input bit [3:0] qhbidas [4:4]
+          , input int lty
+          );
+          
+          
+          not fautlzt(gdir, kfamkla);
+          
+          not grn(kfamkla, kfamkla);
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign zccd = '{'{'b1,'b0},'{'bz,'b1}};
+          
+          // Multi-driven assigns
+          assign zccd = '{'{'bz,'b0},'{'b1,'b1}};
+          assign gdir = 'bz;
+          assign zccd = '{'{'bz,'b1},'{'b0,'b0}};
+        endmodule: nnlfjltlfz
+
+        module zritqw
+          ( output logic [2:3][4:3][4:4][0:1] ozokmpr
+          , output reg q [1:2]
+          , input time jekm
+          , input tri1 logic [0:4][2:4] urkciltby [4:1][4:0][2:1]
+          , input tri0 logic [0:3][0:2][3:2][0:4] hpugai
+          , input shortreal lbn [4:1]
+          );
+          
+          
+          and xpsg(fapit, ozokmpr, fapit);
+          
+          not krygltfcl(gcaoek, ltfwihxe);
+          
+          not mb(ozokmpr, xjfldjhmld);
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign q = '{'b1,'bz};
+          assign ltfwihxe = 'bz;
+          assign xjfldjhmld = 'bx;
+          
+          // Multi-driven assigns
+          assign gcaoek = 'bz;
+          assign fapit = 'b1;
+          assign gcaoek = 'b0;
+          assign fapit = 'bx;
+        endmodule: zritqw
+
+        module tnieawpwht
+          ( output wor logic [2:3] hxabz [4:1][2:1][2:2][1:4]
+          , output tri1 logic [1:4][1:1] gdqbmlpjw
+          , output reg [2:0] sbtmfozx
+          , input trior logic [4:1][1:2][0:2] q [4:2][3:3][3:3][0:0]
+          , input logic [2:1][4:1][4:2][4:4] rmdmentb
+          );
+          
+          supply1 logic [2:2][3:3] pvhnw [1:4][1:4];
+          trior logic [1:3][2:1] jgbhxcfkrz [1:2][0:1][1:4];
+          wand logic pcsnkkc [2:3][1:1];
+          
+          xor iv(dbfecmneec, mut, wksl);
+          
+          not jgyjqmtn(ikaiuxfbw, xlkgy);
+          
+          bnrnmje umywnnmn(.iqhnitgm(pvhnw), .rferwqwnm(ug), .ufjod(jgbhxcfkrz), .lio(pcsnkkc));
+          // warning: implicit conversion of port connection expands from 1 to 32 bits
+          // warning: implicit conversion changes signedness from unsigned to signed
+          //   wire logic ug -> shortreal rferwqwnm
+          
+          xor usdsymi(mut, ikaiuxfbw, rmdmentb);
+          // warning: implicit conversion of port connection truncates from 24 to 1 bits
+          //   logic [2:1][4:1][4:2][4:4] rmdmentb -> logic rmdmentb
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          
+          // Multi-driven assigns
+          assign q = '{'{'{'{'b1}}},'{'{'{'b1}}},'{'{'{'bx}}}};
+          assign ikaiuxfbw = 'bz;
+        endmodule: tnieawpwht
