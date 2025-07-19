@@ -4,6 +4,8 @@ stage: syntesis
 tool: icarus
 id: packed_array_assignment_pattern_expects_elements_in_this_context
 title: Packed array assignment pattern expects <num> element(s) in this context
+regex: >
+  Packed array assignment pattern expects \d+ element\(s\) in this context
 examples:
   - packed_array_assignment_pattern_expects_elements_in_this_context_v1:
       first_found: 09.03.2025

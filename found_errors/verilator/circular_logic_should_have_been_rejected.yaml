@@ -2,6 +2,8 @@ stage: syntesis
 tool: verilator
 id: circular_logic_should_have_been_rejected
 title: V3Gate.cpp Circular logic should have been rejected by okVisitor
+regex: >
+  V3Gate\.cpp:872: Circular logic should have been rejected by okVisitor
 examples:
   - circular_logic_should_have_been_rejected_v1:
       first_found: 07.04.2025

@@ -2,6 +2,8 @@ stage: syntesis
 tool: icarus
 id: cannot_be_driven_with_non_default_strength
 title: Cannot be driven with non default strength
+regex: >
+  ariable .* cannot be driven by a primitive or continuous assignment with non-default strength
 examples:
   - cannot_be_driven_with_non_default_strength_v1:
       first_found: 02.07.2025
@@ -49,3 +51,45 @@ examples:
         endmodule: xvicefqhnc
 
         // Seed after: 4925075022431791883,10002677915001445999
+  - cannot_be_driven_with_non_default_strength_v2:
+      first_found: 18.07.2025
+      full_error: |
+        error: Variable 'nm' cannot be driven by a primitive or continuous assignment with non-default strength.
+      full_example: |
+        module pauht
+          ( output supply1 logic [2:1][4:3][4:4] wheupuag [3:1][4:3][2:0][0:1]
+          , output integer bfcpcps [1:2]
+          , output bit [1:0][4:4][3:4][1:0] nm
+          , output triand logic [4:0][4:3] jvlvzxp [0:1][4:4][2:2][4:1]
+          , input wor logic [1:2][0:0][4:0][2:3] nfywtz [3:0]
+          , input shortreal emg
+          , input byte dy
+          );
+          
+          
+          not rrtzpp(nm, xewuwwev);
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign bfcpcps = '{'b0,'b1};
+          assign xewuwwev = 'b0;
+          assign wheupuag = '{'{'{'{'bz,'b0},'{'bz,'bz},'{'b1,'bz}},'{'{'bz,'b1},'{'bx,'b0},'{'b0,'b0}}},'{'{'{'bx,'bz},'{'b0,'b1},'{'bz,'bx}},'{'{'b0,'b1},'{'bx,'b0},'{'b1,'b1}}},'{'{'{'bx,'b0},'{'bz,'bz},'{'bx,'b0}},'{'{'bz,'b0},'{'b0,'b1},'{'bz,'b0}}}};
+          assign jvlvzxp = '{'{'{'{'bx,'bz,'b0,'bz}}},'{'{'{'b1,'b0,'bx,'b0}}}};
+          
+          // Multi-driven assigns
+        endmodule: pauht
+
+        module sjmhw
+          (input supply1 logic [0:3][1:2] svkeknmyib [4:3][3:2], input bit [1:2][3:0][2:3] ohyhcc);
+          
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          
+          // Multi-driven assigns
+          assign svkeknmyib = '{'{'b0,'bx},'{'b1,'bx}};
+        endmodule: sjmhw

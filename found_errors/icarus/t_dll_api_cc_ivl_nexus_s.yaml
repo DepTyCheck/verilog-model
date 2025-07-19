@@ -3,8 +3,10 @@ issue_link: https://github.com/steveicarus/iverilog/issues/1213
 stage: syntesis
 tool: icarus
 short_desc: Assertion failure in ivl_signal_nex with uwire array port
-id: t-dll-api_cc_ivl_nexus_s
+id: t_dll_api_cc_ivl_nexus_s
 title: ivl_nexus_s* ivl_signal_nex ... Assertion failed
+regex: >
+  t-dll-api\.cc:2501: ivl_nexus_s\* ivl_signal_nex\(ivl_signal_t, unsigned int\): Assertion `net->type_ == IVL_SIT_REG' failed
 examples:
   - t-dll-api_cc_ivl_nexus_s_v1:
       first_found: 03.02.2025

@@ -4,6 +4,8 @@ stage: syntesis
 tool: icarus
 id: expression_width_does_not_match_width
 title: Expression width does not match width
+regex: >
+  Expression width \d+ does not match width \d+
 examples:
   - expression_width_does_not_match_width_v1:
       first_found: 10.12.2024

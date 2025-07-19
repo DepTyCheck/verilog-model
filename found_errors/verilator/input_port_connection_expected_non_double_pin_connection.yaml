@@ -4,6 +4,8 @@ id: input_port_connection_expected_non_double_pin_connection
 title: Input port connection expected non-complex non-double pin connection
 issue_status: reported
 issue_link: https://github.com/verilator/verilator/issues/5877
+regex: >
+  Input port connection '[A-z]+' expected non-complex non-double pin connection in width check
 examples:
   - input_port_connection_expected_non_double_pin_connection_v1:
       first_found: 15.02.2025

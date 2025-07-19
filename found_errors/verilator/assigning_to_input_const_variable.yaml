@@ -5,6 +5,8 @@ title: >
   Assigning to input/const variable
 issue_status: reported
 issue_link: https://github.com/verilator/verilator/issues/5875
+regex: >
+  Assigning to input\/const variable:
 examples:
   - assigning_to_input_const_variable_v1:
       first_found: 09.03.2025

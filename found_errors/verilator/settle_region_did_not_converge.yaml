@@ -2,6 +2,8 @@ stage: simulation
 tool: verilator
 id: settle_region_did_not_converge
 title: Settle region did not converge
+regex: >
+  Settle region did not converge
 examples:
   - settle_region_did_not_converge_v1:
       first_found: 10.12.2024

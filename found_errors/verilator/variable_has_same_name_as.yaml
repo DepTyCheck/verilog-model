@@ -2,6 +2,8 @@ stage: syntesis
 tool: verilator
 id: variable_has_same_name_as
 title: Variable has same name as ...
+regex: >
+  Variable has same name as (instance|CELLINLINE)
 examples:
   - variable_has_same_name_as_celline:
       first_found: 04.03.2025

@@ -2,6 +2,8 @@ stage: syntesis
 tool: verilator
 id: array_initialization_should_have_been_removed_earlier
 title: Array initialization should have been removed earlier
+regex: >
+  Array initialization should have been removed earlier
 examples:
   - array_initialization_should_have_been_removed_earlier_v1:
       first_found: 07.07.2025

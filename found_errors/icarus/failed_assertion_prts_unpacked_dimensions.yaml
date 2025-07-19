@@ -3,6 +3,8 @@ issue_link: https://github.com/steveicarus/iverilog/issues/1231
 tool: icarus
 id: failed_assertion_prts_unpacked_dimensions
 title: failed assertion prts[0]->unpacked_dimensions()==0
+regex: >
+  elaborate\.cc:\d+: failed assertion prts\[0\]->unpacked_dimensions\(\)==0
 examples:
   - failed_assertion_prts_unpacked_dimensions_1661:
       first_found: 03.04.2025

@@ -4,6 +4,8 @@ id: expected_integral_input_to_gate
 title: Expected integral input to gate
 issue_status: reported
 issue_link: https://github.com/verilator/verilator/issues/5876
+regex: >
+  Expected integral \(non-'real'\) input to
 examples:
   - expected_integral_input_to_gate_v1:
       first_found: 10.12.2024

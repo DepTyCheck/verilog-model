@@ -36,6 +36,14 @@ export const allFoundErrors: FoundError[] = [
         "minified_error": null,
         "full_error": "error: variable lbrkx; cannot be driven by a primitive or continuous assignment with non-default strength.\n",
         "full_example": "// Seed: 12348576575492672505,10002677915001445999\n\nmodule iul\n  (output logic lbrkx, output logic [2:3] cvawpgb, output logic xnhyjs [4:3]);\n  \n  xor al(lbrkx, eyezhdj, eyezhdj);\n  \n  not ctwm(eyezhdj, lbrkx);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign cvawpgb = 'b1x;\n  assign xnhyjs = '{'b1,'bx};\n  assign eyezhdj = 'b1;\n  assign eyezhdj = 'bx;\nendmodule: iul\n\nmodule xvicefqhnc\n  (output logic [2:0] mi, output logic [3:3] o);\n  \n  \n  not iiqhh(mgzexopir, dlg);\n  \n  xor ttvhm(dlg, lzi, pyw);\n  \n  and yyxdxc(lzi, dlg, okjrcx);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign okjrcx = 'bz;\n  assign okjrcx = 'b0;\n  assign okjrcx = 'b1;\n  assign okjrcx = 'b0;\n  assign o = 'bz;\n  assign mi = 'bxx1;\n  assign dlg = 'b0;\nendmodule: xvicefqhnc\n\n// Seed after: 4925075022431791883,10002677915001445999\n"
+      },
+      {
+        "id": "cannot_be_driven_with_non_default_strength_v2",
+        "first_found": "2025-07-18T00:00:00.000Z",
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": "error: Variable 'nm' cannot be driven by a primitive or continuous assignment with non-default strength.\n",
+        "full_example": "module pauht\n  ( output supply1 logic [2:1][4:3][4:4] wheupuag [3:1][4:3][2:0][0:1]\n  , output integer bfcpcps [1:2]\n  , output bit [1:0][4:4][3:4][1:0] nm\n  , output triand logic [4:0][4:3] jvlvzxp [0:1][4:4][2:2][4:1]\n  , input wor logic [1:2][0:0][4:0][2:3] nfywtz [3:0]\n  , input shortreal emg\n  , input byte dy\n  );\n  \n  \n  not rrtzpp(nm, xewuwwev);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign bfcpcps = '{'b0,'b1};\n  assign xewuwwev = 'b0;\n  assign wheupuag = '{'{'{'{'bz,'b0},'{'bz,'bz},'{'b1,'bz}},'{'{'bz,'b1},'{'bx,'b0},'{'b0,'b0}}},'{'{'{'bx,'bz},'{'b0,'b1},'{'bz,'bx}},'{'{'b0,'b1},'{'bx,'b0},'{'b1,'b1}}},'{'{'{'bx,'b0},'{'bz,'bz},'{'bx,'b0}},'{'{'bz,'b0},'{'b0,'b1},'{'bz,'b0}}}};\n  assign jvlvzxp = '{'{'{'{'bx,'bz,'b0,'bz}}},'{'{'{'b1,'b0,'bx,'b0}}}};\n  \n  // Multi-driven assigns\nendmodule: pauht\n\nmodule sjmhw\n  (input supply1 logic [0:3][1:2] svkeknmyib [4:3][3:2], input bit [1:2][3:0][2:3] ohyhcc);\n  \n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  \n  // Multi-driven assigns\n  assign svkeknmyib = '{'{'b0,'bx},'{'b1,'bx}};\nendmodule: sjmhw\n"
       }
     ],
     "issue_link": null
@@ -224,7 +232,7 @@ export const allFoundErrors: FoundError[] = [
   {
     "stage": "syntesis",
     "tool": "icarus",
-    "id": "t-dll-api_cc_ivl_nexus_s",
+    "id": "t_dll_api_cc_ivl_nexus_s",
     "title": "ivl_nexus_s* ivl_signal_nex ... Assertion failed",
     "short_desc": "Assertion failure in ivl_signal_nex with uwire array port",
     "examples": [
@@ -492,17 +500,33 @@ export const allFoundErrors: FoundError[] = [
   {
     "stage": "syntesis",
     "tool": "verilator",
-    "id": "not_unexpected_in_assignment_to_unpacked_array",
-    "title": "NOT unexpected in assignment to unpacked array",
+    "id": "gate_unexpected_in_assignment_to_unpacked_array",
+    "title": "gate unexpected in assignment to unpacked array",
     "short_desc": null,
     "examples": [
       {
-        "id": "unsupported_tristate_construct_triand_graph_v1",
-        "first_found": "2025-06-05T00:00:00.000Z",
+        "id": "not_unexpected_in_assignment_to_unpacked_array",
+        "first_found": "2025-07-05T00:00:00.000Z",
         "minified_example": null,
         "minified_error": null,
         "full_error": "%Error: top.sv:24:54: NOT unexpected in assignment to unpacked array\n",
-        "full_example": "module wdl\n  (input int fj, input logic bjxfutvv, input tri logic [2:3][0:0][3:3] gxcjfjpz [0:2][2:2]);\n  \n  \n  not an(q, cr);\n  \n  xor f(dnrqc, selpqlr, bbjipwyu);\n  \n  nand kwjjxqwba(rl, h, panjciu);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign panjciu = 'b1;\n  assign h = 'b0;\n  \n  // Multi-driven assigns\nendmodule: wdl\n\nmodule runcm\n  (output realtime ciibqxaqy [0:4], input tri1 logic uyjodx [3:2][1:1]);\n  \n  \n  nand pywaqtf(xxqwxcq, kt, pfm);\n  \n  and yyqpkew(fgrdbgubmt, kt, g);\n  \n  or wgum(g, kt, xmslx);\n  \n  xor hfd(kt, mjaatnxz, kt);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  \n  // Multi-driven assigns\n  assign fgrdbgubmt = 'bz;\n  assign kt = 'bz;\n  assign g = 'b1;\n  assign kt = 'b1;\nendmodule: runcm\n\nmodule ypkunntc\n  (input reg [1:2][4:0][1:0] oioyzi);\n  \n  not ujzqwd(qx, qx);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  \n  // Multi-driven assigns\n  assign qx = 'bz;\n  assign qx = 'bx;\nendmodule: ypkunntc\n"
+        "full_example": "module wdl\n  (input int fj, input logic bjxfutvv, input tri logic [2:3][0:0][3:3] gxcjfjpz [0:2][2:2]);\n  \n  \n  not an(q, cr);\n  \n  xor f(dnrqc, selpqlr, bbjipwyu);\n  \n  nand kwjjxqwba(rl, h, panjciu);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign panjciu = 'b1;\n  assign h = 'b0;\n  \n  // Multi-driven assigns\nendmodule: wdl\n\nmodule runcm\n  (output realtime ciibqxaqy [0:4], input tri1 logic uyjodx [3:2][1:1]);\n  \n  \n  nand pywaqtf(xxqwxcq, kt, pfm);\n  \n  and yyqpkew(fgrdbgubmt, kt, g);\n  \n  or wgum(g, kt, xmslx);\n  \n  xor hfd(kt, mjaatnxz, kt);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  \n  // Multi-driven assigns\n  assign fgrdbgubmt = 'bz;\n  assign kt = 'bz;\n  assign g = 'b1;\n  assign kt = 'b1;\nendmodule: runcm\n\nmodule ypkunntc\n  (input reg [1:2][4:0][1:0] oioyzi);\n  \n  \n  not ujzqwd(qx, qx);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  \n  // Multi-driven assigns\n  assign qx = 'bz;\n  assign qx = 'bx;\nendmodule: ypkunntc\n"
+      },
+      {
+        "id": "and_unexpected_in_assignment_to_unpacked_array",
+        "first_found": "2025-07-05T00:00:00.000Z",
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": "AND unexpected in assignment to unpacked array\n",
+        "full_example": "module m\n  ( output real wjrmtukg\n  , output tri0 logic [4:3][1:0] hsyin\n  , output realtime ycsudbts [1:3]\n  , output triand logic lzd [1:4]\n  , input bit [4:0][2:3][0:3][1:1] k\n  , input reg [0:4][0:1][3:3][2:2] zeoerjmp\n  );\n  \n  \n  xor wexyagyq(nyxn, nyxn, zeoerjmp);\n  // warning: implicit conversion of port connection truncates from 10 to 1 bits\n  //   reg [0:4][0:1][3:3][2:2] zeoerjmp -> logic zeoerjmp\n  \n  \n  // Top inputs -> top outputs assigns\n  assign hsyin = zeoerjmp;\n  \n  // Single-driven assigns\n  assign lzd = '{'bx,'b1,'bx,'bx};\n  assign ycsudbts = '{'b1,'bx,'b1};\n  assign wjrmtukg = 'bz;\n  \n  // Multi-driven assigns\n  assign lzd = '{'b1,'b1,'b1,'b0};\n  assign lzd = '{'b1,'b0,'b1,'bx};\n  assign lzd = '{'b1,'bx,'b0,'b1};\nendmodule: m\n"
+      },
+      {
+        "id": "or_unexpected_in_assignment_to_unpacked_array",
+        "first_found": "2025-07-18T00:00:00.000Z",
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": "%Error: top.sv:28:20: OR unexpected in assignment to unpacked array\n",
+        "full_example": "module sxdacremp\n  ( output wor logic [3:4][1:3][4:1] gcnyqckkj [1:1]\n  , output real bvpvzwlmit\n  , input logic [0:1][3:1][1:4] rrlwjumtw\n  , input bit [3:2][3:2][3:4][4:2] vmvq\n  , input byte ilepf [4:0]\n  );\n  \n  not jid(cnwpa, s);\n  \n  and hqjsbvpfme(aujsjlk, sgphzw, txjdiwe);\n  \n  nand sawiduvruu(s, pygpwestgo, zbrwcqoe);\n  \n  or hihikcy(sgphzw, knszzvhnma, iiu);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign bvpvzwlmit = 'bx;\n  \n  // Multi-driven assigns\n  assign sgphzw = 'b0;\n  assign gcnyqckkj = '{'b0};\n  assign gcnyqckkj = '{'b1};\n  assign sgphzw = 'b0;\nendmodule: sxdacremp\n"
       }
     ],
     "issue_link": null

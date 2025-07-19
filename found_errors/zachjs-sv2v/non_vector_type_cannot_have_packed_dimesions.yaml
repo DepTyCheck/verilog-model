@@ -2,6 +2,8 @@ stage: parsing
 tool: zachjs-sv2v
 id: non_vector_type_cannot_have_packed_dimesions
 title: non-vector type real cannot have packed dimesions
+regex: >
+  non-vector type \w+ cannot have packed dimesions
 examples:
   - non_vector_type_real_cannot_have_packed_dimesions:
       first_found: 24.05.2025

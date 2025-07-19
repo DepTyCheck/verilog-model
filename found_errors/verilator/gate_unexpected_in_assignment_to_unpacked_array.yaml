@@ -2,6 +2,8 @@ stage: syntesis
 tool: verilator
 id: gate_unexpected_in_assignment_to_unpacked_array
 title: gate unexpected in assignment to unpacked array
+regex: >
+  (AND|NOT|OR) unexpected in assignment to unpacked array
 examples:
   - not_unexpected_in_assignment_to_unpacked_array:
       first_found: 05.07.2025
@@ -101,3 +103,36 @@ examples:
           assign lzd = '{'b1,'b0,'b1,'bx};
           assign lzd = '{'b1,'bx,'b0,'b1};
         endmodule: m
+
+  - or_unexpected_in_assignment_to_unpacked_array:
+      first_found: 18.07.2025
+      full_error: |
+        %Error: top.sv:28:20: OR unexpected in assignment to unpacked array
+      full_example: |
+        module sxdacremp
+          ( output wor logic [3:4][1:3][4:1] gcnyqckkj [1:1]
+          , output real bvpvzwlmit
+          , input logic [0:1][3:1][1:4] rrlwjumtw
+          , input bit [3:2][3:2][3:4][4:2] vmvq
+          , input byte ilepf [4:0]
+          );
+          
+          not jid(cnwpa, s);
+          
+          and hqjsbvpfme(aujsjlk, sgphzw, txjdiwe);
+          
+          nand sawiduvruu(s, pygpwestgo, zbrwcqoe);
+          
+          or hihikcy(sgphzw, knszzvhnma, iiu);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign bvpvzwlmit = 'bx;
+          
+          // Multi-driven assigns
+          assign sgphzw = 'b0;
+          assign gcnyqckkj = '{'b0};
+          assign gcnyqckkj = '{'b1};
+          assign sgphzw = 'b0;
+        endmodule: sxdacremp
