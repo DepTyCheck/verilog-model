@@ -1,0 +1,154 @@
+stage: parsing
+tool: yosys-slang
+id: abort_in_181
+title: Abort in slang_frontend.cc:181
+regex: >
+  Abort in [\/A-z0-9-]+slang_frontend\.cc:181
+examples:
+  - abort_in_181_v1:
+      first_found: 19.07.2025
+      full_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:181.
+      full_example: |
+        module cxkwwv
+          ( input bit [1:4][3:3] ajjevafj
+          , input uwire logic [0:1][0:2][4:4] mdnyba [1:0][2:1][1:0]
+          , input reg [4:4][3:1] a
+          , input wor logic [4:2][3:0][0:2][3:2] dbmsvpty [4:4]
+          );
+          
+          
+          or o(ixiwcmrk, fm, ixiwcmrk);
+          
+          not jb(crev, yzksybsfoi);
+          
+          not kzx(j, a);
+          // warning: implicit conversion of port connection truncates from 3 to 1 bits
+          //   reg [4:4][3:1] a -> logic a
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign yzksybsfoi = 'b1;
+          
+          // Multi-driven assigns
+        endmodule: cxkwwv
+
+        module ryz
+          ( output longint yjy
+          , output tri0 logic [0:1] dstgumnmza [1:1]
+          , input supply1 logic pcegsiuj
+          , input shortint yslxoj
+          , input reg lo [4:3]
+          , input bit [2:3][2:0][4:0][4:0] g
+          );
+          
+          
+          not ytvstdout(numzlvh, ty);
+          
+          
+          // Top inputs -> top outputs assigns
+          assign yjy = yslxoj;
+          
+          // Single-driven assigns
+          assign dstgumnmza = '{'b1};
+          assign ty = 'bx;
+          
+          // Multi-driven assigns
+          assign dstgumnmza = '{'bx};
+        endmodule: ryz
+
+        module sjwtqzdhon
+          ( output tri logic [3:3][4:3][4:0] tjy [4:3][3:0]
+          , output supply0 logic [2:2] bns
+          , output reg [2:3][1:4][0:4] woaa
+          , input shortreal ykbw
+          , input wire logic [2:2] yxwp [2:0]
+          );
+          
+          reg wzfgspok [4:3];
+          tri0 logic [0:1] swgxe [1:1];
+          
+          and mcrpv(bns, bns, nb);
+          
+          not q(yjkup, rydi);
+          
+          ryz kdstyzceff(.yjy(nb), .dstgumnmza(swgxe), .pcegsiuj(xvv), .yslxoj(uavf), .lo(wzfgspok), .g(uavf));
+          // warning: implicit conversion of port connection truncates from 64 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   longint yjy -> wire logic nb
+          //
+          // warning: implicit conversion of port connection expands from 1 to 16 bits
+          // warning: implicit conversion changes signedness from unsigned to signed
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic uavf -> shortint yslxoj
+          //
+          // warning: implicit conversion of port connection expands from 1 to 150 bits
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic uavf -> bit [2:3][2:0][4:0][4:0] g
+          
+          or exxobc(uavf, uavf, uavf);
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          
+          // Multi-driven assigns
+        endmodule: sjwtqzdhon
+
+        module rf
+          ( output wor logic [1:3][2:0][3:2] twegvdyko
+          , output triand logic [3:2][2:4] yojsgcygvv [2:2][4:0]
+          , input triand logic rknpthau [1:1][4:0][2:1]
+          , input wire logic [4:4] sbije
+          );
+          
+          uwire logic [0:1][0:2][4:4] kid [1:0][2:1][1:0];
+          wor logic [4:2][3:0][0:2][3:2] t [4:4];
+          reg qu [4:3];
+          tri0 logic [0:1] frj [1:1];
+          
+          cxkwwv vqicrvb(.ajjevafj(jghwrkvun), .mdnyba(kid), .a(wsmc), .dbmsvpty(t));
+          // warning: implicit conversion of port connection expands from 1 to 4 bits
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic jghwrkvun -> bit [1:4][3:3] ajjevafj
+          //
+          // warning: implicit conversion of port connection expands from 1 to 3 bits
+          //   wire logic wsmc -> reg [4:4][3:1] a
+          
+          xor yygtdxzzdx(jghwrkvun, wsmc, wsmc);
+          
+          ryz rvaapwdg(.yjy(wsmc), .dstgumnmza(frj), .pcegsiuj(wsmc), .yslxoj(jghwrkvun), .lo(qu), .g(kjyhhes));
+          // warning: implicit conversion of port connection truncates from 64 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   longint yjy -> wire logic wsmc
+          //
+          // warning: implicit conversion of port connection expands from 1 to 16 bits
+          // warning: implicit conversion changes signedness from unsigned to signed
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic jghwrkvun -> shortint yslxoj
+          //
+          // warning: implicit conversion of port connection expands from 1 to 150 bits
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic kjyhhes -> bit [2:3][2:0][4:0][4:0] g
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign yojsgcygvv = '{'{'b0,'bx,'b0,'b0,'b1}};
+          assign t = '{'b1};
+          assign kid = '{'{'{'bx,'bx},'{'bz,'bz}},'{'{'bx,'b0},'{'bz,'bz}}};
+          assign qu = '{'bx,'bz};
+          assign twegvdyko = 'b1;
+          
+          // Multi-driven assigns
+          assign sbije = 'bz;
+          assign yojsgcygvv = '{'{'b0,'b1,'b0,'bx,'b0}};
+          assign yojsgcygvv = '{'{'b0,'b1,'bx,'b1,'b1}};
+          assign twegvdyko = 'b1;
+        endmodule: rf
