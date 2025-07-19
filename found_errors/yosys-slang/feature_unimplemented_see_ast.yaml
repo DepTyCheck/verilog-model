@@ -1,7 +1,9 @@
 stage: parsing
 tool: yosys-slang
 id: feature_unimplemented_see_ast
-title: Feature unimplemented, see AST
+title: Real is not supported
+issue_status: already_known
+issue_link: https://github.com/povik/yosys-slang/issues/181
 regex: >
   Feature unimplemented at [\/A-z0-9-]+slang_frontend\.cc:1379, see AST and code line dump above
 examples:
