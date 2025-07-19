@@ -1,1 +1,0 @@
-non-vector type \w+ cannot have packed dimesions
