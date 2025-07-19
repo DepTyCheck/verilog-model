@@ -22,3 +22,18 @@ export function formatDateDMY(date: Date | null): string {
 	const yyyy = date.getFullYear();
 	return `${dd}.${mm}.${yyyy}`;
 }
+
+export function displayIssueStatus(status: string | null | undefined): string {
+  switch (status) {
+    case 'reported': return 'New';
+    case 'already_known': return 'Known';
+    case 'wont_report': return 'Not planned';
+	case 'unsupported': return 'Unsupported';
+    case null:
+    case undefined:
+    case '':
+      return '';
+    default:
+      return status;
+  }
+}

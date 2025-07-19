@@ -27,7 +27,7 @@ function parseYamlFile(filePath) {
     const content = fs.readFileSync(filePath, 'utf8');
     const doc = parse(content);
     
-    const { stage, tool, id, short_desc, title, examples, issue_link } = doc;
+    const { stage, tool, id, short_desc, title, examples, issue_status, issue_link } = doc;
     
     const parsedExamples = [];
     if (Array.isArray(examples)) {
@@ -54,6 +54,7 @@ function parseYamlFile(filePath) {
       title,
       short_desc: short_desc || null,
       examples: parsedExamples,
+      issue_status: issue_status || null,
       issue_link: issue_link || null
     };
   } catch (error) {
@@ -67,7 +68,7 @@ function parseDate(dateStr) {
   if (!dateStr) return null;
   const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(dateStr);
   if (match) {
-    const [_, day, month, year] = match;
+    const [, day, month, year] = match;
     // Convert to YYYY-MM-DD for Date constructor
     return new Date(`${year}-${month}-${day}`);
   }
@@ -88,7 +89,6 @@ export const allFoundErrors: FoundError[] = ${JSON.stringify(validErrors, null, 
 `;
 }
 
-// Main execution
 function main() {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
@@ -129,5 +129,4 @@ function main() {
   console.log('Script completed successfully!');
 }
 
-// Run the script
 main();
