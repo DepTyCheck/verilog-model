@@ -1,0 +1,150 @@
+stage: syntesis
+tool: iverilog
+id: unresolved_wire_cannot_have_multiple_drivers
+title:  Unresolved wire cannot have multiple drivers
+regex: >
+  Unresolved wire .* cannot have multiple drivers
+examples:
+  - invalid_module_item_v1:
+      first_found: 19.07.2025
+      full_error: |
+        error: Unresolved wire 'k' cannot have multiple drivers.
+      full_example: |
+        module nt
+          (input supply1 logic [0:0][1:2][4:2][1:2] irjnhwb, input realtime odtjxy);
+          
+          not nraw(vpoe, irjnhwb);
+          // warning: implicit conversion of port connection truncates from 12 to 1 bits
+          //   supply1 logic [0:0][1:2][4:2][1:2] irjnhwb -> logic irjnhwb
+          
+          xor e(cglxtgqc, cglxtgqc, ybqvnrmfcz);
+          
+          not ntd(mkwfgabsg, irjnhwb);
+          // warning: implicit conversion of port connection truncates from 12 to 1 bits
+          //   supply1 logic [0:0][1:2][4:2][1:2] irjnhwb -> logic irjnhwb
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          
+          // Multi-driven assigns
+          assign vpoe = 'bz;
+          assign cglxtgqc = 'b1;
+        endmodule: nt
+
+        module thqjsww
+          ( output longint hinfmmmc [2:2]
+          , output shortreal vzbcvxk
+          , output wor logic tggow
+          , output uwire logic k
+          , input time pdjt [4:0][0:3][1:0]
+          , input shortint ckeyv
+          , input bit [4:4][0:4][3:1] mtpkv
+          , input tri1 logic [3:4][1:0][0:1][1:4] vchnafbf [0:3]
+          );
+          
+          nt uekjjvqge(.irjnhwb(k), .odtjxy(nswbe));
+          // warning: implicit conversion of port connection expands from 1 to 12 bits
+          //   logic k -> supply1 logic [0:0][1:2][4:2][1:2] irjnhwb
+          //
+          // warning: implicit conversion of port connection expands from 1 to 64 bits
+          // warning: implicit conversion changes signedness from unsigned to signed
+          //   wire logic nswbe -> realtime odtjxy
+          
+          xor dtjytlnzj(csblmehu, ckeyv, nswbe);
+          // warning: implicit conversion of port connection truncates from 16 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   shortint ckeyv -> logic ckeyv
+          
+          or bbrzftyh(nswbe, k, ckeyv);
+          // warning: implicit conversion of port connection truncates from 16 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   shortint ckeyv -> logic ckeyv
+          
+          not w(k, tqkh);
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign tggow = 'b0;
+          
+          // Multi-driven assigns
+          assign nswbe = 'b0;
+          assign tggow = 'bz;
+        endmodule: thqjsww
+
+        module taejvqtg
+          ();
+          
+          time f [4:0][0:3][1:0];
+          tri1 logic [3:4][1:0][0:1][1:4] eg [0:3];
+          longint zielsum [2:2];
+          
+          thqjsww jqyzzhoj(.hinfmmmc(zielsum), .vzbcvxk(ggr), .tggow(ncinbpbx), .k(rjxfqlp), .pdjt(f), .ckeyv(rfrc), .mtpkv(rjxfqlp), .vchnafbf(eg));
+          // warning: implicit conversion of port connection truncates from 32 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          //   shortreal vzbcvxk -> wire logic ggr
+          //
+          // warning: implicit conversion of port connection expands from 1 to 16 bits
+          // warning: implicit conversion changes signedness from unsigned to signed
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic rfrc -> shortint ckeyv
+          //
+          // warning: implicit conversion of port connection expands from 1 to 15 bits
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic rjxfqlp -> bit [4:4][0:4][3:1] mtpkv
+          
+          not zxdlg(cxpzzf, vitddqtpf);
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign f = '{'{'{'bz,'bx},'{'b1,'b1},'{'b0,'bz},'{'bx,'bx}},'{'{'b0,'bz},'{'b1,'bz},'{'b0,'bx},'{'bx,'bz}},'{'{'bx,'b1},'{'b0,'bx},'{'b1,'bx},'{'bx,'bx}},'{'{'b0,'bx},'{'b0,'bz},'{'bz,'bx},'{'b1,'bx}},'{'{'bz,'bx},'{'b1,'b1},'{'bx,'b0},'{'b0,'bz}}};
+          assign rfrc = 'b1;
+          assign eg = '{'b0,'bx,'bz,'b0};
+          assign vitddqtpf = 'b1;
+          
+          // Multi-driven assigns
+          assign ggr = 'b0;
+          assign eg = '{'b0,'bz,'b1,'bz};
+          assign eg = '{'b0,'b0,'bz,'b1};
+          assign eg = '{'b0,'b0,'bx,'bx};
+        endmodule: taejvqtg
+
+        module jgctabv
+          ( output tri1 logic [3:4][3:2][4:4] evp [2:3]
+          , output logic djfsmk
+          , output tri logic [0:4][2:3] lr [3:0][1:0][4:3]
+          , output supply1 logic [1:2][3:0][0:0] kl [3:1][4:1]
+          , input byte volqxmmfv
+          );
+          
+          
+          not dmmrcv(djfsmk, df);
+          
+          nt sjcznoha(.irjnhwb(hhd), .odtjxy(volqxmmfv));
+          // warning: implicit conversion of port connection expands from 1 to 12 bits
+          //   wire logic hhd -> supply1 logic [0:0][1:2][4:2][1:2] irjnhwb
+          //
+          // warning: implicit conversion of port connection expands from 8 to 64 bits
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   byte volqxmmfv -> realtime odtjxy
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign evp = '{'b1,'b1};
+          assign kl = '{'{'bz,'b1,'bz,'b0},'{'b1,'bx,'bz,'b0},'{'bz,'bx,'bz,'bx}};
+          assign df = 'bx;
+          
+          // Multi-driven assigns
+          assign hhd = 'b1;
+          assign kl = '{'{'bx,'b0,'b1,'bx},'{'b1,'bx,'b0,'bx},'{'b1,'bx,'bz,'b1}};
+          assign lr = '{'{'{'bz,'b0},'{'bz,'bx}},'{'{'bz,'bx},'{'bz,'b0}},'{'{'b0,'b0},'{'b1,'b0}},'{'{'b0,'bx},'{'b0,'bz}}};
+          assign kl = '{'{'bx,'bz,'b1,'b0},'{'bz,'bx,'b0,'bx},'{'b0,'bx,'b1,'b0}};
+        endmodule: jgctabv

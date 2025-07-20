@@ -5,6 +5,7 @@ tool: iverilog
 short_desc: Simulation of a continuous assignment of an unpacked array throws error
 id: unable_to_resolve_label
 title: Unable to resolve label
+pattern_mode: whole
 regex: >
   Unable to resolve label [A-z0-9_]+\Wcompile_cleanup: [0-9]+ unresolved item[s]*\Wa.out: Program not runnable
 examples:
