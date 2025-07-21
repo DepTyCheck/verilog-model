@@ -7,7 +7,7 @@ id: unable_to_resolve_label
 title: Unable to resolve label
 matching_mode: whole
 regex: >
-  Unable to resolve label [A-z0-9_]+\Wcompile_cleanup: [0-9]+ unresolved item[s]*\Wa.out: Program not runnable
+  (compile_cleanup: \d+ unresolved items\nUnable to resolve label v0x[0-9a-f_]+|Unable to resolve label v0x[0-9a-f_]+\ncompile_cleanup: \d+ unresolved items)
 examples:
   - unable_to_resolve_label_v1:
       first_found: 04.03.2025
@@ -40,3 +40,89 @@ examples:
         endmodule: bonufropgc
 
         // Seed after: 12068331556777782645,13712862608348962075
+  - unable_to_resolve_label_v2:
+    first_found: 20.07.2025
+    full_error: |
+      a.out: Program not runnable, 52 errors.
+      Unable to resolve label v0x55c36d23a1f0_0
+      Unable to resolve label v0x55c36d239c70_0
+      Unable to resolve label v0x55c36d2396d0_0
+      Unable to resolve label v0x55c36d238a90_0
+      Unable to resolve label v0x55c36d238750_0
+      Unable to resolve label v0x55c36d238190_0
+      Unable to resolve label v0x55c36d237c10_0
+      Unable to resolve label v0x55c36d237880_0
+      Unable to resolve label v0x55c36d2377e0_0
+      Unable to resolve label v0x55c36d2372f0_0
+      Unable to resolve label v0x55c36d23a1f0_0
+      Unable to resolve label v0x55c36d239c70_0
+      Unable to resolve label v0x55c36d2396d0_0
+      Unable to resolve label v0x55c36d238a90_0
+      Unable to resolve label v0x55c36d238750_0
+      Unable to resolve label v0x55c36d23a1f0_0
+      Unable to resolve label v0x55c36d239c70_0
+      Unable to resolve label v0x55c36d23a1f0_0
+      Unable to resolve label v0x55c36d239c70_0
+      Unable to resolve label v0x55c36d2396d0_0
+      Unable to resolve label v0x55c36d2396d0_0
+      Unable to resolve label v0x55c36d238a90_0
+      Unable to resolve label v0x55c36d238750_0
+      Unable to resolve label v0x55c36d238a90_0
+      Unable to resolve label v0x55c36d238750_0
+      Unable to resolve label v0x55c36d238190_0
+      Unable to resolve label v0x55c36d237c10_0
+      Unable to resolve label v0x55c36d237880_0
+      Unable to resolve label v0x55c36d2377e0_0
+      Unable to resolve label v0x55c36d2372f0_0
+      Unable to resolve label v0x55c36d238190_0
+      Unable to resolve label v0x55c36d237c10_0
+      Unable to resolve label v0x55c36d238190_0
+      Unable to resolve label v0x55c36d237c10_0
+      Unable to resolve label v0x55c36d237880_0
+      Unable to resolve label v0x55c36d2377e0_0
+      Unable to resolve label v0x55c36d2372f0_0
+      Unable to resolve label v0x55c36d237880_0
+      Unable to resolve label v0x55c36d2377e0_0
+      Unable to resolve label v0x55c36d2372f0_0
+      Unable to resolve label v0x55c36d230760_0
+      Unable to resolve label v0x55c36d230380_0
+      Unable to resolve label v0x55c36d1e8d80_0
+      Unable to resolve label v0x55c36d230760_0
+      Unable to resolve label v0x55c36d230380_0
+      Unable to resolve label v0x55c36d1e8d80_0
+      Unable to resolve label v0x55c36d230760_0
+      Unable to resolve label v0x55c36d230380_0
+      Unable to resolve label v0x55c36d230760_0
+      Unable to resolve label v0x55c36d230380_0
+      Unable to resolve label v0x55c36d1e8d80_0
+      Unable to resolve label v0x55c36d1e8d80_0
+      compile_cleanup: 52 unresolved items
+    full_example: |
+      module gojmfhv
+        (input tri0 logic [1:0][0:4] zuiwjxpotm [4:3][1:3][1:4][3:2], input reg yjuwkrn, input tri1 logic azhb);
+
+        // Top inputs -> top outputs assigns
+        
+        // Single-driven assigns
+        
+        // Multi-driven assigns
+        assign azhb = 'b1;
+        assign azhb = 'bx;
+        assign zuiwjxpotm = '{'{'{'{'bz,'bz},'{'bz,'b0},'{'bx,'bz},'{'bx,'b0}},'{'{'bx,'b1},'{'bz,'bx},'{'b1,'bz},'{'bz,'b0}},'{'{'b0,'bx},'{'b1,'b1},'{'bz,'b0},'{'bz,'b0}}},'{'{'{'b1,'b1},'{'bx,'b1},'{'b1,'b1},'{'bx,'b1}},'{'{'b0,'b1},'{'bz,'bx},'{'b0,'bz},'{'bx,'bz}},'{'{'b0,'b1},'{'bx,'bz},'{'bx,'b1},'{'b0,'bz}}}};
+      endmodule: gojmfhv
+
+      module zmfuwamyi
+        ( output triand logic [0:2] nd [0:1][1:3][3:1][3:2]
+        , output bit [4:2][4:0] jnu
+        , input shortint pr
+        , input supply0 logic [3:4][4:0][2:2][3:3] me [3:2][1:4]
+        );
+        
+        // Top inputs -> top outputs assigns
+        
+        // Single-driven assigns
+        assign nd = '{'{'{'{'bx,'b1},'{'bz,'bx},'{'b1,'bx}},'{'{'bz,'bz},'{'b0,'b0},'{'bz,'b1}},'{'{'bz,'b1},'{'b1,'b1},'{'b1,'bz}}},'{'{'{'b0,'bx},'{'bz,'b1},'{'b0,'bz}},'{'{'b1,'bz},'{'bx,'b1},'{'b0,'bx}},'{'{'bz,'bx},'{'b0,'b0},'{'b1,'bz}}}};
+        assign jnu = 'b1;
+        
+        // Multi-driven assigns
+      endmodule: zmfuwamyi
