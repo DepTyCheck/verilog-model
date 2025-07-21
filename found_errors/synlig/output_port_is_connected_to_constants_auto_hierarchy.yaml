@@ -1,7 +1,8 @@
 stage: HIERARCHY pass
 tool: synlig
 id: output_port_is_connected_to_constants_auto_hierarchy
-title: Port is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }
+title: >
+  Port is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }
 regex: >
   Output port .* is connected to constants: { \$auto\$hierarchy\.cc:1462:execute\$6 1'0 }
 examples:

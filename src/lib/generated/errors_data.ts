@@ -476,6 +476,25 @@ export const allFoundErrors: FoundError[] = [
     "issue_link": null
   },
   {
+    "stage": "HIERARCHY pass",
+    "tool": "synlig",
+    "id": "output_port_is_connected_to_constants_auto_hierarchy",
+    "title": "Port is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }\n",
+    "short_desc": null,
+    "examples": [
+      {
+        "id": "output_port_is_connected_to_constants_auto_hierarchy_v1",
+        "first_found": "2025-07-21T00:00:00.000Z",
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": "ERROR: Output port udbjmldhub.llfhyxo.agrbxoods (sbp) is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }\n",
+        "full_example": "module sbp\n  ( output triand logic [4:3] ohney\n  , output reg [4:2][4:2][3:4][3:3] agrbxoods\n  , output supply0 logic vkumvbjn\n  , output supply1 logic x [3:3]\n  , input bit [0:0][1:2] omfhsss\n  , input triand logic g [0:1][1:0][4:2]\n  , input reg l\n  , input logic [0:1][2:0][3:3] ov\n  );\n\n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign x = '{'b0};\n  \n  // Multi-driven assigns\n  assign vkumvbjn = 'b1;\n  assign x = '{'b1};\n  assign g = '{'{'{'b0,'b0,'bz},'{'bx,'bz,'b0}},'{'{'b1,'b0,'bx},'{'b1,'bx,'b0}}};\n  assign x = '{'b1};\nendmodule: sbp\n\nmodule udbjmldhub\n  ( output tri1 logic zfrz [4:0]\n  , output wire logic fdobyz\n  , output bit [2:2][4:0] wgcmxprkh\n  , output tri1 logic [2:1][2:4] pzg [2:0][0:2][1:0]\n  , input wor logic [0:3] dkp\n  , input supply0 logic s [3:1]\n  , input tri0 logic ngbav\n  , input logic [1:0] tb\n  );\n  \n  triand logic biujcjgb [0:1][1:0][4:2];\n  supply1 logic jmxmerdxfq [3:3];\n  \n  or vy(wo, uur, dpja);\n  \n  sbp llfhyxo( .ohney(uur)\n            , .agrbxoods(lp)\n            , .vkumvbjn(wgcmxprkh)\n            , .x(jmxmerdxfq)\n            , .omfhsss(dfwhdv)\n            , .g(biujcjgb)\n            , .l(cbe)\n            , .ov(kvsdekkba)\n            );\n  // warning: implicit conversion of port connection truncates from 2 to 1 bits\n  //   triand logic [4:3] ohney -> wire logic uur\n  //\n  // warning: implicit conversion of port connection truncates from 18 to 1 bits\n  //   reg [4:2][4:2][3:4][3:3] agrbxoods -> wire logic lp\n  //\n  // warning: implicit conversion of port connection expands from 1 to 2 bits\n  // warning: implicit conversion changes possible bit states from 4-state to 2-state\n  //   wire logic dfwhdv -> bit [0:0][1:2] omfhsss\n  //\n  // warning: implicit conversion of port connection expands from 1 to 6 bits\n  //   wire logic kvsdekkba -> logic [0:1][2:0][3:3] ov\n  \n  xor slclbvryk(cbe, ezpaxyxhig, cbe);\n\n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  \n  // Multi-driven assigns\n  assign cbe = 'b1;\n  assign lp = 'b0;\n  assign zfrz = '{'b1,'bx,'bz,'bx,'bz};\nendmodule: udbjmldhub\n\nmodule lq\n  ( output wire logic [1:3][4:1][1:1][3:1] xooszipend [1:1][3:0][3:0][1:4]\n  , output shortreal snjgo\n  , output supply1 logic [0:2] i [1:0][2:0]\n  , input tri1 logic [0:1][2:0][3:4] pwap [1:3][0:0][4:2][0:2]\n  , input logic [2:1] shriue\n  , input logic xpdlqs [1:0][4:4]\n  , input wand logic [0:3] mymukcgfz [4:1][2:3]\n  );\n  \n  \n  or bhjx(kvvlmht, n, snjgo);\n  \n  not tke(n, snjgo);\n  \n  or fqlai(snjgo, efke, snjgo);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign i = '{'{'bz,'bz,'b1},'{'b1,'b0,'b1}};\n  assign efke = 'b1;\n  assign xooszipend = '{'{'{'{'b1,'b1,'bz,'bz},'{'bx,'b0,'bx,'b0},'{'b0,'b0,'b1,'b0},'{'b1,'b0,'bx,'b0}},'{'{'bx,'b1,'b0,'b0},'{'bz,'b0,'b1,'bx},'{'bx,'b1,'b0,'bz},'{'b0,'bz,'b1,'b0}},'{'{'b0,'bx,'bz,'bz},'{'bx,'b0,'bx,'b1},'{'b1,'b0,'bx,'b0},'{'b1,'bx,'b0,'b0}},'{'{'b1,'bx,'b1,'b0},'{'bz,'b0,'b1,'b1},'{'bz,'bz,'bx,'b0},'{'b0,'bz,'bx,'bx}}}};\n  \n  // Multi-driven assigns\nendmodule: lq\n"
+      }
+    ],
+    "issue_status": null,
+    "issue_link": null
+  },
+  {
     "stage": "syntesis",
     "tool": "synlig",
     "id": "signal_with_non_constant_width",
