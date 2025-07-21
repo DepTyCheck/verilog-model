@@ -1,0 +1,111 @@
+stage: syntesis
+tool: synlig
+id: failed_to_detect_width_of_signal
+title: Failed to detect width of signal
+regex: >
+  Failed to detect width of signal access .*
+examples:
+  - failed_to_detect_width_of_signal_v1:
+      first_found: 21.07.2025
+      full_error: >
+        ERROR: Failed to detect width of signal access `\y'!
+      full_example: |
+        module fyhjcqrog
+          (input trior logic xxccvkct [0:4]);
+
+          or dvzakungu(gglszlvh, bo, nreeh);
+          
+          and x(m, p, fpdreftjwy);
+          
+          xor ajjgktoi(frziwr, qxxkzwye, hhsxh);
+          
+          nand bm(bo, bo, frziwr);
+
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign nreeh = 'b0;
+          assign fpdreftjwy = 'b0;
+          
+          // Multi-driven assigns
+          assign bo = 'bx;
+          assign bo = 'b0;
+          assign bo = 'bx;
+          assign bo = 'bz;
+        endmodule: fyhjcqrog
+
+        module z
+          ( output trior logic [3:4][0:4][3:0] r [3:2]
+          , output wand logic [3:0][3:2][0:4] lvnqvaypgt [1:4]
+          , output triand logic [2:2][4:1][0:3] rxhe [2:2][2:2][1:0]
+          );
+          
+          trior logic wqfidee [0:4];
+          
+          fyhjcqrog chshhteh(.xxccvkct(wqfidee));
+          
+          not yrjf(zkeqvltrk, zlnzrmv);
+          
+          or omkzdcag(xqscf, ovccxszi, f);
+          
+          not nmmipj(f, xqscf);
+
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign lvnqvaypgt = '{'b1,'bz,'b0,'b0};
+          assign zlnzrmv = 'bx;
+          assign wqfidee = '{'b0,'b0,'bz,'b1,'b0};
+          
+          // Multi-driven assigns
+          assign rxhe = '{'{'{'b1,'bz}}};
+          assign f = 'bz;
+          assign xqscf = 'bz;
+        endmodule: z
+
+        module duh
+          ( output bit [4:3][4:1] y [0:4]
+          , output tri0 logic [3:4][2:4][4:1][3:1] svgzmzy
+          , input tri1 logic [0:1][1:2][1:2][3:0] cd [1:3][3:3][2:4][4:4]
+          );
+          
+          trior logic [3:4][0:4][3:0] q [3:2];
+          wand logic [3:0][3:2][0:4] ykqz [1:4];
+          triand logic [2:2][4:1][0:3] oqsf [2:2][2:2][1:0];
+          
+          z fygn(.r(q), .lvnqvaypgt(ykqz), .rxhe(oqsf));
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign y = '{'b0,'b1,'b1,'b0,'b0};
+          
+          // Multi-driven assigns
+        endmodule: duh
+
+        module uiq
+          ( output triand logic uhj [3:0][0:1][0:4]
+          , input wire logic [1:0][2:0][3:0][1:0] oynf [3:2][1:4]
+          , input logic [2:3][0:1] mmzesrnnc [1:3]
+          , input bit [0:4] vzzkah
+          , input logic [1:0] wjladaibp [4:4][1:2][4:1]
+          );
+
+          xor s(mkki, ijpizmw, nuu);
+          
+          not m(vbxtgxkaw, mkki);
+          
+          or cepqdkfl(nuu, oystsupx, ogippdjf);
+
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign uhj = '{'{'{'b1,'b0,'b0,'b1,'b0},'{'b1,'b0,'b1,'bx,'b0}},'{'{'bx,'bx,'bz,'bz,'bx},'{'b0,'b1,'b1,'b0,'bx}},'{'{'b1,'bz,'bx,'b0,'bx},'{'b0,'b0,'b0,'b1,'bz}},'{'{'bx,'bx,'b0,'bz,'bz},'{'bz,'bz,'b0,'bz,'bz}}};
+          assign ijpizmw = 'bz;
+          assign ogippdjf = 'b0;
+          assign oystsupx = 'bx;
+          
+          // Multi-driven assigns
+          assign uhj = '{'{'{'bx,'bz,'bx,'bx,'b1},'{'b0,'b1,'b1,'bz,'bz}},'{'{'b1,'b0,'b1,'bz,'bz},'{'b0,'bx,'bx,'bx,'b0}},'{'{'b1,'b0,'bz,'bz,'b0},'{'bx,'b0,'b0,'b0,'bz}},'{'{'b0,'b1,'bx,'bz,'bx},'{'b0,'b1,'bz,'b0,'bz}}};
+        endmodule: uiq
