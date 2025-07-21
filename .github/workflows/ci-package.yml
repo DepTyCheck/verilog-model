@@ -425,6 +425,10 @@ jobs:
           set +e
 
           git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
+          cd "${{ env.GH_PAGES_PATH }}"
+          echo "Latest commit hash of ${{ GH_PAGES_PATH }}:"
+          git rev-parse HEAD
+          cd -
 
           python3 .github/workflows/runner/main.py \
             --gen-path "${{ env.GENERATION_DIR }}" \
