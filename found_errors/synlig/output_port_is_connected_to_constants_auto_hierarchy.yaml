@@ -4,7 +4,7 @@ id: output_port_is_connected_to_constants_auto_hierarchy
 title: >
   Port is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }
 regex: >
-  Output port .* is connected to constants: { \$auto\$hierarchy\.cc:1462:execute\$6 1'0 }
+  Output port .* is connected to constants: ({ \$auto\$hierarchy\.cc:1462:execute\$6 1'0 }|[0-9'A-z]+)
 examples:
   - output_port_is_connected_to_constants_auto_hierarchy_v1:
       first_found: 21.07.2025
@@ -111,3 +111,138 @@ examples:
           
           // Multi-driven assigns
         endmodule: lq
+  
+  - output_port_is_connected_to_constants_auto_hierarchy_v2:
+      first_found: 21.07.2025
+      full_error: >
+        ERROR: Output port qzjcl.zavpwmtnm.wfh (kxab) is connected to constants: 9'x
+      full_example: |
+        module cqrewiill
+          ( output triand logic [4:0] cjhxbs [0:3]
+          , output trior logic [1:3][4:0] dctzrckjp
+          , output supply1 logic [4:2] vbvcmvrb [2:4][0:0][3:0]
+          , output supply1 logic [3:3] qlockgum [2:1][4:3][0:4]
+          , input bit [4:3][3:0][0:2] rulysauoq
+          , input wor logic [0:4] qndoehr [0:2][0:1][2:3]
+          , input bit [1:0][1:3][0:4] rvl
+          );
+          
+          
+          
+          // Top inputs -> top outputs assigns
+          assign dctzrckjp = rvl;
+          
+          // Single-driven assigns
+          assign qlockgum = '{'{'{'b0,'bx,'bz,'bz,'b0},'{'bz,'bz,'b0,'bx,'b0}},'{'{'b0,'b1,'bz,'b0,'bx},'{'bz,'bz,'b0,'bz,'bx}}};
+          assign cjhxbs = '{'bz,'b1,'b0,'bx};
+          assign vbvcmvrb = '{'{'{'bz,'b0,'bx,'bx}},'{'{'bz,'bz,'b0,'bx}},'{'{'b1,'bz,'bz,'b0}}};
+          
+          // Multi-driven assigns
+          assign qlockgum = '{'{'{'b1,'bz,'bz,'b0,'b1},'{'bz,'bz,'bz,'bx,'bz}},'{'{'bz,'bz,'bx,'b1,'bz},'{'bz,'bx,'b0,'bx,'bz}}};
+        endmodule: cqrewiill
+
+        module kxab
+          (output trireg logic [0:2] wfh [2:4], output bit [2:1] arkzhs [1:3], output bit rhaifxdm, input uwire logic [1:0] rmyqfj [0:1][1:0]);
+          
+          wor logic [0:4] evihajrf [0:2][0:1][2:3];
+          triand logic [4:0] bihedomx [0:3];
+          supply1 logic [4:2] l [2:4][0:0][3:0];
+          supply1 logic [3:3] mpe [2:1][4:3][0:4];
+          
+          not yykkyv(qrdahxx, pezqya);
+          
+          not pu(mv, ulfqjdcxi);
+          
+          cqrewiill vfdf( .cjhxbs(bihedomx)
+                        , .dctzrckjp(nmqdlpd)
+                        , .vbvcmvrb(l)
+                        , .qlockgum(mpe)
+                        , .rulysauoq(mv)
+                        , .qndoehr(evihajrf)
+                        , .rvl(rhaifxdm)
+                        );
+          // warning: implicit conversion of port connection truncates from 15 to 1 bits
+          //   trior logic [1:3][4:0] dctzrckjp -> wire logic nmqdlpd
+          //
+          // warning: implicit conversion of port connection expands from 1 to 24 bits
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic mv -> bit [4:3][3:0][0:2] rulysauoq
+          //
+          // warning: implicit conversion of port connection expands from 1 to 30 bits
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   logic rhaifxdm -> bit [1:0][1:3][0:4] rvl
+          
+          not kj(rhaifxdm, suzqhvlewq);
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign evihajrf = '{'{'{'bx,'b0},'{'b1,'b1}},'{'{'b1,'b0},'{'bx,'bz}},'{'{'bx,'b0},'{'bz,'b0}}};
+          assign suzqhvlewq = 'bx;
+          
+          // Multi-driven assigns
+          assign wfh = '{'b1,'bx,'b0};
+          assign wfh = '{'b1,'bx,'bx};
+        endmodule: kxab
+
+        module nil
+          (output trior logic [1:2][3:3][3:4] pbnkwobv [3:2][1:0], output reg [4:1] szc [0:3], input bit [0:3][2:0] wu);
+          
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign szc = '{'b0,'bx,'bz,'bx};
+          assign pbnkwobv = '{'{'b0,'bx},'{'b1,'bx}};
+          
+          // Multi-driven assigns
+          assign pbnkwobv = '{'{'b0,'bz},'{'bz,'bz}};
+        endmodule: nil
+
+        module qzjcl
+          ( output bit [3:1] lbuly
+          , output reg [1:1][2:4] ayjy [2:3]
+          , output logic yuosjhyef [0:3]
+          , output reg [4:4][0:1][4:2] yontivklty [4:2]
+          , input tri1 logic [0:4] xastjzuk [1:1][2:4]
+          , input reg [4:4][2:2][2:0][4:4] tni
+          , input logic [4:4] eifepkfgl [2:4][0:4]
+          );
+          
+          uwire logic [1:0] ypzxja [0:1][1:0];
+          trireg logic [0:2] fzpjavmt [2:4];
+          bit [2:1] cmutf [1:3];
+          trior logic [1:2][3:3][3:4] dgxgctsuum [3:2][1:0];
+          reg [4:1] bbxuhubq [0:3];
+          trior logic [1:2][3:3][3:4] opnaewdoj [3:2][1:0];
+          reg [4:1] yshsvthc [0:3];
+          
+          kxab zavpwmtnm(.wfh(fzpjavmt), .arkzhs(cmutf), .rhaifxdm(lbuly), .rmyqfj(ypzxja));
+          
+          nil uandb(.pbnkwobv(dgxgctsuum), .szc(bbxuhubq), .wu(jmppebdqr));
+          // warning: implicit conversion of port connection expands from 1 to 12 bits
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic jmppebdqr -> bit [0:3][2:0] wu
+          
+          nand ymhldrgfhu(tytdbwhxx, qnvcpza, tytdbwhxx);
+          
+          nil nmjvmesls(.pbnkwobv(opnaewdoj), .szc(yshsvthc), .wu(txilnjr));
+          // warning: implicit conversion of port connection expands from 1 to 12 bits
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic txilnjr -> bit [0:3][2:0] wu
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign yontivklty = '{'bz,'b1,'bx};
+          assign ayjy = '{'bz,'b1};
+          assign yuosjhyef = '{'bx,'b0,'b0,'bx};
+          assign ypzxja = '{'{'bz,'bz},'{'bz,'bz}};
+          assign txilnjr = 'b1;
+          
+          // Multi-driven assigns
+          assign fzpjavmt = '{'b0,'b0,'bx};
+        endmodule: qzjcl
