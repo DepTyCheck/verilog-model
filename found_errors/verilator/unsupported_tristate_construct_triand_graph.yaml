@@ -3,7 +3,7 @@ tool: verilator
 id: unsupported_tristate_construct_triand_graph
 title: Unsupported tristate construct (in graph; not converted)
 regex: >
-  Unsupported tristate construct \(in graph; not converted\): (CONST|VARREF|INITITEM)
+  Unsupported tristate construct \(in graph; not converted\): (CONST|VARREF|INITITEM|ASSIGNW)
 examples:
   - unsupported_tristate_construct_triand_graph_const:
       first_found: 04.03.2025
@@ -146,3 +146,49 @@ examples:
           assign jvdhk = 'b0;
           assign fyruvy = 'bx;
         endmodule: gkokmqe
+  - unsupported_tristate_construct_triand_graph_assignw:
+      first_found: 21.07.2025
+      full_error: |
+        %Error: top.sv:4:46: Unsupported tristate construct (in graph; not converted): ASSIGNW
+      full_example: |
+        module fzdvm
+          ( output triand logic [1:0][3:0][4:1][4:4] tkbyhwql
+          , output realtime dh [2:4][3:3]
+          , input integer spcavyg
+          , input wand logic [3:4] zwn [3:3][2:4][3:2][0:4]
+          );
+
+          nand fxffiyqx(rteypawfw, tkbyhwql, tkbyhwql);
+          
+          not eyhdqcmpiy(tkbyhwql, tkbyhwql);
+
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign dh = '{'{'bx},'{'bx},'{'bx}};
+          
+          // Multi-driven assigns
+          assign tkbyhwql = 'bz;
+        endmodule: fzdvm
+
+        module rnbqswtn
+          ( output real lj
+          , output uwire logic [4:0][4:3][2:3][2:1] mioscshqu
+          , output supply1 logic ofipox
+          , input logic sl
+          , input tri logic [0:0][2:2][1:1] ldlyo [1:0][2:0][2:1][4:0]
+          , input reg [0:3][4:3][0:3] qfeaazkksm
+          );
+
+          or cppeuksodh(ofipox, rq, rimieshrxj);
+
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign mioscshqu = 'b0;
+          assign rq = 'b1;
+          assign rimieshrxj = 'b0;
+          assign lj = 'bx;
+          
+          // Multi-driven assigns
+        endmodule: rnbqswtn

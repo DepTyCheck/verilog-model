@@ -294,6 +294,14 @@ export const allFoundErrors: FoundError[] = [
         "minified_error": null,
         "full_error": "Unable to resolve label v0x55a8dad28e10_0\ncompile_cleanup: 1 unresolved items\na.out: Program not runnable, 1 errors.\n",
         "full_example": "// Seed: 14318809588400357211,13712862608348962075\n\nmodule bonufropgc\n  ( output bit haroct [1:2][2:1]\n  , output integer hlvvwzhwsh\n  , output logic y [2:1]\n  , input bit go\n  , input bit [2:2] vrqmu [1:0]\n  , input integer nffbpbbong [2:4]\n  , input bit [4:2][1:0] ec\n  );\n  \n  // Top inputs -> top outputs assigs\n  assign hlvvwzhwsh = ec;\n  \n  // Assigns\n  assign y = '{'b1,'bz};\nendmodule: bonufropgc\n\n// Seed after: 12068331556777782645,13712862608348962075\n"
+      },
+      {
+        "id": "unable_to_resolve_label_v2",
+        "first_found": null,
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": null,
+        "full_example": null
       }
     ],
     "issue_status": "reported",
@@ -443,6 +451,44 @@ export const allFoundErrors: FoundError[] = [
         "minified_error": null,
         "full_error": "ERROR: Encountered unhandled type in process_port: real_var\n",
         "full_example": "// Seed: 12155394080032148100,2426731264514140405\n\nmodule cjcbbn\n  ( output logic ongg\n  , output wire xzkunvy [2:4]\n  , output real yltdauz [4:3][2:4]\n  , input bit [2:4] hfkcmovudd\n  , input bit [4:2] pfqdfc [2:1]\n  );\n  \n  and eglowkxpgw(ongg, dp, hfkcmovudd);\n  // warning: implicit conversion of port connection truncates from 3 to 1 bits\n  // warning: implicit conversion changes possible bit states from 2-state to 4-state\n  //   bit [2:4] hfkcmovudd -> logic hfkcmovudd\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign dp = 'bx;\n  assign xzkunvy = '{'b1,'b1,'b0};\n  assign xzkunvy = '{'b0,'b0,'b1};\n  assign yltdauz = '{'{'b0,'b1,'bz},'{'bx,'b1,'bx}};\nendmodule: cjcbbn\n\nmodule y\n  ( output bit [0:3] iodmfscj\n  , output bit [1:4] hgdmtyhad [3:3]\n  , input integer njiobdayo\n  , input real ph\n  , input bit [0:4] taagvcaj\n  , input bit [3:0][3:1] nwswsdfli\n  );\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign iodmfscj = 'b0111;\n  assign hgdmtyhad = '{'b0001};\nendmodule: y\n\nmodule aa\n  ( output logic [1:2][3:3] l\n  , output bit [0:3][3:4][4:0] v\n  , output wire vpikzldy\n  , output logic [0:0] qwtmzuhi [3:0]\n  , input logic [0:2] jpxlkbv [0:4]\n  , input logic [0:1][4:2][2:1] sewbhdsu\n  , input wire fhcbpa [4:1][4:3]\n  );\n  \n  or rlzl(tkuti, dcmmofz, shric);\n  \n  and ewniwtur(fzmmwmzg, xl, fzmmwmzg);\n  \n  and wxuxnoai(xl, tkuti, xl);\n  \n  // Top inputs -> top outputs assigns\n  assign v = sewbhdsu;\n  \n  // Assigns\n  assign shric = 'b0;\n  assign dcmmofz = 'bz;\n  assign l = 'b1x;\n  assign fhcbpa = '{'{'b0,'b0},'{'b1,'b1},'{'b0,'b0},'{'b1,'b0}};\nendmodule: aa\n\nmodule isknojrfq\n  (output real fvmu);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Assigns\n  assign fvmu = 'b0;\nendmodule: isknojrfq\n\n// Seed after: 18199170163325466416,2426731264514140405\n"
+      }
+    ],
+    "issue_status": null,
+    "issue_link": null
+  },
+  {
+    "stage": "syntesis",
+    "tool": "synlig",
+    "id": "failed_to_detect_width_of_signal",
+    "title": "Failed to detect width of signal",
+    "short_desc": null,
+    "examples": [
+      {
+        "id": "failed_to_detect_width_of_signal_v1",
+        "first_found": "2025-07-21T00:00:00.000Z",
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": "ERROR: Failed to detect width of signal access `\\y'!\n",
+        "full_example": "module fyhjcqrog\n  (input trior logic xxccvkct [0:4]);\n\n  or dvzakungu(gglszlvh, bo, nreeh);\n  \n  and x(m, p, fpdreftjwy);\n  \n  xor ajjgktoi(frziwr, qxxkzwye, hhsxh);\n  \n  nand bm(bo, bo, frziwr);\n\n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign nreeh = 'b0;\n  assign fpdreftjwy = 'b0;\n  \n  // Multi-driven assigns\n  assign bo = 'bx;\n  assign bo = 'b0;\n  assign bo = 'bx;\n  assign bo = 'bz;\nendmodule: fyhjcqrog\n\nmodule z\n  ( output trior logic [3:4][0:4][3:0] r [3:2]\n  , output wand logic [3:0][3:2][0:4] lvnqvaypgt [1:4]\n  , output triand logic [2:2][4:1][0:3] rxhe [2:2][2:2][1:0]\n  );\n  \n  trior logic wqfidee [0:4];\n  \n  fyhjcqrog chshhteh(.xxccvkct(wqfidee));\n  \n  not yrjf(zkeqvltrk, zlnzrmv);\n  \n  or omkzdcag(xqscf, ovccxszi, f);\n  \n  not nmmipj(f, xqscf);\n\n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign lvnqvaypgt = '{'b1,'bz,'b0,'b0};\n  assign zlnzrmv = 'bx;\n  assign wqfidee = '{'b0,'b0,'bz,'b1,'b0};\n  \n  // Multi-driven assigns\n  assign rxhe = '{'{'{'b1,'bz}}};\n  assign f = 'bz;\n  assign xqscf = 'bz;\nendmodule: z\n\nmodule duh\n  ( output bit [4:3][4:1] y [0:4]\n  , output tri0 logic [3:4][2:4][4:1][3:1] svgzmzy\n  , input tri1 logic [0:1][1:2][1:2][3:0] cd [1:3][3:3][2:4][4:4]\n  );\n  \n  trior logic [3:4][0:4][3:0] q [3:2];\n  wand logic [3:0][3:2][0:4] ykqz [1:4];\n  triand logic [2:2][4:1][0:3] oqsf [2:2][2:2][1:0];\n  \n  z fygn(.r(q), .lvnqvaypgt(ykqz), .rxhe(oqsf));\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign y = '{'b0,'b1,'b1,'b0,'b0};\n  \n  // Multi-driven assigns\nendmodule: duh\n\nmodule uiq\n  ( output triand logic uhj [3:0][0:1][0:4]\n  , input wire logic [1:0][2:0][3:0][1:0] oynf [3:2][1:4]\n  , input logic [2:3][0:1] mmzesrnnc [1:3]\n  , input bit [0:4] vzzkah\n  , input logic [1:0] wjladaibp [4:4][1:2][4:1]\n  );\n\n  xor s(mkki, ijpizmw, nuu);\n  \n  not m(vbxtgxkaw, mkki);\n  \n  or cepqdkfl(nuu, oystsupx, ogippdjf);\n\n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign uhj = '{'{'{'b1,'b0,'b0,'b1,'b0},'{'b1,'b0,'b1,'bx,'b0}},'{'{'bx,'bx,'bz,'bz,'bx},'{'b0,'b1,'b1,'b0,'bx}},'{'{'b1,'bz,'bx,'b0,'bx},'{'b0,'b0,'b0,'b1,'bz}},'{'{'bx,'bx,'b0,'bz,'bz},'{'bz,'bz,'b0,'bz,'bz}}};\n  assign ijpizmw = 'bz;\n  assign ogippdjf = 'b0;\n  assign oystsupx = 'bx;\n  \n  // Multi-driven assigns\n  assign uhj = '{'{'{'bx,'bz,'bx,'bx,'b1},'{'b0,'b1,'b1,'bz,'bz}},'{'{'b1,'b0,'b1,'bz,'bz},'{'b0,'bx,'bx,'bx,'b0}},'{'{'b1,'b0,'bz,'bz,'b0},'{'bx,'b0,'b0,'b0,'bz}},'{'{'b0,'b1,'bx,'bz,'bx},'{'b0,'b1,'bz,'b0,'bz}}};\nendmodule: uiq\n"
+      }
+    ],
+    "issue_status": null,
+    "issue_link": null
+  },
+  {
+    "stage": "syntesis",
+    "tool": "synlig",
+    "id": "signal_with_non_constant_width",
+    "title": "Signal with non-constant width!",
+    "short_desc": null,
+    "examples": [
+      {
+        "id": "signal_with_non_constant_width_v1",
+        "first_found": "2025-07-21T00:00:00.000Z",
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": "ERROR: Signal `\\khbfhwajrd' with non-constant width!\n",
+        "full_example": "module pxcr\n  ( output trior logic [3:0] vgbqkkfhwt\n  , output wor logic [3:1][3:2][0:1] efdwbjjy [4:1][3:1][4:1]\n  , output bit [2:0][3:3] t\n  , input logic [1:2][3:4] uapi [3:0]\n  , input uwire logic [3:3][0:3] quoepegllr\n  );\n  \n  not thbjs(olzr, hits);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign vgbqkkfhwt = 'bx;\n  assign hits = 'b1;\n  assign efdwbjjy = '{'{'{'bz,'b0,'bx,'bz},'{'b1,'b1,'b0,'bz},'{'bx,'b0,'bx,'bz}},'{'{'b1,'bz,'b0,'b1},'{'bz,'b0,'bx,'bx},'{'bz,'bx,'bz,'bx}},'{'{'bz,'bx,'bz,'bx},'{'b1,'bz,'bz,'bx},'{'b0,'bx,'bz,'bx}},'{'{'bz,'bz,'b1,'b0},'{'b0,'b1,'b0,'b1},'{'bx,'bx,'bz,'bz}}};\n  assign t = 'b1;\n  \n  // Multi-driven assigns\n  assign vgbqkkfhwt = 'bx;\n  assign efdwbjjy = '{'{'{'b1,'b1,'b1,'b0},'{'bz,'bz,'bz,'bz},'{'bz,'bz,'b0,'bz}},'{'{'bx,'b1,'b0,'bx},'{'b1,'b0,'b1,'b1},'{'b0,'bx,'b0,'b1}},'{'{'bx,'b0,'b0,'bz},'{'bz,'bx,'b1,'bx},'{'b1,'bz,'b1,'bx}},'{'{'bx,'bz,'b1,'b1},'{'bx,'b1,'bz,'bz},'{'b1,'b1,'b1,'b0}}};\n  assign efdwbjjy = '{'{'{'b1,'b0,'bx,'bx},'{'bx,'b1,'b0,'b0},'{'b1,'b1,'bx,'b1}},'{'{'bx,'b0,'b0,'b1},'{'b0,'b0,'bx,'bz},'{'b1,'b1,'b1,'bx}},'{'{'b0,'bz,'b1,'bz},'{'bz,'b1,'bx,'bz},'{'bx,'bz,'bz,'bz}},'{'{'b1,'bz,'bx,'b0},'{'b0,'b1,'bx,'b1},'{'b1,'b1,'b0,'b0}}};\nendmodule: pxcr\n\nmodule jsq\n  (input supply0 logic [0:1][0:3] ptgosbvzwh [2:1][0:2], input logic [1:2][1:3][3:4] tkzrid);\n  \n  nand suqbueekkh(czebq, uds, czebq);\n  \n  not mznpoqdht(uds, thf);\n\n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign thf = 'b0;\n  \n  // Multi-driven assigns\n  assign uds = 'b1;\nendmodule: jsq\n\nmodule xckxsms\n  (output logic [2:1][2:0][3:2][0:0] ky, output reg [0:1] ryiguwk [1:2]);\n  \n  not x(ky, hko);\n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign ryiguwk = '{'b0,'b1};\n  assign hko = 'b0;\n  \n  // Multi-driven assigns\nendmodule: xckxsms\n\nmodule sofw\n  ( output bit [2:2][0:2] khbfhwajrd [2:1]\n  , output wor logic [0:0][3:2][1:4] mirv\n  , output bit [4:4] qnmvhcinz\n  , output logic shqvk [2:1]\n  , input trireg logic [0:3] nyn [1:2][0:2]\n  , input wire logic [4:4][2:0][4:3][0:1] bi [3:1][4:2][3:4]\n  , input reg [3:3][0:3][3:2] wc\n  );\n  \n  reg [0:1] vvwc [1:2];\n  \n  xor qnr(auswsszzx, mirv, xbtii);\n  \n  not r(bthap, cmnguo);\n  \n  xckxsms wfvygnss(.ky(sjjfd), .ryiguwk(vvwc));\n  // warning: implicit conversion of port connection truncates from 12 to 1 bits\n  //   logic [2:1][2:0][3:2][0:0] ky -> wire logic sjjfd\n  \n  not htkdwu(mirv, auswsszzx);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign shqvk = '{'b0,'b0};\n  \n  // Multi-driven assigns\n  assign sjjfd = 'b0;\n  assign mirv = 'b1;\nendmodule: sofw\n"
       }
     ],
     "issue_status": null,
@@ -825,6 +871,14 @@ export const allFoundErrors: FoundError[] = [
         "minified_error": null,
         "full_error": "%Error: top.sv:58:10: Unsupported tristate construct (in graph; not converted): VARREF 'fyruvy'\n",
         "full_example": "module bds\n  ( output wand logic [0:0][3:3][0:3][1:2] gkwggxbkpt [3:0][0:3][0:2][2:4]\n  , output tri1 logic [2:3][4:0][0:2][3:4] zgjwvrbva [0:4]\n  , output tri logic eu [3:2]\n  , output realtime pmake\n  , input time royrmsw\n  , input bit [4:3][4:4][0:1] ltsbgechj\n  );\n  \n  \n  xor fzgfje(ofwq, royrmsw, mbpuk);\n  // warning: implicit conversion of port connection truncates from 64 to 1 bits\n  //   time royrmsw -> logic royrmsw\n  \n  not pmqxbxvkb(blyyln, jrynh);\n  \n  not vrr(jrynh, ozjl);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign zgjwvrbva = '{'bz,'bx,'bx,'b0,'bz};\n  assign eu = '{'bz,'bz};\n  assign mbpuk = 'b1;\n  \n  // Multi-driven assigns\nendmodule: bds\n\nmodule gkokmqe\n  ( output shortint t\n  , output triand logic [0:0][3:3] fyruvy\n  , output shortreal pbj [0:3][2:4]\n  , input wor logic [3:4][1:2][2:1] rter [0:0][0:0][0:0][2:4]\n  , input wire logic [3:3][1:3][1:0][4:1] gcdb [0:3][3:2][1:1]\n  , input bit [3:3][4:0][4:2][0:0] zuqrabpmi\n  , input triand logic [3:0][0:1][2:4][0:1] maggdh [1:0][1:3][1:4][2:2]\n  );\n  \n  \n  xor hiu(nqpbvsucu, jhap, eikwcpsn);\n  \n  nand xvn(jvdhk, bmmcnxvke, b);\n  \n  not giny(vwrbiev, qozv);\n  \n  or yea(t, t, cro);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign pbj = '{'{'b0,'bx,'b0},'{'bz,'bx,'bz},'{'b0,'b1,'b0},'{'bz,'bx,'bx}};\n  assign cro = 'b1;\n  assign qozv = 'bx;\n  assign fyruvy = 'bz;\n  assign b = 'bx;\n  \n  // Multi-driven assigns\n  assign fyruvy = 'b0;\n  assign fyruvy = 'bx;\n  assign jvdhk = 'b0;\n  assign fyruvy = 'bx;\nendmodule: gkokmqe\n"
+      },
+      {
+        "id": "unsupported_tristate_construct_triand_graph_assignw",
+        "first_found": "2025-07-21T00:00:00.000Z",
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": "%Error: top.sv:4:46: Unsupported tristate construct (in graph; not converted): ASSIGNW\n",
+        "full_example": "module fzdvm\n  ( output triand logic [1:0][3:0][4:1][4:4] tkbyhwql\n  , output realtime dh [2:4][3:3]\n  , input integer spcavyg\n  , input wand logic [3:4] zwn [3:3][2:4][3:2][0:4]\n  );\n\n  nand fxffiyqx(rteypawfw, tkbyhwql, tkbyhwql);\n  \n  not eyhdqcmpiy(tkbyhwql, tkbyhwql);\n\n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign dh = '{'{'bx},'{'bx},'{'bx}};\n  \n  // Multi-driven assigns\n  assign tkbyhwql = 'bz;\nendmodule: fzdvm\n\nmodule rnbqswtn\n  ( output real lj\n  , output uwire logic [4:0][4:3][2:3][2:1] mioscshqu\n  , output supply1 logic ofipox\n  , input logic sl\n  , input tri logic [0:0][2:2][1:1] ldlyo [1:0][2:0][2:1][4:0]\n  , input reg [0:3][4:3][0:3] qfeaazkksm\n  );\n\n  or cppeuksodh(ofipox, rq, rimieshrxj);\n\n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign mioscshqu = 'b0;\n  assign rq = 'b1;\n  assign rimieshrxj = 'b0;\n  assign lj = 'bx;\n  \n  // Multi-driven assigns\nendmodule: rnbqswtn\n"
       }
     ],
     "issue_status": null,
