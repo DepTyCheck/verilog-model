@@ -282,7 +282,7 @@ jobs:
               synlig -h
             run: synlig -f systemverilog -o output.blif -S {file}
             error_regex: |
-              ERROR: [\S]+: [0-9A-z _:]+$
+              ERROR: .*$
 
           - name: sv_parser
             repo: https://github.com/dalance/sv-parser.git
