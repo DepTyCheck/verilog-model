@@ -1,10 +1,11 @@
 import subprocess
 from find_top import find_top
-from handle_errors import handle_errors
+from handle_errors import FoundMatch, UnexpectedErrorText, extract_and_classify_errors, match_whole_output
 from ignored_errors_list import IgnoredErrorsList
 
 COMMAND_TIMEOUT_MINUTES = 7
-COMMAND_TIMEOUT_SECONDS = COMMAND_TIMEOUT_MINUTES*60
+COMMAND_TIMEOUT_SECONDS = COMMAND_TIMEOUT_MINUTES * 60
+
 
 def execute_command(cmd: str) -> tuple[str, int]:
     """
@@ -25,28 +26,22 @@ def execute_command(cmd: str) -> tuple[str, int]:
     print(f"Execute: {cmd}")
 
     try:
-        result = subprocess.run(
-            cmd,
-            shell=True,
-            capture_output=True,
-            text=True,
-            timeout=COMMAND_TIMEOUT_SECONDS
-        )
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=COMMAND_TIMEOUT_SECONDS)
         output = result.stdout + result.stderr
         print(f"Exit code: {result.returncode}. Output:\n{output}")
         return output, result.returncode
     except subprocess.TimeoutExpired as timeout_error:
-        print(f"Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}")
+        print(
+            f"Command timed out after {
+              COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}"
+        )
         return f"Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}", 1
     except Exception as error:
         print(f"Command execution failed: {error}")
         return str(error), 1
 
-def make_command(
-    cmd: str,
-    file_path: str,
-    file_content: str
-) -> str:
+
+def make_command(cmd: str, file_path: str, file_content: str) -> str:
     """
     Construct a command string for running analysis or simulation tools.
 
@@ -64,33 +59,42 @@ def make_command(
     command = command.replace("{file}", file_path)
     return command
 
+
 def print_file(file_content: str, file_path: str) -> None:
     """Print the contents of a file."""
     print(f"\nThe entire content of {file_path}:")
     print(file_content)
     print("")
 
+
 def run_test(
-    cmd: str,
-    file_content: str,
-    file_path: str,
-    error_regex: str,
-    ignored_errors: IgnoredErrorsList
-) -> tuple[bool, list[str]]:
+    cmd: str, file_content: str, file_path: str, error_regex: str, ignored_errors: IgnoredErrorsList
+) -> tuple[bool, list[str], list[FoundMatch]]:
     """
     Run a single test (analysis or simulation) and handle its errors.
     Returns:
         - Whether the command executed successfully or failed
-        - List of error texts that are not ignored
+        - List of error texts that are not ignored, or matched ignored error regex if whole output matches
     """
     output, exit_code = execute_command(cmd)
     if exit_code != 0:
-        found_errors = handle_errors(
+        # Match errors
+        unexpected_errors, found_matches = extract_and_classify_errors(
             output,
             error_regex,
             ignored_errors,
         )
-        if found_errors:
+
+        # Match whole output
+        if len(found_matches) == 0:
+            print("Matching whole output")
+            unexpected_error_whole = match_whole_output(output, ignored_errors)
+            if unexpected_error_whole == None:
+                unexpected_errors.append("\n".join(output.splitlines()[:3]))
+            elif isinstance(unexpected_error_whole, FoundMatch):
+                found_matches.append(unexpected_error_whole)
+
+        if len(unexpected_errors) > 0:
             print_file(file_content, file_path)
-        return False, found_errors
-    return True, []
+        return False, unexpected_errors, found_matches
+    return True, [], []

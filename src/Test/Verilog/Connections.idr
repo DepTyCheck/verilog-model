@@ -14,6 +14,14 @@ import Test.DepTyCheck.Gen.Coverage
 public export
 data ConnMode = TopOuts | SubInps
 
+public export
+basicIntegral : SVType -> Bool
+basicIntegral (RVar x)            = False
+basicIntegral (SVar x)            = True
+basicIntegral (VVar x)            = True
+basicIntegral (PackedArr   t _ _) = basicIntegral t
+basicIntegral (UnpackedArr x _ _) = basicIntegral x
+
 ||| 6.22.2 Equivalent types
 ||| c) Packed arrays, packed structures, packed unions, and built-in integral types are equivalent if they
 ||| contain the same number of total bits, are either all 2-state or all 4-state, and are either all signed or
@@ -21,7 +29,8 @@ data ConnMode = TopOuts | SubInps
 ||| NOTE — If any bit of a packed structure or union is 4-state, the entire structure or union is considered 4-state.
 public export
 data EquivalentSVT : SVType -> SVType -> Type where
-  ESVT : So (bitsCnt t == bitsCnt t') -> So (states t == states t') -> So (isSigned t == isSigned t') -> EquivalentSVT t t'
+  ESVT : So (bitsCnt t == bitsCnt t') -> So (states t == states t') -> So (isSigned t == isSigned t') -> So (basicIntegral t == basicIntegral t') ->
+         EquivalentSVT t t'
 
 ||| Checks if two ports have the same basic type
 |||

@@ -7,6 +7,7 @@ from sklearn.manifold import MDS
 import re
 from utils import print_pretty
 
+
 class FoundError:
     def __init__(self, text: str, file_name: str):
         self.text = text
@@ -32,9 +33,7 @@ def compute_ncd_for_errors(errors: List[FoundError], ncd_script_path: str) -> Di
                 f2.flush()
             try:
                 proc = subprocess.run(
-                    [f"{ncd_script_path} {file1} {file2}"],
-                    shell=True,
-                    capture_output=True, text=True, check=True
+                    [f"{ncd_script_path} {file1} {file2}"], shell=True, capture_output=True, text=True, check=True
                 )
                 ncd_value = float(proc.stdout.strip())
                 results[(i, j)] = ncd_value
@@ -51,7 +50,9 @@ def compute_ncd_for_errors(errors: List[FoundError], ncd_script_path: str) -> Di
     return results
 
 
-def plot_error_distances_mds(errors: List[FoundError], distances: Dict[Tuple[int, int], float], output_path: str = "error_distances.png"):
+def plot_error_distances_mds(
+    errors: List[FoundError], distances: Dict[Tuple[int, int], float], output_path: str = "error_distances.png"
+):
     """
     Plots error nodes in 2D using MDS (scikit-learn) and matplotlib, grouping similar errors close together.
     No edges are drawn. Each node is labeled with its test number.
@@ -68,7 +69,7 @@ def plot_error_distances_mds(errors: List[FoundError], distances: Dict[Tuple[int
             dist_matrix[i, j] = dist
             dist_matrix[j, i] = dist
     # MDS embedding
-    mds = MDS(n_components=2, dissimilarity='precomputed', random_state=42)
+    mds = MDS(n_components=2, dissimilarity="precomputed", random_state=42)
     coords = mds.fit_transform(dist_matrix)
     if coords is None:
         print("MDS failed to compute coordinates.")
@@ -84,9 +85,17 @@ def plot_error_distances_mds(errors: List[FoundError], distances: Dict[Tuple[int
         else:
             label = base_name
         plt.scatter(x, y, s=500)
-        plt.text(x, y, label, fontsize=14, ha='center', va='center', bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
+        plt.text(
+            x,
+            y,
+            label,
+            fontsize=14,
+            ha="center",
+            va="center",
+            bbox=dict(facecolor="white", alpha=0.7, edgecolor="none"),
+        )
     plt.title("Found errors groups (MDS)")
-    plt.axis('off')
+    plt.axis("off")
     plt.tight_layout()
     plt.savefig(output_path)
     plt.close()
