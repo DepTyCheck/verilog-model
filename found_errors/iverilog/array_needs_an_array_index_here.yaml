@@ -22,12 +22,12 @@ examples:
           , input logic taqfhggt [3:1][1:4]
           , input wire hm [3:2]
           );
-          
-          
+
+
           not pssd(yylmdiec, yylmdiec);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign fld = 'b10001;
           assign b = '{'b0,'bx};
@@ -36,13 +36,13 @@ examples:
 
         module jfliepplh
           (output logic [1:1] whoywxhzh, output logic [0:1][0:3] dz, output uwire pm [2:0][0:3], output logic qfykkdy [3:2]);
-          
-          
+
+
           nand tl(euidwkrlpl, idgw, nfwo);
           and ihsncrglpm(xyk, xyk, euidwkrlpl);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign nfwo = 'b0;
           assign idgw = 'b1;
@@ -60,14 +60,14 @@ examples:
           , input logic [4:2] ngjmnvtkzx [0:2]
           , input integer xi [1:2][0:0]
           );
-          
-          
+
+
           nand epcoibz(fjrbwrhbj, alnqbdq, lfyk);
           nand ysyr(em, xfyxjybzr, fjrbwrhbj);
-          
+
           // Top inputs -> top outputs assigns
           assign ffeziq = b;
-          
+
           // Assigns
           assign lfyk = 'bx;
           assign alnqbdq = 'b0;
@@ -77,15 +77,15 @@ examples:
 
         module ptfqv
           (output wire uvgwd [4:1], output bit [1:2][3:4][2:4] qbj, output logic [3:4] ybmjrducq, input integer mhhd);
-          
+
           uwire bdizhyz [2:0][0:3];
           logic muo [3:2];
-          
+
           jfliepplh fwbn(.whoywxhzh(f), .dz(xwgcbuc), .pm(bdizhyz), .qfykkdy(muo));
-          
+
           // Top inputs -> top outputs assigns
           assign ybmjrducq = mhhd;
-          
+
           // Assigns
           assign uvgwd = '{'b0,'b1,'b0,'b0};
           assign qbj = 'b101000010000;

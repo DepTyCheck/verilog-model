@@ -19,15 +19,15 @@ examples:
       full_example: |
         module ug
           (input logic vdaev, input wire gl, input int skf, input bit xnyyueprwu);
-          
+
           or xiqyjro(j, j, j);
-          
+
         endmodule: ug
 
         module sifgljh
           ();
-          
+
           nand xhuhnk(cuczaubtei, mtqinoh, cuczaubtei);
           nand rowvzfvz(mtqinoh, mtqinoh, mtqinoh);
-          
+
         endmodule: sifgljh

@@ -14,12 +14,12 @@ examples:
 
         module wzxxt
           (output logic [1:1] lunkojo, output real zgqpgtsvt [3:0][0:0], input bit [2:3] juwdfii, input uwire kfuj [3:1][4:3]);
-          
+
           or vqmhwugnjr(dry, pbswkb, pmdxkzydk);
-          
+
           // Top inputs -> top outputs assigns
           assign lunkojo = juwdfii;
-          
+
           // Assigns
           assign pmdxkzydk = 'bz;
           assign pbswkb = 'bx;
@@ -36,10 +36,10 @@ examples:
           , output logic [2:2][1:1][2:0] buguy
           , input bit [0:3] qiwlwu
           );
-          
+
           // Top inputs -> top outputs assigns
           assign e = qiwlwu;
-          
+
           // Assigns
           assign buguy = 'bzxz;
           assign pclhhkrs = '{'b01101};
@@ -54,11 +54,11 @@ examples:
           , input int n
           , input logic [1:2] bdocp [2:2]
           );
-          
-          
+
+
           // Top inputs -> top outputs assigns
           assign ltoy = n;
-          
+
           // Assigns
           assign htdyggar = 'b0;
           assign htdyggar = 'b1;
@@ -82,13 +82,13 @@ examples:
 
         module dezagwgu
           (output uwire llvafqeyiy, output int djvbra [0:0]);
-          
-          
+
+
           not lji(oialfexbh, jrvm);
           not nfyvtut(llvafqeyiy, oialfexbh);
-          
+
           // Top inputs -> top outputs assigs
-          
+
           // Assigns
           assign djvbra = '{'b1};
         endmodule: dezagwgu
@@ -101,13 +101,13 @@ examples:
           , input bit zalqdg
           , input int s
           );
-          
+
           int mhvp [0:0];
-          
+
           dezagwgu yth(.llvafqeyiy(ncfjx), .djvbra(mhvp));
-          
+
           // Top inputs -> top outputs assigs
-          
+
           // Assigns
         endmodule: jllbeivu
 
@@ -119,17 +119,17 @@ examples:
           , input logic [3:0] fbevawcvjt [2:2]
           , input logic [1:4] jnxzeju
           );
-          
+
           int udl [0:0];
           int nmhdnefld [0:0];
           int pghd [0:0];
-          
+
           dezagwgu wvdcim(.llvafqeyiy(zwm), .djvbra(udl));
           dezagwgu qoyl(.llvafqeyiy(zp), .djvbra(nmhdnefld));
           dezagwgu liiof(.llvafqeyiy(dtvtqsfypa), .djvbra(pghd));
-          
+
           // Top inputs -> top outputs assigs
-          
+
           // Assigns
           assign jfqncy = 'bx;
           assign x = 'b1;
@@ -144,15 +144,14 @@ examples:
           , input uwire vgcqn
           , input logic [1:3][3:0] fggkja
           );
-          
+
           int sytpgyhfuo [0:0];
-          
+
           dezagwgu lwjribmyim(.llvafqeyiy(ms), .djvbra(sytpgyhfuo));
-          
+
           // Top inputs -> top outputs assigs
-          
+
           // Assigns
         endmodule: hgcdhhv
 
         // Seed after: 8189762551118901864,14732534206656503631
-      

@@ -24,8 +24,8 @@ examples:
           , input wire i
           , input integer gymw
           );
-          
-          
+
+
           assign eiezecp = wx;
           assign kjagrfjq = gymw;
           assign jbfwqxka = wx;
@@ -34,13 +34,13 @@ examples:
 
         module wecazlcleg
           (output integer yqnzybrx, output uwire xp, input int pypt, input int jqujyzt, input integer g);
-          
+
           or rg(yqnzybrx, pypt, g);
-          
+
           assign xp = g;
         endmodule: wecazlcleg
 
         module qzczsyeanw
           (input real ov, input integer dftixk, input int lvxtzb, input uwire qu);
-          
+
         endmodule: qzczsyeanw

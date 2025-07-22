@@ -16,4 +16,3 @@ examples:
           nand nandInst(o2, o2, someWire);
 
         endmodule: two
-      

@@ -20,7 +20,7 @@ examples:
       full_example: |
         module bohobpsjzp
           (output int offd, output int kvqorcm, output wire jy, input int pwih, input int iccv, input logic gjdhea, input real ayhpgynurl);
-          
+
           assign offd = pwih;
           assign kvqorcm = iccv;
           assign jy = ayhpgynurl;
@@ -28,9 +28,9 @@ examples:
 
         module pbibmboprf
           (output int egvndv, output integer tlxvyasrr, input bit kezyfqh, input uwire awmkkjzvik, input real kmf, input int yeu);
-          
+
           and pwtdahni(euw, kmf, awmkkjzvik);
-          
+
           assign egvndv = yeu;
           assign tlxvyasrr = kezyfqh;
         endmodule: pbibmboprf

@@ -12,17 +12,17 @@ examples:
       full_example: |
         module xyyrehs
           (output bit [4:1][4:1][4:3][4:4] drgieooos, input tri0 logic [2:1] cjfrkm [3:4][0:4][4:1][3:2], input wire logic vckuladkdj [3:0]);
-          
+
           not grbvrmows(gxcftgch, yv);
-          
+
           or czzgdozg(yv, gxcftgch, yv);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign drgieooos = 'b0;
-          
+
           // Multi-driven assigns
         endmodule: xyyrehs
 
@@ -34,23 +34,23 @@ examples:
           , input trior logic yspcpklr [2:3]
           , input wand logic [4:1][1:0][0:3][1:0] gommacm [2:3]
           );
-          
+
           tri0 logic [2:1] fqm [3:4][0:4][4:1][3:2];
           wire logic myvg [3:0];
-          
+
           not ixk(zcxrbyfgq, zcxrbyfgq);
-          
+
           xyyrehs dddod(.drgieooos(rmlocox), .cjfrkm(fqm), .vckuladkdj(myvg));
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign xjd = '{'{'b0},'{'b0},'{'bx}};
           assign fqm = '{'{'{'{'bx,'b1},'{'b1,'bx},'{'b0,'b1},'{'b1,'b1}},'{'{'bz,'bx},'{'bz,'b0},'{'bx,'bx},'{'bx,'bx}},'{'{'bx,'b0},'{'b1,'b1},'{'b1,'b1},'{'bx,'b0}},'{'{'b0,'b1},'{'bx,'b0},'{'b0,'b1},'{'b0,'bx}},'{'{'bz,'bx},'{'b1,'b1},'{'b0,'b0},'{'b0,'b0}}},'{'{'{'bx,'bx},'{'bz,'bx},'{'b0,'b1},'{'b0,'bx}},'{'{'bx,'bz},'{'bz,'b1},'{'bz,'b1},'{'bz,'b1}},'{'{'bz,'bx},'{'b1,'bx},'{'b1,'bx},'{'bx,'bz}},'{'{'bx,'bz},'{'bx,'b0},'{'bz,'bx},'{'b0,'b1}},'{'{'bz,'b1},'{'b0,'bx},'{'b0,'bx},'{'b1,'b1}}}};
           assign myvg = '{'bz,'b0,'b0,'bx};
           assign ytidpi = 'bz;
-          
+
           // Multi-driven assigns
           assign zcxrbyfgq = 'bx;
           assign zcxrbyfgq = 'bx;
@@ -58,19 +58,19 @@ examples:
 
         module kfbe
           (output wor logic [4:0][1:1] aeganepcu);
-          
-          
+
+
           xor iluttm(pfax, i, h);
-          
+
           and kym(aeganepcu, pfax, zcfczutnyx);
-          
+
           and py(ngul, ngul, ngul);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
-          
+
           // Multi-driven assigns
           assign ngul = 'bz;
           assign aeganepcu = 'bz;
@@ -83,23 +83,23 @@ examples:
       full_example: |
         module cxaaajtuph
           (output reg vgjelmbv [0:0], output integer nfi [3:3]);
-          
-          
+
+
           xor i(lsk, ql, wnazcmrr);
-          
+
           or dllxuzp(lyocnv, lsk, ddovvd);
-          
+
           and yyfvxhcqwm(ddovvd, ddovvd, kcycjt);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign ql = 'b1;
           assign vgjelmbv = '{'b1};
           assign nfi = '{'b1};
           assign wnazcmrr = 'bz;
-          
+
           // Multi-driven assigns
           assign ddovvd = 'b0;
           assign ddovvd = 'bz;
@@ -115,44 +115,44 @@ examples:
           , input wand logic vydsdssuky [0:4]
           , input logic [4:4][0:4][3:1] bkaupqd [3:3]
           );
-          
+
           reg bpqfnxvay [0:0];
           integer rptmimoo [3:3];
-          
+
           and l(zmiqtpphx, dnpdicppfi, rjusu);
-          
+
           nand gkcgmpolyi(jkcqj, rycdy, mbg);
-          
+
           cxaaajtuph wnj(.vgjelmbv(bpqfnxvay), .nfi(rptmimoo));
-          
+
           nand ivqohb(dnpdicppfi, dnpdicppfi, zdsfvitfoq);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign rycdy = 'bx;
-          
+
           // Multi-driven assigns
           assign wjhjukcpy = '{'bz,'bz,'b0,'bz};
         endmodule: xo
 
         module cnvrczgr
           (output wor logic [4:1][3:1][0:1][0:4] koguqup);
-          
-          
+
+
           or pmcryd(ohuniwt, uaeulwr, nwqc);
-          
+
           not iejp(koguqup, nrgji);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign nrgji = 'bz;
           assign nwqc = 'b0;
           assign uaeulwr = 'b0;
-          
+
           // Multi-driven assigns
           assign koguqup = 'bz;
           assign koguqup = 'b0;
@@ -169,22 +169,22 @@ examples:
           , output wand logic [2:4] irkwykwiq
           , input tri0 logic [3:3][2:1][0:4][3:1] det [1:4][1:4][4:1][1:0]
           );
-          
-          
+
+
           not gcfsjvd(cr, vwx);
-          
+
           and mkdrghwmal(q, vvtmzluk, qie);
-          
+
           and miyib(irkwykwiq, wkjleryuzh, wkjleryuzh);
-          
+
           or kxmsr(wkjleryuzh, irkwykwiq, ywzvdnuu);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign leffd = 'b1;
-          
+
           // Multi-driven assigns
           assign cr = 'bz;
           assign irkwykwiq = 'b1;
@@ -198,23 +198,23 @@ examples:
           , input longint tztrsmjoxk [4:3][2:4]
           , input logic mtbdfyept
           );
-          
-          
+
+
           and frikvgzum(luym, njznakqr, war);
-          
+
           not dotkxvps(rpmmp, nieosltuw);
-          
+
           xor zooipt(idwd, nieosltuw, x);
-          
+
           xor iwogpyd(nieosltuw, luym, nieosltuw);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign w = '{'b1};
           assign x = 'bz;
-          
+
           // Multi-driven assigns
           assign drsov = '{'{'{'bz,'b1}},'{'{'b1,'bx}},'{'{'bz,'b0}}};
           assign nieosltuw = 'bz;
@@ -233,21 +233,21 @@ examples:
           , output shortreal iofkeszq [0:3]
           , input shortint dnv
           );
-          
+
           not hcdkwoyvyx(qrvop, oio);
-          
+
           or qxorikis(tdnzpr, dnv, tdnzpr);
           // warning: implicit conversion of port connection truncates from 16 to 1 bits
           // warning: implicit conversion changes signedness from signed to unsigned
           // warning: implicit conversion changes possible bit states from 2-state to 4-state
           //   shortint dnv -> logic dnv
-          
+
           // Top inputs -> top outputs assigns
           assign vcywaeuib = dnv;
-          
+
           // Single-driven assigns
           assign oio = 'b0;
-          
+
           // Multi-driven assigns
           assign hye = '{'{'bx},'{'bz},'{'bz},'{'b1},'{'bz}};
           assign hye = '{'{'bz},'{'bz},'{'b0},'{'b1},'{'bz}};
@@ -256,24 +256,24 @@ examples:
 
         module zmevhqq
           (output triand logic [4:0][3:4] jbpy, output bit [2:3][3:1][2:4][0:4] ekj);
-          
-          
+
+
           or ztb(qw, qw, nypxc);
-          
+
           not qe(dzhx, zjxb);
-          
+
           not vt(jzad, dzhx);
-          
+
           and tbfuq(ekj, qw, kkvgt);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign jbpy = 'b1;
           assign nypxc = 'b0;
           assign kkvgt = 'b1;
-          
+
           // Multi-driven assigns
           assign jbpy = 'bz;
           assign jbpy = 'bz;

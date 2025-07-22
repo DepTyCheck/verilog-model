@@ -22,11 +22,11 @@ examples:
 
         module ytfkwsta
           ();
-          
+
           not zbp(pftgbi, pftgbi);
-          
+
           // Top inputs -> top outputs assigs
-          
+
           // Assigns
         endmodule: ytfkwsta
 
@@ -39,14 +39,14 @@ examples:
           , input bit [2:0] ca [1:0]
           , input int qgbutvmv [4:3][3:0]
           );
-          
+
           ytfkwsta vbrlnkif();
           ytfkwsta ivnmqkuj();
           ytfkwsta wb();
-          
+
           // Top inputs -> top outputs assigs
           assign myjjpdk = fzxsscchkk;
-          
+
           // Assigns
           assign iaw = '{'{'b0}};
         endmodule: ytxv
@@ -59,15 +59,15 @@ examples:
           , input bit [2:2] hdlbxab [4:1]
           , input uwire owa [2:2][2:1]
           );
-          
-          
+
+
           ytfkwsta hgnw();
           ytfkwsta jjkjodvd();
           ytfkwsta fbpphqztol();
           ytfkwsta po();
-          
+
           // Top inputs -> top outputs assigs
-          
+
           // Assigns
         endmodule: rqrzqcfp
 
@@ -88,12 +88,12 @@ examples:
           , input bit [2:1][3:3] om
           , input bit [0:2][0:0] agclap
           );
-          
-          
-          
+
+
+
           // Top inputs -> top outputs assigns
           assign o = agclap;
-          
+
           // Assigns
           assign uhgidcxia = '{'bz};
         endmodule: v
@@ -117,32 +117,32 @@ examples:
           , input bit [0:3][4:4] bypta
           , input logic [4:3] a [0:3]
           );
-          
-          
-          
+
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign pf = '{'b0,'b0,'b1};
         endmodule: htgh
 
         module pjunhle
           (output int tez [4:1][3:2], output real h [0:0][4:4], output int tz, output bit [1:4] hqykveqbbw, input integer pbodvp [1:3]);
-          
-          
-          
+
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
         endmodule: pjunhle
 
         module xkmwnqaduh
           (output bit [2:3] a [3:2], output logic jvbuffuq [0:0], output uwire tmbz, output integer y);
-          
-          
-          
+
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign y = 'b1;
           assign tmbz = 'b0;
