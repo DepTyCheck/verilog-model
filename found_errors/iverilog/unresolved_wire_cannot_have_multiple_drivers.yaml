@@ -1,7 +1,7 @@
 stage: syntesis
 tool: iverilog
 id: unresolved_wire_cannot_have_multiple_drivers
-title:  Unresolved wire cannot have multiple drivers
+title: Unresolved wire cannot have multiple drivers
 regex: >
   Unresolved wire .* cannot have multiple drivers
 examples:

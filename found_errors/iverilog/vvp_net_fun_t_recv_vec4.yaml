@@ -2,7 +2,7 @@ stage: simulation
 tool: iverilog
 id: vvp_net_fun_t_recv_vec4
 title: >
-   virtual void vvp_net_fun_t recv_vec4(vvp_net_ptr_t, const vvp_vector4_t&, vvp_context_t)
+  virtual void vvp_net_fun_t recv_vec4(vvp_net_ptr_t, const vvp_vector4_t&, vvp_context_t)
 regex: >
   vvp_net\.cc:3285: virtual void vvp_net_fun_t::recv_vec4\(vvp_net_ptr_t, const vvp_vector4_t&, vvp_context_t\): Assertion `0' failed
 examples:

@@ -111,7 +111,7 @@ examples:
           
           // Multi-driven assigns
         endmodule: lq
-  
+
   - output_port_is_connected_to_constants_auto_hierarchy_v2:
       first_found: 21.07.2025
       full_error: >
