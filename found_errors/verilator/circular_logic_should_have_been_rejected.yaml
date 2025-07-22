@@ -23,13 +23,13 @@ examples:
       full_example: |
         module mzxezxdaal
           (input real eishvgggc [4:4], input logic [2:4] qj, input bit [4:3][3:3] vxnszjw);
-          
+
           and hoho(kwqhzrlhiq, kwqhzrlhiq, qj);
           not veuj(weqyzpy, rkjj);
           or oyj(vetraym, wab, uuouiikc);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign rkjj = 'b1;
         endmodule: mzxezxdaal
@@ -38,21 +38,21 @@ examples:
           (output bit [0:0] e [1:3]);
 
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign e = '{'b0,'b1,'b1};
         endmodule: pljholvq
 
         module cwvvyg
           (output logic [4:4][0:0] lyvgarhcl, output integer mzncji);
-          
+
           real jlptusin [4:4];
-          
+
           nand xolueipow(lyvgarhcl, pyrdsb, lyvgarhcl);
           mzxezxdaal lulvrcwfzj(.eishvgggc(jlptusin), .qj(ostshtea), .vxnszjw(lyvgarhcl));
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign pyrdsb = 'bz;
           assign ostshtea = 'bx1z;

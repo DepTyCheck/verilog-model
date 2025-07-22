@@ -16,23 +16,23 @@ examples:
 
         module hdjihl
           (output real avk, output bit [4:2][4:2] ip);
-          
+
           not ovszaxlkqx(avk, avk);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign ip = 'b111111000;
         endmodule: hdjihl
 
         module i
           (output real olwf, output logic [3:3][0:4] ohxfehldp, output logic neoxdc, output logic dzubc [4:3]);
-          
+
           or qpp(lfcda, kupiupc, olwf);
           not bskm(olwf, lfcda);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign kupiupc = 'b0;
           assign kupiupc = 'bz;
@@ -51,16 +51,16 @@ examples:
           , input bit [0:1][4:2][0:4] etyzlq
           , input logic [2:0][1:4] l
           );
-          
+
           logic evfo [4:3];
-          
+
           not z(vwbnzzrzb, gngam);
           i qorio(.olwf(ebknvanp), .ohxfehldp(eaqiogdm), .neoxdc(ckcgjhbpr), .dzubc(evfo));
           xor saqwmazl(avpamusm, rvpf, jsnaswocy);
           and dckfpbel(gngam, etyzlq, sdxqwlft);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign sdxqwlft = 'b1;
           assign sdxqwlft = 'bz;
@@ -80,7 +80,7 @@ examples:
 
           // Top inputs -> top outputs assigns
           assign qwuzpt = kvsdzlkcvo;
-          
+
           // Assigns
           assign jnsorqt = 'b0x11xz11;
           assign arynsmt = 'b1;

@@ -14,24 +14,24 @@ examples:
       full_example: |
         module phgqb
           (output bit [2:0] jsl, output real lzbajzqmr [1:0][0:0], output bit [1:3] epd [1:1], output logic [2:0] uyocdlqy);
-          
+
           // Top inputs -> top outputs assigs
-          
+
           // Assigns
           assign uyocdlqy = 'bxxz;
         endmodule: phgqb
 
         module nkuz
           (output uwire winadayzaf [2:4][2:3]);
-          
+
           real w [1:0][0:0];
           bit [1:3] jmdosgxs [1:1];
-          
+
           and dqhopqrikt(oou, vnho, trpqu);
           phgqb udraazisl(.jsl(pclmizjztv), .lzbajzqmr(w), .epd(jmdosgxs), .uyocdlqy(y));
-          
+
           // Top inputs -> top outputs assigs
-          
+
           // Assigns
           assign trpqu = 'bz;
         endmodule: nkuz

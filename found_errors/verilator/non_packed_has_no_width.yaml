@@ -17,24 +17,24 @@ examples:
           , input uwire logic [0:0][4:4] xjtj [3:1][3:0][0:4]
           , input tri0 logic nwv [0:2][1:1][1:3][0:4]
           );
-          
-          
+
+
           and tvh(hjc, lcsl, mgve);
-          
+
           nand oitzocsxex(sba, hjc, mgve);
-          
+
           not obb(jryxssc, mgve);
-          
+
           not ywh(mgve, elwzyup);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign elwzyup = 'b0;
           assign lcsl = 'bx;
           assign rb = '{'b0,'bx,'bx,'bx};
-          
+
           // Multi-driven assigns
           assign rb = '{'b1,'bx,'b1,'bz};
           assign mgve = 'bx;
@@ -43,25 +43,25 @@ examples:
 
         module hrpoidukjo
           ();
-          
+
           wire logic [2:2][2:2][0:4][4:3] xpwsuumfno [3:4][2:0][0:1];
           uwire logic [0:0][4:4] abahwd [3:1][3:0][0:4];
           tri0 logic wpawoy [0:2][1:1][1:3][0:4];
           tri0 logic [1:2] sotz [1:4];
-          
+
           not efnwyenfur(khermwo, khermwo);
-          
+
           db nnidcapilk(.rb(sotz), .zeik(jiktkfqptj), .wkbjlwoi(xpwsuumfno), .xjtj(abahwd), .nwv(wpawoy));
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign jiktkfqptj = 'bx;
           assign abahwd = '{'{'{'b0,'bz,'bx,'bx,'bx},'{'b0,'bx,'bz,'b1,'b1},'{'b1,'b0,'b1,'bx,'bz},'{'b0,'b1,'b0,'b0,'b1}},'{'{'b0,'b0,'b0,'bz,'bx},'{'bx,'b1,'bz,'bx,'bz},'{'b1,'bz,'b1,'b0,'b0},'{'b1,'bx,'b1,'bx,'b1}},'{'{'b0,'b0,'b0,'bx,'b0},'{'bz,'b0,'bx,'b0,'b1},'{'b0,'bx,'b1,'bz,'bx},'{'bz,'b0,'bz,'bz,'b0}}};
           assign wpawoy = '{'{'{'{'b0,'bx,'b1,'b0,'bz},'{'b1,'b0,'bz,'b0,'bx},'{'b0,'bz,'bx,'bx,'b0}}},'{'{'{'b1,'bz,'b0,'bx,'bx},'{'bx,'b0,'bx,'bz,'b0},'{'bz,'b0,'bz,'bz,'bx}}},'{'{'{'b1,'b1,'b0,'b0,'bz},'{'b1,'bz,'b1,'b0,'bz},'{'bx,'b0,'bz,'b0,'bz}}}};
           assign xpwsuumfno = '{'{'{'b1,'b1},'{'b1,'b0},'{'bx,'bx}},'{'{'b0,'bx},'{'bx,'b0},'{'b0,'b0}}};
-          
+
           // Multi-driven assigns
           assign wpawoy = '{'{'{'{'bx,'b1,'b1,'bz,'b1},'{'b1,'bz,'b0,'bz,'b0},'{'b0,'bx,'b1,'bx,'b0}}},'{'{'{'bx,'bx,'b1,'b1,'bz},'{'b1,'bz,'b0,'b0,'b1},'{'bx,'bx,'b0,'b0,'bx}}},'{'{'{'b0,'bx,'b0,'b0,'bz},'{'bx,'bz,'bz,'bx,'bx},'{'b1,'b0,'bz,'b1,'bx}}}};
           assign wpawoy = '{'{'{'{'bx,'b1,'bx,'b0,'bx},'{'b0,'bz,'bx,'bx,'bx},'{'bx,'bx,'b0,'bz,'b1}}},'{'{'{'bx,'b1,'bz,'bx,'b1},'{'bz,'bx,'bx,'bx,'bx},'{'b1,'b0,'bz,'b0,'bx}}},'{'{'{'b0,'bz,'b0,'bx,'bx},'{'bz,'bx,'bx,'b1,'bz},'{'bz,'b0,'b1,'bz,'b0}}}};

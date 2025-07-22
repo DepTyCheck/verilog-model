@@ -17,17 +17,17 @@ examples:
           , input logic [1:2][3:4] uapi [3:0]
           , input uwire logic [3:3][0:3] quoepegllr
           );
-          
+
           not thbjs(olzr, hits);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign vgbqkkfhwt = 'bx;
           assign hits = 'b1;
           assign efdwbjjy = '{'{'{'bz,'b0,'bx,'bz},'{'b1,'b1,'b0,'bz},'{'bx,'b0,'bx,'bz}},'{'{'b1,'bz,'b0,'b1},'{'bz,'b0,'bx,'bx},'{'bz,'bx,'bz,'bx}},'{'{'bz,'bx,'bz,'bx},'{'b1,'bz,'bz,'bx},'{'b0,'bx,'bz,'bx}},'{'{'bz,'bz,'b1,'b0},'{'b0,'b1,'b0,'b1},'{'bx,'bx,'bz,'bz}}};
           assign t = 'b1;
-          
+
           // Multi-driven assigns
           assign vgbqkkfhwt = 'bx;
           assign efdwbjjy = '{'{'{'b1,'b1,'b1,'b0},'{'bz,'bz,'bz,'bz},'{'bz,'bz,'b0,'bz}},'{'{'bx,'b1,'b0,'bx},'{'b1,'b0,'b1,'b1},'{'b0,'bx,'b0,'b1}},'{'{'bx,'b0,'b0,'bz},'{'bz,'bx,'b1,'bx},'{'b1,'bz,'b1,'bx}},'{'{'bx,'bz,'b1,'b1},'{'bx,'b1,'bz,'bz},'{'b1,'b1,'b1,'b0}}};
@@ -36,31 +36,31 @@ examples:
 
         module jsq
           (input supply0 logic [0:1][0:3] ptgosbvzwh [2:1][0:2], input logic [1:2][1:3][3:4] tkzrid);
-          
+
           nand suqbueekkh(czebq, uds, czebq);
-          
+
           not mznpoqdht(uds, thf);
 
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign thf = 'b0;
-          
+
           // Multi-driven assigns
           assign uds = 'b1;
         endmodule: jsq
 
         module xckxsms
           (output logic [2:1][2:0][3:2][0:0] ky, output reg [0:1] ryiguwk [1:2]);
-          
+
           not x(ky, hko);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign ryiguwk = '{'b0,'b1};
           assign hko = 'b0;
-          
+
           // Multi-driven assigns
         endmodule: xckxsms
 
@@ -73,25 +73,25 @@ examples:
           , input wire logic [4:4][2:0][4:3][0:1] bi [3:1][4:2][3:4]
           , input reg [3:3][0:3][3:2] wc
           );
-          
+
           reg [0:1] vvwc [1:2];
-          
+
           xor qnr(auswsszzx, mirv, xbtii);
-          
+
           not r(bthap, cmnguo);
-          
+
           xckxsms wfvygnss(.ky(sjjfd), .ryiguwk(vvwc));
           // warning: implicit conversion of port connection truncates from 12 to 1 bits
           //   logic [2:1][2:0][3:2][0:0] ky -> wire logic sjjfd
-          
+
           not htkdwu(mirv, auswsszzx);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign shqvk = '{'b0,'b0};
-          
+
           // Multi-driven assigns
           assign sjjfd = 'b0;
           assign mirv = 'b1;

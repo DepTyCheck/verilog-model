@@ -11,12 +11,12 @@ examples:
       full_example: |
         module kcqr
           (output bit ebu [0:4][4:3], input real ipxklfobj, input bit [3:3] ymhbaxeupm);
-          
+
           and biyiqwmtkm(nlgbyfzn, hhjq, hhjq);
           or jcitexyr(hhjq, ipxklfobj, ymhbaxeupm);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign ebu = '{'{'b1,'b0},'{'b1,'b0},'{'b0,'b0},'{'b1,'b1},'{'b1,'b0}};
         endmodule: kcqr
@@ -28,13 +28,13 @@ examples:
       full_example: |
         module cnafaw
           (output uwire taskuqsxv, output integer zekjov [1:0]);
-          
-          
+
+
           and bdc(c, bcqyqlj, wuybdlhu);
           not gygxf(avyao, hrylu);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign wuybdlhu = 'bx;
           assign zekjov = '{'b0,'b0};
@@ -42,12 +42,12 @@ examples:
 
         module hkgmvffhr
           (output logic gvxkrm [4:0][1:0], input bit [1:2] fmgalgfwvp, input real rhlumwdl, input bit [0:2] jttnkdthy);
-          
-          
+
+
           not mwau(decl, rhlumwdl);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign decl = 'b1;
           assign decl = 'bz;
@@ -61,15 +61,15 @@ examples:
           , input logic squnqm
           , input integer uuooojb [0:1]
           );
-          
+
           logic u [4:0][1:0];
-          
+
           not nsqzsbey(xlfloniydg, xlfloniydg);
           hkgmvffhr haizuj(.gvxkrm(u), .fmgalgfwvp(zdqqzlc), .rhlumwdl(bzacszzvbl), .jttnkdthy(gfceainnht));
           or oaeziv(bzacszzvbl, an, bzacszzvbl);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign an = 'bz;
           assign an = 'b0;

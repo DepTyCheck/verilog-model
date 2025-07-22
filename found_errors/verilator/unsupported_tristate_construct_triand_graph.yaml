@@ -12,21 +12,21 @@ examples:
       full_example: |
         module xbzdahabhw
           (output logic [0:1] fziqpeo [0:3], output triand logic [1:2][4:1] om [2:1][2:1][2:0]);
-          
+
           xor bv(xty, sapauggg, q);
-          
+
           nand l(njghqv, c, q);
-          
+
           not xqydflsxp(cqucbfif, q);
-          
+
           or r(q, gcmbjlhaeh, pjtwdndp);
 
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign c = 'b1;
           assign sapauggg = 'bz;
-          
+
           // Multi-driven assigns
           assign om = '{'{'{'b1,'b0,'bx},'{'b1,'b0,'b0}},'{'{'bx,'bz,'bx},'{'b0,'b1,'b0}}};
           assign xty = 'b1;
@@ -35,21 +35,21 @@ examples:
 
         module opqzzgtarh
           (output reg g, output real qtwnqz [3:0], output longint bgrpm);
-          
+
           logic [0:1] y [0:3];
           triand logic [1:2][4:1] jt [2:1][2:1][2:0];
-          
+
           xor pcgzlh(swsu, rpt, aj);
-          
+
           xbzdahabhw xi(.fziqpeo(y), .om(jt));
-          
+
           not ovvl(bgrpm, bgrpm);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign qtwnqz = '{'b0,'bz,'b1,'b1};
-          
+
           // Multi-driven assigns
           assign jt = '{'{'{'b1,'b1,'b1},'{'bz,'bz,'b1}},'{'{'b0,'b0,'b0},'{'bx,'bz,'b0}}};
           assign jt = '{'{'{'b0,'b0,'bx},'{'b0,'bz,'bz}},'{'{'b0,'bx,'b0},'{'bx,'b0,'bx}}};
@@ -57,19 +57,19 @@ examples:
 
         module pgm
           (output tri logic xfug [3:2][2:2][4:0]);
-          
+
           nand ojgfewpcl(ap, ap, myuixvw);
-          
+
           not adkuue(myuixvw, lqlpsidn);
-          
+
           xor cefy(lqlpsidn, lqlpsidn, jkyjxwal);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign xfug = '{'{'{'b0,'bx,'bx,'bz,'bz}},'{'{'b1,'bx,'bx,'b0,'b1}}};
           assign jkyjxwal = 'bx;
-          
+
           // Multi-driven assigns
           assign lqlpsidn = 'bz;
           assign xfug = '{'{'{'b0,'b0,'b0,'b1,'b0}},'{'{'b1,'b0,'bz,'bx,'bx}}};
@@ -90,24 +90,24 @@ examples:
           , input time royrmsw
           , input bit [4:3][4:4][0:1] ltsbgechj
           );
-          
-          
+
+
           xor fzgfje(ofwq, royrmsw, mbpuk);
           // warning: implicit conversion of port connection truncates from 64 to 1 bits
           //   time royrmsw -> logic royrmsw
-          
+
           not pmqxbxvkb(blyyln, jrynh);
-          
+
           not vrr(jrynh, ozjl);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign zgjwvrbva = '{'bz,'bx,'bx,'b0,'bz};
           assign eu = '{'bz,'bz};
           assign mbpuk = 'b1;
-          
+
           // Multi-driven assigns
         endmodule: bds
 
@@ -120,26 +120,26 @@ examples:
           , input bit [3:3][4:0][4:2][0:0] zuqrabpmi
           , input triand logic [3:0][0:1][2:4][0:1] maggdh [1:0][1:3][1:4][2:2]
           );
-          
-          
+
+
           xor hiu(nqpbvsucu, jhap, eikwcpsn);
-          
+
           nand xvn(jvdhk, bmmcnxvke, b);
-          
+
           not giny(vwrbiev, qozv);
-          
+
           or yea(t, t, cro);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign pbj = '{'{'b0,'bx,'b0},'{'bz,'bx,'bz},'{'b0,'b1,'b0},'{'bz,'bx,'bx}};
           assign cro = 'b1;
           assign qozv = 'bx;
           assign fyruvy = 'bz;
           assign b = 'bx;
-          
+
           // Multi-driven assigns
           assign fyruvy = 'b0;
           assign fyruvy = 'bx;
@@ -159,14 +159,14 @@ examples:
           );
 
           nand fxffiyqx(rteypawfw, tkbyhwql, tkbyhwql);
-          
+
           not eyhdqcmpiy(tkbyhwql, tkbyhwql);
 
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign dh = '{'{'bx},'{'bx},'{'bx}};
-          
+
           // Multi-driven assigns
           assign tkbyhwql = 'bz;
         endmodule: fzdvm
@@ -183,12 +183,12 @@ examples:
           or cppeuksodh(ofipox, rq, rimieshrxj);
 
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign mioscshqu = 'b0;
           assign rq = 'b1;
           assign rimieshrxj = 'b0;
           assign lj = 'bx;
-          
+
           // Multi-driven assigns
         endmodule: rnbqswtn

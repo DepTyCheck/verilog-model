@@ -12,7 +12,7 @@ examples:
       full_example: |
         module xkkf
           (output wire hk, output bit sekew, output bit frqhrnh, output wire pwkkdczkw, input logic p, input wire vfuvoh);
-          
+
           assign hk = vfuvoh;
           assign sekew = vfuvoh;
           assign frqhrnh = p;
@@ -21,21 +21,21 @@ examples:
 
         module p
           (output wire avbsmmkv, output wire uxeit);
-          
+
           or jlnzrbasnv(uxeit, uxeit, uxeit);
-          
+
           assign avbsmmkv = uxeit;
         endmodule: p
 
         module quxrwlxgk
           (input logic a, input uwire xhc, input int qtwwqyp, input real qw);
-          
+
           or mbakoem(bttmnvylhq, a, a);
           and ptnkgc(ucxkqd, qtwwqyp, bttmnvylhq);
-          
+
         endmodule: quxrwlxgk
 
         module tbjwaeog
           (input bit u, input integer vzhlr, input wire iwgcoh);
-          
+
         endmodule: tbjwaeog

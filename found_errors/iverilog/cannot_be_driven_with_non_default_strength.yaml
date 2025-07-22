@@ -14,13 +14,13 @@ examples:
 
         module iul
           (output logic lbrkx, output logic [2:3] cvawpgb, output logic xnhyjs [4:3]);
-          
+
           xor al(lbrkx, eyezhdj, eyezhdj);
-          
+
           not ctwm(eyezhdj, lbrkx);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign cvawpgb = 'b1x;
           assign xnhyjs = '{'b1,'bx};
@@ -30,16 +30,16 @@ examples:
 
         module xvicefqhnc
           (output logic [2:0] mi, output logic [3:3] o);
-          
-          
+
+
           not iiqhh(mgzexopir, dlg);
-          
+
           xor ttvhm(dlg, lzi, pyw);
-          
+
           and yyxdxc(lzi, dlg, okjrcx);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign okjrcx = 'bz;
           assign okjrcx = 'b0;
@@ -65,31 +65,31 @@ examples:
           , input shortreal emg
           , input byte dy
           );
-          
-          
+
+
           not rrtzpp(nm, xewuwwev);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign bfcpcps = '{'b0,'b1};
           assign xewuwwev = 'b0;
           assign wheupuag = '{'{'{'{'bz,'b0},'{'bz,'bz},'{'b1,'bz}},'{'{'bz,'b1},'{'bx,'b0},'{'b0,'b0}}},'{'{'{'bx,'bz},'{'b0,'b1},'{'bz,'bx}},'{'{'b0,'b1},'{'bx,'b0},'{'b1,'b1}}},'{'{'{'bx,'b0},'{'bz,'bz},'{'bx,'b0}},'{'{'bz,'b0},'{'b0,'b1},'{'bz,'b0}}}};
           assign jvlvzxp = '{'{'{'{'bx,'bz,'b0,'bz}}},'{'{'{'b1,'b0,'bx,'b0}}}};
-          
+
           // Multi-driven assigns
         endmodule: pauht
 
         module sjmhw
           (input supply1 logic [0:3][1:2] svkeknmyib [4:3][3:2], input bit [1:2][3:0][2:3] ohyhcc);
-          
-          
-          
+
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
-          
+
           // Multi-driven assigns
           assign svkeknmyib = '{'{'b0,'bx},'{'b1,'bx}};
         endmodule: sjmhw

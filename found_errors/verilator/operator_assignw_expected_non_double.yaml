@@ -16,28 +16,28 @@ examples:
       full_example: |
         module qha
           (output real evqvvq [2:4], input wire jnrihwxdls [4:2], input logic [2:2] aanpt, input integer utf [3:2]);
-          
+
         endmodule: qha
 
         module wifydq
           (output bit sbiajs [1:3], output logic [2:2] jwzrezf, output int tlhxiuang [2:3], input integer qky, input bit [0:1] t);
-          
+
         endmodule: wifydq
 
         module zam
           (output logic qkdqpmd [2:0], output real qidcicusw, input real y);
-          
-          
+
+
           or xtfwrlwqi(vhrlq, vhrlq, kinpjls);
-          
+
         endmodule: zam
 
         module xlvqeibu
           (output wire zsymsud [4:2], output real dl [3:0], output real txzrzek, input real ydp [4:1]);
-          
+
           logic bepuq [2:0];
-          
+
           zam b(.qkdqpmd(bepuq), .qidcicusw(gf), .y(gf));
-          
+
           assign dl = ydp;
         endmodule: xlvqeibu

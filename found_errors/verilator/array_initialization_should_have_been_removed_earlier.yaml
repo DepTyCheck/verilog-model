@@ -12,21 +12,21 @@ examples:
       full_example: |
         module htlcim
           (output triand logic g [3:3][1:2], output logic [1:4] zksvacmlv, output reg [2:3][2:1][4:4] pb);
-          
+
           and retsvgumxk(zksvacmlv, vbkonmvke, vbkonmvke);
-          
+
           xor tzfgmhfdi(vbkonmvke, vqxtghdfa, bahed);
-          
+
           or tkehq(nxoxzhxcp, vbkonmvke, nxoxzhxcp);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign pb = 'bx;
           assign vqxtghdfa = 'b0;
           assign bahed = 'bx;
           assign g = '{'{'b0,'bx}};
-          
+
           // Multi-driven assigns
           assign g = '{'{'bx,'bx}};
           assign g = '{'{'b0,'b0}};
@@ -40,19 +40,19 @@ examples:
           , input logic wbnbqckbgo [4:3]
           , input reg naa [3:4]
           );
-          
+
           not tflzftcu(snhgmy, spafcoxmp);
-          
+
           not zrezvwoanv(epp, udzuga);
-          
+
           not cr(spafcoxmp, efpz);
-          
+
           and sjusbng(udzuga, epp, u);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Single-driven assigns
           assign rrj = 'b0;
-          
+
           // Multi-driven assigns
         endmodule: j
