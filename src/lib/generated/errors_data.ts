@@ -476,7 +476,7 @@ export const allFoundErrors: FoundError[] = [
     "issue_link": null
   },
   {
-    "stage": "HIERARCHY pass",
+    "stage": "analysis",
     "tool": "synlig",
     "id": "output_port_is_connected_to_constants_auto_hierarchy",
     "title": "Port is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }\n",
@@ -703,6 +703,25 @@ export const allFoundErrors: FoundError[] = [
         "minified_error": null,
         "full_error": "%Error: top.sv:1:8: Unsupported in C: Instance has the same name as port: 'p'\n",
         "full_example": "module xkkf\n  (output wire hk, output bit sekew, output bit frqhrnh, output wire pwkkdczkw, input logic p, input wire vfuvoh);\n  \n  assign hk = vfuvoh;\n  assign sekew = vfuvoh;\n  assign frqhrnh = p;\n  assign pwkkdczkw = vfuvoh;\nendmodule: xkkf\n\nmodule p\n  (output wire avbsmmkv, output wire uxeit);\n  \n  or jlnzrbasnv(uxeit, uxeit, uxeit);\n  \n  assign avbsmmkv = uxeit;\nendmodule: p\n\nmodule quxrwlxgk\n  (input logic a, input uwire xhc, input int qtwwqyp, input real qw);\n  \n  or mbakoem(bttmnvylhq, a, a);\n  and ptnkgc(ucxkqd, qtwwqyp, bttmnvylhq);\n  \nendmodule: quxrwlxgk\n\nmodule tbjwaeog\n  (input bit u, input integer vzhlr, input wire iwgcoh);\n  \nendmodule: tbjwaeog\n"
+      }
+    ],
+    "issue_status": null,
+    "issue_link": null
+  },
+  {
+    "stage": "syntesis",
+    "tool": "verilator",
+    "id": "non_packed_has_no_width",
+    "title": "non-packed has no 'width()'",
+    "short_desc": null,
+    "examples": [
+      {
+        "id": "non_packed_has_no_width_v1",
+        "first_found": "2025-07-22T00:00:00.000Z",
+        "minified_example": null,
+        "minified_error": null,
+        "full_error": "%Error: Internal Error: top.sv:4:29: ../V3Dfg.h:247: non-packed has no 'width()'\n",
+        "full_example": "module db\n  ( output tri0 logic [1:2] rb [1:4]\n  , input logic zeik\n  , input wire logic [2:2][2:2][0:4][4:3] wkbjlwoi [3:4][2:0][0:1]\n  , input uwire logic [0:0][4:4] xjtj [3:1][3:0][0:4]\n  , input tri0 logic nwv [0:2][1:1][1:3][0:4]\n  );\n  \n  \n  and tvh(hjc, lcsl, mgve);\n  \n  nand oitzocsxex(sba, hjc, mgve);\n  \n  not obb(jryxssc, mgve);\n  \n  not ywh(mgve, elwzyup);\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign elwzyup = 'b0;\n  assign lcsl = 'bx;\n  assign rb = '{'b0,'bx,'bx,'bx};\n  \n  // Multi-driven assigns\n  assign rb = '{'b1,'bx,'b1,'bz};\n  assign mgve = 'bx;\n  assign rb = '{'b0,'b0,'b0,'b1};\nendmodule: db\n\nmodule hrpoidukjo\n  ();\n  \n  wire logic [2:2][2:2][0:4][4:3] xpwsuumfno [3:4][2:0][0:1];\n  uwire logic [0:0][4:4] abahwd [3:1][3:0][0:4];\n  tri0 logic wpawoy [0:2][1:1][1:3][0:4];\n  tri0 logic [1:2] sotz [1:4];\n  \n  not efnwyenfur(khermwo, khermwo);\n  \n  db nnidcapilk(.rb(sotz), .zeik(jiktkfqptj), .wkbjlwoi(xpwsuumfno), .xjtj(abahwd), .nwv(wpawoy));\n  \n  \n  // Top inputs -> top outputs assigns\n  \n  // Single-driven assigns\n  assign jiktkfqptj = 'bx;\n  assign abahwd = '{'{'{'b0,'bz,'bx,'bx,'bx},'{'b0,'bx,'bz,'b1,'b1},'{'b1,'b0,'b1,'bx,'bz},'{'b0,'b1,'b0,'b0,'b1}},'{'{'b0,'b0,'b0,'bz,'bx},'{'bx,'b1,'bz,'bx,'bz},'{'b1,'bz,'b1,'b0,'b0},'{'b1,'bx,'b1,'bx,'b1}},'{'{'b0,'b0,'b0,'bx,'b0},'{'bz,'b0,'bx,'b0,'b1},'{'b0,'bx,'b1,'bz,'bx},'{'bz,'b0,'bz,'bz,'b0}}};\n  assign wpawoy = '{'{'{'{'b0,'bx,'b1,'b0,'bz},'{'b1,'b0,'bz,'b0,'bx},'{'b0,'bz,'bx,'bx,'b0}}},'{'{'{'b1,'bz,'b0,'bx,'bx},'{'bx,'b0,'bx,'bz,'b0},'{'bz,'b0,'bz,'bz,'bx}}},'{'{'{'b1,'b1,'b0,'b0,'bz},'{'b1,'bz,'b1,'b0,'bz},'{'bx,'b0,'bz,'b0,'bz}}}};\n  assign xpwsuumfno = '{'{'{'b1,'b1},'{'b1,'b0},'{'bx,'bx}},'{'{'b0,'bx},'{'bx,'b0},'{'b0,'b0}}};\n  \n  // Multi-driven assigns\n  assign wpawoy = '{'{'{'{'bx,'b1,'b1,'bz,'b1},'{'b1,'bz,'b0,'bz,'b0},'{'b0,'bx,'b1,'bx,'b0}}},'{'{'{'bx,'bx,'b1,'b1,'bz},'{'b1,'bz,'b0,'b0,'b1},'{'bx,'bx,'b0,'b0,'bx}}},'{'{'{'b0,'bx,'b0,'b0,'bz},'{'bx,'bz,'bz,'bx,'bx},'{'b1,'b0,'bz,'b1,'bx}}}};\n  assign wpawoy = '{'{'{'{'bx,'b1,'bx,'b0,'bx},'{'b0,'bz,'bx,'bx,'bx},'{'bx,'bx,'b0,'bz,'b1}}},'{'{'{'bx,'b1,'bz,'bx,'b1},'{'bz,'bx,'bx,'bx,'bx},'{'b1,'b0,'bz,'b0,'bx}}},'{'{'{'b0,'bz,'b0,'bx,'bx},'{'bz,'bx,'bx,'b1,'bz},'{'bz,'b0,'b1,'bz,'b0}}}};\nendmodule: hrpoidukjo\n"
       }
     ],
     "issue_status": null,

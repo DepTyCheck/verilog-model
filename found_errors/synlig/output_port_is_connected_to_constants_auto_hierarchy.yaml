@@ -1,4 +1,4 @@
-stage: HIERARCHY pass
+stage: analysis
 tool: synlig
 id: output_port_is_connected_to_constants_auto_hierarchy
 title: >
