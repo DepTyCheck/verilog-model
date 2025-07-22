@@ -21,9 +21,7 @@ examples:
           , input logic [0:1][2:1] tq
           , input integer tqqnq
           );
-          
-          
-          
+
         endmodule: ohtszg
 
         module ef
@@ -34,7 +32,7 @@ examples:
           , input bit [0:3] llwc
           , input logic [0:2] ef
           );
-          
+
         endmodule: ef
   - variable_has_same_name_as_instance:
       first_found: 04.03.2025

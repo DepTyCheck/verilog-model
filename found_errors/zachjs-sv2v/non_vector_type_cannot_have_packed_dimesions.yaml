@@ -16,11 +16,11 @@ examples:
 
         module zbjft
           (output real hftsz [2:1], output bit rhqocjml [1:1], output int dyhck);
-          
+
           xor bauagpzq(mmchqmwvv, ctophjw, vh);
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign vh = 'bx;
           assign ctophjw = 'b0;
@@ -39,9 +39,9 @@ examples:
           , input bit [4:0] yjjdnwp
           , input uwire ue
           );
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign w = 'b10;
           assign pwhnwwmffv = '{'b0,'bx};

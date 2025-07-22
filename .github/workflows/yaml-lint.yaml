@@ -1,0 +1,46 @@
+name: YAML Syntax Check
+
+on:
+  push:
+    paths:
+      - 'found_errors/**/*.yaml'
+    branches:
+      - gh-pages
+    tags:
+      - '**'
+  pull_request:
+    paths:
+      - 'found_errors/**/*.yaml'
+    branches:
+      - gh-pages
+
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}@${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lint-yaml:
+    name: Validate YAML Syntax
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Run yamllint
+        run: |
+          yamllint -c .yamllint found_errors/

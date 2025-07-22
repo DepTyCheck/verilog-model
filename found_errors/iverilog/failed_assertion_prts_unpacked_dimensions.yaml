@@ -23,10 +23,10 @@ examples:
 
         module upyu
           (output int uytlurz [3:1], output logic [4:3] lgvmh, input wire vhdvpydcie [4:4][1:3], input logic [1:2][4:4] xjkoy);
-          
+
           // Top inputs -> top outputs assigns
           assign lgvmh = xjkoy;
-          
+
           // Assigns
           assign uytlurz = '{'b1,'b1,'b1};
           assign vhdvpydcie = '{'{'b0,'b1,'b1}};
@@ -35,15 +35,15 @@ examples:
 
         module fhqyox
           (input real nr);
-          
+
           wire vzcsefbn [4:4][1:3];
           int qyqz [3:1];
-          
+
           xor rylnlneqxm(llqsuzqnq, qcxdwwe, lonwvju);
           upyu cvsilbyhs(.uytlurz(qyqz), .lgvmh(qcxdwwe), .vhdvpydcie(vzcsefbn), .xjkoy(qcxdwwe));
-          
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign lonwvju = 'b1;
           assign vzcsefbn = '{'{'b0,'b0,'b0}};
@@ -55,12 +55,12 @@ examples:
 
         module ma
           (output bit [3:2][2:1] rqqji, output bit r, input logic [0:3] ngc, input logic [1:4][2:2][3:4] tb);
-          
+
           nand h(rqqji, xguwdoevz, rqqji);
-          
+
           // Top inputs -> top outputs assigns
           assign r = tb;
-          
+
           // Assigns
           assign xguwdoevz = 'b0;
           assign xguwdoevz = 'b0;
@@ -77,12 +77,12 @@ examples:
           , input bit [2:3] zhseg [4:2]
           , input logic [4:0] fivlwpb [1:4]
           );
-          
+
           fhqyox dwmnculns(.nr(e));
-          
+
           // Top inputs -> top outputs assigns
           assign mac = e;
-          
+
           // Assigns
           assign e = 'b1;
           assign e = 'b1;
@@ -100,21 +100,21 @@ examples:
 
         module uxxuthb
           (input wire zeigtvdbp [3:0], input bit [4:1] wdlbfljcj, input bit [0:1][4:2][4:4] xqsdv);
-          
+
           xor liwlhle(prawo, yopczqr, yopczqr);
-          
+
           not cvurtmdnh(w, xqsdv);
           // warning: implicit conversion of port connection truncates from 6 to 1 bits
           // warning: implicit conversion changes possible bit states from 2-state to 4-state
           //   bit [0:1][4:2][4:4] xqsdv -> logic xqsdv
-          
+
           or tejh(ltfxyj, yopczqr, ltfxyj);
-          
+
           or q(yopczqr, qjragd, xpyoh);
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign xpyoh = 'b1;
           assign xpyoh = 'bz;
@@ -130,9 +130,9 @@ examples:
           , input bit [2:3] zgqxowuzjj [1:3]
           , input logic [4:0] dvv [1:4]
           );
-          
+
           wire k [3:0];
-          
+
           uxxuthb qyhkd(.zeigtvdbp(k), .wdlbfljcj(awdswmvyno), .xqsdv(r));
           // warning: implicit conversion of port connection expands from 1 to 4 bits
           // warning: implicit conversion changes possible bit states from 4-state to 2-state
@@ -141,10 +141,10 @@ examples:
           // warning: implicit conversion of port connection expands from 1 to 6 bits
           // warning: implicit conversion changes possible bit states from 4-state to 2-state
           //   wire r -> bit [0:1][4:2][4:4] xqsdv
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign vgb = 'b1;
           assign ec = 'b11010010011001000111;
@@ -153,8 +153,8 @@ examples:
 
         module fgbha
           (output logic [1:0][4:3] htwzzr, output int lyvyxabqmd [1:2][2:2], output bit [0:2][3:4][2:1] es, input bit [4:0][0:0] fnxrhonkd);
-          
-          
+
+
           and f(es, htwzzr, fib);
           // warning: implicit conversion of port connection expands from 1 to 12 bits
           // warning: implicit conversion changes possible bit states from 4-state to 2-state
@@ -162,21 +162,21 @@ examples:
           //
           // warning: implicit conversion of port connection truncates from 4 to 1 bits
           //   logic [1:0][4:3] htwzzr -> logic htwzzr
-          
+
           xor ruuujmad(ob, htwzzr, whyte);
           // warning: implicit conversion of port connection truncates from 4 to 1 bits
           //   logic [1:0][4:3] htwzzr -> logic htwzzr
-          
+
           nand vjzacqoige(htwzzr, htwzzr, wbbdrrnq);
           // warning: implicit conversion of port connection expands from 1 to 4 bits
           //   logic htwzzr -> logic [1:0][4:3] htwzzr
           //
           // warning: implicit conversion of port connection truncates from 4 to 1 bits
           //   logic [1:0][4:3] htwzzr -> logic htwzzr
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign fib = 'b0;
           assign wbbdrrnq = 'b1;
@@ -193,15 +193,15 @@ examples:
           , input logic [1:3][1:1] oigcryjunp
           , input logic [3:0] qfmhvgz [0:2]
           );
-          
+
           wire ypyeugtc [3:0];
-          
+
           not lywnhbhus(xexbl, oeqxdw);
-          
+
           not kwfnv(mazndohkpz, kbnnnjnf);
-          
+
           and zq(tvrtbipgc, mazndohkpz, qhgiwirgp);
-          
+
           uxxuthb nytgb(.zeigtvdbp(ypyeugtc), .wdlbfljcj(oigcryjunp), .xqsdv(mazndohkpz));
           // warning: implicit conversion of port connection expands from 3 to 4 bits
           // warning: implicit conversion changes possible bit states from 4-state to 2-state
@@ -210,10 +210,10 @@ examples:
           // warning: implicit conversion of port connection expands from 1 to 6 bits
           // warning: implicit conversion changes possible bit states from 4-state to 2-state
           //   wire mazndohkpz -> bit [0:1][4:2][4:4] xqsdv
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign ypyeugtc = '{'b0,'b1,'b0,'b1};
           assign qhgiwirgp = 'bx;
@@ -226,7 +226,7 @@ examples:
         endmodule: ntsh
 
         // Seed after: 9722071735199696192,15556259958226977675
-  
+
   - failed_assertion_prts_unpacked_dimensions_1662:
       first_found: 01.07.2025
       full_error: |
@@ -236,10 +236,10 @@ examples:
 
         module nh
           (output bit [4:2] socv, input integer hruyko [3:2], input logic [0:3][1:3][4:1] hguwg, input wire vyjh [0:3][2:0]);
-          
-          
+
+
           not jabsepvph(jjivwpnzr, kpfl);
-          
+
           and zax(lumokkrv, socv, socv);
           // warning: implicit conversion of port connection truncates from 3 to 1 bits
           // warning: implicit conversion changes possible bit states from 2-state to 4-state
@@ -248,7 +248,7 @@ examples:
           // warning: implicit conversion of port connection truncates from 3 to 1 bits
           // warning: implicit conversion changes possible bit states from 2-state to 4-state
           //   bit [4:2] socv -> logic socv
-          
+
           not ttq(socv, socv);
           // warning: implicit conversion of port connection expands from 1 to 3 bits
           // warning: implicit conversion changes possible bit states from 4-state to 2-state
@@ -257,10 +257,10 @@ examples:
           // warning: implicit conversion of port connection truncates from 3 to 1 bits
           // warning: implicit conversion changes possible bit states from 2-state to 4-state
           //   bit [4:2] socv -> logic socv
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign kpfl = 'bz;
           assign lumokkrv = 'b1;
@@ -269,12 +269,12 @@ examples:
 
         module jvrbtyy
           (input uwire p [0:2][1:4], input integer mvuekky [2:1][1:4], input logic [4:1] bklnx);
-          
+
           integer ljztmasvs [3:2];
           wire bxqdrhkv [0:3][2:0];
           integer xhlv [3:2];
           wire a [0:3][2:0];
-          
+
           nh kacbezspy(.socv(su), .hruyko(ljztmasvs), .hguwg(xa), .vyjh(bxqdrhkv));
           // warning: implicit conversion of port connection truncates from 3 to 1 bits
           // warning: implicit conversion changes possible bit states from 2-state to 4-state
@@ -282,7 +282,7 @@ examples:
           //
           // warning: implicit conversion of port connection expands from 1 to 48 bits
           //   wire xa -> logic [0:3][1:3][4:1] hguwg
-          
+
           nh valll(.socv(xa), .hruyko(xhlv), .hguwg(yjnlfkl), .vyjh(a));
           // warning: implicit conversion of port connection truncates from 3 to 1 bits
           // warning: implicit conversion changes possible bit states from 2-state to 4-state
@@ -290,10 +290,10 @@ examples:
           //
           // warning: implicit conversion of port connection expands from 1 to 48 bits
           //   wire yjnlfkl -> logic [0:3][1:3][4:1] hguwg
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign xhlv = '{'b0,'b0};
           assign ljztmasvs = '{'b0,'b1};
@@ -301,11 +301,11 @@ examples:
 
         module xen
           (output uwire ffokjy [4:0], output logic [0:0][2:4] qtjgxxnhd, input bit [4:3] ykjtxamk, input logic mcobdgrcf [1:4]);
-          
-          
-          
+
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign ffokjy = '{'b1,'b0,'b0,'b0,'b1};
           assign qtjgxxnhd = 'b10x;
@@ -313,14 +313,14 @@ examples:
 
         module frxmmsmuij
           (output logic [3:4] prmyf, input integer llvrlzdvv, input wire ezesnh);
-          
+
           logic rywnjsg [1:4];
           uwire cvzn [4:0];
-          
+
           xor pojahneyg(gnkyfiqf, vybiwu, prmyf);
           // warning: implicit conversion of port connection truncates from 2 to 1 bits
           //   logic [3:4] prmyf -> logic prmyf
-          
+
           xen r(.ffokjy(cvzn), .qtjgxxnhd(prmyf), .ykjtxamk(mquwxsnpy), .mcobdgrcf(rywnjsg));
           // warning: implicit conversion of port connection truncates from 3 to 2 bits
           //   logic [0:0][2:4] qtjgxxnhd -> logic [3:4] prmyf
@@ -328,10 +328,10 @@ examples:
           // warning: implicit conversion of port connection expands from 1 to 2 bits
           // warning: implicit conversion changes possible bit states from 4-state to 2-state
           //   wire mquwxsnpy -> bit [4:3] ykjtxamk
-          
-          
+
+
           // Top inputs -> top outputs assigns
-          
+
           // Assigns
           assign mquwxsnpy = 'b10;
           assign rywnjsg = '{'bz,'bz,'bx,'b1};

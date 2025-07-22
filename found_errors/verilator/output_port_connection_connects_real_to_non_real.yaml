@@ -12,31 +12,31 @@ examples:
       full_example: |
         module fojwmn
           (output bit [3:2] mixclycjhf, output int qxzaoklel, input int xkyya, input logic [3:4] ykfrocmze, input bit [3:3][1:2][4:1] grhl);
-          
+
           xor i(re, grhl, ykfrocmze);
-          
+
         endmodule: fojwmn
 
         module vtykdzw
           (output logic ilwebga, output real gsannnig, input bit [2:2] fwiwccuwf, input wire ulgiuqez);
-          
+
           nand hq(yso, bm, ulgiuqez);
-          
+
         endmodule: vtykdzw
 
         module hjivk
           ();
 
           vtykdzw haczawgmd(.ilwebga(y), .gsannnig(yrmdv), .fwiwccuwf(snhm), .ulgiuqez(twvoqkqrl));
-          
+
         endmodule: hjivk
 
         module k
           (output logic [1:1] f, output integer p [4:4][3:4], output logic [0:4][3:1] id, output wire zckbjl, input integer brutctvlvj [0:4][3:3]);
-          
-          
+
+
           hjivk xyh();
           hjivk zxroj();
           hjivk fbwh();
-          
+
         endmodule: k

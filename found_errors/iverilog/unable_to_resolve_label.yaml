@@ -31,10 +31,10 @@ examples:
           , input integer nffbpbbong [2:4]
           , input bit [4:2][1:0] ec
           );
-          
+
           // Top inputs -> top outputs assigs
           assign hlvvwzhwsh = ec;
-          
+
           // Assigns
           assign y = '{'b1,'bz};
         endmodule: bonufropgc
@@ -102,9 +102,9 @@ examples:
         (input tri0 logic [1:0][0:4] zuiwjxpotm [4:3][1:3][1:4][3:2], input reg yjuwkrn, input tri1 logic azhb);
 
         // Top inputs -> top outputs assigns
-        
+
         // Single-driven assigns
-        
+
         // Multi-driven assigns
         assign azhb = 'b1;
         assign azhb = 'bx;
@@ -117,12 +117,12 @@ examples:
         , input shortint pr
         , input supply0 logic [3:4][4:0][2:2][3:3] me [3:2][1:4]
         );
-        
+
         // Top inputs -> top outputs assigns
-        
+
         // Single-driven assigns
         assign nd = '{'{'{'{'bx,'b1},'{'bz,'bx},'{'b1,'bx}},'{'{'bz,'bz},'{'b0,'b0},'{'bz,'b1}},'{'{'bz,'b1},'{'b1,'b1},'{'b1,'bz}}},'{'{'{'b0,'bx},'{'bz,'b1},'{'b0,'bz}},'{'{'b1,'bz},'{'bx,'b1},'{'b0,'bx}},'{'{'bz,'bx},'{'b0,'b0},'{'b1,'bz}}}};
         assign jnu = 'b1;
-        
+
         // Multi-driven assigns
       endmodule: zmfuwamyi
