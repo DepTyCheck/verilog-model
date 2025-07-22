@@ -3,7 +3,7 @@ name: YAML Syntax Check
 on:
   push:
     paths:
-        - 'found_errors/**/*.yaml'
+      - 'found_errors/**/*.yaml'
     branches:
       - gh-pages
     tags:
