@@ -9,6 +9,7 @@ examples:
       first_found: 22.07.2025
       full_error: |
         %Error: Internal Error: top.sv:4:29: ../V3Dfg.h:247: non-packed has no 'width()'
+          ... This fatal error may be caused by the earlier error(s); resolve those first.
       full_example: |
         module db
           ( output tri0 logic [1:2] rb [1:4]

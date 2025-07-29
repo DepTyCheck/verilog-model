@@ -43,4 +43,4 @@ jobs:
 
       - name: Run yamllint
         run: |
-          yamllint -c .yamllint found_errors/
+          yamllint -c .yamllint --no-warnings found_errors/

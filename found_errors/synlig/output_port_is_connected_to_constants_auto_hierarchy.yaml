@@ -1,12 +1,12 @@
-stage: analysis
+stage: post analysis
 tool: synlig
 id: output_port_is_connected_to_constants_auto_hierarchy
 title: >
   Port is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }
 regex: >
-  Output port .* is connected to constants: ({ \$auto\$hierarchy\.cc:1462:execute\$6 1'0 }|[0-9'A-z]+)
+  Output port .* is connected to constants: ({ \$auto\$hierarchy\.cc:1462:execute\$\d+ 1'0 }|[0-9'A-z]+)
 examples:
-  - output_port_is_connected_to_constants_auto_hierarchy_v1:
+  - output_port_is_connected_to_constants_auto_hierarchy_execute_6:
       first_found: 21.07.2025
       full_error: >
         ERROR: Output port udbjmldhub.llfhyxo.agrbxoods (sbp) is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }
@@ -112,7 +112,7 @@ examples:
           // Multi-driven assigns
         endmodule: lq
 
-  - output_port_is_connected_to_constants_auto_hierarchy_v2:
+  - output_port_is_connected_to_constants_auto_hierarchy_number:
       first_found: 21.07.2025
       full_error: >
         ERROR: Output port qzjcl.zavpwmtnm.wfh (kxab) is connected to constants: 9'x
@@ -246,3 +246,114 @@ examples:
           // Multi-driven assigns
           assign fzpjavmt = '{'b0,'b0,'bx};
         endmodule: qzjcl
+
+  - output_port_is_connected_to_constants_auto_hierarchy_execute_8:
+      first_found: 29.07.2025
+      full_error: >
+        ERROR: Output port qxuelserbc.myq.o (faeccq) is connected to constants: { $auto$hierarchy.cc:1462:execute$8 1'0 }
+      full_example: |
+        module faeccq
+          (output bit [0:0][1:4] o, output realtime ydvwszkvj, input bit fhmhaog);
+
+
+          not zf(venmstbh, venmstbh);
+
+          not jkklhzea(vwdydcds, jfwfrk);
+
+          xor gerofmaezg(vpvhsrcou, fdltlua, ldvez);
+
+
+          // Top inputs -> top outputs assigns
+
+          // Single-driven assigns
+
+          // Multi-driven assigns
+          assign vpvhsrcou = 'b1;
+          assign vwdydcds = 'b1;
+        endmodule: faeccq
+
+        module zpyz
+          ( output wor logic [4:4] alsttgmta [0:3][1:0]
+          , output logic [0:2][4:2][0:0] nh
+          , output reg nqhz
+          , output tri1 logic [4:3][4:0] nhigcjgep
+          );
+
+
+
+          // Top inputs -> top outputs assigns
+
+          // Single-driven assigns
+          assign nh = 'b1;
+
+          // Multi-driven assigns
+          assign alsttgmta = '{'{'bx,'bz},'{'bx,'b1},'{'bz,'b0},'{'bx,'b1}};
+          assign nhigcjgep = 'bx;
+          assign nhigcjgep = 'bx;
+        endmodule: zpyz
+
+        module po
+          (input bit oiikoicqad [1:4]);
+
+
+          not fxrde(mxhzdcoaq, ukrslwcls);
+
+          faeccq vshgsghbx(.o(o), .ydvwszkvj(yzbuves), .fhmhaog(rbkbpumr));
+          // warning: implicit conversion of port connection truncates from 4 to 1 bits
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   bit [0:0][1:4] o -> wire logic o
+          //
+          // warning: implicit conversion of port connection truncates from 64 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          //   realtime ydvwszkvj -> wire logic yzbuves
+          //
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic rbkbpumr -> bit fhmhaog
+
+          xor xuxzar(gohvszw, jxkizvjwy, vehutrsz);
+
+          not ixhj(xui, xui);
+
+
+          // Top inputs -> top outputs assigns
+
+          // Single-driven assigns
+          assign vehutrsz = 'bz;
+
+          // Multi-driven assigns
+          assign mxhzdcoaq = 'b1;
+          assign mxhzdcoaq = 'bz;
+        endmodule: po
+
+        module qxuelserbc
+          ( output bit [1:0][0:3][3:2] wpcsja
+          , output logic qdwwz
+          , output tri0 logic vy [4:1][4:3][4:0]
+          , output trior logic [1:0][2:2][4:0][3:2] phxsjkjj [4:0][2:3][4:0][2:3]
+          );
+
+
+          faeccq myq(.o(rd), .ydvwszkvj(qdwwz), .fhmhaog(qdwwz));
+          // warning: implicit conversion of port connection truncates from 4 to 1 bits
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   bit [0:0][1:4] o -> wire logic rd
+          //
+          // warning: implicit conversion of port connection truncates from 64 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   realtime qdwwz -> bit fhmhaog
+
+
+          // Top inputs -> top outputs assigns
+
+          // Single-driven assigns
+          assign phxsjkjj = '{'{'{'{'b1,'bz},'{'bz,'b0},'{'b1,'b1},'{'b0,'b1},'{'b1,'bz}},'{'{'b1,'b1},'{'bx,'b0},'{'b0,'b0},'{'bx,'bx},'{'b1,'bx}}},'{'{'{'bx,'bz},'{'bz,'bz},'{'b1,'b1},'{'bz,'b0},'{'bx,'b1}},'{'{'bx,'b0},'{'bx,'b1},'{'bz,'b1},'{'bz,'b1},'{'bz,'b1}}},'{'{'{'b0,'bz},'{'b0,'bz},'{'bz,'b1},'{'bz,'b1},'{'bz,'b0}},'{'{'b1,'b0},'{'b0,'b0},'{'bx,'b1},'{'bz,'b0},'{'b0,'b0}}},'{'{'{'b0,'b0},'{'bz,'b0},'{'b0,'b1},'{'b1,'b0},'{'bz,'bx}},'{'{'bz,'b1},'{'b0,'bz},'{'bx,'b1},'{'bz,'bz},'{'bz,'b1}}},'{'{'{'bx,'bz},'{'bz,'bz},'{'bx,'bx},'{'bz,'b1},'{'b0,'bz}},'{'{'bz,'b1},'{'b0,'bx},'{'b1,'bz},'{'bx,'bx},'{'bz,'bz}}}};
+          assign wpcsja = 'b1;
+          assign vy = '{'{'{'b1,'b0,'bx,'bz,'bx},'{'bz,'bx,'b1,'b0,'bx}},'{'{'bz,'b1,'b1,'bz,'bz},'{'bx,'bx,'bz,'b1,'b0}},'{'{'b0,'bz,'bz,'bz,'b1},'{'bz,'bx,'bx,'b0,'b1}},'{'{'bx,'bx,'bx,'b1,'b1},'{'bz,'bz,'bz,'b1,'bz}}};
+
+          // Multi-driven assigns
+          assign rd = 'b0;
+          assign rd = 'b1;
+          assign phxsjkjj = '{'{'{'{'b0,'b1},'{'bx,'b0},'{'b0,'bx},'{'bx,'bz},'{'bz,'bz}},'{'{'bz,'bx},'{'bx,'b1},'{'bx,'bz},'{'b1,'b1},'{'bx,'bx}}},'{'{'{'b0,'b1},'{'bx,'bx},'{'bz,'b1},'{'bz,'bz},'{'bx,'b1}},'{'{'bz,'bx},'{'bz,'b0},'{'bz,'bx},'{'bz,'bz},'{'bx,'b1}}},'{'{'{'bz,'b1},'{'b0,'bz},'{'b0,'bz},'{'bz,'bx},'{'bx,'b0}},'{'{'b1,'b0},'{'b1,'b1},'{'bx,'bx},'{'bz,'bz},'{'bz,'b0}}},'{'{'{'bz,'b1},'{'bz,'bx},'{'bz,'b0},'{'b1,'b0},'{'bz,'b1}},'{'{'b0,'b0},'{'b0,'b0},'{'b1,'b0},'{'bz,'bz},'{'bx,'b0}}},'{'{'{'bz,'b0},'{'b1,'bz},'{'bx,'b0},'{'b0,'bx},'{'b1,'b0}},'{'{'bz,'bx},'{'b1,'b1},'{'bx,'b0},'{'bx,'bx},'{'bx,'b0}}}};
+          assign phxsjkjj = '{'{'{'{'bx,'bx},'{'bx,'b0},'{'bz,'b1},'{'b1,'b1},'{'bx,'bz}},'{'{'b0,'bz},'{'b1,'b0},'{'bx,'bx},'{'b0,'bx},'{'bz,'b0}}},'{'{'{'bz,'bz},'{'bz,'b1},'{'b0,'b0},'{'b0,'bz},'{'b0,'bz}},'{'{'b1,'bx},'{'b1,'b0},'{'bz,'b0},'{'bx,'bz},'{'b0,'b0}}},'{'{'{'bz,'bx},'{'b1,'bx},'{'bx,'b0},'{'bx,'b0},'{'b0,'bx}},'{'{'b0,'bz},'{'bx,'b0},'{'b1,'bx},'{'bz,'b1},'{'bz,'bz}}},'{'{'{'bx,'b0},'{'b1,'b0},'{'b0,'bz},'{'bz,'b1},'{'b1,'b1}},'{'{'bx,'bz},'{'b0,'bx},'{'b1,'b0},'{'b1,'b0},'{'bx,'b1}}},'{'{'{'bz,'bz},'{'bz,'bx},'{'bz,'b0},'{'bx,'b0},'{'b1,'b0}},'{'{'bx,'b0},'{'b1,'b1},'{'bz,'b0},'{'bz,'bx},'{'bx,'b1}}}};
+        endmodule: qxuelserbc
