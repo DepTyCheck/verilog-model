@@ -48,9 +48,49 @@ namespace FinsList
   allFins (S n) = FZ :: mapFin FS (allFins n)
 
   public export
+  notIn : Fin n -> FinsList n -> Bool
+  notIn x Nil = True
+  notIn x (y :: ys) = if x == y then False else notIn x ys
+
+  public export
+  minus : FinsList n -> FinsList n -> FinsList n
+  minus Nil       _ = Nil
+  minus (x :: xs) b = if notIn x b then x :: minus xs b else minus xs b
+
+  -- public export
+  -- Eq (FinsList n) where
+  --   (==) []        []        = True
+  --   (==) (x :: xs) (y :: ys) = x == y && xs == ys
+  --   (==) _         _         = False
+
+  -- public export
+  -- Uninhabited (FinsList.Nil = x :: xs) where
+  --   uninhabited Refl impossible
+
+  -- public export
+  -- Uninhabited (x :: xs = FinsList.Nil) where
+  --   uninhabited Refl impossible
+
+  -- public export
+  -- Biinjective FinsList.(::) where
+  --   biinjective Refl = (Refl, Refl)
+
+  -- public export
+  -- DecEq (FinsList n) where
+  --   decEq Nil Nil = Yes Refl
+  --   decEq (x :: xs) (y :: ys) = decEqCong2 (decEq x y) (decEq xs ys)
+  --   decEq Nil (y :: ys) = No absurd
+  --   decEq (x :: xs) Nil = No absurd
+
+  public export
   data FinNotIn : FinsList srcs -> Fin srcs -> Type where
     FNIEmpty : FinNotIn [] f
     FNICons  : {x, f : Fin srcs} -> (0 _ : So $ x /= f) -> (fni: FinNotIn xs f) -> FinNotIn (x :: xs) f
+  
+  -- public export
+  -- data FinInFL : FinsList l -> Fin l -> Type where
+  --   Here  : (n, n' : Fin l) => (0 _ : So $ n == n') => FinInFL (n::ns) n'
+  --   There : (n, n' : Fin l) => (0 _ : So $ n /= n') => FinInFL ns n' -> FinInFL (n::ns) n'
 
 namespace MFinsList
 

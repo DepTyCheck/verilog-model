@@ -4,6 +4,44 @@ import Data.List
 
 import Test.Verilog.SVType
 
+-- ||| Implicit cast situations:
+-- |||
+-- ||| module a(output logic [1:0] a1);
+-- ||| endmodule: a
+-- ||| 
+-- ||| module b(input bit b1);
+-- ||| endmodule: b
+-- |||
+-- ||| module c();
+-- |||   a a_inst(w);      // #1  Cast logic [1:0] -> wire
+-- |||   b b_inst(w);      // #1  Cast wire -> bit
+-- ||| endmodule: c
+-- |||
+-- ||| module d(output byte d1, input reg d2);
+-- |||   assign d1 = d2;   // #2  Cast reg -> byte
+-- ||| endmodule: d
+-- |||
+-- ||| module e(input integer e1);
+-- |||   b b_inst(e1);     // #3  Cast bit -> integer
+-- ||| endmodule: e
+-- |||
+-- ||| module f(output int f1);
+-- |||  a a_inst(f1);      // #4  Cast logic [1:0] -> int
+-- ||| endmodule: f
+-- |||
+-- ||| module g();
+-- |||   b b_inst(g2);     // #5  Cast wire -> bit
+-- |||   a a_inst(g1);     // #6  Cast logic [1:0] -> wire
+-- ||| endmodule: g
+-- |||
+-- ||| Implicit cast situations:                    | if unpacked then 0 casts else ...
+-- ||| 1. Submodule source -> submodule sink        | 2 casts (source type -> default_net_type, default_net_type -> sink type)
+-- ||| 2. Top source -> top sink                    | 1 cast  (source type -> sink type)
+-- ||| 3. Top source -> submodule sink              | 1 cast  (source type -> sink type)
+-- ||| 4. Submodule source -> top sink              | 1 cast  (source type -> sink type)
+-- ||| 5. Unconnected submodule sink                | 1 cast  (source type -> default_net_type)
+-- ||| 6. Unconnected submodule source              | 1 cast  (default_net_type -> sink type)  -- calculated in Pretty
+
 export
 Show State where
   show S2 = "2"

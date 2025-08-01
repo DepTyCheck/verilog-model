@@ -238,9 +238,9 @@ finLookup : (y : FinsList n) -> (List $ Fin $ y.length) -> List $ Fin n
 finLookup xs []        = []
 finLookup xs (y :: ys) = index xs y :: finLookup xs ys
 
-selectPorts' : {mc : _} -> (mcs : MultiConnectionsVect l mc) -> List (Fin l) -> SVObjList
-selectPorts' p []        = []
-selectPorts' p (x :: xs) = find p x :: selectPorts' p xs
+selectPorts' : {mc : _} -> (mcs : MultiConnectionVect n ms m subMs uf) -> List (Fin n) -> SVObjList
+-- selectPorts' p []        = []
+-- selectPorts' p (x :: xs) = find p x :: selectPorts' p xs
 
 tryToFitL : {to : _} -> List (Fin a) -> List (Fin to)
 tryToFitL []      = []
@@ -250,67 +250,72 @@ tryToFitL (x::xs) = case tryToFit x of
 
 gen : Fuel -> Gen MaybeEmpty $ ExtendedModules StdModules
 gen x = do
-  rawMS <- genModules x StdModules @{genConns}
+  rawMS <- genModules x StdModules @{genMCL}
   res <- extend x rawMS
   pure res where
     extend : Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
     extend _ End = pure End
-    extend x modules@(NewCompositeModule m {ms} subMs {sicons} {tocons} sssi ssto cont) = do
+    extend x modules@(NewCompositeModule m {ms} subMs {n} mcs cont) = do
       -- Resolve mcs
-      let (l ** mcs) = resolveMultiConnections $ SC ms m subMs sicons tocons
+      -- let (l ** mcs) = resolveMultiConnections $ SC ms m subMs sicons tocons
 
-      -- Gen Assigns
-      let sdmcs = portsToAssign mcs
-      (rawSdAssigns ** uf) <- genUniqueFins x (sdmcs.length)
-      let sdAssigns = finLookup sdmcs rawSdAssigns.asList
-      rawMdAssigns <- genMDAssigns x mcs
-      let mdAssigns = (toFinsList rawMdAssigns).asList
+      -- -- Gen Assigns
+      -- let sdmcs = portsToAssign mcs
+      -- (rawSdAssigns ** uf) <- genUniqueFins x (sdmcs.length)
+      -- let sdAssigns = finLookup sdmcs rawSdAssigns.asList
+      -- rawMdAssigns <- genMDAssigns x mcs
+      -- let mdAssigns = (toFinsList rawMdAssigns).asList
 
-      -- Gen literals
-      sdLiterals <- genLiterals @{genBinVect} x $ selectPorts' mcs sdAssigns
-      mdLiterals <- genLiterals @{genBinVect} x $ selectPorts' mcs mdAssigns
+      -- -- Gen literals
+      -- sdLiterals <- genLiterals @{genBinVect} x $ selectPorts' mcs sdAssigns
+      -- mdLiterals <- genLiterals @{genBinVect} x $ selectPorts' mcs mdAssigns
 
-      -- Extend the rest
+      -- -- Extend the rest
       contEx <- extend x cont
 
-      -- Gen port types for current context
-      let ports = resolveLocalCtxPortTypes modules
+      -- -- Gen port types for current context
+      -- let ports = resolveLocalCtxPortTypes modules
 
-      pure $ NewCompositeModule m subMs sssi ssto mcs sdAssigns sdLiterals mdAssigns mdLiterals ports contEx
+      pure $ NewCompositeModule m subMs mcs [] [] [] [] contEx
 
 covering
 main : IO ()
 main = do
-  let usage : Lazy String := usageInfo "Usage:" cliOpts
-  MkResult options [] [] [] <- getOpt Permute cliOpts . tail'' <$> getArgs
-    | MkResult {nonOptions=nonOpts@(_::_), _}     => die "unrecognised arguments \{show nonOpts}\n\{usage}"
-    | MkResult {unrecognized=unrecOpts@(_::_), _} => die "unrecognised options \{show unrecOpts}\n\{usage}"
-    | MkResult {errors=es@(_::_), _}              => die "arguments parse errors \{show es}\n\{usage}"
-  let cfg : Config Maybe = foldl (mergeCfg (\x, y => x <|> y)) allNothing options
-  let cfg : Cfg = mergeCfg (\m, d => fromMaybe d m) cfg !defaultConfig
+  putStrLn "Hello from Idris2!"
 
-  when cfg.help $ do
-    putStrLn usage
-    exitSuccess
+-- covering
+-- main : IO ()
+-- main = do
+--   let usage : Lazy String := usageInfo "Usage:" cliOpts
+--   MkResult options [] [] [] <- getOpt Permute cliOpts . tail'' <$> getArgs
+--     | MkResult {nonOptions=nonOpts@(_::_), _}     => die "unrecognised arguments \{show nonOpts}\n\{usage}"
+--     | MkResult {unrecognized=unrecOpts@(_::_), _} => die "unrecognised options \{show unrecOpts}\n\{usage}"
+--     | MkResult {errors=es@(_::_), _}              => die "arguments parse errors \{show es}\n\{usage}"
+--   let cfg : Config Maybe = foldl (mergeCfg (\x, y => x <|> y)) allNothing options
+--   let cfg : Cfg = mergeCfg (\m, d => fromMaybe d m) cfg !defaultConfig
 
-  let cgi = initCoverageInfo'' [`{Modules}, `{LiteralsList}] -- `{SingleDrivenAssigns}, `{MultiDrivenAssigns},
+--   when cfg.help $ do
+--     putStrLn usage
+--     exitSuccess
 
-  let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
-  let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>
-                                                        if nonTrivial md then Just (fst gmd, mcov, md) else Nothing
-  let vals = take (limit cfg.testsCnt) vals
+--   let cgi = initCoverageInfo'' [`{Modules}, `{LiteralsList}] -- `{SingleDrivenAssigns}, `{MultiDrivenAssigns},
 
-  -- Make sure the paths for the files exist
-  whenJust cfg.covFile ensureParentDir
-  whenJust cfg.testsDir $ createDir''
+--   let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
+--   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>
+--                                                         if nonTrivial md then Just (fst gmd, mcov, md) else Nothing
+--   let vals = take (limit cfg.testsCnt) vals
 
-  let (seeds, modules) = unzip vals
-  let alignedSeeds = cfg.randomSeed::seeds
-  let indexedVals = withIndex $ zip3 alignedSeeds seeds modules
+--   -- Make sure the paths for the files exist
+--   whenJust cfg.covFile ensureParentDir
+--   whenJust cfg.testsDir $ createDir''
 
-  forS_ cgi indexedVals $ \cgi, (idx, initialSeed, seedAfter, mcov, generatedModule) => do
-    when (not cfg.silent) $ printModule cfg idx generatedModule initialSeed seedAfter
+--   let (seeds, modules) = unzip vals
+--   let alignedSeeds = cfg.randomSeed::seeds
+--   let indexedVals = withIndex $ zip3 alignedSeeds seeds modules
 
-    let cgi = registerCoverage mcov cgi
-    whenJust cfg.covFile $ printMCov cgi
-    pure cgi
+--   forS_ cgi indexedVals $ \cgi, (idx, initialSeed, seedAfter, mcov, generatedModule) => do
+--     when (not cfg.silent) $ printModule cfg idx generatedModule initialSeed seedAfter
+
+--     let cgi = registerCoverage mcov cgi
+--     whenJust cfg.covFile $ printMCov cgi
+--     pure cgi

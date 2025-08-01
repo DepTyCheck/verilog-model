@@ -2,7 +2,6 @@ module Test.Verilog.Assign
 
 import public Test.Verilog.SVType
 import public Test.Verilog.Connections
-import public Test.Verilog.MultiConnection
 
 import Data.Fuel
 import Data.Vect.Extra
@@ -14,22 +13,16 @@ import Test.DepTyCheck.Gen.Coverage
 %default total
 
 namespace SD
-
+  
   ||| 10.3.2
   ||| Continuous assignments to singledriven types are illegal when assigned to top input ports and submodule output ports
   |||
   ||| So unconnected sumbodule inputs and unconnected top outputs are available for singledriven continuous assignment
   export
-  portsToAssign : {m : ModuleConns} -> MultiConnectionsVect l m -> FinsList l
-  portsToAssign v = do
-    let (_ ** res) = catMaybes $ map resolve $ withIndex $ toVect v
-    fromVect res where
-      noSource : {m : ModuleConns} -> MultiConnection m -> Bool
-      noSource {m = (SC _ _ _ _ _)} (MC _ _ Nothing _) = True
-      noSource _                                       = False
-
-      resolve : {m : ModuleConns} -> (Fin l, MultiConnection m) -> Maybe (Fin l)
-      resolve (fsk, fss) = if noSource fss then Just fsk else Nothing  
+  portsToAssign : (mcs : MultiConnectionVect n ms m subMs uf) -> FinsList n
+  portsToAssign mcs = fromList $ foldl resolve [] $ withIndex $ toVect mcs where
+    resolve : List (Fin n) -> (Fin n, ShortConn ms m subMs) -> List (Fin n)
+    resolve acc (fin, MkSC sk sc) = if isUnconnected sc then fin :: acc else acc
 
   public export
   data UniqueFins : (n : Nat) -> (fs : FinsList n) -> Type where 
@@ -50,19 +43,14 @@ namespace MD
     RN : ResolvedNet sv => Multidriven sv
 
   public export
-  data CanDriveMD : {m : ModuleConns} -> (mcs : MultiConnectionsVect l m) -> Fin l -> Type where
-    Can : Multidriven (find mcs f) -> CanDriveMD mcs f
+  data CanDriveMD : (mcs : MultiConnectionVect n ms m subMs uf) -> Fin n -> Type where
+    Can : Multidriven (typeOf mcs f) -> CanDriveMD mcs f
 
   public export
-  data MDAssigns : {m : ModuleConns} -> (mcs : MultiConnectionsVect l m) -> Type where 
+  data MDAssigns : (mcs : MultiConnectionVect n ms m subMs uf) -> Type where 
     Nil  : MDAssigns mcs
-    (::) : {mcs : MultiConnectionsVect l m} -> (f : Fin l) -> CanDriveMD mcs f => MDAssigns mcs -> MDAssigns mcs
+    (::) : {mcs : MultiConnectionVect n ms m subMs uf} -> (f : Fin n) -> {_ : CanDriveMD mcs f} -> MDAssigns mcs -> MDAssigns mcs
   
   export
-  toFinsList : {mcs : MultiConnectionsVect l m} -> MDAssigns mcs -> FinsList l
-  toFinsList []      = []
-  toFinsList (x::xs) = x :: toFinsList xs
-
-  export
-  genMDAssigns : Fuel -> {l : Nat} -> {m : ModuleConns} -> (mcs : MultiConnectionsVect l m) -> 
-    Gen MaybeEmpty $ MDAssigns {l} {m} mcs
+  genMDAssigns : Fuel -> {n : Nat} -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> {uf : UseFins ms m subMs} -> 
+                 (mcs : MultiConnectionVect n ms m subMs uf) -> Gen MaybeEmpty $ MDAssigns mcs

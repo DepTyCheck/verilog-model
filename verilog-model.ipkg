@@ -26,8 +26,6 @@ depends = collection-utils
 modules = Test.Common.Utils
         , Test.Verilog.SVType
         , Test.Verilog.Connections
-        , Test.Verilog.CtxPorts
-        , Test.Verilog.MultiConnection
         , Test.Verilog.Assign
         , Test.Verilog.Literal
         , Test.Verilog.Warnings
