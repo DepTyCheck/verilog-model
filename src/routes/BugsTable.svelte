@@ -72,8 +72,23 @@
 
     function getIssueNumberFromLink(link: string | null | undefined): string | null {
       if (!link) return null;
-      const match = link.match(/\/issues\/(\d+)$/);
+      const match = link.match(/\/issues\/(\d+)/);
       return match ? match[1] : null;
+    }
+
+    function formatLinkText(link: string | null | undefined): string {
+      if (!link) return '';
+      
+      const issueNumber = getIssueNumberFromLink(link);
+      if (!issueNumber) return '';
+      
+      // Check if it's a comment link
+      if (link.includes('#issuecomment-')) {
+        return `Comment on #${issueNumber}`;
+      }
+      
+      // Regular issue link
+      return `Issue #${issueNumber}`;
     }
 
     // Update query params when filter changes
@@ -171,7 +186,7 @@
               {#if item.issue_link && item.issue_link.trim() !== ''}
                 {#if getIssueNumberFromLink(item.issue_link)}
                   <A href={item.issue_link} target="_blank" rel="noopener noreferrer">
-                    Issue#{getIssueNumberFromLink(item.issue_link)}
+                    {formatLinkText(item.issue_link)}
                   </A>
                 {:else}
                   <A href={item.issue_link} target="_blank" rel="noopener noreferrer">

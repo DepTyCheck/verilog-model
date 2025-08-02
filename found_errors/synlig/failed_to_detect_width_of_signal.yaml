@@ -4,11 +4,17 @@ id: failed_to_detect_width_of_signal
 title: Failed to detect width of signal
 regex: >
   Failed to detect width of signal access .*
+issue_status: reported
+issue_link: https://github.com/chipsalliance/synlig/issues/2772
 examples:
   - failed_to_detect_width_of_signal_v1:
       first_found: 21.07.2025
       full_error: >
         ERROR: Failed to detect width of signal access `\y'!
+      minified_example: |
+        module a(output bit [0:0][0:0] b [0:0]);
+          assign b = '{'b0};
+        endmodule: a
       full_example: |
         module fyhjcqrog
           (input trior logic xxccvkct [0:4]);

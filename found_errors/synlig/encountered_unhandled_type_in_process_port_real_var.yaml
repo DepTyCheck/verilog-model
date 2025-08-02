@@ -8,6 +8,9 @@ regex: >
 examples:
   - encountered_unhandled_type_in_process_port_real_var_v1:
       first_found: 24.05.2025
+      minified_example: |
+        module a(input real b);
+        endmodule: a
       full_error: >
         ERROR: Encountered unhandled type in process_port: real_var
       full_example: |

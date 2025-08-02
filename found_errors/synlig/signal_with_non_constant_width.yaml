@@ -4,11 +4,18 @@ id: signal_with_non_constant_width
 title: Signal with non-constant width!
 regex: >
   Signal .* with non-constant width
+issue_status: reported
+issue_link: https://github.com/chipsalliance/synlig/issues/2772#issuecomment-3146510179
 examples:
   - signal_with_non_constant_width_v1:
       first_found: 21.07.2025
       full_error: >
         ERROR: Signal `\khbfhwajrd' with non-constant width!
+      minified_error: >
+        ERROR: Signal `\b' with non-constant width!
+      minified_example: |
+        module a (output bit [0:0][0:0] b [0:0]);
+        endmodule: a
       full_example: |
         module pxcr
           ( output trior logic [3:0] vgbqkkfhwt
