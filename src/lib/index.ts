@@ -1,5 +1,6 @@
 import { type FoundError } from '$lib/core';
 import { base } from '$app/paths'
+import type { IssueStatus } from './core';
 
 export function getFirstFound(error: FoundError): Date | null {
 	const dates: Date[] = error.examples
@@ -24,18 +25,15 @@ export function formatDateDMY(date: Date | null): string {
 	return `${dd}.${mm}.${yyyy}`;
 }
 
-export function displayIssueStatus(status: string | null | undefined): string {
+export function displayIssueStatus(status: IssueStatus | undefined): string {
   switch (status) {
-    case 'reported': return 'New';
-    case 'already_known': return 'Known';
-    case 'wont_report': return 'Not planned';
-	case 'unsupported': return 'Unsupported';
-    case null:
+    case 'reported': return 'Brand new';
+    case 'already_known': return 'Known before';
+	  case 'unsupported': return 'Unsupported';
     case undefined:
-    case '':
       return '';
     default:
-      return status;
+      return '';
   }
 }
 

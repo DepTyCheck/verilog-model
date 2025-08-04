@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { Button, Dropdown, Checkbox, TableBody, TableBodyCell, TableBodyRow, Table, TableHead, Card, Heading, A } from 'flowbite-svelte';
+    import { Button, Dropdown, Checkbox, TableBody, TableBodyCell, TableBodyRow, Table, TableHead, Card, Heading, A, Tooltip } from 'flowbite-svelte';
     import TableHeadCellSortable from './TableHeadCellSortable.svelte';
     import { FilterSolid, ArrowRightOutline } from 'flowbite-svelte-icons';
-    import { type CheckBoxChoice, type SortableColumn } from '$lib/core';
+    import { type CheckBoxChoice, type SortableColumn, type IssueStatus } from '$lib/core';
     import { githubUrl, depTyCheckGithubUrl } from '$lib/consts';
     import { allFoundErrors } from '$lib/generated/errors_data';
     import { formatDateDMY, getFirstFound, displayIssueStatus } from '$lib/index';
@@ -18,6 +18,21 @@
     let group: string[] = [];
     let sortColumn: SortableColumn = 'title';
     let sortAsc = true;
+
+    function getStatusTooltip(status: IssueStatus | undefined): string {
+      switch (status) {
+        case 'reported':
+          return "This issue is reported for the first time";
+        case 'already_known':
+          return 'This issue was already known before';
+        case 'unsupported':
+          return 'This feature is not supported by the tool and is not planned in the near future';
+        case null:
+          return 'No status information available';
+        default:
+          return `Status: ${status}`;
+      }
+    }
 
     function updateQueryParams() {
       if (!browser) return;
@@ -101,7 +116,7 @@
       <div class="mt-px mb-4 lg:mb-0">
         <Heading tag="h3" class="mb-2 -ml-0.25 text-xl font-semibold dark:text-white">Found bugs</Heading>
         <p class="text-base font-normal text-gray-500 dark:text-gray-300">
-          This is a list of bugs found by 
+          This is a list of bugs and issues found by 
           <A href={githubUrl} class="underline">verilog-model</A> using
           <A href={depTyCheckGithubUrl} class="underline">DepTyCheck</A> for various SystemVerilog tools.
           <br/>
@@ -182,7 +197,10 @@
             <TableBodyCell class="px-4 py-3 w-32">{item.tool}</TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-32">{item.stage}</TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-32">{formatDateDMY(getFirstFound(item))}</TableBodyCell>
-            <TableBodyCell class="px-4 py-3 w-32">{displayIssueStatus(item.issue_status)}</TableBodyCell>
+            <TableBodyCell class="px-4 py-3 w-32">
+              {displayIssueStatus(item.issue_status)}
+              <Tooltip>{getStatusTooltip(item.issue_status)}</Tooltip>
+            </TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-32">
               {#if item.issue_link && item.issue_link.trim() !== ''}
                 {#if getIssueNumberFromLink(item.issue_link)}

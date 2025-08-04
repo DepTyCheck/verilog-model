@@ -7,7 +7,7 @@ Keys:
 - title: A short, descriptive title for the error.
 - tool: The name of the tool where the error was encountered.
 - short_desc: A concise summary of the error.
-- issue_status: The current status of the issue (e.g., reported, already_known, wont_report, unsupported).
+- issue_status: The current status of the issue (e.g., reported, already_known, unsupported).
 - issue_link: A URL to the related issue, if available.
 - stage: The stage or context in which the error was found (e.g., parsing, synthesis, simulation).
 - matching_mode: Defines pattern should be matched to the `whole` command output
