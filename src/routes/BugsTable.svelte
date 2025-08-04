@@ -10,6 +10,7 @@
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
+    import { base } from '$app/paths';
   
     let toolChoices: CheckBoxChoice[] = Array.from(new Set(allFoundErrors.map(i => i.tool)))
           .sort()
@@ -176,7 +177,7 @@
           <TableBodyRow>
             <TableBodyCell class="px-4 py-3 w-12 text-gray-400">{i + 1}</TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-64">
-              <A href={`/error/${item.id}`}>{item.title}</A>
+              <A href={`${base}/error/${item.id}`}>{item.title}</A>
             </TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-32">{item.tool}</TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-32">{item.stage}</TableBodyCell>
