@@ -4,7 +4,7 @@ id: array_initialization_should_have_been_removed_earlier
 title: Array initialization should have been removed earlier
 regex: >
   Array initialization should have been removed earlier
-issue_status: unsupported
+issue_novelty: unsupported
 issue_link: https://github.com/verilator/verilator/issues/6254
 examples:
   - array_initialization_should_have_been_removed_earlier_v1:

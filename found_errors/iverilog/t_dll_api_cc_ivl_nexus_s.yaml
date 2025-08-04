@@ -1,4 +1,4 @@
-issue_status: reported
+issue_novelty: reported
 issue_link: https://github.com/steveicarus/iverilog/issues/1213
 stage: synthesis
 tool: iverilog

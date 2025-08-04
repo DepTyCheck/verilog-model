@@ -2,10 +2,10 @@
     import { Button, Dropdown, Checkbox, TableBody, TableBodyCell, TableBodyRow, Table, TableHead, Card, Heading, A, Tooltip } from 'flowbite-svelte';
     import TableHeadCellSortable from './TableHeadCellSortable.svelte';
     import { FilterSolid, ArrowRightOutline } from 'flowbite-svelte-icons';
-    import { type CheckBoxChoice, type SortableColumn, type IssueStatus } from '$lib/core';
+    import { type CheckBoxChoice, type SortableColumn, type IssueNovelty } from '$lib/core';
     import { githubUrl, depTyCheckGithubUrl } from '$lib/consts';
     import { allFoundErrors } from '$lib/generated/errors_data';
-    import { formatDateDMY, getFirstFound, displayIssueStatus } from '$lib/index';
+    import { formatDateDMY, getFirstFound, displayIssueNovelty } from '$lib/index';
     import { page } from '$app/state';
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
@@ -19,18 +19,18 @@
     let sortColumn: SortableColumn = 'title';
     let sortAsc = true;
 
-    function getStatusTooltip(status: IssueStatus | undefined): string {
+    function getNoveltyTooltip(status: IssueNovelty | undefined): string {
       switch (status) {
         case 'reported':
-          return "This issue is reported for the first time";
+          return 'This issue is reported for the first time';
         case 'already_known':
           return 'This issue was already known before';
         case 'unsupported':
           return 'This feature is not supported by the tool and is not planned in the near future';
         case null:
-          return 'No status information available';
+          return 'No novelty information available';
         default:
-          return `Status: ${status}`;
+          return `Novelty: ${status}`;
       }
     }
 
@@ -47,7 +47,7 @@
       const toolsParam = url.searchParams.get('tools');
       group = toolsParam ? toolsParam.split(',') : [];
       const sortParam = url.searchParams.get('sort');
-      if (sortParam && ['tool','firstFound','title','stage','issue_link','issue_status'].includes(sortParam)) {
+      if (sortParam && ['tool','firstFound','title','stage','issue_link','issue_novelty'].includes(sortParam)) {
         sortColumn = sortParam as SortableColumn;
       }
       const ascParam = url.searchParams.get('asc');
@@ -114,7 +114,7 @@
   <Card size="xl" class="max-w-none p-4 shadow-sm sm:p-6">
     <div class="items-center justify-between lg:flex">
       <div class="mt-px mb-4 lg:mb-0">
-        <Heading tag="h3" class="mb-2 -ml-0.25 text-xl font-semibold dark:text-white">Found bugs</Heading>
+        <Heading tag="h3" class="mb-2 -ml-0.25 text-xl font-semibold dark:text-white">Found bugs & issues</Heading>
         <p class="text-base font-normal text-gray-500 dark:text-gray-300">
           This is a list of bugs and issues found by 
           <A href={githubUrl} class="underline">verilog-model</A> using
@@ -173,8 +173,8 @@
           {setSort}
         />
         <TableHeadCellSortable
-          label="Status"
-          sortKey="issue_status"
+          label="Novelty"
+          sortKey="issue_novelty"
           {sortColumn}
           {sortAsc}
           {setSort}
@@ -198,8 +198,13 @@
             <TableBodyCell class="px-4 py-3 w-32">{item.stage}</TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-32">{formatDateDMY(getFirstFound(item))}</TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-32">
-              {displayIssueStatus(item.issue_status)}
-              <Tooltip>{getStatusTooltip(item.issue_status)}</Tooltip>
+              {@const noveltyDisplay = displayIssueNovelty(item.issue_novelty)}
+              {#if noveltyDisplay}
+                {noveltyDisplay}
+                <Tooltip type="auto">{getNoveltyTooltip(item.issue_novelty)}</Tooltip>
+              {:else}
+                {noveltyDisplay}
+              {/if}
             </TableBodyCell>
             <TableBodyCell class="px-4 py-3 w-32">
               {#if item.issue_link && item.issue_link.trim() !== ''}

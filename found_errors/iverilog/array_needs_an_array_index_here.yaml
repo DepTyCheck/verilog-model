@@ -4,7 +4,7 @@ id: array_needs_an_array_index_here
 title: Array needs an array index here
 regex: >
   Array \w+ needs an array index here\.
-issue_status: reported
+issue_novelty: reported
 issue_link: https://github.com/steveicarus/iverilog/issues/1265
 examples:
   - array_needs_an_array_index_here_v1:

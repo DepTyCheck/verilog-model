@@ -4,7 +4,7 @@ id: unsupported_tristate_construct_inititem
 title: Unsupported tristate construct INITITEM
 regex: >
   Unsupported tristate construct: INITITEM
-issue_status: unsupported
+issue_novelty: unsupported
 examples:
   - unsupported_tristate_construct_inititem_v1:
       first_found: 04.03.2025

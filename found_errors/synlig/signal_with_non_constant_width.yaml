@@ -4,7 +4,7 @@ id: signal_with_non_constant_width
 title: Signal with non-constant width!
 regex: >
   Signal .* with non-constant width
-issue_status: reported
+issue_novelty: reported
 issue_link: https://github.com/chipsalliance/synlig/issues/2772#issuecomment-3146510179
 examples:
   - signal_with_non_constant_width_v1:

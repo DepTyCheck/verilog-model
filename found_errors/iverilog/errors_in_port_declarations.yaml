@@ -4,7 +4,7 @@ id: errors_in_port_declarations
 title: Errors in port declarations
 regex: >
   syntax error\W[A-z-\/0-9,.:]+ .*Errors in port declarations\.$
-issue_status: unsupported
+issue_novelty: unsupported
 issue_link: https://github.com/steveicarus/iverilog/issues/1266
 examples:
   - errors_in_port_declarations_v1:

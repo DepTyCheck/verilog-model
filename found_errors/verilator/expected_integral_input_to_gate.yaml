@@ -2,7 +2,7 @@ stage: synthesis
 tool: verilator
 id: expected_integral_input_to_gate
 title: Expected integral input to gate
-issue_status: reported
+issue_novelty: reported
 issue_link: https://github.com/verilator/verilator/issues/5876
 regex: >
   Expected integral \(non-'real'\) input to

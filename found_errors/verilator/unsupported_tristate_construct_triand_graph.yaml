@@ -4,7 +4,7 @@ id: unsupported_tristate_construct_triand_graph
 title: Unsupported tristate construct (in graph; not converted)
 regex: >
   Unsupported tristate construct \(in graph; not converted\): (CONST|VARREF|INITITEM|ASSIGNW|OR)
-issue_status: unsupported
+issue_novelty: unsupported
 examples:
   - unsupported_tristate_construct_triand_graph_const:
       first_found: 04.03.2025

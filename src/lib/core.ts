@@ -3,7 +3,7 @@ export type CheckBoxChoice = {
 	label: string;
 };
 
-export type IssueStatus = 'reported' | 'already_known' | 'unsupported' | null;
+export type IssueNovelty = 'reported' | 'already_known' | 'unsupported' | null;
 
 export type FoundErrorExample = {
 	id: string;
@@ -22,7 +22,7 @@ export type FoundError = {
 	short_desc?: string | null;
 	examples: FoundErrorExample[];
 	issue_link?: string | null;
-	issue_status?: IssueStatus;
+	issue_novelty?: IssueNovelty;
 };
 
-export type SortableColumn = 'tool' | 'firstFound' | 'title' | 'stage' | 'issue_link' | 'issue_status';
+export type SortableColumn = 'tool' | 'firstFound' | 'title' | 'stage' | 'issue_link' | 'issue_novelty';
