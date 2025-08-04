@@ -1,4 +1,5 @@
 import { type FoundError } from '$lib/core';
+import { base } from '$app/paths'
 
 export function getFirstFound(error: FoundError): Date | null {
 	const dates: Date[] = error.examples
@@ -36,4 +37,16 @@ export function displayIssueStatus(status: string | null | undefined): string {
     default:
       return status;
   }
+}
+
+export const LinkHandler = (link: string) => {
+  if (process.env.NODE_ENV === 'development') {
+    return link
+  }
+
+  if (link === '/') {
+    return base
+  }
+
+  return base + link
 }
