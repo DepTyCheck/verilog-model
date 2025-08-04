@@ -4,6 +4,10 @@ on:
   push:
     branches: 'gh-pages'
 
+concurrency:
+  group: ${{ github.workflow }}@${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build_site:
     runs-on: ubuntu-latest
