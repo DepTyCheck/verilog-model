@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: synlig
 id: signal_with_non_constant_width
 title: Signal with non-constant width!

@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: verilator
 id: assigning_to_input_const_variable
 title: >

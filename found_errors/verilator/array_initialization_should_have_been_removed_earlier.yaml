@@ -1,12 +1,22 @@
-stage: syntesis
+stage: synthesis
 tool: verilator
 id: array_initialization_should_have_been_removed_earlier
 title: Array initialization should have been removed earlier
 regex: >
   Array initialization should have been removed earlier
+issue_status: unsupported
+issue_link: https://github.com/verilator/verilator/issues/6254
 examples:
   - array_initialization_should_have_been_removed_earlier_v1:
       first_found: 07.07.2025
+      minified_error: |
+        %Error: Internal Error: test.sv:2:14: ../V3Slice.cpp:316: Array initialization should have been removed earlier
+            2 |   assign b = '{'{'b0,'bx}};
+      minified_example: |
+        module a (output triand logic b [3:3][1:2]);
+          assign b = '{'{'b0,'bx}};
+          assign b = '{'{'bx,'bx}};
+        endmodule: a
       full_error: |
         %Error: Internal Error: top.sv:20:14: ../V3Slice.cpp:316: Array initialization should have been removed earlier
       full_example: |

@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: iverilog
 id: invalid_module_item
 title: Invalid module item

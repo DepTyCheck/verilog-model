@@ -1,9 +1,10 @@
-stage: syntesis
+stage: synthesis
 tool: verilator
 id: output_port_connection_connects_real_to_non_real
 title: Output port connection connects real to non-real
 regex: >
   Output port connection '[A-z]+' connects real to non-real
+issue_status: unsupported
 examples:
   - output_port_connection_connects_real_to_non_real_v1:
       first_found: 10.12.2024

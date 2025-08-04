@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 short_desc: (implicit) uwire <name> must have a single driver, found <num>
 tool: iverilog
 id: uwire_must_have_single_driver

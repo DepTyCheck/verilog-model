@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 issue_status: reported
 issue_link: https://github.com/steveicarus/iverilog/issues/1231
 tool: iverilog

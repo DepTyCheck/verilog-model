@@ -1,6 +1,6 @@
 issue_status: reported
 issue_link: https://github.com/steveicarus/iverilog/issues/1217
-stage: syntesis
+stage: synthesis
 tool: iverilog
 short_desc: A continuously assigned unpacked array literal is parsed wrong
 id: scalar_type_is_not_a_valid_context_for_assignment_pattern

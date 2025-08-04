@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: verilator
 id: operator_assignw_expected_non_double
 title: Operator ASSIGNW expected non-complex non-double

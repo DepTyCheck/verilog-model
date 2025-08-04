@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: verilator
 id: slices_of_arrays_in_assignments_have_different_unpacked_dimensions
 title: Slices of arrays in assignments have different unpacked dimensions

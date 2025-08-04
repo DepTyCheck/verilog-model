@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: verilator
 id: gate_unexpected_in_assignment_to_unpacked_array
 title: gate unexpected in assignment to unpacked array

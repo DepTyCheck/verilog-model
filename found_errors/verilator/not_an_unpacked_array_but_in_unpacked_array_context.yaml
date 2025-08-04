@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: verilator
 id: not_an_unpacked_array_but_in_unpacked_array_context
 title: Not an unpacked array but in unpacked array context

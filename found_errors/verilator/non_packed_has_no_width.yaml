@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: verilator
 id: non_packed_has_no_width
 title: non-packed has no 'width()'

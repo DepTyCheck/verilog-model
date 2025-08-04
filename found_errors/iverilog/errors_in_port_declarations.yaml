@@ -1,12 +1,20 @@
-stage: syntesis
+stage: synthesis
 tool: iverilog
 id: errors_in_port_declarations
 title: Errors in port declarations
 regex: >
   syntax error\W[A-z-\/0-9,.:]+ .*Errors in port declarations\.$
+issue_status: unsupported
+issue_link: https://github.com/steveicarus/iverilog/issues/1266
 examples:
   - errors_in_port_declarations_v1:
       first_found: 01.06.2025
+      minified_error: |
+        test.sv:1: syntax error
+        test.sv:1: Errors in port declarations.
+      minified_example: |
+        module a(output trireg logic b);
+        endmodule: a
       full_error: |
         generated-modules/97-seed_14860280421552192959,5268399088297407135.sv:5: syntax error
         generated-modules/97-seed_14860280421552192959,5268399088297407135.sv:1: Errors in port declarations.

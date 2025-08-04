@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: verilator
 id: variable_has_same_name_as
 title: Variable has same name as ...

@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: verilator
 id: wire_inputs_its_own_output
 title: Wire inputs its own output, creating circular logic

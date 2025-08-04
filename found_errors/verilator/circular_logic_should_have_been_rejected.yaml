@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: verilator
 id: circular_logic_should_have_been_rejected
 title: V3Gate.cpp Circular logic should have been rejected by okVisitor

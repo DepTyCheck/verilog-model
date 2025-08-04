@@ -1,4 +1,4 @@
-stage: syntesis
+stage: synthesis
 tool: synlig
 id: failed_to_detect_width_of_signal
 title: Failed to detect width of signal
