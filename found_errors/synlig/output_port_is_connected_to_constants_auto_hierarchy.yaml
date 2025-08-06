@@ -5,7 +5,7 @@ title: >
   Port is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }
 regex: >
   Output port .* is connected to constants: ({ \$auto\$hierarchy\.cc:1462:execute\$\d+ 1'[01xz]+ }|[0-9'A-z]+)
-issue_novelty: reported
+issue_novelty: new
 issue_link: https://github.com/chipsalliance/synlig/issues/2771
 examples:
   - output_port_is_connected_to_constants_auto_hierarchy_v1:

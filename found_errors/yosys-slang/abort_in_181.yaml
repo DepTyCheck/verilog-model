@@ -2,11 +2,18 @@ stage: parsing
 tool: yosys-slang
 id: abort_in_181
 title: Abort in slang_frontend.cc:181
+issue_novelty: already_known
+issue_link: https://github.com/povik/yosys-slang/issues/181#issuecomment-3161067098
 regex: >
   Abort in [\/A-z0-9-]+slang_frontend\.cc:181
 examples:
   - abort_in_181_v1:
       first_found: 19.07.2025
+      minified_error: |
+        ERROR: Abort in /yosys-slang/src/slang_frontend.cc:181.
+      minified_example: |
+        module a (input real a1);
+        endmodule: a
       full_error: |
         ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:181.
       full_example: |

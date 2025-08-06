@@ -25,13 +25,11 @@ export function formatDateDMY(date: Date | null): string {
 	return `${dd}.${mm}.${yyyy}`;
 }
 
-export function displayIssueNovelty(status: IssueNovelty | undefined): string {
+export function displayIssueNovelty(status: IssueNovelty): string {
   switch (status) {
-    case 'reported': return 'Brand new';
+    case 'new': return 'Brand new';
     case 'already_known': return 'Known before';
 	case 'unsupported': return 'Unsupported';
-    case undefined:
-      return '';
     default:
       return '';
   }

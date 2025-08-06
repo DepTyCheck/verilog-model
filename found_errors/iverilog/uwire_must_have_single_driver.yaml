@@ -5,6 +5,8 @@ id: uwire_must_have_single_driver
 title: Uwire must have single driver
 regex: >
   (\(implicit\) |)uwire "\w+" must have a single driver, found \(\d+\)
+issue_link: https://github.com/steveicarus/iverilog/issues/1267
+issue_novelty: new
 examples:
   - implicit_uwire_must_have_single_driver:
       first_found: 03.04.2025
@@ -205,3 +207,111 @@ examples:
 
 
       // Seed after: 7415663828183734803,14186438219062418103
+  - implicit_uwire_must_have_single_driver_modern:
+      first_found: 05.08.2025
+      minified_error: |
+        top.sv:5: vvp.tgt error: (implicit) uwire "b1" must have a single driver, found (2).
+        error: Code generation had 1 error(s).
+      minified_example: |
+        module a(input uwire logic a1);  
+        endmodule: a
+
+        module b();
+          wire logic b1;
+
+          a b_inst(.a1(b1));
+          not not_inst(b1, b1);
+
+          assign b1 = 'b0;
+        endmodule: b
+      full_error: >
+        vvp.tgt error: (implicit) uwire "dkaj" must have a single driver, found (2).
+        error: Code generation had 1 error(s).
+      full_example: |
+        module mtutgxeq
+          (output logic [0:4][1:1][4:1][4:1] ugwcgvpnw, input uwire logic voipkih, input reg [2:4][4:0] zkrzn);
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign ugwcgvpnw = 'bz;
+          
+          // Multi-driven assigns
+        endmodule: mtutgxeq
+
+        module vcrsojld
+          (input uwire logic [0:2][0:1][2:1] xjrvsiwxji [1:3][1:3][0:1]);
+          
+          
+          xor ximaoco(znxfm, znxfm, ua);
+          
+          not eerh(ywrjtro, pxbquxytk);
+          
+          mtutgxeq ao(.ugwcgvpnw(ua), .voipkih(mkoxifge), .zkrzn(iwcg));
+          // warning: implicit conversion of port connection truncates from 80 to 1 bits
+          //   logic [0:4][1:1][4:1][4:1] ugwcgvpnw -> wire logic ua
+          //
+          // warning: implicit conversion of port connection expands from 1 to 15 bits
+          //   wire logic iwcg -> reg [2:4][4:0] zkrzn
+          
+          xor hyt(n, vmiw, znxfm);
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign vmiw = 'bx;
+          assign iwcg = 'b1;
+          assign mkoxifge = 'b1;
+          
+          // Multi-driven assigns
+          assign n = 'b0;
+          assign znxfm = 'bz;
+          assign n = 'bz;
+          assign ua = 'b0;
+        endmodule: vcrsojld
+
+        module obfevrtsu
+          (output bit [4:4] wj [0:0][1:0], output bit jryyapx);
+          
+          
+          not nectitol(bp, tnyekiqhno);
+          
+          xor uec(tzlxr, dkaj, w);
+          
+          mtutgxeq tltiy(.ugwcgvpnw(tnyekiqhno), .voipkih(dkaj), .zkrzn(xqkeslrdh));
+          // warning: implicit conversion of port connection truncates from 80 to 1 bits
+          //   logic [0:4][1:1][4:1][4:1] ugwcgvpnw -> wire logic tnyekiqhno
+          //
+          // warning: implicit conversion of port connection expands from 1 to 15 bits
+          //   wire logic xqkeslrdh -> reg [2:4][4:0] zkrzn
+          
+          not tuiir(dkaj, dkaj);
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          
+          // Multi-driven assigns
+          assign dkaj = 'bz;
+          assign dkaj = 'bz;
+          assign dkaj = 'b0;
+        endmodule: obfevrtsu
+
+        module pa
+          (output real uamkgq [3:2]);
+          
+          uwire logic [0:2][0:1][2:1] uxxquioey [1:3][1:3][0:1];
+          
+          vcrsojld r(.xjrvsiwxji(uxxquioey));
+          
+          
+          // Top inputs -> top outputs assigns
+          
+          // Single-driven assigns
+          assign uxxquioey = '{'{'{'bx,'b1},'{'bx,'b1},'{'bx,'bz}},'{'{'b0,'b0},'{'b1,'b1},'{'b1,'b1}},'{'{'b0,'bz},'{'bx,'bx},'{'b1,'b1}}};
+          assign uamkgq = '{'b0,'b1};
+          
+          // Multi-driven assigns
+        endmodule: pa

@@ -3,12 +3,23 @@ tool: yosys-slang
 id: feature_unimplemented_see_ast
 title: Real is not supported
 issue_novelty: already_known
-issue_link: https://github.com/povik/yosys-slang/issues/181
+issue_link: https://github.com/povik/yosys-slang/issues/181#issuecomment-3161067098
 regex: >
   Feature unimplemented at [\/A-z0-9-]+slang_frontend\.cc:1379, see AST and code line dump above
+maintainers_response: question
 examples:
   - feature_unimplemented_see_ast_v1:
       first_found: 19.07.2025
+      minified_error: |
+        Source line top.sv:5:16:   a a_inst(.a1(b1));
+        ERROR: Feature unimplemented at /yosys-slang/src/slang_frontend.cc:1379, see AST and code line dump above
+      minified_example: |
+        module a (input shortreal a1);
+        endmodule: a
+
+        module b();
+          a a_inst(.a1(b1));
+        endmodule: b
       full_error: |
         Source line generated-modules/67-seed_14137937824704098027_8217928765404351501.sv:100:49:   bnrnmje umywnnmn(.iqhnitgm(pvhnw), .rferwqwnm(ug), .ufjod(jgbhxcfkrz), .lio(pcsnkkc));
         ERROR: Feature unimplemented at /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:1379, see AST and code line dump above

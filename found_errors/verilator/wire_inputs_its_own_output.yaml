@@ -2,7 +2,7 @@ stage: synthesis
 tool: verilator
 id: wire_inputs_its_own_output
 title: Wire inputs its own output, creating circular logic
-issue_novelty: reported
+issue_novelty: new
 issue_link: https://github.com/verilator/verilator/issues/5878
 regex: >
   Wire inputs its own output, creating circular logic

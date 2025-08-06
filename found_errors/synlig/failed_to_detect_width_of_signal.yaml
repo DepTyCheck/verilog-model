@@ -4,7 +4,7 @@ id: failed_to_detect_width_of_signal
 title: Failed to detect width of signal
 regex: >
   Failed to detect width of signal access .*
-issue_novelty: reported
+issue_novelty: new
 issue_link: https://github.com/chipsalliance/synlig/issues/2772
 examples:
   - failed_to_detect_width_of_signal_v1:

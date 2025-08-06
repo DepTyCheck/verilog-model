@@ -27,7 +27,7 @@ function parseYamlFile(filePath) {
     const content = fs.readFileSync(filePath, 'utf8');
     const doc = parse(content);
     
-    const { stage, tool, id, short_desc, title, examples, issue_novelty, issue_link } = doc;
+    const { stage, tool, id, short_desc, title, examples, issue_novelty, issue_link, maintainers_response } = doc;
     
     const parsedExamples = [];
     if (Array.isArray(examples)) {
@@ -55,7 +55,8 @@ function parseYamlFile(filePath) {
       short_desc: short_desc || null,
       examples: parsedExamples,
       issue_novelty: issue_novelty || null,
-      issue_link: issue_link || null
+      issue_link: issue_link || null,
+      maintainers_response: maintainers_response || null,
     };
   } catch (error) {
     console.error(`Error parsing ${filePath}:`, error.message);

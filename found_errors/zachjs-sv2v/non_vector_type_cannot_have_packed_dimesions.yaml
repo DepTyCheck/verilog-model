@@ -4,9 +4,18 @@ id: non_vector_type_cannot_have_packed_dimesions
 title: non-vector type real cannot have packed dimesions
 regex: >
   non-vector type \w+ cannot have packed dimesions
+issue_novelty: new
+issue_link: https://github.com/zachjs/sv2v/issues/320
 examples:
   - non_vector_type_real_cannot_have_packed_dimesions:
       first_found: 24.05.2025
+      minified_error: |
+        sv2v: non-vector type real cannot have packed dimesions:[(1,0)]
+        CallStack (from HasCallStack):
+          error, called at src/Language/SystemVerilog/AST/Type.hs:118:14 in main:Language.SystemVerilog.AST.Type
+      minified_example: |
+        module a(output real b [1:0]);
+        endmodule: a
       full_error: |
         sv2v: non-vector type real cannot have packed dimesions:[(2,1)]
         CallStack (from HasCallStack):

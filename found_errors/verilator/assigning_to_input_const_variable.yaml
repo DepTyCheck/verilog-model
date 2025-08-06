@@ -3,10 +3,11 @@ tool: verilator
 id: assigning_to_input_const_variable
 title: >
   Assigning to input/const variable
-issue_novelty: reported
+issue_novelty: new
 issue_link: https://github.com/verilator/verilator/issues/5875
 regex: >
   Assigning to input\/const variable:
+maintainers_response: wontfix
 examples:
   - assigning_to_input_const_variable_v1:
       first_found: 09.03.2025

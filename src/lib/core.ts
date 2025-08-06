@@ -3,7 +3,8 @@ export type CheckBoxChoice = {
 	label: string;
 };
 
-export type IssueNovelty = 'reported' | 'already_known' | 'unsupported' | null;
+export type IssueNovelty = 'new' | 'already_known' | 'unsupported' | null;
+export type MaintainersResponse = 'bug' | 'enhancement' | 'question' | 'wontfix' | null;
 
 export type FoundErrorExample = {
 	id: string;
@@ -22,7 +23,8 @@ export type FoundError = {
 	short_desc?: string | null;
 	examples: FoundErrorExample[];
 	issue_link?: string | null;
-	issue_novelty?: IssueNovelty;
+	issue_novelty: IssueNovelty;
+	maintainers_response: MaintainersResponse;
 };
 
 export type SortableColumn = 'tool' | 'firstFound' | 'title' | 'stage' | 'issue_link' | 'issue_novelty';

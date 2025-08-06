@@ -2,7 +2,7 @@ stage: synthesis
 tool: verilator
 id: input_port_connection_expected_non_double_pin_connection
 title: Input port connection expected non-complex non-double pin connection
-issue_novelty: reported
+issue_novelty: new
 issue_link: https://github.com/verilator/verilator/issues/5877
 regex: >
   Input port connection '[A-z]+' expected non-complex non-double pin connection in width check

@@ -7,8 +7,9 @@ Keys:
 - title: A short, descriptive title for the error.
 - tool: The name of the tool where the error was encountered.
 - short_desc: A concise summary of the error.
-- issue_novelty: The novelty of the issue (e.g., reported, already_known, unsupported).
+- issue_novelty: The novelty of the issue (e.g., new, already_known, unsupported).
 - issue_link: A URL to the related issue, if available.
+- maintainers_response: The reaction of tool maintainers (e.g., bug, enhancement, question, wontfix).
 - stage: The stage or context in which the error was found (e.g., parsing, synthesis, simulation).
 - matching_mode: Defines pattern should be matched to the `whole` command output
 - examples: A list of examples that repoduce the error, each with:

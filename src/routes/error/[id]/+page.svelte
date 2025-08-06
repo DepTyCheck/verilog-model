@@ -4,8 +4,8 @@
 	import type { FoundError } from '$lib/core';
 	import { defaultMargin } from '$lib/styles';
 	import { formatDateDMY } from '$lib/index';
-  import VCard from './VCard.svelte';
-  import CodeBlock from './CodeBlock.svelte';
+	import VCard from './VCard.svelte';
+	import CodeBlock from './CodeBlock.svelte';
 	import FieldDisplay from './FieldDisplay.svelte';
 
 	let id: string = page.params.id;
