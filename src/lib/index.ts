@@ -1,5 +1,5 @@
 import { type FoundError } from '$lib/core';
-import { base } from '$app/paths'
+import { base } from '$app/paths';
 import type { IssueNovelty } from './core';
 
 export function getFirstFound(error: FoundError): Date | null {
@@ -26,23 +26,30 @@ export function formatDateDMY(date: Date | null): string {
 }
 
 export function displayIssueNovelty(status: IssueNovelty): string {
-  switch (status) {
-    case 'new': return 'Brand new';
-    case 'already_known': return 'Known before';
-	case 'unsupported': return 'Unsupported';
-    default:
-      return '';
-  }
+	switch (status) {
+		case 'new':
+			return 'Brand new';
+		case 'already_known':
+			return 'Known before';
+		case 'unsupported':
+			return 'Unsupported';
+		case 'feature':
+			return 'Feature';
+		case 'late':
+			return 'Late';
+		default:
+			return '';
+	}
 }
 
 export const LinkHandler = (link: string) => {
-  if (process.env.NODE_ENV === 'development') {
-    return link
-  }
+	if (process.env.NODE_ENV === 'development') {
+		return link;
+	}
 
-  if (link === '/') {
-    return base
-  }
+	if (link === '/') {
+		return base;
+	}
 
-  return base + link
-}
+	return base + link;
+};

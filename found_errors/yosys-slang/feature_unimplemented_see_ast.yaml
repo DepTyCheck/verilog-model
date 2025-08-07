@@ -6,7 +6,7 @@ issue_novelty: already_known
 issue_link: https://github.com/povik/yosys-slang/issues/181#issuecomment-3161067098
 regex: >
   Feature unimplemented at [\/A-z0-9-]+slang_frontend\.cc:1379, see AST and code line dump above
-maintainers_response: question
+maintainers_response: low
 examples:
   - feature_unimplemented_see_ast_v1:
       first_found: 19.07.2025

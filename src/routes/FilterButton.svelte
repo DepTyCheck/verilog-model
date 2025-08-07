@@ -7,13 +7,14 @@
 	export let group: string[];
 	export let label: string;
 	export let name: string;
+	export let extraClass: string = '';
 </script>
 
 <div class="flex items-center justify-center">
 	<Button
 		color="alternative"
-		class="w-fit border-none px-4 py-2 whitespace-nowrap shadow-none"
-		style="border: none; box-shadow: none;"
+		class="w-fit border-none px-4 py-2 whitespace-nowrap shadow-none {extraClass}"
+		style="border: none; box-shadow: none; font-size: 12px; font-weight: 700; text-transform: uppercase;"
 	>
 		{@html label}
 		{#if group.length > 0}

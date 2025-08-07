@@ -5,37 +5,37 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Primary: based on #003C82 (deep blue) */
-  --color-primary-50:  #e6eef7;
-  --color-primary-100: #c2d6ee;
-  --color-primary-200: #99b8e0;
-  --color-primary-300: #6a97cb;
-  --color-primary-400: #4176b1;
-  --color-primary-500: #003C82;
-  --color-primary-600: #00346f;
-  --color-primary-700: #002a5a;
-  --color-primary-800: #002146;
-  --color-primary-900: #001733;
+	/* Primary: based on #003C82 (deep blue) */
+	--color-primary-50: #e6eef7;
+	--color-primary-100: #c2d6ee;
+	--color-primary-200: #99b8e0;
+	--color-primary-300: #6a97cb;
+	--color-primary-400: #4176b1;
+	--color-primary-500: #003c82;
+	--color-primary-600: #00346f;
+	--color-primary-700: #002a5a;
+	--color-primary-800: #002146;
+	--color-primary-900: #001733;
 
-  /* Secondary: accent, a gold to complement blue */
-  --color-secondary-50:  #fff9e6;
-  --color-secondary-100: #fff3c2;
-  --color-secondary-200: #ffe899;
-  --color-secondary-300: #ffdb6a;
-  --color-secondary-400: #ffcb37;
-  --color-secondary-500: #ffb800;
-  --color-secondary-600: #e6a600;
-  --color-secondary-700: #b38600;
-  --color-secondary-800: #806000;
-  --color-secondary-900: #4d3900;
+	/* Secondary: accent, a gold to complement blue */
+	--color-secondary-50: #fff9e6;
+	--color-secondary-100: #fff3c2;
+	--color-secondary-200: #ffe899;
+	--color-secondary-300: #ffdb6a;
+	--color-secondary-400: #ffcb37;
+	--color-secondary-500: #ffb800;
+	--color-secondary-600: #e6a600;
+	--color-secondary-700: #b38600;
+	--color-secondary-800: #806000;
+	--color-secondary-900: #4d3900;
 }
 
 @source "../node_modules/flowbite-svelte/dist";
 @source "../node_modules/flowbite-svelte-icons/dist";
 
 @layer base {
-  /* disable chrome cancel button */
-  input[type="search"]::-webkit-search-cancel-button {
-    display: none;
-  }
+	/* disable chrome cancel button */
+	input[type='search']::-webkit-search-cancel-button {
+		display: none;
+	}
 }

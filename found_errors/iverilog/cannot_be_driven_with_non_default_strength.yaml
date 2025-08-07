@@ -4,9 +4,18 @@ id: cannot_be_driven_with_non_default_strength
 title: Cannot be driven with non default strength
 regex: >
   ariable .* cannot be driven by a primitive or continuous assignment with non-default strength
+issue_novelty: new
+issue_link: https://github.com/steveicarus/iverilog/issues/1268
 examples:
   - cannot_be_driven_with_non_default_strength_v1:
       first_found: 02.07.2025
+      minified_error: |
+        top.sv:4: error: variable c; cannot be driven by a primitive or continuous assignment with non-default strength.
+        1 error(s) during elaboration.
+      minified_example: |
+        module a(output logic c);
+          xor b(c, d, e);
+        endmodule: a
       full_error: |
         error: variable lbrkx; cannot be driven by a primitive or continuous assignment with non-default strength.
       full_example: |

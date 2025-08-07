@@ -4,6 +4,10 @@ id: not_an_unpacked_array_but_in_unpacked_array_context
 title: Not an unpacked array but in unpacked array context
 regex: >
   (VARREF|CONST) .* is not an unpacked array, but is in an unpacked array context
+issue_novelty: new
+issue_link: https://github.com/verilator/verilator/issues/6254#issuecomment-3146668599
+short_desc: Maintainer suggested to avoid reporting bugs related to tristates
+maintainers_response: low
 examples:
   - const_not_an_unpacked_array_but_in_unpacked_array_context:
       first_found: 01.06.2025

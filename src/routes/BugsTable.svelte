@@ -80,6 +80,10 @@
 				return 'This issue was already known before';
 			case 'unsupported':
 				return 'This feature is not supported by the tool and is not planned in the near future';
+			case 'feature':
+				return 'Actually it is not a bug, but a feature';
+			case 'late':
+				return 'An issue was detected, but the maintainers resolved it before it was reported';
 			case null:
 				return 'No novelty information available';
 			default:
@@ -185,8 +189,8 @@
 				return { text: 'Bug', color: 'red' as const };
 			case 'enhancement':
 				return { text: 'Enhancement', color: 'blue' as const };
-			case 'question':
-				return { text: 'Question', color: 'purple' as const };
+			case 'low':
+				return { text: 'Low priority', color: 'purple' as const };
 			case 'wontfix':
 				return { text: "Won't fix", color: 'gray' as const };
 			default:
@@ -200,7 +204,7 @@
 				return 'The maintainers have accepted this bug';
 			case 'enhancement':
 				return "This feature isn't implemented yet, but it's planned";
-			case 'question':
+			case 'low':
 				return 'The maintainers are unsure whether this feature is needed';
 			case 'wontfix':
 				return 'There are no plans to implement this feature';
@@ -246,18 +250,25 @@
 				{sortAsc}
 				{setSort}
 				widthClass="px-4 py-3 w-64"
+				extraClass="text-gray-700"
 			/>
 			<TableHeadCellSortable label="" widthClass="">
-				<FilterButton choices={toolChoices} bind:group={toolGroup} label="Tool" name="tools" />
+				<FilterButton
+					choices={toolChoices}
+					bind:group={toolGroup}
+					label="Tool"
+					name="tools"
+					extraClass="text-gray-700"
+				/>
 			</TableHeadCellSortable>
-			<TableHeadCellSortable label="Stage" widthClass="" extraClass="text-center" />
+			<TableHeadCellSortable label="Stage" widthClass="" extraClass="text-center text-gray-700" />
 			<TableHeadCellSortable
 				label="First Found"
 				sortKey="firstFound"
 				{sortColumn}
 				{sortAsc}
 				{setSort}
-				extraClass="text-center"
+				extraClass="text-center text-gray-700"
 			/>
 			<TableHeadCellSortable label="" widthClass="" extraClass="text-center">
 				<FilterButton
@@ -265,16 +276,17 @@
 					bind:group={noveltyGroup}
 					label="Novelty"
 					name="novelty"
+					extraClass="text-gray-700"
 				/>
 			</TableHeadCellSortable>
-			<TableHeadCellSortable label="Link" widthClass="" extraClass="text-center" />
-
+			<TableHeadCellSortable label="Link" widthClass="" extraClass="text-center text-gray-700" />
 			<TableHeadCellSortable label="" widthClass="px-4 py-3 w-32" extraClass="text-center">
 				<FilterButton
 					choices={maintainersChoices}
 					bind:group={maintainersGroup}
 					label="Maintainers<br>response"
 					name="maintainers"
+					extraClass="text-gray-700"
 				/>
 			</TableHeadCellSortable>
 		</TableHead>
