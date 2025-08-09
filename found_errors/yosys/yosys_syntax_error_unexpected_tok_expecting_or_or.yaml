@@ -1,7 +1,7 @@
 stage: parsing
 tool: yosys
 id: yosys_syntax_error_unexpected_tok_expecting_or_or
-title: ERROR: syntax error, unexpected TOK_ID, expecting ',' or '=' or ')'
+title: syntax error, unexpected TOK_*, expecting ',' or '=' or ')'
 issue_novelty: unsupported
 regex: >
   syntax error, unexpected (TOK_ID|TOK_LOGIC), expecting ',' or '=' or '\)'
