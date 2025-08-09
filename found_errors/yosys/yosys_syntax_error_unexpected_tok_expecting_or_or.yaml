@@ -1,0 +1,133 @@
+stage: parsing
+tool: yosys
+id: yosys_syntax_error_unexpected_tok_expecting_or_or
+title: ERROR: syntax error, unexpected TOK_ID, expecting ',' or '=' or ')'
+issue_novelty: unsupported
+regex: >
+  syntax error, unexpected (TOK_ID|TOK_LOGIC), expecting ',' or '=' or '\)'
+examples:
+  - yosys_syntax_error_unexpected_tok_id_expecting_or_or:
+      first_found: 24.05.2025
+      full_error: |
+        ERROR: syntax error, unexpected TOK_ID, expecting ',' or '=' or ')'
+      full_example: |
+        module zh
+          (output logic [2:2] nebhihq, output uwire bqj, output logic ayneqzd, output logic [4:3] blfhjlbbph, input bit [1:0] hyq);
+
+          and xuqytvefhf(pqxmjgo, nebhihq, ayneqzd);
+
+          not yuiohpctmh(ayneqzd, hkr);
+
+          not aamvrptl(nebhihq, hqcrpoga);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+          assign hqcrpoga = 'b1;
+          assign hqcrpoga = 'bx;
+          assign bqj = 'b1;
+          assign blfhjlbbph = 'b1z;
+          assign pqxmjgo = 'bz;
+          assign pqxmjgo = 'bz;
+        endmodule: zh
+  - yosys_syntax_error_unexpected_tok_logic_expecting_or_or:
+      first_found: 01.06.2025
+      full_error: |
+        ERROR: syntax error, unexpected TOK_LOGIC, expecting ',' or '=' or ')'
+      full_example: |
+        module mntecv
+          ( output trireg logic [0:1][0:4][2:1] tbac [4:0][4:0][3:0][0:4]
+          , output trireg logic [3:0] zmtwzd [4:1][1:4][3:3][1:3]
+          , output bit [1:4][3:1][2:0] czup
+          , output trireg logic [3:2][3:4] m [4:4][4:2]
+          );
+
+          not nminajsebm(fmxnktmwv, fmxnktmwv);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: mntecv
+
+        module xnatfpn
+          (output reg [1:0][4:4][1:0] wmsbwzslnm);
+
+          trireg logic [0:1][0:4][2:1] tcdl [4:0][4:0][3:0][0:4];
+          trireg logic [3:0] wtmqdcgasa [4:1][1:4][3:3][1:3];
+          trireg logic [3:2][3:4] mxf [4:4][4:2];
+
+          and gssmfkd(kahkoywa, og, jjspkifjq);
+          // warning: implicit conversion of port connection expands from 1 to 4 bits
+          // logic kahkoywa -> trireg logic [3:2][3:4] kahkoywa [4:4][4:2]
+
+          not drlbosr(tof, lc);
+          // warning: implicit conversion of port connection expands from 1 to 36 bits
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          // logic tof -> bit [1:4][3:1][2:0] tof
+
+          mntecv qlmzvn(.tbac(tcdl), .zmtwzd(wtmqdcgasa), .czup(wmsbwzslnm), .m(mxf));
+          // warning: implicit conversion of port connection truncates from 20 to 4 bits
+          // trireg logic [0:1][0:4][2:1] tbac [4:0][4:0][3:0][0:4] -> trireg logic [3:0] tcdl [4:1][1:4][3:3][1:3]
+          //
+
+          // warning: implicit conversion of port connection expands from 4 to 20 bits
+          // trireg logic [3:0] zmtwzd [4:1][1:4][3:3][1:3] -> trireg logic [0:1][0:4][2:1] wtmqdcgasa [4:0][4:0][3:0][0:4]
+          //
+          // warning: implicit conversion of port connection truncates from 36 to 1 bits
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          // bit [1:4][3:1][2:0] czup -> wire logic wmsbwzslnm
+          //
+          // warning: implicit conversion of port connection truncates from 4 to 1 bits
+          // trireg logic [3:2][3:4] m [4:4][4:2] -> wire logic mxf
+          // Top inputs -> top outputs assigns
+          // Assigns
+
+        endmodule: xnatfpn
+
+
+        module vzlopgb
+          ( output uwire logic hru [4:1][0:3][1:0][2:2]
+          , output uwire logic yejbxbix
+          , output time dlcbx
+          , output int xpwa [2:1][1:3]
+          , input logic [4:1] rzi
+          , input uwire logic [0:4][2:0][1:0] rhh [1:0][2:4][4:3][4:0]
+          , input logic [0:1][4:3][0:4] aembncsoxx
+          , input triand logic [0:0][3:2][4:0][4:0] sijppx [4:3]
+          );
+
+          not re(dlcbx, fdioczeu);
+
+          not yfnslhni(bxu, xolqprjfts);
+          // warning: implicit conversion of port connection truncates from 20 to 1 bits
+          // logic [0:1][4:3][0:4] xolqprjfts -> logic xolqprjfts
+
+          and sqtrvdq(n, rzi, aembncsoxx);
+          // warning: implicit conversion of port connection truncates from 20 to 1 bits
+          // logic [0:1][4:3][0:4] rzi -> logic rzi
+          //
+          // warning: implicit conversion of port connection truncates from 4 to 1 bits
+          // logic [4:1] aembncsoxx -> logic aembncsoxx
+
+          or bbjulhbxlb(dpeipi, aembncsoxx, hidnukf);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: vzlopgb
+
+        module uhe
+          ( output wire logic [4:0][1:1] mekfk [4:1]
+          , output triand logic [1:2] d [2:2]
+          , output tri1 logic [2:1][0:2][0:2][1:1] fhrnbsfrxd [1:0]
+          , input supply1 logic [4:2][2:4] runnyb [1:1][0:3][4:0][2:2]
+          );
+
+          xor wl(xbhsqbuwj, xbhsqbuwj, xbhsqbuwj);
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+
+        endmodule: uhe

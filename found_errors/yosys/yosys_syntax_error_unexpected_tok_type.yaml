@@ -1,0 +1,149 @@
+stage: parsing
+tool: yosys
+id: yosys_syntax_error_unexpected_tok_type
+title: syntax error, unexpected TOK_*
+issue_novelty: unsupported
+regex: >
+  syntax error, unexpected (TOK_REAL|TOK_SUPPLY0|TOK_SUPPLY1)
+examples:
+  - yosys_syntax_error_unexpected_tok_real:
+      first_found: 24.05.2025
+      full_error: |
+        ERROR: syntax error, unexpected TOK_REAL
+      full_example: |
+        module zbjft
+          (output real hftsz [2:1], output bit rhqocjml [1:1], output int dyhck);
+
+          xor bauagpzq(mmchqmwvv, ctophjw, vh);
+
+          // Assigns
+          assign vh = 'bx;
+          assign ctophjw = 'b0;
+          assign hftsz = '{'bx,'bx};
+          assign mmchqmwvv = 'b0;
+          assign mmchqmwvv = 'b1;
+        endmodule: zbjft
+
+        module agxj
+          ( output integer uvujoem [1:0]
+          , output wire cgpe [4:1]
+          , output logic pwhnwwmffv [4:3]
+          , output bit [2:1][3:3] w
+          , input real cesmyxprke
+          , input logic [2:3] ajkuhiz
+          , input bit [4:0] yjjdnwp
+          , input uwire ue
+          );
+
+          // Assigns
+          assign w = 'b10;
+          assign pwhnwwmffv = '{'b0,'bx};
+          assign uvujoem = '{'b0,'b0};
+          assign cgpe = '{'b0,'b0,'b0,'b0};
+        endmodule: agxj
+  - yosys_syntax_error_unexpected_tok_supply0:
+      first_found: 01.06.2025
+      full_error: |
+        ERROR: syntax error, unexpected TOK_SUPPLY0
+      full_example: |
+        module jzfejrrk
+          ( output supply0 logic [3:0][2:4][4:4][0:4] jmp [4:2][1:2][0:1][4:0]
+          , output tri0 logic [0:4][0:2][2:3] grnwree [2:2]
+          , output tri1 logic [2:0][1:1] jwxkkpwn [0:2]
+          , output shortreal j
+          , input supply1 logic kzhdmofqy
+          );
+
+          // Top inputs -> top outputs assigns
+
+          assign j = kzhdmofqy;
+
+          // Assigns
+
+        endmodule: jzfejrrk
+
+        module o
+          (output shortreal mefw, output logic etwilyoc);
+
+          supply0 logic [3:0][2:4][4:4][0:4] xmmugsjk [4:2][1:2][0:1][4:0];
+          tri0 logic [0:4][0:2][2:3] m [2:2];
+          tri1 logic [2:0][1:1] wpdycshim [0:2];
+          supply0 logic [3:0][2:4][4:4][0:4] tthqvi [4:2][1:2][0:1][4:0];
+          tri0 logic [0:4][0:2][2:3] nf [2:2];
+          tri1 logic [2:0][1:1] tqegrap [0:2];
+
+          nand svh(pmvluxdwyf, wdiyvmqq, wdiyvmqq);
+
+          xor icxwihphwb(xsaflihuny, bb, rtamjlcitc);
+          jzfejrrk tvay(.jmp(xmmugsjk), .grnwree(m), .jwxkkpwn(wpdycshim), .j(bz), .kzhdmofqy(wdiyvmqq));
+
+          jzfejrrk au(.jmp(tthqvi), .grnwree(nf), .jwxkkpwn(tqegrap), .j(wdiyvmqq), .kzhdmofqy(eaveng));
+
+        endmodule: o
+
+        module l
+          (output logic [3:1][2:0][1:1][0:3] wfp, input wire logic [0:4][2:4] th [1:1][3:1][3:1], input reg [3:4][3:2] wht [3:1]);
+
+          nand i(v, z, b);
+
+          o ne(.mefw(fkaoavrhgg), .etwilyoc(z));
+
+        endmodule: l
+
+        module ttikxfvpqi
+          ( output triand logic [0:0][2:3][3:4][1:0] atdrhu [1:2][1:3]
+          , output supply1 logic [1:2][3:1][3:0][3:2] to [4:0][1:3]
+          , output logic [0:0][2:3] y
+          , input bit [4:3][4:4] fpvwsfjrcc
+          , input supply0 logic [2:2][4:3] lvv [3:2][3:4]
+          );
+
+        endmodule: ttikxfvpqi
+  - yosys_syntax_error_unexpected_tok_supply1:
+      first_found: 01.06.2025
+      full_error: |
+        ERROR: syntax error, unexpected TOK_SUPPLY1
+      full_example: |
+        module vojckoc
+          ( output supply1 logic [0:2][0:4][2:3] mhejn [4:1][2:1]
+          , output trior logic [4:2] vxts
+          , input bit [3:4][3:4] eyngcndkjo
+          , input tri0 logic [4:4][4:3][3:2] nhpshegghj [3:2][4:0][4:2][2:0]
+          , input shortreal dzsmudogl
+          , input reg [3:3] cri [1:2]
+          );
+
+          not ovoqnndeax(hpdbv, gld);
+          or yme(nhowc, nke, aho);
+        endmodule: vojckoc
+
+        module hlas
+          (input triand logic [4:4][0:1][3:4] mdbujsee [2:4][1:2]);
+
+          or p(heg, dka, s);
+          or wofvy(s, wkeamvh, romyadbsz);
+        endmodule: hlas
+
+        module ehfixm
+          ( output tri0 logic [2:1][4:0][2:1][1:4] piid [3:1][4:2]
+          , output bit [0:2][4:1][0:3] gwwe
+          , output logic [0:0][4:1] whzyl
+          , output supply1 logic eoopoc [4:2][3:0][2:4]
+          , input wand logic [0:4][1:4][3:2][2:4] dwgczrgum [2:3][4:1]
+          );
+
+          tri0 logic [4:4][4:3][3:2] eszfbsjibf [3:2][4:0][4:2][2:0];
+          reg [3:3] mbnvwryw [1:2];
+          supply1 logic [0:2][0:4][2:3] tstxkaegw [4:1][2:1];
+
+          vojckoc uet(.mhejn(tstxkaegw), .vxts(x), .eyngcndkjo(alyvso), .nhpshegghj(eszfbsjibf), .dzsmudogl(crtlce), .cri(mbnvwryw));
+        endmodule: ehfixm
+
+          
+
+        module mxyc
+          (input logic [3:4][4:1] rsndycvqo [1:4]);
+
+          or jlvuyajj(nmx, nmx, nmx);
+
+        endmodule: mxyc

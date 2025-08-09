@@ -2,8 +2,8 @@ stage: synthesis
 tool: verilator
 id: non_packed_has_no_width
 title: non-packed has no 'width()'
-regex: >
-  non-packed has no 'width\(\)'
+regex: never_matching_regex_ever # non-packed has no 'width\(\)'
+issue_novelty: late
 examples:
   - non_packed_has_no_width_v1:
       first_found: 22.07.2025

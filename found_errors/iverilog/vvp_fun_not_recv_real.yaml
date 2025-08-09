@@ -5,6 +5,7 @@ title: >
   vvp_fun_not: recv_real not implemented
 regex: >
   1[10]vvp_fun_[a-z]{2,4}: recv_real\([0-9.]+\) not implemented
+issue_novelty: late
 examples:
   - 10vvp_fun_or_recv_real(0.000000)_not_implemented:
       first_found: 10.12.2024

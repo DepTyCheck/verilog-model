@@ -1,0 +1,70 @@
+stage: parsing
+tool: yosys
+id: yosys_syntax_error_unexpected_expecting_or_or
+title: syntax error, unexpected '', expecting ',' or '=' or '
+issue_novelty: unsupported
+regex: >
+  syntax error, unexpected '\[', expecting ',' or '=' or '\)'
+examples:
+  - yosys_syntax_error_unexpected_expecting_or_or_v1:
+      first_found: 24.05.2025
+      full_error: |
+        ERROR: syntax error, unexpected '[', expecting ',' or '=' or ')'
+      full_example: |
+        module ozjc
+          ( output logic [4:0] rlhslaluv
+          , output logic [3:2] xfezpst [2:3]
+          , input bit [4:4][0:2][2:0] xbgasvge
+          , input bit [4:2][1:4] n
+          , input bit dyavrpeaa
+          );
+
+          not tly(jpz, rlhslaluv);
+          // warning: implicit conversion of port connection truncates from 5 to 1 bits
+          //   logic [4:0] rlhslaluv -> logic rlhslaluv
+
+          xor ku(rlhslaluv, euuecz, cju);
+          // warning: implicit conversion of port connection expands from 1 to 5 bits
+          //   logic rlhslaluv -> logic [4:0] rlhslaluv
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+          assign cju = 'b1;
+          assign cju = 'bz;
+          assign cju = 'b0;
+          assign euuecz = 'b0;
+          assign xfezpst = '{'bx1,'b1x};
+          assign jpz = 'bz;
+          assign jpz = 'bz;
+        endmodule: ozjc
+
+        module lj
+          ( output uwire ptnipwfj [4:3][3:0]
+          , output logic [3:4] xibh [4:3]
+          , output logic [3:2] ojhqfpsl [4:3]
+          , input logic [1:2] bpep
+          , input uwire ul
+          );
+
+          xor aqbag(wijf, btteniey, ysiti);
+
+          or aevcsifzku(btteniey, btteniey, b);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+          assign b = 'bz;
+          assign b = 'b1;
+          assign ojhqfpsl = '{'bz0,'bxz};
+          assign xibh = '{'bxx,'bzz};
+          assign ptnipwfj = '{'{'b1,'b1,'b1,'b0},'{'b0,'b0,'b1,'b0}};
+        endmodule: lj
+
+        module v
+          ();
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+        endmodule: v

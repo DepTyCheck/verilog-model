@@ -7,6 +7,18 @@ regex: >
 examples:
   - invalid_module_item_v1:
       first_found: 19.07.2025
+      minified_error: |
+        top.sv:5: warning: input port a1 is coerced to inout.
+        top.sv:6: error: Unresolved wire 'b1' cannot have multiple drivers.
+        1 error(s) during elaboration.
+      minified_example: |
+        module a(input supply0 logic  a1);
+        endmodule: a
+
+        module b(output uwire logic b1);
+          a a_inst(.a1(b1));
+          not gate(b1, b2);
+        endmodule: b
       full_error: |
         error: Unresolved wire 'k' cannot have multiple drivers.
       full_example: |

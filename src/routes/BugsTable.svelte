@@ -279,7 +279,7 @@
 					extraClass="text-gray-700"
 				/>
 			</TableHeadCellSortable>
-			<TableHeadCellSortable label="Link" widthClass="" extraClass="text-center text-gray-700" />
+			<TableHeadCellSortable label="Related<br>issue" widthClass="" extraClass="text-center text-gray-700" />
 			<TableHeadCellSortable label="" widthClass="px-4 py-3 w-32" extraClass="text-center">
 				<FilterButton
 					choices={maintainersChoices}
