@@ -2,8 +2,11 @@ stage: synthesis
 tool: verilator
 id: non_packed_has_no_width
 title: non-packed has no 'width()'
-regex: never_matching_regex_ever # non-packed has no 'width\(\)'
-issue_novelty: late
+regex: >
+  non-packed has no 'width\(\)'
+issue_novelty: new
+issue_link: https://github.com/verilator/verilator/issues/6254#issuecomment-3146668599
+short_desc: Maintainer suggested to avoid reporting bugs related to tristates
 examples:
   - non_packed_has_no_width_v1:
       first_found: 22.07.2025
