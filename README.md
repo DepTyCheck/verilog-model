@@ -27,34 +27,28 @@ TBD
 
 Currently we have found several bugs in open-source instruments working with SystemVerilog.
 We are on the way of reporting them officially.
-There is a list of reported bugs:
 
-- iverilog
-  - [Assertion 'net->type_ == IVL_SIT_REG'](https://github.com/steveicarus/iverilog/issues/1213)
-  - [Unable to elaborate r-value](https://github.com/steveicarus/iverilog/issues/1217)
-  - [Unable to resolve label v0x55abf7187e10_0](https://github.com/steveicarus/iverilog/issues/1218)
-  - [Expression width does not match width of logic gate](https://github.com/steveicarus/iverilog/issues/1221)
-  - [18vvp_arith_cast_int: recv_vec4 not implemented](https://github.com/steveicarus/iverilog/issues/1222)
-  - [11vvp_fun_not: recv_real(0.000000) not implemented](https://github.com/steveicarus/iverilog/issues/1223)
-  - [Packed vs unpacked dimension confusion](https://github.com/steveicarus/iverilog/issues/1224)
-  - [elaborate.cc:1661: failed assertion prts[0]->unpacked_dimensions()==0](https://github.com/steveicarus/iverilog/issues/1231)
-- verilator
-  - [Real arrays with opposite index ranges](https://github.com/verilator/verilator/issues/5877)
-
-We also found some already known bugs:
-
-- iverilog
-  - [Single-element unpacked array ports fail to elaborate](https://github.com/steveicarus/iverilog/issues/915)
-- verilator
-  - [Missing MULTIDRIVEN warning for variable with multiple drivers](https://github.com/verilator/verilator/issues/5887)
+To see the bugs and issues we have discovered, please visit our [website](https://deptycheck.github.io/verilog-model/).
 
 ## Running
 
-You can run generator of semantically correct SystemVerilog definitions.
-The easiest way is to use [pack](https://github.com/stefan-hoeck/idris2-pack), the package manager for Idris 2 programming language:
+The generator of semantically correct SystemVerilog definitions can be run with [pack](https://github.com/stefan-hoeck/idris2-pack),
+the package manager for the Idris 2 programming language.
+
+You can either build it yourself:
+
+```console
+$ pack build verilog-model
+```
+
+Or use the latest prebuilt container from the `packages` and just run:
 
 ```console
 $ pack run verilog-model
 ```
 
-The program supports several options, which you can view by using the `--help` option.
+For available options, use:
+
+```console
+$ pack run verilog-model --help
+```
