@@ -105,7 +105,7 @@ jobs:
       - name: Fix file system  ¯\_(ツ)_/¯
         run: |
           set -x +e
-          pack run verilog-model --coverage mcov -n 1 --seed 0,1
+          pack run ${{ env.PACKAGE_NAME }} --coverage mcov -n 1 --seed 0,1
           touch tests/printer/model-coverage/dummy
           touch tests/printer/create-dir/dummy
       - name: Test `${{ env.PACKAGE_NAME }}`
@@ -455,9 +455,8 @@ jobs:
   publish-container:
     name: Build and publish Docker image
     needs: run-tools
-    if: ${{ success() && github.ref == 'refs/heads/master' }}
+    if: ${{ success()  }} # github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
-    container: ghcr.io/stefan-hoeck/idris2-pack:latest
     permissions:
       contents: read
       packages: write
@@ -477,16 +476,6 @@ jobs:
           path: ${{ env.BUILD_DIR }}
           key: build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-latest-pack-collection
 
-      - name: Rebuild project
-        run: |
-          pack build ${{ env.PACKAGE_NAME }}
-
-      - name: Fix file system (・‿・)
-        run: |
-          set -x +e
-          pack run verilog-model --coverage mcov -n 1 --seed 0,1
-          rm mcov
-
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
@@ -505,6 +494,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: .github/workflows/push/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
