@@ -108,7 +108,7 @@ jobs:
           pack run ${{ env.PACKAGE_NAME }} --coverage mcov -n 1 --seed 0,1
           touch tests/printer/model-coverage/dummy
           touch tests/printer/create-dir/dummy
-      - name: Test `${{ env.PACKAGE_NAME }}`
+      - name: Test ${{ env.PACKAGE_NAME }}
         run: pack test ${{ env.PACKAGE_NAME }}
       - name: Gen SystemVerilog modules
         if: matrix.upstream-mode == 'latest-pack-collection'
@@ -475,6 +475,12 @@ jobs:
         with:
           path: ${{ env.BUILD_DIR }}
           key: build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-latest-pack-collection
+      
+      - name: Touch ${{ env.BUILD_DIR }} dir (-_-)
+        run: |
+          set +e
+          ls -la
+          mkdir ${{ env.BUILD_DIR }}
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
