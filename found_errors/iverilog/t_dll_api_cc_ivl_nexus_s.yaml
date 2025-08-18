@@ -1,5 +1,6 @@
 issue_novelty: new
 issue_link: https://github.com/steveicarus/iverilog/issues/1213
+maintainers_response: bug
 stage: synthesis
 tool: iverilog
 short_desc: Assertion failure in ivl_signal_nex with uwire array port

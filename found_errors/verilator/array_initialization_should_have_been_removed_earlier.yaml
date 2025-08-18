@@ -6,6 +6,7 @@ regex: >
   Array initialization should have been removed earlier
 issue_novelty: unsupported
 issue_link: https://github.com/verilator/verilator/issues/6254
+maintainers_response: low
 examples:
   - array_initialization_should_have_been_removed_earlier_v1:
       first_found: 07.07.2025

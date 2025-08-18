@@ -9,7 +9,8 @@
 		Heading,
 		A,
 		Tooltip,
-		Badge
+		Badge,
+		Button
 	} from 'flowbite-svelte';
 	import TableHeadCellSortable from './TableHeadCellSortable.svelte';
 	import FilterButton from './FilterButton.svelte';
@@ -32,6 +33,12 @@
 	let toolChoices: CheckBoxChoice[] = Array.from(new Set(allFoundErrors.map((i) => i.tool)))
 		.sort()
 		.map((tool) => ({ value: tool, label: tool }));
+
+	// Stage filter choices
+	let stageChoices: CheckBoxChoice[] = Array.from(new Set(allFoundErrors.map((i) => i.stage)))
+		.filter((stage) => stage !== null && stage !== undefined)
+		.sort()
+		.map((stage) => ({ value: stage!, label: stage! }));
 
 	// Novelty filter choices
 	let noveltyChoices: CheckBoxChoice[] = Array.from(
@@ -57,6 +64,7 @@
 		.sort((a, b) => a.label.localeCompare(b.label));
 	let maintainersGroup: string[] = [];
 	let toolGroup: string[] = [];
+	let stageGroup: string[] = [];
 	let sortColumn: SortableColumn = 'title';
 	let sortAsc = true;
 
@@ -97,6 +105,7 @@
 		if (toolGroup.length > 0) params.set('tools', toolGroup.join(','));
 		if (noveltyGroup.length > 0) params.set('novelty', noveltyGroup.join(','));
 		if (maintainersGroup.length > 0) params.set('maintainers', maintainersGroup.join(','));
+		if (stageGroup.length > 0) params.set('stage', stageGroup.join(','));
 		if (sortColumn) params.set('sort', sortColumn);
 		params.set('asc', sortAsc ? '1' : '0');
 		goto(`?${params.toString()}`, { replaceState: true, keepFocus: true, noScroll: true });
@@ -109,12 +118,22 @@
 		noveltyGroup = noveltyParam ? noveltyParam.split(',') : [];
 		const maintainersParam = url.searchParams.get('maintainers');
 		maintainersGroup = maintainersParam ? maintainersParam.split(',') : [];
+		const stageParam = url.searchParams.get('stage');
+		stageGroup = stageParam ? stageParam.split(',') : [];
 		const sortParam = url.searchParams.get('sort');
 		if (sortParam && ['firstFound', 'title'].includes(sortParam)) {
 			sortColumn = sortParam as SortableColumn;
 		}
 		const ascParam = url.searchParams.get('asc');
 		sortAsc = ascParam === '0' ? false : true;
+	}
+
+	function clearAllFilters() {
+		toolGroup = [];
+		noveltyGroup = [];
+		maintainersGroup = [];
+		stageGroup = [];
+		if (browser) updateQueryParams();
 	}
 
 	onMount(() => {
@@ -138,7 +157,12 @@
 				)
 			: noveltyFilteredErrors;
 
-	$: sortedErrors = [...maintainersFilteredErrors].sort((a, b) => {
+	$: stageFilteredErrors =
+		stageGroup.length > 0
+			? maintainersFilteredErrors.filter((e) => e.stage && stageGroup.includes(e.stage))
+			: maintainersFilteredErrors;
+
+	$: sortedErrors = [...stageFilteredErrors].sort((a, b) => {
 		let aVal, bVal;
 		if (sortColumn === 'firstFound') {
 			aVal = a ? (getFirstFound(a)?.getTime() ?? 0) : 0;
@@ -174,13 +198,7 @@
 		const issueNumber = getIssueNumberFromLink(link);
 		if (!issueNumber) return '';
 
-		// Check if it's a comment link
-		if (link.includes('#issuecomment-')) {
-			return `Comment on #${issueNumber}`;
-		}
-
-		// Regular issue link
-		return `Issue #${issueNumber}`;
+		return `#${issueNumber}`;
 	}
 
 	function getMaintainersResponseDisplay(tag: MaintainersResponse) {
@@ -219,6 +237,7 @@
 	$: if (browser && toolGroup) updateQueryParams();
 	$: if (browser && noveltyGroup) updateQueryParams();
 	$: if (browser && maintainersGroup) updateQueryParams();
+	$: if (browser && stageGroup) updateQueryParams();
 </script>
 
 <Card size="xl" class="max-w-none p-4 shadow-sm sm:p-6">
@@ -234,6 +253,9 @@
 				<br />
 				There are examples that reproduce these bugs.
 			</p>
+		</div>
+		<div class="flex items-center gap-2">
+			<Button color="light" onclick={clearAllFilters}>Clear filters</Button>
 		</div>
 	</div>
 	<Table hoverable={true} class="mt-6 min-w-full divide-y divide-gray-200 dark:divide-gray-600">
@@ -261,7 +283,15 @@
 					extraClass="text-gray-700"
 				/>
 			</TableHeadCellSortable>
-			<TableHeadCellSortable label="Stage" widthClass="" extraClass="text-center text-gray-700" />
+			<TableHeadCellSortable label="" widthClass="px-4 py-3 w-32" extraClass="text-center">
+				<FilterButton
+					choices={stageChoices}
+					bind:group={stageGroup}
+					label="Stage"
+					name="stage"
+					extraClass="text-gray-700"
+				/>
+			</TableHeadCellSortable>
 			<TableHeadCellSortable
 				label="First Found"
 				sortKey="firstFound"
@@ -279,7 +309,11 @@
 					extraClass="text-gray-700"
 				/>
 			</TableHeadCellSortable>
-			<TableHeadCellSortable label="Related<br>issue" widthClass="" extraClass="text-center text-gray-700" />
+			<TableHeadCellSortable
+				label="Related<br>issue"
+				widthClass=""
+				extraClass="text-center text-gray-700"
+			/>
 			<TableHeadCellSortable label="" widthClass="px-4 py-3 w-32" extraClass="text-center">
 				<FilterButton
 					choices={maintainersChoices}

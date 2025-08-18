@@ -6,6 +6,7 @@ regex: >
   ariable .* cannot be driven by a primitive or continuous assignment with non-default strength
 issue_novelty: new
 issue_link: https://github.com/steveicarus/iverilog/issues/1268
+maintainers_response: bug
 examples:
   - cannot_be_driven_with_non_default_strength_v1:
       first_found: 02.07.2025

@@ -6,6 +6,7 @@ issue_novelty: already_known
 issue_link: https://github.com/povik/yosys-slang/issues/181#issuecomment-3161067098
 regex: >
   Abort in [\/A-z0-9-]+slang_frontend\.cc:181
+maintainers_response: low
 examples:
   - abort_in_181_v1:
       first_found: 19.07.2025

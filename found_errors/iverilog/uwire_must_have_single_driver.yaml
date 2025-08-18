@@ -7,6 +7,7 @@ regex: >
   (\(implicit\) |)uwire "\w+" must have a single driver, found \(\d+\)
 issue_link: https://github.com/steveicarus/iverilog/issues/1267
 issue_novelty: new
+maintainers_response: bug
 examples:
   - implicit_uwire_must_have_single_driver:
       first_found: 03.04.2025
