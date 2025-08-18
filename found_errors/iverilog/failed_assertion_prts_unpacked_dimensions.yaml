@@ -7,7 +7,6 @@ id: failed_assertion_prts_unpacked_dimensions
 title: failed assertion prts[0]->unpacked_dimensions()==0
 regex: >
   elaborate\.cc:\d+: failed assertion prts\[0\]->unpacked_dimensions\(\)==0
-maintainers_response: enhancement
 examples:
   - failed_assertion_prts_unpacked_dimensions_1661:
       first_found: 03.04.2025
