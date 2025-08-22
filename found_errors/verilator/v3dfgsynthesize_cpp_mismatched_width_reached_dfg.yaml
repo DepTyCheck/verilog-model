@@ -1,7 +1,8 @@
 stage: synthesis
 tool: verilator
 id: v3dfgsynthesize_cpp_mismatched_width_reached_dfg
-title: V3DfgSynthesize.cpp:442: Mismatched width reached DFG
+title: >
+  V3DfgSynthesize.cpp:442: Mismatched width reached DFG
 regex: >
   V3DfgSynthesize\.cpp:442: Mismatched width reached DFG
 issue_novelty: new
