@@ -1,0 +1,71 @@
+stage: synthesis
+tool: verilator
+id: v3dfgsynthesize_cpp_mismatched_width_reached_dfg
+title: V3DfgSynthesize.cpp:442: Mismatched width reached DFG
+regex: >
+  V3DfgSynthesize\.cpp:442: Mismatched width reached DFG
+issue_novelty: new
+issue_link: https://github.com/verilator/verilator/issues/6323
+examples:
+  - v3dfgsynthesize_cpp_mismatched_width_reached_dfg_v1:
+      first_found: 21.08.2025
+      minified_error: |
+        %Error: Internal Error: top.sv:7:13: ../V3DfgSynthesize.cpp:442: Mismatched width reached DFG
+      minified_example: |
+        module a(output logic [1:2] a1);
+          assign a1 = 'bz;
+        endmodule: a
+
+        module b (output logic b1);
+          a a_inst(.a1(b1));
+        endmodule: b
+      full_error: |
+        %Error: Internal Error: top.sv:56:15: ../V3DfgSynthesize.cpp:442: Mismatched width reached DFG
+      full_example: |
+        module ktygoq
+          ( output supply1 logic autonmydqi [0:1]
+          , output wor logic [2:0] lzwo
+          , output logic [3:3][2:0][4:3][0:1] qctrupp
+          , output reg [1:1][2:4] jfemua
+          , input tri0 logic [2:1] kwo [0:2]
+          );
+
+          not s(jfemua, lsdzvtdd);
+          not zeiubpvlkp(qc, qc);
+          not xroazngryu(hxvmwc, rex);
+
+          // Single-driven assigns
+          assign lsdzvtdd = 'bx;
+          assign qctrupp = 'bx;
+        endmodule: ktygoq
+
+        module ynkine
+          (output logic [1:2][0:4] ienm);
+
+          not frzppbqgdy(lkmprwmcn, biqrk);
+          nand vpyylpt(mv, mv, biqrk);
+          nand q(biqrk, yb, fjv);
+          or ahrqtiz(hdbxlquukp, biqrk, oaoeg);
+
+          // Single-driven assigns
+          assign ienm = 'bz;
+          assign yb = 'b1;
+          assign oaoeg = 'b1;
+          assign fjv = 'b0;
+        endmodule: ynkine
+
+        module jy
+          (output logic [2:0][1:2] d);
+
+          ynkine gox(.ienm(d));
+          or jgg(bmb, bn, kjdpwtuo);
+          not o(bn, bn);
+          not mjkkshf(kjdpwtuo, ohmwgszvvt);
+
+          // Single-driven assigns
+          assign ohmwgszvvt = 'bz;
+
+          // Multi-driven assigns
+          assign bmb = 'bz;
+          assign kjdpwtuo = 'bx;
+        endmodule: jy

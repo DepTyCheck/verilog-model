@@ -14,8 +14,6 @@ examples:
       full_error: >
         ERROR: Encountered unhandled type in process_port: real_var
       full_example: |
-        // Seed: 12155394080032148100,2426731264514140405
-
         module cjcbbn
           ( output logic ongg
           , output wire xzkunvy [2:4]
@@ -28,8 +26,6 @@ examples:
           // warning: implicit conversion of port connection truncates from 3 to 1 bits
           // warning: implicit conversion changes possible bit states from 2-state to 4-state
           //   bit [2:4] hfkcmovudd -> logic hfkcmovudd
-
-          // Top inputs -> top outputs assigns
 
           // Assigns
           assign dp = 'bx;
@@ -46,8 +42,6 @@ examples:
           , input bit [0:4] taagvcaj
           , input bit [3:0][3:1] nwswsdfli
           );
-
-          // Top inputs -> top outputs assigns
 
           // Assigns
           assign iodmfscj = 'b0111;
@@ -83,10 +77,6 @@ examples:
         module isknojrfq
           (output real fvmu);
 
-          // Top inputs -> top outputs assigns
-
           // Assigns
           assign fvmu = 'b0;
         endmodule: isknojrfq
-
-        // Seed after: 18199170163325466416,2426731264514140405
