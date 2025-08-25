@@ -8,9 +8,17 @@ import public Test.Verilog.Connections
 
 %logging "deptycheck" 20
 
--- Test.Verilog.Connections.genMF = deriveGen
--- Test.Verilog.Connections.genCC = deriveGen
--- Test.Verilog.Connections.genFNI = deriveGen
-Test.Verilog.Connections.genPf = genPf
-Test.Verilog.Connections.genCSS = genCSS
+GenOrderTuning "MkG".dataCon where
+  isConstructor = itIsConstructor
+  deriveFirst _ _ = [`{subMs}, `{m}, `{ftk}, `{fsk}, `{ftc}, `{fsc}]
+
+GenOrderTuning "FACons".dataCon where
+  isConstructor = itIsConstructor
+  deriveFirst _ _ = [`{rest}, `{fit}]
+
+GenOrderTuning "ExistingAny".dataCon where
+  isConstructor = itIsConstructor
+  deriveFirst _ _ = [`{f}, `{cap}, `{jmc}, `{cc}]
+
+Test.Verilog.Connections.genFitAny = deriveGen
 Test.Verilog.Connections.genModules = deriveGen

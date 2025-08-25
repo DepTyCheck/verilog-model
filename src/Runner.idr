@@ -1,12 +1,14 @@
 module Runner
 
 import Data.Fuel
+import Data.List
 import Data.List.Lazy
 import Data.List.Lazy.Extra
 import Data.List1
 import Data.String
 import Data.Fin
 import Data.Vect.Extra
+import Debug.Trace
 
 import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
@@ -238,30 +240,201 @@ finLookup : (y : FinsList n) -> (List $ Fin $ y.length) -> List $ Fin n
 finLookup xs []        = []
 finLookup xs (y :: ys) = index xs y :: finLookup xs ys
 
-selectPorts' : {mc : _} -> (mcs : MultiConnectionVect n ms m subMs uf) -> List (Fin n) -> SVObjList
--- selectPorts' p []        = []
--- selectPorts' p (x :: xs) = find p x :: selectPorts' p xs
+selectPorts' : (mcs : MultiConnectionsList ms m subMs) -> List (Fin $ length mcs) -> SVObjList
+selectPorts' p []        = []
+selectPorts' p (x :: xs) = (typeOf $ index p x) :: selectPorts' p xs
 
-tryToFitL : {to : _} -> List (Fin a) -> List (Fin to)
-tryToFitL []      = []
-tryToFitL (x::xs) = case tryToFit x of
-  Nothing => tryToFitL xs
-  Just x' => x' :: tryToFitL xs
+export
+toFinsList : {mcs : MultiConnectionsList m ms subMs} -> MDAssigns mcs -> FinsList (length mcs)
+toFinsList []      = []
+toFinsList (x::xs) = x :: toFinsList xs
+
+-- tryToFitL : {to : _} -> List (Fin a) -> List (Fin to)
+-- tryToFitL []      = []
+-- tryToFitL (x::xs) = case tryToFit x of
+--   Nothing => tryToFitL xs
+--   Just x' => x' :: tryToFitL xs
+
+-- debugd1 : PortRef [] [] [] []
+-- debugd1 = Sub $ ACCNil
+
+-- DebugMs : FinsList $ ModuleSig.length StdModules
+-- DebugMs = [FZ]
+
+-- debugM : ModuleSig
+-- debugM = MkModuleSig [Var $ SVar Logic'] [Var $ SVar Logic']
+
+-- DebugLTO : FinsList $ Runner.debugM.outsCount
+-- DebugLTO = [FZ]
+
+-- genFin' : (n : Nat) -> Gen MaybeEmpty $ Fin n
+-- genFin' Z     = empty
+-- genFin' (S n) = elements (fromList (allFins (S n)))
+
+-- public export
+-- toList : MultiConnectionsList ms m subMs -> List $ MultiConnection ms m subMs
+-- toList []      = []
+-- toList (x::xs) = x :: toList xs
+
+-- canConnect' : SVType -> SVType -> Bool
+-- canConnect' a b = if (isUnpacked' a) || (isUnpacked' b) 
+--   then (bitsCnt a == bitsCnt b) && (states a == states b) && (isSigned a == isSigned b) && (basicIntegral a == basicIntegral b) 
+--   else True
+
+-- canConnect : SVObject -> SVObject -> Bool
+-- canConnect a b = canConnect' (valueOf a) (valueOf b)
+
+-- public export
+-- Eq (MFin n) where
+--   (==) Nothing  Nothing  = True
+--   (==) Nothing  (Just x) = False
+--   (==) (Just x) Nothing  = False
+--   (==) (Just x) (Just y) = x == y
+
+-- public export
+-- Eq (FinsList n) where
+--   (==) Nil       Nil       = True
+--   (==) Nil       (_ :: _)  = False
+--   (==) (_ :: _)  Nil       = False
+--   (==) (x :: xs) (y :: ys) = x == y && xs == ys
+
+-- Eq (MultiConnection ms m subMs) where
+--   (==) (MkMC tsk ssk tsc ssc) (MkMC tsk' ssk' tsc' ssc') = tsk == tsk' && ssk == ssk' && tsc == tsc' && ssc == ssc'
+
+-- elem : FinsList n -> Fin n -> Bool
+-- elem []      f = False
+-- elem (x::xs) f = if x == f then True else elem xs f
+
+-- public export
+-- replaceOn : (fs : MultiConnectionsList ms m subMs) -> (old : MultiConnection ms m subMs) -> 
+--             (new : MultiConnection ms m subMs) -> MultiConnectionsList ms m subMs
+-- replaceOn []        _   _ = []
+-- replaceOn (x :: xs) old new = if x == old 
+--   then new :: xs
+--   else x :: replaceOn xs old new
+
+-- parameters (ms : ModuleSigsList) (m : ModuleSig) (subMs : FinsList ms.length) (ports : SVObjList) 
+--           --  (newAny : Fin (ports.length) -> MultiConnection ms m subMs)
+--            (superReplace : Fin (ports.length) -> MultiConnection ms m subMs -> Maybe $ MultiConnection ms m subMs)
+--           --  (isOkay : Fin (ports.length) -> MultiConnection ms m subMs -> Bool)
+  
+--   filterAny : Fin (ports.length) -> MultiConnectionsList ms m subMs -> MultiConnectionsList ms m subMs
+--   filterAny f []      = []
+--   filterAny f (x::xs) = case superReplace f x of
+--     (Just _) => x :: filterAny f xs
+--     Nothing  => filterAny f xs
+
+--   filterCanConnect : SVObject -> MultiConnectionsList ms m subMs -> MultiConnectionsList ms m subMs
+--   filterCanConnect t []      = []
+--   filterCanConnect t (x::xs) = if canConnect (typeOf x) t then x :: filterCanConnect t xs else filterCanConnect t xs
+
+--   extistingAny : Fuel -> Fin (ports.length) -> MultiConnectionsList ms m subMs -> Gen MaybeEmpty $ MultiConnectionsList ms m subMs
+--   extistingAny x f []          = pure $ [ newAny f ]
+--   extistingAny x f rest@(_::_) = do
+--     let filtered = filterCanConnect (typeOf ports f) $ filterAny f rest
+--     case filtered of
+--       []                => pure $ newAny f :: rest
+--       filtered'@(x::xs) => do
+--         oldEl <- elements $ fromList $ toList filtered'
+--        superReplace f oldEl
+--         pure $ replaceOn rest oldEl newEl
+
+--   fillAny : Fuel -> FinsList (ports.length) -> MultiConnectionsList ms m subMs -> Gen MaybeEmpty $ MultiConnectionsList ms m subMs
+--   fillAny x []      rest = pure rest
+--   fillAny x (f::fs) rest = do
+--     cur <- fillAny x fs rest
+--     pure $ newAny f :: cur
+--     -- oneOf [pure $ newAny f :: cur, extistingAny x f cur]
+    
+
+-- isOkayTK : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> 
+--            Fin (topSnks' m) -> MultiConnection ms m subMs -> Bool
+-- isOkayTK _ (MkMC Nothing  ssk Nothing ssc) = True
+-- isOkayTK _ _                               = False
+
+-- newTK : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> 
+--         Fin (topSnks' m) -> MultiConnection ms m subMs
+-- newTK f = MkMC (Just f) [] Nothing []
+ 
+-- replaceTK : Fin (topSnks' m) -> MultiConnection ms m subMs -> Gen MaybeEmpty $ MultiConnection ms m subMs
+-- replaceTK f (MkMC Nothing ssc Nothing ssk) = pure $ MkMC (Just f) ssc Nothing ssk
+-- replaceTK f _                              = empty
+
+-- superReplace : Fin (topSnks' m) -> MultiConnection ms m subMs -> Maybe $ MultiConnection ms m subMs
+
+-- isOkaySK : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> 
+--            Fin (subSnks' ms m subMs) -> MultiConnection ms m subMs -> Bool
+-- isOkaySK f (MkMC tsk ssk tsc ssc) = elem ssk f
+
+-- newSK : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> 
+--         Fin (subSnks' ms m subMs) -> MultiConnection ms m subMs
+-- newSK f = MkMC Nothing [ f ] Nothing []
+
+-- replaceSK : Fin (subSnks' ms m subMs) -> MultiConnection ms m subMs -> Gen MaybeEmpty $ MultiConnection ms m subMs
+-- replaceSK f (MkMC tsk ssk tsc ssc) = pure $ MkMC tsk (f::ssk) tsc ssc
+
+-- isOkayTC : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> 
+--            Fin (topSrcs' m) -> MultiConnection ms m subMs -> Bool
+-- isOkayTC _ (MkMC Nothing ssk Nothing ssc) = True
+-- isOkayTC _ _                              = False
+
+-- newTC : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> 
+--         Fin (topSrcs' m) -> MultiConnection ms m subMs
+-- newTC f = MkMC Nothing [] (Just f) []
+ 
+-- replaceTC : Fin (topSrcs' m) -> MultiConnection ms m subMs -> Gen MaybeEmpty $ MultiConnection ms m subMs
+-- replaceTC f (MkMC Nothing ssk Nothing ssc) = pure $ MkMC Nothing ssk (Just f) ssc
+-- replaceTC f _                              = empty
+
+-- isOkaySC : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> 
+--            Fin (subSrcs' ms m subMs) -> MultiConnection ms m subMs -> Bool
+-- isOkaySC f (MkMC tsk ssk tsc ssc) = elem ssc f
+
+-- newSC : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> 
+--         Fin (subSrcs' ms m subMs) -> MultiConnection ms m subMs
+-- newSC f = MkMC Nothing [] Nothing [ f ]
+
+-- replaceSC : Fin (subSrcs' ms m subMs) -> MultiConnection ms m subMs -> Gen MaybeEmpty $ MultiConnection ms m subMs
+-- replaceSC f (MkMC tsk ssk tsc ssc) = pure $ MkMC tsk ssk tsc (f::ssc)
+
+-- d : MultiConnectionsList ms m subMs -> String
+-- d mcs = joinBy "\n" $ "--------------------" :: debugPrint mcs
+-- -- 3 weeks wasted trying to make this generator derived
+-- genMCL' : Fuel -> (ms : ModuleSigsList) -> (m : ModuleSig) -> (subMs : FinsList ms.length) -> 
+--           Gen MaybeEmpty $ MultiConnectionsList ms m subMs
+-- genMCL' x ms m subMs = do
+--   fillTK <- fillAny ms m subMs (topSnks m)          newTK replaceTK isOkayTK x (allFins $ topSnks' m)          []
+--   fillSK <- fillAny ms m subMs (subSnks ms m subMs) newSK replaceSK isOkaySK x (allFins $ subSnks' ms m subMs) fillTK
+--   fillTC <- fillAny ms m subMs (topSrcs m)          newTC replaceTC isOkayTC x (allFins $ topSrcs' m)          fillSK
+--   fillSC <- fillAny ms m subMs (subSrcs ms m subMs) newSC replaceSC isOkaySC x (allFins $ subSrcs' ms m subMs) fillTC
+--   pure $ flip trace fillSC $ joinBy "\n" $ "===============" :: map d [fillTK, fillSK, fillTC, fillSC]
+
+-- export
+-- genMCL : Fuel -> (ms' : ModuleSigsList) -> (m' : ModuleSig) -> (subMs' : FinsList ms'.length) -> Gen MaybeEmpty $ MultiConnectionsList ms' m' subMs'
+-- genMCL x ms m subMs = withCoverage $ genMCL' x ms m subMs
+-- d3 : PortRef [Var $ SVar Logic'] DebugLTO [] []
+-- d3 = Top FZ
+-- -- d1 = Sub $ ACCOne FZ
+
+-- d2 : Gen MaybeEmpty (n : Nat ** MultiConnectionVect n StdModules (Runner.debugM) DebugMs (UF DebugLTO [] [] []))
+-- d2 = pure $ (1 ** Cons d3 (Sub ACCNil) Empty) -- (Sub ACCNil) -- {tsk=FinsList (topSnks' (Runner.debugM))}
 
 gen : Fuel -> Gen MaybeEmpty $ ExtendedModules StdModules
 gen x = do
-  rawMS <- genModules x StdModules @{genMCL}
+  -- debug <- genPf x [] [] [Var $ SVar Logic', Var $ SVar Logic'] [FZ, FS FZ]
+  -- let ms = StdModules
+  -- let subMs = 
+  -- debug <- genMCL x StdModules debugM DebugMs $ UF DebugLTO [] [] [] --$ UseFins.fullUF {ms=StdModules}
+  -- pure End
+  rawMS <- genModules x StdModules @{genFillAny}
   res <- extend x rawMS
   pure res where
     extend : Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
     extend _ End = pure End
-    extend x modules@(NewCompositeModule m {ms} subMs {n} mcs cont) = do
-      -- Resolve mcs
-      -- let (l ** mcs) = resolveMultiConnections $ SC ms m subMs sicons tocons
-
-      -- -- Gen Assigns
+    extend x modules@(NewCompositeModule m {ms} subMs {mcs} _ cont) = do
+      -- Gen Assigns
       -- let sdmcs = portsToAssign mcs
-      -- (rawSdAssigns ** uf) <- genUniqueFins x (sdmcs.length)
+      -- (rawSdAssigns ** ufsd) <- genUniqueFins x (sdmcs.length)
       -- let sdAssigns = finLookup sdmcs rawSdAssigns.asList
       -- rawMdAssigns <- genMDAssigns x mcs
       -- let mdAssigns = (toFinsList rawMdAssigns).asList
@@ -270,52 +443,69 @@ gen x = do
       -- sdLiterals <- genLiterals @{genBinVect} x $ selectPorts' mcs sdAssigns
       -- mdLiterals <- genLiterals @{genBinVect} x $ selectPorts' mcs mdAssigns
 
-      -- -- Extend the rest
+      -- Extend the rest
       contEx <- extend x cont
-
-      -- -- Gen port types for current context
-      -- let ports = resolveLocalCtxPortTypes modules
-
+  
       pure $ NewCompositeModule m subMs mcs [] [] [] [] contEx
-
-covering
-main : IO ()
-main = do
-  putStrLn "Hello from Idris2!"
 
 -- covering
 -- main : IO ()
 -- main = do
---   let usage : Lazy String := usageInfo "Usage:" cliOpts
---   MkResult options [] [] [] <- getOpt Permute cliOpts . tail'' <$> getArgs
---     | MkResult {nonOptions=nonOpts@(_::_), _}     => die "unrecognised arguments \{show nonOpts}\n\{usage}"
---     | MkResult {unrecognized=unrecOpts@(_::_), _} => die "unrecognised options \{show unrecOpts}\n\{usage}"
---     | MkResult {errors=es@(_::_), _}              => die "arguments parse errors \{show es}\n\{usage}"
---   let cfg : Config Maybe = foldl (mergeCfg (\x, y => x <|> y)) allNothing options
---   let cfg : Cfg = mergeCfg (\m, d => fromMaybe d m) cfg !defaultConfig
+--   putStrLn "Hello from Idris2222!"
 
---   when cfg.help $ do
---     putStrLn usage
---     exitSuccess
+-- public export
+-- showFL : FinsList n -> String
+-- showFL [] = "Nil"
+-- showFL (x :: xs) = "\{show $ finToNat x}, \{showFL xs}"
 
---   let cgi = initCoverageInfo'' [`{Modules}, `{LiteralsList}] -- `{SingleDrivenAssigns}, `{MultiDrivenAssigns},
+-- public export
+-- showUF : UseFins ms m subMs -> String
+-- showUF (UF tsk ssk tsc ssc) = "UF{ \{showFL tsk} ; \{showFL ssk} ; \{showFL tsc} ; \{showFL ssc} }"
 
---   let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
---   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>
---                                                         if nonTrivial md then Just (fst gmd, mcov, md) else Nothing
---   let vals = take (limit cfg.testsCnt) vals
+-- test : UseFins Runner.StdModules (MkModuleSig [Var $ SVar Logic', Var $ SVar Logic'] [Var $ SVar Logic']) ([FZ, FS FZ])
+-- test = minus (UF [FZ] [FS FZ, FZ] [FZ] [FZ]) (UF [FZ] [FZ] [] [FZ])
 
---   -- Make sure the paths for the files exist
---   whenJust cfg.covFile ensureParentDir
---   whenJust cfg.testsDir $ createDir''
+covering
+main : IO ()
+main = do
+  putStrLn "msg 1"
+  let usage : Lazy String := usageInfo "Usage:" cliOpts
+  MkResult options [] [] [] <- getOpt Permute cliOpts . tail'' <$> getArgs
+    | MkResult {nonOptions=nonOpts@(_::_), _}     => die "unrecognised arguments \{show nonOpts}\n\{usage}"
+    | MkResult {unrecognized=unrecOpts@(_::_), _} => die "unrecognised options \{show unrecOpts}\n\{usage}"
+    | MkResult {errors=es@(_::_), _}              => die "arguments parse errors \{show es}\n\{usage}"
+  let cfg : Config Maybe = foldl (mergeCfg (\x, y => x <|> y)) allNothing options
+  let cfg : Cfg = mergeCfg (\m, d => fromMaybe d m) cfg !defaultConfig
 
---   let (seeds, modules) = unzip vals
---   let alignedSeeds = cfg.randomSeed::seeds
---   let indexedVals = withIndex $ zip3 alignedSeeds seeds modules
+  when cfg.help $ do
+    putStrLn usage
+    exitSuccess
+  
+  putStrLn "msg 2"
+  let cgi = initCoverageInfo'' [`{Modules}, `{LiteralsList},`{MDAssigns}, `{UniqueFins} ]
+  putStrLn "msg 3"
+  let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
+  putStrLn "msg 4"
+  let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>
+                                                        if nonTrivial md then Just (fst gmd, mcov, md) else Nothing
+  putStrLn "msg 5"
+  let vals = take (limit cfg.testsCnt) vals
+  putStrLn "msg 6"
 
---   forS_ cgi indexedVals $ \cgi, (idx, initialSeed, seedAfter, mcov, generatedModule) => do
---     when (not cfg.silent) $ printModule cfg idx generatedModule initialSeed seedAfter
+  -- Make sure the paths for the files exist
+  whenJust cfg.covFile ensureParentDir
+  whenJust cfg.testsDir $ createDir''
 
---     let cgi = registerCoverage mcov cgi
---     whenJust cfg.covFile $ printMCov cgi
---     pure cgi
+  -- putStrLn $ showUF $ test
+  putStrLn "msg 7"
+  let (seeds, modules) = unzip vals
+  putStrLn "msg 8"
+  let alignedSeeds = cfg.randomSeed::seeds
+  let indexedVals = withIndex $ zip3 alignedSeeds seeds modules
+
+  forS_ cgi indexedVals $ \cgi, (idx, initialSeed, seedAfter, mcov, generatedModule) => do
+    when (not cfg.silent) $ printModule cfg idx generatedModule initialSeed seedAfter
+
+    let cgi = registerCoverage mcov cgi
+    whenJust cfg.covFile $ printMCov cgi
+    pure cgi

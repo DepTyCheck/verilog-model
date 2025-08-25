@@ -304,8 +304,8 @@ resolveConAssigns v outNames inpNames = map (resolveConn outNames inpNames) $ wi
     Just finInp => Just $ printAssign (index finOut outNames) (index finInp inpNames)
 
 -- zip PortsList with List
-zipPLWList : Foldable b => b a -> SVObjList -> List (a, SVObject)
-zipPLWList other ports = toList other `zip` toList ports
+-- zipPLWList : Foldable b => b a -> SVObjList -> List (a, SVObject)
+-- zipPLWList other ports = toList other `zip` toList ports
 
 printLiterals : LiteralsList ls -> List String
 printLiterals []        = []
@@ -315,18 +315,18 @@ getNames : Vect l String -> List (Fin l) -> List String
 getNames names []        = []
 getNames names (x :: xs) = index x names :: getNames names xs
 
-typeOf' : List SVObject -> Fin a -> Maybe SVObject -- UNSAFE
-typeOf' []      _      = Nothing
-typeOf' (x::xs) FZ     = Just x
-typeOf' (x::xs) (FS i) = typeOf' xs i
+-- typeOf' : List SVObject -> Fin a -> Maybe SVObject -- UNSAFE
+-- typeOf' []      _      = Nothing
+-- typeOf' (x::xs) FZ     = Just x
+-- typeOf' (x::xs) (FS i) = typeOf' xs i
 
-allInputs' : ModuleSigsList -> List SVObject
-allInputs' []      = []
-allInputs' (m::ms) = (toList m.inputs) ++ allInputs' ms
+-- allInputs' : ModuleSigsList -> List SVObject
+-- allInputs' []      = []
+-- allInputs' (m::ms) = (toList m.inputs) ++ allInputs' ms
 
-allOutputs' : ModuleSigsList -> List SVObject
-allOutputs' []      = []
-allOutputs' (m::ms) = (toList m.outputs) ++ allOutputs' ms
+-- allOutputs' : ModuleSigsList -> List SVObject
+-- allOutputs' []      = []
+-- allOutputs' (m::ms) = (toList m.outputs) ++ allOutputs' ms
 
 isElem : Eq a => (x : a) -> (xs : List a) -> Bool
 isElem x []      = False
@@ -353,63 +353,60 @@ isElem x (y::xs) = case x == y of
 --   Just res => Just res
 --   -- where
 
-iMcsByF : MultiConnectionVect n ms m subMs uf ->
-          (extractField : ShortConn ms m subMs -> List $ Fin iport) -> Fin iport -> Maybe (Fin n)
+iMcsByF : (mcs : MultiConnectionsList ms m subMs) ->
+          (extractField : MultiConnection ms m subMs -> List $ Fin iport) -> Fin iport -> Maybe (Fin $ length mcs)
 iMcsByF mcs func fin = findIndex resolve $ toVect mcs where
-    resolve : ShortConn ms m subMs -> Bool
+    resolve : MultiConnection ms m subMs -> Bool
     resolve sc = isElem fin $ func sc
 
-findMcsNameByF : MultiConnectionVect n ms m subMs uf -> Vect n String -> 
-                 (extractField : ShortConn ms m subMs -> List $ Fin iport) -> Fin iport -> Maybe String
+findMcsNameByF : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> 
+                 (extractField : MultiConnection ms m subMs -> List $ Fin iport) -> Fin iport -> Maybe String
 findMcsNameByF mcs mcsNames func fin = case iMcsByF mcs func fin of
   Just mcsFin => Just $ index mcsFin mcsNames
   Nothing     => Nothing
 
-handleRefs : SubRefsList subs ssk newFins -> List (Fin $ length subs)
-handleRefs ACCNil                   = []
-handleRefs (ACCOne  {use} i)        = [ lookUp use i ]
-handleRefs (ACCCons {use} i _ rest) = lookUp use i :: handleRefs rest
+-- handleRefs : FinsList n -> List (Fin $ length $ allInputs subMs)))
+-- handleRefs ACCNil                   = []
+-- handleRefs (ACCOne  {use} i)        = [ lookUp use i ]
+-- handleRefs (ACCCons {use} i _ rest) = lookUp use i :: handleRefs rest
 
-actuallyFindSubSnks : ShortConn ms m subMs -> List (Fin $ subSnks' ms m subMs)
-actuallyFindSubSnks (MkSC (Sub x)  _) = handleRefs x
-actuallyFindSubSnks _                 = []
+actuallyFindSubSnks : MultiConnection ms m subMs -> List (Fin $ subSnks' ms m subMs)
+actuallyFindSubSnks (MkMC _ ssk _ _) = ssk.asList
 
-findSubPortName : MultiConnectionVect n ms m subMs uf -> (mcsNames : Vect n String) -> 
-                  (ShortConn ms m subMs -> List $ Fin subs) -> Fin subs -> String
+findSubPortName : (mcs : MultiConnectionsList ms m subMs) -> (mcsNames : Vect (length mcs) String) -> 
+                  (MultiConnection ms m subMs -> List $ Fin subs) -> Fin subs -> String
 findSubPortName mcs mcsNames func f = case findMcsNameByF mcs mcsNames func f of
   Just name => name
   Nothing   => "error!!"
 
-findSIName : MultiConnectionVect n ms m subMs uf -> (mcsNames : Vect n String) -> Fin (subSnks' ms m subMs) -> String
+findSIName : (mcs : MultiConnectionsList ms m subMs) -> (mcsNames : Vect (length mcs) String) -> Fin (subSnks' ms m subMs) -> String
 findSIName mcs mcsNames f = findSubPortName mcs mcsNames actuallyFindSubSnks f
 
-actuallyFindSubSrcs : ShortConn ms m subMs -> List (Fin $ subSrcs' ms m subMs)
-actuallyFindSubSrcs (MkSC _  (Sub x)) = handleRefs x
-actuallyFindSubSrcs _                 = []
+actuallyFindSubSrcs : MultiConnection ms m subMs -> List (Fin $ subSrcs' ms m subMs)
+actuallyFindSubSrcs (MkMC _ _ _ ssc) = ssc.asList
 
-findSOName : MultiConnectionVect n ms m subMs uf -> (mcsNames : Vect n String) -> Fin (subSrcs' ms m subMs) -> String
+findSOName : (mcs : MultiConnectionsList ms m subMs) -> (mcsNames : Vect (length mcs) String) -> Fin (subSrcs' ms m subMs) -> String
 findSOName mcs mcsNames f = findSubPortName mcs mcsNames actuallyFindSubSrcs f
 
-findSubPortType : MultiConnectionVect n ms m subMs uf -> 
-                  (ShortConn ms m subMs -> List $ Fin $ subs) -> Fin subs -> SVObject
+findSubPortType : MultiConnectionsList ms m subMs -> 
+                  (MultiConnection ms m subMs -> List $ Fin $ subs) -> Fin subs -> SVObject
 findSubPortType mcs func fin = case iMcsByF mcs func fin of
-  Just mcsFin => typeOf mcs mcsFin
+  Just mcsFin => typeOf $ index mcs mcsFin
   Nothing     => defaultNetType -- error. should not be possible
 
-findSISVT : MultiConnectionVect n ms m subMs uf -> Fin (subSnks' ms m subMs) -> SVObject
+findSISVT : MultiConnectionsList ms m subMs -> Fin (subSnks' ms m subMs) -> SVObject
 findSISVT mcs fin = findSubPortType mcs actuallyFindSubSnks fin
 
-findSOSVT : MultiConnectionVect n ms m subMs uf -> Fin (subSrcs' ms m subMs) -> SVObject
+findSOSVT : MultiConnectionsList ms m subMs -> Fin (subSrcs' ms m subMs) -> SVObject
 findSOSVT mcs fin = findSubPortType mcs actuallyFindSubSrcs fin
 
 
 parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : FinsList ms.length) (pms : PrintableModules ms)
-           {uf : UseFins ms m subMs}
           --  (subMINames : Vect (totalInputs {ms} subMs) String) (subMONames : Vect (length $ allOutputs {ms} subMs) String)
           --  (ports : ModuleSigsList) {mcsl : Nat} 
           --  {sicons : MFinsList (totalInputs {ms} subMs) $ allSrcsLen m ms subMs}
           --  {tocons : MFinsList (m.outsCount) $ allSrcsLen m ms subMs}
-           (mcs : MultiConnectionVect n ms m subMs uf) (mcsNames : Vect n String)
+           (mcs : MultiConnectionsList ms m subMs) (mcsNames : Vect (length mcs) String)
 
   printSubmodules : List String -> List (Fin (length (subMs.asList)), Fin (length ms)) -> List $ Doc opts
   printSubmodules  subMInstanceNames subMsIdxs = foldl (++) [] $ map printSubm $ zip subMInstanceNames subMsIdxs where
@@ -486,65 +483,83 @@ data ExtendedModules : ModuleSigsList -> Type where
   NewCompositeModule :
     (m : ModuleSig) ->
     (subMs : FinsList ms.length) ->
-    {n : _} ->
-    (mcs : MultiConnectionVect n ms m subMs UseFins.fullUF) ->
+    (mcs : MultiConnectionsList ms m subMs) ->
     -- {sicons : MFinsList (totalInputs {ms} subMs) $ allSrcsLen m ms subMs} ->
     -- {tocons : MFinsList (m.outsCount) $ allSrcsLen m ms subMs} ->
     -- (sssi : Connections (allSrcs m ms subMs) (allInputs {ms} subMs) SubInps sicons) ->
     -- (ssto : Connections (allSrcs m ms subMs) (m.outputs)            TopOuts tocons) ->
     -- {mcsl : Nat} ->
     -- (mcs : MultiConnectionsVect mcsl $ SC ms m subMs sicons tocons) ->
-    (sdAssigns : List $ Fin n) ->
+    (sdAssigns : List $ Fin $ length mcs) ->
     {spl : SVObjList} ->
     (sdLiterals : LiteralsList spl) ->
-    (mdAssigns : List $ Fin n) ->
+    (mdAssigns : List $ Fin $ length mcs) ->
     {mpl : SVObjList} ->
     (mdLiterals : LiteralsList mpl) ->
     -- (ports : ModuleSigsList) ->
     (cont : ExtendedModules $ m::ms) ->
     ExtendedModules ms
 
-findTIName : MultiConnectionVect n ms m subMs uf -> Vect n String -> Fin (m.inpsCount) -> Maybe String
+findTIName : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Fin (m.inpsCount) -> Maybe String
 findTIName mcs mcsNames f = findMcsNameByF mcs mcsNames actuallyFind f where
-  actuallyFind : ShortConn ms m subMs -> List (Fin m.inpsCount)
-  actuallyFind (MkSC _ {tsc} (Top i)) = [ lookUp tsc i ]
-  actuallyFind _                      = []
+  actuallyFind : MultiConnection ms m subMs -> List (Fin m.inpsCount)
+  actuallyFind (MkMC _ _ (Just i) _) = [ i ]
+  actuallyFind _                     = []
 
-resolveInputNames : {m : _} -> {uf : UseFins ms m subMs} -> MultiConnectionVect n ms m subMs uf -> Vect n String -> Vect (m.inpsCount) String
+resolveInputNames : {m : _} -> (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Vect (m.inpsCount) String
 resolveInputNames mcs mcsNames = map resolve $ allFins (m.inpsCount) where
   resolve : Fin (m.inpsCount) -> String
   resolve f = case findTIName mcs mcsNames f of
     Just name => name
     Nothing => "error!!"
 
-findTOName : MultiConnectionVect n ms m subMs uf -> Vect n String -> Fin (m.outsCount) -> Maybe String
+findTOName : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Fin (m.outsCount) -> Maybe String
 findTOName mcs mcsNames f = findMcsNameByF mcs mcsNames actuallyFind f where
-  actuallyFind : ShortConn ms m subMs -> List (Fin m.outsCount)
-  actuallyFind (MkSC {tsk} (Top i) _) = [ lookUp tsk i ]
-  actuallyFind _                      = []
+  actuallyFind : MultiConnection ms m subMs -> List (Fin m.outsCount)
+  actuallyFind (MkMC (Just i) _ _ _) = [ i ]
+  actuallyFind _                     = []
 
-resolveOutputNames : {m : _} -> {uf : UseFins ms m subMs} -> MultiConnectionVect n ms m subMs uf -> Vect n String -> Vect (m.outsCount) String
+resolveOutputNames : {m : _} -> (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Vect (m.outsCount) String
 resolveOutputNames mcs mcsNames = map resolve $ allFins (m.outsCount) where
   resolve : Fin (m.outsCount) -> String
   resolve f = case findTOName mcs mcsNames f of
     Just name => name
     Nothing => "error!!"
 
-unpackedDecls : MultiConnectionVect n ms m subMs uf -> Vect n String -> List String
-unpackedDecls Empty _ = []
-unpackedDecls mc@(Cons sk sc css rest) (name::names) = if (isUnpacked $ typeOf mc FZ) 
-  then (showSVObj (typeOf mc FZ) name) :: unpackedDecls rest names 
-  else unpackedDecls rest names
+unpackedDecls : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> List String
+unpackedDecls []          _             = []
+unpackedDecls (mc@(MkMC Nothing ssk Nothing ssc) :: mcs) (name::names) = if (isUnpacked $ typeOf mc) 
+  then (showSVObj (typeOf mc) name) :: unpackedDecls mcs names 
+  else unpackedDecls mcs names
+unpackedDecls (mc :: mcs) (name::names) = unpackedDecls mcs names
+
+sf : Fin n -> String
+sf x = show $ finToNat x
+
+debugPrint'' : MFin n -> String
+debugPrint'' Nothing = "Nothing"
+debugPrint'' (Just x) = sf x
+
+debugPrint''' : FinsList n -> String
+debugPrint''' []      = "Nil"
+debugPrint''' (x::xs) = "\{sf x},\{debugPrint''' xs}"
+
+debugPrint' : MultiConnection ms m subMs -> String
+debugPrint' (MkMC tsk ssk tsc ssc) = "MC{ tsk: \{debugPrint'' tsk} | ssk: \{debugPrint''' ssk} | tsc: \{debugPrint'' tsc} | ssc: \{debugPrint''' ssc} }"
+
+export
+debugPrint : MultiConnectionsList ms m subMs -> List String
+debugPrint mcs = map debugPrint' $ toList $ toVect mcs
 
 export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
                 (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => ExtendedModules ms -> Gen0 $ Doc opts
-prettyModules x _         End = pure empty
-prettyModules x pms @{un} (NewCompositeModule m subMs {n} mcs sdAssigns sdLiterals mdAssigns mdLiterals cont) = do
+prettyModules x _         End = pure $ empty -- line "yeah some shit"
+prettyModules x pms @{un} (NewCompositeModule m subMs mcs sdAssigns sdLiterals mdAssigns mdLiterals cont) = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} (allModuleNames pms) un
 
-  (mcsNames ** namesWihMcs ** unm) <- genNUniqueNamesVect x n (allModuleNames pms) un
+  (mcsNames ** namesWihMcs ** unm) <- genNUniqueNamesVect x (length mcs) (allModuleNames pms) un
 
   -- -- Generate top module input names
   -- (inputNames ** namesWithInputs ** uni) <- genNUniqueNamesVect x m.inpsCount (allModuleNames pms) un
@@ -595,5 +610,16 @@ prettyModules x pms @{un} (NewCompositeModule m subMs {n} mcs sdAssigns sdLitera
       [ line "", line "// Single-driven assigns" ] ++ (map line sdAssignments) ++
       [ line "", line "// Multi-driven assigns" ] ++ (map line mdAssignments)
     , line ""
+    -- , line "allFins tsk : \{debugPrint''' $ allFins $ topSnks' m}"
+    -- , line "allFins ssk : \{debugPrint''' $ allFins $ subSnks' ms m subMs}"
+    -- , line "allFins tsc : \{debugPrint''' $ allFins $ topSrcs' m}"
+    -- , line "allFins ssc : \{debugPrint''' $ allFins $ subSrcs' ms m subMs}"
+    -- , line "tsk len: \{show $ topSnks' m}"
+    -- , line "ssk len: \{show $ subSnks' ms m subMs}"
+    -- , line "tsc len: \{show $ topSrcs' m}"
+    -- , line "ssc len: \{show $ subSrcs' ms m subMs}"
+    -- , line "mcs len: \{show $ length mcs}"
+    -- , (line $ joinBy "\n" $ debugPrint mcs)
+    -- , line "// recur"
     , recur
     ]

@@ -43,24 +43,24 @@ data NetType = Supply0' | Supply1' | Triand' | Trior' | Trireg' | Tri0' | Tri1' 
 
 namespace States
   ||| 6.3.1 Logic values
-  ||| 
+  |||
   ||| The SystemVerilog value set consists of the following four basic values:
   ||| 0—represents a logic zero or a false condition
   ||| 1—represents a logic one or a true condition
   ||| x—represents an unknown logic value
   ||| z—represents a high-impedance state
-  ||| 
+  |||
   ||| IEEE 1800-2023
   namespace Logic4
     ||| 0 or 1 or x or z
     public export
     data S4Value = Z | S | X | H
-  
+
   namespace Logic2
     ||| 0 or 1
     public export
     data S2Value = Z | S
-  
+
   ||| 6.3.1 Logic values
   |||
   ||| Several SystemVerilog data types are 4-state types, which can store all four logic values. All bits of 4-state
@@ -155,8 +155,8 @@ namespace NonIntegerType
 
   public export
   bitsCnt : NonIntegerType -> Nat
-  bitsCnt Shortreal' = 32 
-  bitsCnt Real'      = 64 
+  bitsCnt Shortreal' = 32
+  bitsCnt Real'      = 64
   bitsCnt Realtime'  = 64
 
 namespace SVType
@@ -291,7 +291,7 @@ namespace SVType
     -- Void (?)
     -- Event
     -- User-defined
-  
+
   ||| 7.4.1 Packed arrays
   ||| Packed arrays can be made of only the single bit data types (bit, logic, reg), enumerated types, and
   ||| recursively other packed arrays and packed structures.
@@ -348,7 +348,7 @@ namespace SVType
     NA : (i : SVIntegral obj) => (s : State4 i) => NotReg i => AllowedNetData obj
     NB : AllowedNetData t => AllowedNetData $ UnpackedArr t s e
     -- TODO: unpacked structure, union
-  
+
   public export
   bitsCnt : SVType -> Nat
   bitsCnt (RVar x)            = bitsCnt x
@@ -368,10 +368,10 @@ namespace SVType
   public export
   states : SVType -> State
   states (RVar x)            = S4
-  states (SVar x)            = states x 
-  states (VVar x)            = states x 
-  states (PackedArr   t s e) = states t 
-  states (UnpackedArr t s e) = states t 
+  states (SVar x)            = states x
+  states (VVar x)            = states x
+  states (PackedArr   t s e) = states t
+  states (UnpackedArr t s e) = states t
 
 namespace SVObject
 
@@ -523,88 +523,6 @@ namespace SVObjList
   typeOf : (xs : SVObjList) -> Fin (length xs) -> SVObject
   typeOf (p::_ ) FZ     = p
   typeOf (_::ps) (FS i) = typeOf ps i
-
-namespace ModuleSig
-
-  public export
-  record ModuleSig where
-    constructor MkModuleSig
-    inputs  : SVObjList
-    outputs : SVObjList
-
-  public export
-  (.inpsCount) : ModuleSig -> Nat
-  (.inpsCount) m = length m.inputs
-
-  public export
-  (.outsCount) : ModuleSig -> Nat
-  (.outsCount) m = length m.outputs
-
-  %name ModuleSig m
-
-  public export
-  data ModuleSigsList = Nil | (::) ModuleSig ModuleSigsList
-
-  %name ModuleSigsList ms
-
-  public export
-  length : ModuleSigsList -> Nat
-  length []      = Z
-  length (_::ms) = S $ length ms
-
-  public export %inline
-  (.length) : ModuleSigsList -> Nat
-  (.length) = length
-
-  public export
-  index : (ms : ModuleSigsList) -> Fin ms.length -> ModuleSig
-  index (m::_ ) FZ     = m
-  index (_::ms) (FS i) = index ms i
-
-  public export
-  (++) : ModuleSigsList -> ModuleSigsList -> ModuleSigsList
-  Nil       ++ ys = ys
-  (x :: xs) ++ ys = x :: (xs ++ ys)
-
-  public export
-  fromList : List ModuleSig -> ModuleSigsList
-  fromList [] = []
-  fromList (x :: xs) = x :: fromList xs
-
-  public export
-  toList : ModuleSigsList -> List ModuleSig
-  toList []        = []
-  toList (m :: ms) = m :: toList ms
-
-  public export
-  reverse : ModuleSigsList -> ModuleSigsList
-  reverse msl = fromList $ reverse $ toList msl
-
-public export
-allInputs : {ms : ModuleSigsList} -> FinsList ms.length -> SVObjList
-allInputs []      = []
-allInputs (i::is) = (index ms i).inputs ++ allInputs is
-
-public export
-allOutputs : {ms : ModuleSigsList} -> FinsList ms.length -> SVObjList
-allOutputs []      = []
-allOutputs (i::is) = (index ms i).outputs ++ allOutputs is
-
-public export
-totalInputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
-totalInputs = length . allInputs
-
-public export
-totalOutputs : {ms : ModuleSigsList} -> FinsList ms.length -> Nat
-totalOutputs = length . allOutputs
-
-public export
-allSrcs : (m : ModuleSig) -> (ms : ModuleSigsList) -> (subMs : FinsList ms.length) -> SVObjList
-allSrcs m ms subMs = m.inputs ++ allOutputs {ms} subMs
-
-public export
-allSrcsLen : (m : ModuleSig) -> (ms : ModuleSigsList) -> (subMs : FinsList ms.length) -> Nat
-allSrcsLen m ms subMs = length $ allSrcs m ms subMs
 
 public export
 isUnpacked' : SVType -> Bool
