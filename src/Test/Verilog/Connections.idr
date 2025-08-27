@@ -200,7 +200,7 @@ data Multidriven : SVObject -> Type where
 ||| IEEE 1800-2023
 public export
 data SingleDriven : SVObject -> Type where
-  SDV : SingleDriven (Var $ st)
+  SDV : SingleDriven (Var st)
   SDU : AllowedNetData st => SingleDriven (Net Uwire' st)
 
 namespace MultiConnection
@@ -320,21 +320,19 @@ typeOfPort ms m subMs SSK = typeOf (subSnks ms m subMs)
 typeOfPort ms m subMs TSC = typeOf (topSrcs m)          
 typeOfPort ms m subMs SSC = typeOf (subSrcs ms m subMs) 
 
-    -- MkMC : {ms : _} -> {m : _} -> {subMs : _} ->
-    --        (tsk : MFin $ topSnks' m) -> (ssk : FinsList $ subSnks' ms m subMs) ->
-    --        (tsc : MFin $ topSrcs' m) -> (ssc : FinsList $ subSrcs' ms m subMs) -> MultiConnection ms m subMs
--- public export
--- data NoSourceConn : {ms : _} -> {m : _} -> {subMs : _} -> MultiConnection ms m subMs -> Type where
---   NSC : NoSourceConn $ MkMC tsk ssk Nothing []
+public export
+noSource : MultiConnection ms m subMs -> Bool
+noSource (MkMC tsk ssk Nothing []) = True
+noSource _                         = False
 
 public export
-data CanAddPort : {ms : _} -> {m : _} -> {subMs : _} -> FillMode ms m subMs n -> MultiConnection ms m subMs -> Type where
+data CanAddPort : FillMode ms m subMs n -> MultiConnection ms m subMs -> Type where
   YTK   : CanAddPort TSK mc
   YSK   : CanAddPort SSK mc
-  YTCMD : Multidriven  (typeOf mc) => CanAddPort TSC mc
-  YSCMD : Multidriven  (typeOf mc) => CanAddPort SSC mc
-  YTCSD : SingleDriven (typeOf $ MkMC {ms} {m} {subMs} tsk ssk Nothing []) => CanAddPort TSC $ MkMC {ms} {m} {subMs} tsk ssk Nothing []
-  YSCSD : SingleDriven (typeOf $ MkMC {ms} {m} {subMs} tsk ssk Nothing []) => CanAddPort SSC $ MkMC {ms} {m} {subMs} tsk ssk Nothing []
+  YTCMD : Multidriven (typeOf mc) => CanAddPort TSC mc
+  YSCMD : Multidriven (typeOf mc) => CanAddPort SSC mc
+  YTCSD : So (noSource mc) => CanAddPort TSC mc
+  YSCSD : So (noSource mc) => CanAddPort SSC mc
 
 public export
 data FitAny : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> {n : _} ->
@@ -347,19 +345,32 @@ data FitAny : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.l
                 FitAny {ms} {m} {subMs} rest i mode $ replaceAt rest f newMC
 
 public export
+natToFin' : Nat -> (n : Nat) -> MFin n
+natToFin' i n = case natToFin i n of
+  Nothing  => Nothing
+  (Just x) => Just x
+
+public export
+data JustFin : MFin n -> Fin n -> Type where
+  JF : JustFin (Just x) x
+
+-- i has type Nat instead of Fin, because otherwise a fuel-consuming generator is derived
+-- feature request : https://github.com/buzden/deptycheck/issues/279
+public export
 data FillAny : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} ->
-               (pre : MultiConnectionsList ms m subMs) -> {n : _} -> (i : Fin (S n)) -> 
+               (pre : MultiConnectionsList ms m subMs) -> {n : _} -> (i : Nat) ->
                FillMode ms m subMs n -> (aft : MultiConnectionsList ms m subMs) -> Type where
-  FANil  : FillAny pre FZ mode pre
-  FACons : (fit : FitAny {ms} {m} {subMs} {n} mid i mode aft) -> (rest : FillAny {ms} {m} {subMs} pre {n} (weaken i) mode mid) ->
-           FillAny {ms} {m} {subMs} pre {n} (FS i) mode aft
+  FANil  : FillAny pre Z mode pre
+  FACons : (jf : JustFin (natToFin' i n) f) -> (fit : FitAny {ms} {m} {subMs} {n} mid f mode aft) -> 
+           (rest : FillAny {ms} {m} {subMs} pre {n} i mode mid) ->
+           FillAny {ms} {m} {subMs} pre {n} (S i) mode aft
 
 public export
 data GenMulticonns : (ms : ModuleSigsList) -> (m : ModuleSig) -> (subMs : FinsList ms.length) -> MultiConnectionsList ms m subMs -> Type where
-  MkG : (ftk : FillAny {ms} {m} {subMs} []     Fin.last {n=topSnks' m}          TSK fillTK) ->
-        (fsk : FillAny {ms} {m} {subMs} fillTK Fin.last {n=subSnks' ms m subMs} SSK fillSK) ->
-        (ftc : FillAny {ms} {m} {subMs} fillSK Fin.last {n=topSrcs' m}          TSC fillTC) ->
-        (fsc : FillAny {ms} {m} {subMs} fillTC Fin.last {n=subSrcs' ms m subMs} SSC fillSC) ->
+  MkG : (ftk : FillAny {ms} {m} {subMs} []     (topSnks' m)          TSK fillTK) ->
+        (fsk : FillAny {ms} {m} {subMs} fillTK (subSnks' ms m subMs) SSK fillSK) ->
+        (ftc : FillAny {ms} {m} {subMs} fillSK (topSrcs' m)          TSC fillTC) ->
+        (fsc : FillAny {ms} {m} {subMs} fillTC (subSrcs' ms m subMs) SSC fillSC) ->
         GenMulticonns ms m subMs fillSC
 
 public export
@@ -375,24 +386,28 @@ data Modules : ModuleSigsList -> Type where
     (cont : Modules $ m::ms) ->
     Modules ms
 
-export
-genFitAny : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> {n : _} ->
-            (rest : MultiConnectionsList ms m subMs) -> (i : Fin n) -> (mode : FillMode ms m subMs n) ->
-            Gen MaybeEmpty (aft : MultiConnectionsList ms m subMs ** FitAny {ms} {m} {subMs} rest i mode aft)
+-- export
+-- genFitAny : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> {n : _} ->
+--             (rest : MultiConnectionsList ms m subMs) -> (i : Fin n) -> (mode : FillMode ms m subMs n) ->
+--             Gen MaybeEmpty (aft : MultiConnectionsList ms m subMs ** FitAny {ms} {m} {subMs} rest i mode aft)
 
-export
-genFillAny : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} ->
-                     (pre : MultiConnectionsList ms m subMs) -> {n : _} -> (i : Fin (S n)) -> (mode : FillMode ms m subMs n) -> 
-                     Gen MaybeEmpty (aft : MultiConnectionsList ms m subMs ** FillAny {ms} {m} {subMs} {n} pre i mode aft)
-genFillAny x pre FZ     mode = pure (pre ** FANil)
-genFillAny x pre (FS y) mode = do
-  (mid ** rest) <- assert_total $ genFillAny {ms} {m} {subMs} x pre (weaken y) mode
-  (aft ** fit) <- genFitAny {ms} {m} {subMs} x mid y mode
-  pure (aft ** FACons fit rest)
+-- export
+-- genPrf : Fuel -> (i : Nat) -> (n : Nat) -> Gen MaybeEmpty (i `LT` n)
+
+-- export
+-- genFillAny : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} ->
+--                      (pre : MultiConnectionsList ms m subMs) -> {n : _} -> (i : Nat) -> (mode : FillMode ms m subMs n) -> 
+--                      Gen MaybeEmpty (aft : MultiConnectionsList ms m subMs ** FillAny {ms} {m} {subMs} {n} pre i mode aft)
+-- genFillAny x pre Z     mode = pure (pre ** FANil)
+-- genFillAny x pre (S i) mode = do
+--   (mid ** rest) <- genFillAny {ms} {m} {subMs} x pre i mode
+--   prf <- genPrf x i n
+--   (aft ** fit) <- genFitAny {ms} {m} {subMs} x mid (natToFinLT {n} {prf} i) mode
+--   pure (aft ** FACons fit rest)
 
 export
 genModules : Fuel -> (ms : ModuleSigsList) ->
-  (Fuel -> {ms' : ModuleSigsList} -> {m' : ModuleSig} -> {subMs' : FinsList ms'.length} ->
-  (pre' : MultiConnectionsList ms' m' subMs') -> {n' : _} -> (i' : Fin (S n')) -> (mode' : FillMode ms' m' subMs' n') -> 
-  Gen MaybeEmpty (aft' : MultiConnectionsList ms' m' subMs' ** FillAny {ms=ms'} {m=m'} {subMs=subMs'} {n=n'} pre' i' mode' aft')) =>
+  -- (Fuel -> {ms' : ModuleSigsList} -> {m' : ModuleSig} -> {subMs' : FinsList ms'.length} ->
+  -- (pre' : MultiConnectionsList ms' m' subMs') -> {n' : _} -> (i' : Nat) -> (mode' : FillMode ms' m' subMs' n') -> 
+  -- Gen MaybeEmpty (aft' : MultiConnectionsList ms' m' subMs' ** FillAny {ms=ms'} {m=m'} {subMs=subMs'} {n=n'} pre' i' mode' aft')) =>
   Gen MaybeEmpty $ Modules ms
