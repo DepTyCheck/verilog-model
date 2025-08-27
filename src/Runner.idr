@@ -426,7 +426,7 @@ gen x = do
   -- let subMs = 
   -- debug <- genMCL x StdModules debugM DebugMs $ UF DebugLTO [] [] [] --$ UseFins.fullUF {ms=StdModules}
   -- pure End
-  rawMS <- genModules x StdModules @{genFillAny}
+  rawMS <- genModules x StdModules
   res <- extend x rawMS
   pure res where
     extend : Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
@@ -482,7 +482,7 @@ main = do
     exitSuccess
   
   putStrLn "msg 2"
-  let cgi = initCoverageInfo'' [`{Modules}, `{LiteralsList},`{MDAssigns}, `{UniqueFins} ]
+  let cgi = initCoverageInfo'' [`{Modules}, `{LiteralsList},`{MDAssigns}, `{SDAssigns} ]
   putStrLn "msg 3"
   let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
   putStrLn "msg 4"
