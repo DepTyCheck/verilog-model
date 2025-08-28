@@ -15,6 +15,9 @@ RUN find ${BUILD_DIR} -type f -exec touch {} +
 # Build
 RUN pack build ${PACKAGE_NAME}
 
+# Install
+RUN pack install ${PACKAGE_NAME}
+
 # Fix filesystem (・‿・)
 RUN pack run ${PACKAGE_NAME} --coverage mcov -n 1 --seed 0,1 && rm mcov
 

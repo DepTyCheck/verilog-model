@@ -16,7 +16,7 @@ def execute_command(cmd: str) -> tuple[str, int]:
 
     Returns:
         tuple[str, int]: A tuple containing:
-            - The command's output (stdout + stderr combined)
+            - The command's output
             - The exit code (0 for success, non-zero for failure)
 
     Note:
@@ -26,8 +26,8 @@ def execute_command(cmd: str) -> tuple[str, int]:
     print(f"Execute: {cmd}")
 
     try:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=COMMAND_TIMEOUT_SECONDS)
-        output = result.stdout + result.stderr
+        result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=COMMAND_TIMEOUT_SECONDS)
+        output = result.stdout
         print(f"Exit code: {result.returncode}. Output:\n{output}")
         return output, result.returncode
     except subprocess.TimeoutExpired as timeout_error:

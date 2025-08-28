@@ -25,6 +25,11 @@ namespace SD
   genSDAssigns : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} ->
                  (mcs : MultiConnectionsList ms m subMs) -> Gen MaybeEmpty $ SDAssigns mcs
 
+  export
+  toFinsList : SDAssigns mcs -> FinsList (length mcs)
+  toFinsList []      = []
+  toFinsList (x::xs) = x :: toFinsList xs
+
 namespace MD
 
   public export
@@ -35,3 +40,8 @@ namespace MD
   export
   genMDAssigns : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} ->
                  (mcs : MultiConnectionsList ms m subMs) -> Gen MaybeEmpty $ MDAssigns mcs
+
+  export
+  toFinsList : MDAssigns mcs -> FinsList (length mcs)
+  toFinsList []      = []
+  toFinsList (x::xs) = x :: toFinsList xs
