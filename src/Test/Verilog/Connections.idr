@@ -393,7 +393,7 @@ genFitAny : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsLis
             Gen MaybeEmpty (aft : MultiConnectionsList ms m subMs ** FitAny {ms} {m} {subMs} rest i mode aft)
 
 export
-genJF : Fuel -> (mf : MFin n) -> Gen MaybeEmpty (f : Fin n ** JustFin mf f)
+genJF : Fuel -> {n : _} -> (mf : MFin n) -> Gen MaybeEmpty (f : Fin n ** JustFin mf f)
 
 export
 genFillAny : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} ->

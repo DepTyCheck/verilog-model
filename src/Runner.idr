@@ -243,7 +243,7 @@ selectPorts' p (x :: xs) = (typeOf $ index p x) :: selectPorts' p xs
 
 gen : Fuel -> Gen MaybeEmpty $ ExtendedModules StdModules
 gen x = do
-  rawMS <- genModules x StdModules
+  rawMS <- genModules x StdModules @{genFillAny}
   res <- extend x rawMS
   pure res where
     extend : Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
@@ -253,15 +253,14 @@ gen x = do
       contEx <- extend x cont
 
       -- Gen Assigns
-      (uf ** rawSdAssigns) <- genSDAssigns x mcs
+      (sdAssigns ** uf ** rawSdAssigns) <- genSDAssigns x mcs
       rawMdAssigns <- genMDAssigns x mcs
 
-      let sdAssigns = toFinsList rawSdAssigns
       let mdAssigns = toFinsList rawMdAssigns
 
       -- Gen Expressions
-      sdExprs <- genTMPExList x sdAssigns
-      mdExprs <- genTMPExList x mdAssigns
+      sdExprs <- genTMPExList x mcs sdAssigns
+      mdExprs <- genTMPExList x mcs mdAssigns
 
       pure $ NewCompositeModule m subMs mcs sdAssigns sdExprs mdAssigns mdExprs contEx
 

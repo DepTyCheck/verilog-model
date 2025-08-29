@@ -1,121 +1,25 @@
 [+] Printed file newdir/newdir/1-seed_0,1.sv
 // Seed: 0,1
 
-module s
-  ( input wire logic [4:0][2:2][3:3] ztpokdqo [4:3][0:2][0:4][3:4]
-  , input trior logic [0:1][1:4][1:4][1:0] ckqldtpaks [3:3]
-  , input trireg logic [0:4][0:3][1:4] hkf [1:3]
+module kpusrt
+  ( input wire logic [4:0][2:2][3:3] l [4:3][0:2][0:4][3:4]
+  , input trior logic [0:1][1:4][1:4][1:0] zhzynsgrwm [3:3]
+  , input trireg logic [0:4][0:3][1:4] k [1:3]
   );
   
   
-  not afw(wdurptfc, wdurptfc);
+  not cpwvj(w, xl);
   
   
   // Single-driven assigns
-  assign wdurptfc = wdurptfc;
-  assign wdurptfc = ckqldtpaks;
-  assign wdurptfc = ztpokdqo;
+  assign xl = 'b1;
+  assign w = xl;
   
   // Multi-driven assigns
-endmodule: s
-
-module wqbs
-  (output trior logic [4:4][2:1][4:1] onkntbrtuq [2:0][4:3], output tri0 logic [1:2][1:4][0:1] lzhc [3:0][1:2], output realtime k [1:2]);
-  
-  
-  not nvgv(fwjv, vctqe);
-  
-  and vo(vctqe, fwjv, vctqe);
-  
-  xor kvdcmbdr(yuy, vctqe, vctqe);
-  
-  and dxdwykomg(xwj, vctqe, yuy);
-  
-  
-  // Single-driven assigns
-  
-  // Multi-driven assigns
-  assign onkntbrtuq = '{'{'b1,'b1},'{'b1,'b0},'{'b0,'bx}};
-  assign onkntbrtuq = '{'{'b1,'bx},'{'bz,'b0},'{'b1,'b1}};
-  assign lzhc = k;
-endmodule: wqbs
-
-module xoo
-  ( output bit [4:1][0:0] rmyzfgtaxu [0:1][1:1]
-  , output wand logic [2:0][0:4] shvjqwr
-  , output supply0 logic [4:3][0:1][2:2][2:4] rjzkmqueag
-  );
-  
-  realtime zrpc [1:2];
-  tri0 logic [1:2][1:4][0:1] exejqcipr [3:0][1:2];
-  trior logic [4:4][2:1][4:1] jcbx [2:0][4:3];
-  
-  and dodsm(shvjqwr, hmelbl, shvjqwr);
-  // warning: implicit conversion of port connection expands from 1 to 15 bits
-  //   logic shvjqwr -> wand logic [2:0][0:4] shvjqwr
-  //
-  // warning: implicit conversion of port connection truncates from 15 to 1 bits
-  //   wand logic [2:0][0:4] shvjqwr -> logic shvjqwr
-  
-  nand e(gdd, vljc, shvjqwr);
-  // warning: implicit conversion of port connection truncates from 15 to 1 bits
-  //   wand logic [2:0][0:4] shvjqwr -> logic shvjqwr
-  
-  xor onzyqncd(oywagqdic, nnrdtjkx, hmelbl);
-  
-  wqbs wndxckxvi(.onkntbrtuq(jcbx), .lzhc(exejqcipr), .k(zrpc));
-  
-  
-  // Single-driven assigns
-  assign rmyzfgtaxu = '{'{'b0},'{'b0}};
-  assign rmyzfgtaxu = '{'{'b1},'{'b1}};
-  
-  // Multi-driven assigns
-  assign shvjqwr = 'bz;
-  assign shvjqwr = 'bz;
-  assign shvjqwr = 'b1;
-  assign jcbx = '{'{'b0,'b0},'{'b1,'bz},'{'b1,'b0}};
-endmodule: xoo
-
-module gw
-  ( output realtime eysb
-  , output logic [4:4][2:1][2:4][1:2] bo
-  , output trior logic [2:0][1:4][0:0][4:3] ufztiuvc [0:4][3:4][0:0]
-  , input wire logic [2:3][0:3][2:4] pycqenwvvy [2:4][1:0][4:1][3:3]
-  , input wire logic [0:3][1:3][2:2][3:4] n [1:4][4:3][2:4][3:2]
-  );
-  
-  realtime hndam [1:2];
-  tri0 logic [1:2][1:4][0:1] aylnmr [3:0][1:2];
-  trior logic [4:4][2:1][4:1] kscvn [2:0][4:3];
-  bit [4:1][0:0] tzim [0:1][1:1];
-  trireg logic [0:4][0:3][1:4] crgfjxqzpy [1:3];
-  trior logic [0:1][1:4][1:4][1:0] cmp [3:3];
-  wire logic [4:0][2:2][3:3] swdyvkau [4:3][0:2][0:4][3:4];
-  
-  xoo qgxxkrgvo(.rmyzfgtaxu(tzim), .shvjqwr(bo), .rjzkmqueag(eysb));
-  // warning: implicit conversion of port connection truncates from 15 to 12 bits
-  //   wand logic [2:0][0:4] shvjqwr -> logic [4:4][2:1][2:4][1:2] bo
-  //
-  // warning: implicit conversion of port connection expands from 12 to 64 bits
-  // warning: implicit conversion changes signedness from unsigned to signed
-  //   supply0 logic [4:3][0:1][2:2][2:4] rjzkmqueag -> realtime eysb
-  
-  wqbs t(.onkntbrtuq(kscvn), .lzhc(aylnmr), .k(hndam));
-  
-  s jmcmatxjtd(.ztpokdqo(swdyvkau), .ckqldtpaks(cmp), .hkf(crgfjxqzpy));
-  
-  
-  // Single-driven assigns
-  assign eysb = 'bz;
-  assign eysb = 'b1;
-  assign eysb = 'bz;
-  assign eysb = 'b1;
-  
-  // Multi-driven assigns
-  assign ufztiuvc = kscvn;
-endmodule: gw
+  assign l = l;
+  assign l = '{'{'{'{'bx,'b1},'{'b1,'bx},'{'b1,'bz},'{'bz,'bx},'{'bz,'bx}},'{'{'bz,'bz},'{'b0,'bx},'{'b0,'bx},'{'bx,'b0},'{'bx,'bx}},'{'{'b0,'bz},'{'bz,'bz},'{'b1,'b1},'{'b0,'b1},'{'b1,'bz}}},'{'{'{'b1,'bx},'{'b0,'b0},'{'bz,'b0},'{'b1,'b1},'{'bz,'b0}},'{'{'b1,'b0},'{'b1,'b1},'{'bz,'b0},'{'bx,'b0},'{'b0,'bz}},'{'{'bx,'b0},'{'b0,'b0},'{'bz,'b0},'{'bz,'bx},'{'bz,'bz}}}};
+endmodule: kpusrt
 
 
 
-// Seed after: 20014,1
+// Seed after: 3283,1

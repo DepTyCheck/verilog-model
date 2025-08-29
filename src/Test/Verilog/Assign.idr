@@ -20,19 +20,14 @@ namespace SD
   data SDAssigns : (mcs : MultiConnectionsList ms m subMs) -> {fs : FinsList $ length mcs} -> (uf : UniqueFins (length mcs) fs) -> Type where
     SDNil  : SDAssigns mcs uf
     SDCons : {mcs : MultiConnectionsList ms m subMs} -> {old : FinsList $ length mcs} -> {oldUF : UniqueFins (length mcs) old} ->
-           (f : Fin $ length mcs) -> 
-           (ns : So $ noSource $ index mcs f) => (sd : SingleDriven $ typeOf $ index mcs f) => (newUF : UniqueFins (length mcs) (f::old)) =>
-           (rest : SDAssigns mcs oldUF) -> SDAssigns mcs newUF
+             (f : Fin $ length mcs) -> 
+             (ns : So $ noSource $ index mcs f) => (sd : SingleDriven $ typeOf $ index mcs f) => (newUF : UniqueFins (length mcs) (f::old)) =>
+             (rest : SDAssigns mcs oldUF) -> SDAssigns mcs newUF
 
   export
   genSDAssigns : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} ->
                  (mcs : MultiConnectionsList ms m subMs) -> 
-                 {fs : FinsList $ length mcs} -> Gen MaybeEmpty (uf : UniqueFins (length mcs) fs ** SDAssigns mcs uf)
-
-  export
-  toFinsList : SDAssigns mcs uf -> FinsList (length mcs)
-  toFinsList SDNil         = []
-  toFinsList (SDCons x xs) = x :: toFinsList xs
+                 Gen MaybeEmpty (fs : FinsList $ length mcs ** (uf : UniqueFins (length mcs) fs ** SDAssigns mcs uf))
 
 namespace MD
 
