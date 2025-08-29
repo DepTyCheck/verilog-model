@@ -361,7 +361,7 @@ data FillAny : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.
                (pre : MultiConnectionsList ms m subMs) -> {n : _} -> (i : Nat) ->
                FillMode ms m subMs n -> (aft : MultiConnectionsList ms m subMs) -> Type where
   FANil  : FillAny pre Z mode pre
-  FACons : (jf : JustFin (natToFin' i n) f) -> (fit : FitAny {ms} {m} {subMs} {n} mid f mode aft) -> 
+  FACons : {jf : JustFin (natToFin' i n) f} -> (fit : FitAny {ms} {m} {subMs} {n} mid f mode aft) -> 
            (rest : FillAny {ms} {m} {subMs} pre {n} i mode mid) ->
            FillAny {ms} {m} {subMs} pre {n} (S i) mode aft
 
@@ -386,28 +386,29 @@ data Modules : ModuleSigsList -> Type where
     (cont : Modules $ m::ms) ->
     Modules ms
 
--- export
--- genFitAny : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> {n : _} ->
---             (rest : MultiConnectionsList ms m subMs) -> (i : Fin n) -> (mode : FillMode ms m subMs n) ->
---             Gen MaybeEmpty (aft : MultiConnectionsList ms m subMs ** FitAny {ms} {m} {subMs} rest i mode aft)
 
--- export
--- genPrf : Fuel -> (i : Nat) -> (n : Nat) -> Gen MaybeEmpty (i `LT` n)
+export
+genFitAny : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} -> {n : _} ->
+            (rest : MultiConnectionsList ms m subMs) -> (i : Fin n) -> (mode : FillMode ms m subMs n) ->
+            Gen MaybeEmpty (aft : MultiConnectionsList ms m subMs ** FitAny {ms} {m} {subMs} rest i mode aft)
 
--- export
--- genFillAny : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} ->
---                      (pre : MultiConnectionsList ms m subMs) -> {n : _} -> (i : Nat) -> (mode : FillMode ms m subMs n) -> 
---                      Gen MaybeEmpty (aft : MultiConnectionsList ms m subMs ** FillAny {ms} {m} {subMs} {n} pre i mode aft)
--- genFillAny x pre Z     mode = pure (pre ** FANil)
--- genFillAny x pre (S i) mode = do
---   (mid ** rest) <- genFillAny {ms} {m} {subMs} x pre i mode
---   prf <- genPrf x i n
---   (aft ** fit) <- genFitAny {ms} {m} {subMs} x mid (natToFinLT {n} {prf} i) mode
---   pure (aft ** FACons fit rest)
+export
+genJF : Fuel -> (mf : MFin n) -> Gen MaybeEmpty (f : Fin n ** JustFin mf f)
+
+export
+genFillAny : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} ->
+                     (pre : MultiConnectionsList ms m subMs) -> {n : _} -> (i : Nat) -> (mode : FillMode ms m subMs n) -> 
+                     Gen MaybeEmpty (aft : MultiConnectionsList ms m subMs ** FillAny {ms} {m} {subMs} {n} pre i mode aft)
+genFillAny x pre Z     mode = pure (pre ** FANil)
+genFillAny x pre (S i) mode = do
+  (mid ** rest) <- genFillAny {ms} {m} {subMs} x pre i mode
+  (f ** jf) <- genJF x $ natToFin' i n
+  (aft ** fit) <- genFitAny {ms} {m} {subMs} x mid f mode
+  pure (aft ** FACons {jf} fit rest)
 
 export
 genModules : Fuel -> (ms : ModuleSigsList) ->
-  -- (Fuel -> {ms' : ModuleSigsList} -> {m' : ModuleSig} -> {subMs' : FinsList ms'.length} ->
-  -- (pre' : MultiConnectionsList ms' m' subMs') -> {n' : _} -> (i' : Nat) -> (mode' : FillMode ms' m' subMs' n') -> 
-  -- Gen MaybeEmpty (aft' : MultiConnectionsList ms' m' subMs' ** FillAny {ms=ms'} {m=m'} {subMs=subMs'} {n=n'} pre' i' mode' aft')) =>
+  (Fuel -> {ms' : ModuleSigsList} -> {m' : ModuleSig} -> {subMs' : FinsList ms'.length} ->
+  (pre' : MultiConnectionsList ms' m' subMs') -> {n' : _} -> (i' : Nat) -> (mode' : FillMode ms' m' subMs' n') -> 
+  Gen MaybeEmpty (aft' : MultiConnectionsList ms' m' subMs' ** FillAny {ms=ms'} {m=m'} {subMs=subMs'} {n=n'} pre' i' mode' aft')) =>
   Gen MaybeEmpty $ Modules ms

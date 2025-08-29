@@ -8,4 +8,4 @@ import public Test.Verilog.TMPExpression
 
 %logging "deptycheck" 20
 
-Test.Verilog.TMPExpression.genTMPExpr = deriveGen
+Test.Verilog.TMPExpression.genTMPExList = deriveGen

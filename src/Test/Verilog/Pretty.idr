@@ -247,11 +247,11 @@ resolveConAssigns v outNames inpNames = map (resolveConn outNames inpNames) $ wi
     Nothing     => Nothing
     Just finInp => Just $ printAssign (index finOut outNames) (index finInp inpNames)
 
-printTMPExpr : Vect ml String -> TMPExpression ml t -> String
+printTMPExpr : Vect (length mcs) String -> TMPExpression mcs t -> String
 printTMPExpr _     (MkLiteral  l) = show l
 printTMPExpr names (MkQualName f) = index f names
 
-printTMPExprs : Vect ml String -> TMPExList ml -> List String
+printTMPExprs : Vect (length mcs) String -> TMPExList mcs fs -> List String
 printTMPExprs _     []        = []
 printTMPExprs names (b :: xs) = printTMPExpr names b :: printTMPExprs names xs
 
@@ -375,9 +375,9 @@ data ExtendedModules : ModuleSigsList -> Type where
     (subMs : FinsList ms.length) ->
     (mcs : MultiConnectionsList ms m subMs) ->
     (sdAssigns : FinsList $ length mcs) ->
-    (sdExprs : TMPExList $ length mcs) ->
+    (sdExprs : TMPExList mcs sdAssigns) ->
     (mdAssigns : FinsList $ length mcs) ->
-    (mdExprs : TMPExList $ length mcs) ->
+    (mdExprs : TMPExList mcs mdAssigns) ->
     (cont : ExtendedModules $ m::ms) ->
     ExtendedModules ms
 

@@ -253,7 +253,7 @@ gen x = do
       contEx <- extend x cont
 
       -- Gen Assigns
-      rawSdAssigns <- genSDAssigns x mcs
+      (uf ** rawSdAssigns) <- genSDAssigns x mcs
       rawMdAssigns <- genMDAssigns x mcs
 
       let sdAssigns = toFinsList rawSdAssigns

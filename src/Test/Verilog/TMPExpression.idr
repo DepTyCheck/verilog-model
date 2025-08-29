@@ -10,22 +10,15 @@ import Test.DepTyCheck.Gen
 
 -- TODO. Replace this with a real expression
 public export
-data TMPExpression : (mcsLength : Nat) -> (t : SVObject) -> Type where
-  MkQualName : Fin ml                  -> TMPExpression ml t
-  MkLiteral  : TypeLiteral (valueOf t) -> TMPExpression ml t
+data TMPExpression : (mcs : MultiConnectionsList ms m subMs) -> (t : SVType) -> Type where
+  MkQualName : (f : Fin $ length mcs) -> CanConnect (valueOf $ typeOf $ index mcs f) t => TMPExpression {ms} {m} {subMs} mcs t
+  MkLiteral  : TypeLiteral t -> TMPExpression {ms} {m} {subMs} mcs t
 
 public export
-data TMPExList : Nat -> Type where
-  Nil  : TMPExList n
-  (::) : TMPExpression n t -> TMPExList n -> TMPExList n
+data TMPExList : (mcs : MultiConnectionsList ms m subMs) -> FinsList (length mcs) -> Type where
+  Nil  : TMPExList mcs []
+  (::) : TMPExpression mcs (valueOf $ typeOf $ index mcs f) -> TMPExList mcs fs -> TMPExList mcs (f::fs)
 
 export
-genTMPExpr : Fuel -> (mcsLength : Nat) -> (t : SVObject) -> Gen MaybeEmpty $ TMPExpression mcsLength t
-
-export
-genTMPExList : Fuel -> {mcs : MultiConnectionsList ms m subMs} -> FinsList (length mcs) -> Gen MaybeEmpty $ TMPExList $ length mcs
-genTMPExList _ []      = pure []
-genTMPExList x (f::fs) = do
-  tmpExpr <- genTMPExpr x (length mcs) (typeOf $ index mcs f)
-  rest <- genTMPExList x fs
-  pure $ tmpExpr :: rest
+genTMPExList : Fuel -> {ms : _} -> {m : _} -> {subMs : _} -> 
+               (mcs : MultiConnectionsList ms m subMs) -> (fs : FinsList $ length mcs) -> Gen MaybeEmpty $ TMPExList mcs fs
