@@ -1,0 +1,202 @@
+stage: parsing
+tool: yosys-slang
+id: net_type_not_supported
+title: Net type not supported
+issue_novelty: unsupported
+regex: >
+  net type .* unsupported
+examples:
+  - net_type_not_supported_wor:
+      first_found: 30.08.2025
+      full_error: >
+        error: net type 'wor' unsupported
+      full_example: |
+        module eqmaoe
+          ( output bit [0:4] q
+          , output logic [2:1][2:1][2:4][4:2] mxostruq
+          , input wor logic dr [0:3][1:0][3:4]
+          , input uwire logic rhzuaugoc [4:3][4:1][0:1][0:2]
+          );
+          
+          not dyujmzzxg(ecwpzzjoig, xc);
+          or oj(mxostruq, q, mxostruq);
+          and odsdfl(xc, kwukwyyb, j);
+          not p(q, crj);
+          
+          assign j = 'b0;
+          assign kwukwyyb = 'bz;
+          assign crj = 'bx;
+        endmodule: eqmaoe
+  - net_type_not_supported_triand_tri0:
+      first_found: 30.08.2025
+      full_error: |
+        error: net type 'tri0' unsupported
+        error: net type 'triand' unsupported
+      full_example: |
+        module mrc
+          ( input tri0 logic yugfkeucwn [3:3][2:4][3:3]
+          , input bit sxafnxh
+          , input wire logic cap [0:3][1:4][0:0][1:0]
+          , input triand logic ocm [0:2][2:0][1:0][2:0]
+          );
+
+          assign ocm = '{'{'{'{'bx,'bx,'b0},'{'bx,'bz,'b1}},'{'{'b0,'b0,'b1},'{'bz,'b1,'bx}},'{'{'b0,'bz,'bz},'{'b1,'bx,'bx}}},'{'{'{'b1,'b1,'b0},'{'bx,'bz,'b0}},'{'{'b0,'bz,'b0},'{'bx,'b0,'b1}},'{'{'b1,'b0,'b1},'{'b0,'bz,'b1}}},'{'{'{'bz,'bz,'b1},'{'bx,'b1,'bz}},'{'{'b1,'bz,'bx},'{'b0,'b0,'bz}},'{'{'b0,'b0,'b1},'{'b1,'bz,'b1}}}};
+        endmodule: mrc
+  - net_type_not_supported_trior_trireg:
+      first_found: 30.08.2025
+      full_error: |
+        error: net type 'trior' unsupported
+        error: net type 'trireg' unsupported
+      full_example: |
+        module dgwh
+          ( output longint zra
+          , input trior logic [1:1][0:3] tq [3:0][0:2][0:2]
+          , input bit [0:3][0:1] kr [2:2]
+          , input trireg logic [2:1][0:0] zphke [4:0]
+          );
+          
+          not agnxgiu(bfwgsfkfco, czkoioa);
+          not ji(syjvkj, zra);
+          and rvqv(zra, fpgc, vgmxqrfzmx);
+          
+          assign vgmxqrfzmx = 'b1;
+          assign fpgc = 'bx;
+          assign czkoioa = 'b1;
+        endmodule: dgwh
+
+        module ym
+          ( output wor logic [4:3] iz
+          , input tri0 logic bzcddbissw
+          , input tri logic [3:3][1:3][2:1][1:1] tcwiwu [4:0][2:4][1:4]
+          , input trior logic [2:4] klkvnsnsze
+          , input wor logic [2:0][2:4][1:0][4:1] mrzggkr [2:0][4:1][3:1]
+          );
+          
+          trior logic [1:1][0:3] mydtcrzcmj [3:0][0:2][0:2];
+          bit [0:3][0:1] wgkztddgmm [2:2];
+          trireg logic [2:1][0:0] urvwi [4:0];
+          
+          dgwh scqkhcd(.zra(yv), .tq(mydtcrzcmj), .kr(wgkztddgmm), .zphke(urvwi));
+          and yaqczog(jvdzc, dgfzog, bzcddbissw);
+          nand yyf(iz, iz, aqrlwagxhd);
+          
+          assign wgkztddgmm = '{'b1};
+          assign mydtcrzcmj = '{'{'{'b1,'b0,'b1},'{'bx,'bx,'b1},'{'bx,'b1,'bx}},'{'{'b0,'b0,'bx},'{'b0,'bx,'bx},'{'bx,'bx,'bx}},'{'{'bz,'bz,'b1},'{'b0,'b0,'bx},'{'bz,'b0,'bz}},'{'{'b0,'bz,'bx},'{'bz,'b0,'b0},'{'b1,'bz,'b1}}};
+          assign urvwi = '{'b0,'b1,'b0,'bz,'b0};
+          assign dgfzog = 'b1;
+          assign aqrlwagxhd = 'b1;
+        endmodule: ym
+  - net_type_not_supported_tri1:
+      first_found: 30.08.2025
+      full_error: |
+        error: net type 'tri1' unsupported
+      full_example: |
+        module zifejh
+          ( output logic [1:2][2:3][2:2][0:0] vjrck
+          , output byte q [2:1][3:3]
+          , output tri1 logic [0:2][0:3][3:4][4:4] m
+          , input tri1 logic [0:4][3:3][4:0][4:3] dkw [0:1][3:4][2:3]
+          , input wire logic [1:0] rscd [3:0]
+          , input logic [0:0][1:1][4:2] kjhck [2:4]
+          , input triand logic [0:3][3:1][2:1][1:2] ndxd [4:1][4:3]
+          );
+
+          assign m = 'bz;
+          assign vjrck = 'b0;
+          assign q = '{'{'b1},'{'b1}};
+
+          assign m = 'b0;
+          assign m = 'bx;
+        endmodule: zifejh
+  - net_type_not_supported_supply0_supply1:
+      first_found: 30.08.2025
+      full_error: |
+        error: net type 'supply1' unsupported
+        error: net type 'supply0' unsupported
+      full_example: |
+        module bcikqsxchk
+          (output supply0 logic njd [4:0], output triand logic [2:1][4:1][4:3] mvbxzygx, input supply0 logic [1:4] mm [1:0]);
+          
+          nand lxxyyx(deechkt, bzrkm, deechkt);
+          or zlflieobn(yzpmcedo, exk, atfvutvwqm);
+          and ybfxcvj(atfvutvwqm, oyji, mvbxzygx);
+          not rmgxhy(mvbxzygx, bhhvvckhc);
+          
+          assign exk = 'bx;
+          assign bhhvvckhc = 'b0;
+
+          assign deechkt = 'bx;
+          assign deechkt = 'bz;
+          assign njd = '{'b0,'bz,'b0,'bz,'b1};
+        endmodule: bcikqsxchk
+
+        module qja
+          ( input trireg logic [3:3][3:3][3:3][1:1] etsaoexcmr [3:4]
+          , input supply1 logic [3:0] biocq [1:2][4:3]
+          , input tri1 logic [4:3][1:3] nmix [4:1]
+          );
+          assign biocq = '{'{'b0,'b1},'{'bz,'bx}};
+          assign nmix = '{'b1,'b1,'b1,'bz};
+          assign nmix = '{'b0,'bz,'b1,'b0};
+        endmodule: qja
+
+        module xj
+          (input supply0 logic [3:1][3:4] dtwmf, input supply0 logic [2:1][1:3][3:2][0:4] syk [2:2]);
+          not juthgwgl(ondwzojzeb, ondwzojzeb);
+        endmodule: xj
+  - net_type_not_supported_wand:
+      first_found: 30.08.2025
+      full_error: |
+        error: net type 'wand' unsupported
+      full_example: |
+        module pz
+          ( output logic efyubuuej [0:3]
+          , output reg [3:2][3:2][4:3][3:4] yxbhhi
+          , output logic [2:1][0:1] dcqb [4:1]
+          , output supply0 logic bs [1:0][0:1][0:1][3:4]
+          , input bit [2:3][1:4] sdpodgyzsy [4:4][2:1]
+          , input wand logic [2:4][4:4] xbpgjggm [4:1][2:2]
+          );
+            
+          not boujkcyvqo(nggrdkajub, mujwdnl);
+
+          assign yxbhhi = 'b0;
+          assign dcqb = '{'bz,'bz,'bz,'b0};
+
+          assign nggrdkajub = 'b0;
+          assign bs = '{'{'{'{'b1,'bz},'{'b1,'b1}},'{'{'b1,'b0},'{'bz,'b0}}},'{'{'{'b0,'bx},'{'bz,'bz}},'{'{'b1,'b0},'{'b1,'b0}}}};
+          assign bs = '{'{'{'{'bz,'bx},'{'b1,'bz}},'{'{'b0,'bx},'{'bz,'bx}}},'{'{'{'bz,'b1},'{'b0,'b0}},'{'{'b1,'bx},'{'b0,'b0}}}};
+          assign xbpgjggm = '{'{'bz},'{'b1},'{'b0},'{'b1}};
+        endmodule: pz
+
+        module f
+          (output tri logic [3:2][0:1] doywag [4:2][3:1][4:4], input wire logic gykflripy [2:0], input wand logic w [0:0][0:4]);
+          
+          and siino(qivxg, cczpimw, trwqsii);  
+          xor ovwvsvcnfc(trwqsii, trwqsii, ks);
+
+          assign ks = 'b1;
+          assign cczpimw = 'b1;
+          assign doywag = '{'{'{'bz},'{'bz},'{'b1}},'{'{'b0},'{'bx},'{'bx}},'{'{'b0},'{'bx},'{'bz}}};
+          
+          assign qivxg = 'b0;
+          assign gykflripy = '{'bx,'b1,'b0};
+          assign doywag = '{'{'{'b0},'{'bz},'{'bx}},'{'{'b0},'{'b1},'{'bz}},'{'{'b0},'{'bz},'{'b0}}};
+          assign doywag = '{'{'{'bx},'{'b0},'{'b0}},'{'{'bz},'{'b0},'{'bx}},'{'{'bx},'{'bx},'{'b0}}};
+        endmodule: f
+
+        module wfqxnehnsx
+          ( output logic [1:2] okvysxdqhh [4:2]
+          , output supply0 logic [3:0][2:1] atyz [0:4][2:0][1:4]
+          , input wor logic [0:4] repws
+          , input bit [1:2] zclivfc
+          , input time akwk [0:2][4:1]
+          , input bit [4:2][3:3] xikutd
+          );
+          assign okvysxdqhh = '{'b0,'b0,'bx};
+          
+          assign atyz = '{'{'{'bx,'bz,'b0,'bz},'{'b1,'b0,'b1,'bz},'{'bx,'bz,'bz,'bz}},'{'{'b0,'b1,'b0,'bz},'{'b1,'b0,'bz,'bz},'{'bz,'b0,'bx,'bz}},'{'{'b1,'bx,'bz,'bx},'{'b0,'bx,'b0,'bx},'{'bz,'b0,'bx,'b1}},'{'{'b1,'bz,'bx,'bx},'{'bx,'bz,'bx,'bx},'{'b0,'b0,'bx,'b0}},'{'{'b1,'bz,'b0,'bx},'{'b0,'bx,'bx,'b1},'{'bx,'bx,'b1,'bz}}};
+          assign atyz = '{'{'{'bx,'bz,'b1,'bz},'{'b1,'bx,'b0,'b0},'{'bz,'bz,'bz,'bx}},'{'{'bz,'bx,'b0,'b0},'{'bz,'bz,'b0,'b1},'{'bz,'b1,'bx,'bz}},'{'{'b0,'bz,'b0,'bx},'{'b0,'bx,'b0,'b1},'{'bx,'b1,'b0,'bz}},'{'{'b1,'bx,'bx,'b0},'{'bx,'bz,'b0,'bx},'{'bx,'b1,'bx,'b1}},'{'{'bx,'b0,'b1,'b1},'{'b0,'bz,'bx,'b0},'{'bx,'bz,'b1,'b0}}};
+          assign repws = 'b1;
+          assign atyz = '{'{'{'b0,'b1,'b1,'b0},'{'b0,'b0,'bx,'bx},'{'b0,'b1,'b0,'b0}},'{'{'bz,'bx,'bz,'b0},'{'b1,'bx,'b0,'bz},'{'b0,'bx,'b1,'b1}},'{'{'b0,'bx,'b1,'bz},'{'bz,'b1,'bz,'b1},'{'bx,'b0,'b1,'b1}},'{'{'bx,'bx,'b0,'bz},'{'b1,'b1,'bx,'b0},'{'b0,'b0,'bz,'bz}},'{'{'bz,'bx,'b1,'b0},'{'b1,'bx,'bx,'bz},'{'b1,'bx,'b1,'bz}}};
+        endmodule: wfqxnehnsx
