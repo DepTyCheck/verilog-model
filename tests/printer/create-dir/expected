@@ -1,25 +1,23 @@
 [+] Printed file newdir/newdir/1-seed_0,1.sv
 // Seed: 0,1
 
-module kpusrt
-  ( input wire logic [4:0][2:2][3:3] l [4:3][0:2][0:4][3:4]
-  , input trior logic [0:1][1:4][1:4][1:0] zhzynsgrwm [3:3]
-  , input trireg logic [0:4][0:3][1:4] k [1:3]
+module wd
+  ( input wire logic [4:0][2:2][3:3] zyerjx [4:3][0:2][0:4][3:4]
+  , input trior logic [0:1][1:4][1:4][1:0] dz [3:3]
+  , input trireg logic [0:4][0:3][1:4] duod [1:3]
   );
   
   
-  not cpwvj(w, xl);
+  not esjp(qgiwl, vtar);
   
   
   // Single-driven assigns
-  assign xl = 'b1;
-  assign w = xl;
   
   // Multi-driven assigns
-  assign l = l;
-  assign l = '{'{'{'{'bx,'b1},'{'b1,'bx},'{'b1,'bz},'{'bz,'bx},'{'bz,'bx}},'{'{'bz,'bz},'{'b0,'bx},'{'b0,'bx},'{'bx,'b0},'{'bx,'bx}},'{'{'b0,'bz},'{'bz,'bz},'{'b1,'b1},'{'b0,'b1},'{'b1,'bz}}},'{'{'{'b1,'bx},'{'b0,'b0},'{'bz,'b0},'{'b1,'b1},'{'bz,'b0}},'{'{'b1,'b0},'{'b1,'b1},'{'bz,'b0},'{'bx,'b0},'{'b0,'bz}},'{'{'bx,'b0},'{'b0,'b0},'{'bz,'b0},'{'bz,'bx},'{'bz,'bz}}}};
-endmodule: kpusrt
+  assign qgiwl = vtar;
+  assign duod = '{'b0,'b0,'bz};
+endmodule: wd
 
 
 
-// Seed after: 3283,1
+// Seed after: 2823,1

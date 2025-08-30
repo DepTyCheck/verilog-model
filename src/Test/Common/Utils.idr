@@ -43,10 +43,3 @@ namespace MFinsList
   data MFin : Nat -> Type where
     Nothing : MFin n
     Just    : Fin n -> MFin n
-
-namespace UF
-
-  public export
-  data UniqueFins : (n : Nat) -> (fs : FinsList n) -> Type where 
-    Nil  : UniqueFins n []
-    (::) : (f : Fin n) -> FinNotIn rest f => UniqueFins n rest -> UniqueFins n (f::rest)

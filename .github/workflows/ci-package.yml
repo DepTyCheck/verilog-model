@@ -334,7 +334,9 @@ jobs:
             version: yosys --version
             run: yosys -m slang -p 'read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
             error_regex: >
-              ERROR:.*$
+              (ERROR|error): .*
+            extra_ignored_regexes: >
+              "Compilation failed"
 
     steps:
       - name: Checkout

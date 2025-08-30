@@ -400,7 +400,6 @@ unpackedDecls (mc@(MkMC Nothing ssk Nothing ssc) :: mcs) (name::names) = if (isU
   else unpackedDecls mcs names
 unpackedDecls (mc :: mcs) (name::names) = unpackedDecls mcs names
 
-
 export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
                 (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => ExtendedModules ms -> Gen0 $ Doc opts

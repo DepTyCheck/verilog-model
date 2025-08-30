@@ -30,25 +30,56 @@ We are on the way of reporting them officially.
 
 To see the bugs and issues we have discovered, please visit our [website](https://deptycheck.github.io/verilog-model/).
 
-## Running
+## Installation
 
-The generator of semantically correct SystemVerilog definitions can be run with [pack](https://github.com/stefan-hoeck/idris2-pack),
+The generator of semantically correct SystemVerilog definitions uses [pack](https://github.com/stefan-hoeck/idris2-pack),
 the package manager for the Idris 2 programming language.
 
-You can either build it yourself:
+You can either:
 
+- **Build manually:**
+1. Install `pack` (see [pack installation guide](https://github.com/stefan-hoeck/idris2-pack)).
+2. Build the project:
+    ```console
+    pack build verilog-model
+    ```
+
+- **Use the prebuilt Docker container** from the [packages](https://github.com/deptycheck/verilog-model/pkgs/container/verilog-model).
+
+## Running
+
+After building, you have two options to run the generator:
+
+Run directly with `pack`:
 ```console
-$ pack build verilog-model
+pack run verilog-model -h
 ```
 
-Or use the latest prebuilt container from the `packages` and just run:
-
+Install once and run as a standalone executable:
 ```console
-$ pack run verilog-model
+pack install verilog-model
+verilog-model --help
 ```
 
-For available options, use:
+(this is already done inside the Docker container, so you can just run `verilog-model`).
 
+### Usage
+
+The generator produces SystemVerilog test designs.  
+Each generated file corresponds to a **separate test**.
+
+- By default, tests are printed to the console, but you can specify a directory to save files using `--to`.
+- Every run produces different tests. You can set the seed manually to make results reproducible with `--seed` (the `--seed` option expects two numbers). 
+  
+  To see which seeds are actually used, add the `--seed-name` flag to include the seed in file names, and the `--seed-content` flag to print the seed inside the file.
+
+
+For all available options, run:
 ```console
-$ pack run verilog-model --help
+verilog-model -h
+```
+
+Here is a basic usage example. Generate 10 tests in the tests folder with a fixed seed:
+```console
+verilog-model --to ./tests -n 10 --seed 12345,6789
 ```

@@ -13,8 +13,8 @@ import Debug.Trace
 import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
 
+import Test.Common.UniqueFins.Derived
 import Test.Verilog.Connections.Derived
-import Test.Verilog.Assign.Derived
 import Test.Verilog.TMPExpression.Derived
 
 import Test.Verilog.Pretty
@@ -223,7 +223,7 @@ printModule : Cfg -> Nat -> String -> StdGen -> StdGen -> IO ()
 printModule cfg idx generatedModule initialSeed seedAfter = do
   let text = content cfg generatedModule initialSeed seedAfter
   case cfg.testsDir of
-    Nothing   => putStr $ text ++ "--------------------------\n\n"
+    Nothing   => putStr $ "-------------------------- # \{show $ S idx} --------------------------\n\n" ++ text
     Just path => do
       let file = fileName cfg path idx initialSeed
       writeRes <- writeFile file text
@@ -253,10 +253,13 @@ gen x = do
       contEx <- extend x cont
 
       -- Gen Assigns
-      (sdAssigns ** uf ** rawSdAssigns) <- genSDAssigns x mcs
-      rawMdAssigns <- genMDAssigns x mcs
+      let sdf = sdFins $ allFins $ length mcs
+      (rawSDAssigns ** sduf) <- genUF x $ sdf.length
+      let sdAssigns = listLookUp sdf rawSDAssigns
 
-      let mdAssigns = toFinsList rawMdAssigns
+      let mdf = mdFins $ allFins $ length mcs
+      (rawMDAssigns ** mduf) <- genUF x $ mdf.length
+      let mdAssigns = listLookUp mdf rawMDAssigns
 
       -- Gen Expressions
       sdExprs <- genTMPExList x mcs sdAssigns
@@ -279,7 +282,7 @@ main = do
     putStrLn usage
     exitSuccess
 
-  let cgi = initCoverageInfo'' [`{Modules}, `{MDAssigns}, `{SDAssigns} ] -- TODO: Add expression type
+  let cgi = initCoverageInfo'' [`{Modules} ] -- TODO: Add expression type
   let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>
                                                         if nonTrivial md then Just (fst gmd, mcov, md) else Nothing

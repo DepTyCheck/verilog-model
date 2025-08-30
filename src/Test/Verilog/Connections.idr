@@ -195,6 +195,21 @@ public export
 data Multidriven : SVObject -> Type where
   RN : ResolvedNet sv => Multidriven sv
 
+public export
+isMD : SVObject -> Bool
+isMD (Net Supply0' t) = True
+isMD (Net Supply1' t) = True
+isMD (Net Triand'  t) = True
+isMD (Net Trior'   t) = True
+isMD (Net Trireg'  t) = True
+isMD (Net Tri0'    t) = True
+isMD (Net Tri1'    t) = True
+isMD (Net Tri'     t) = True
+isMD (Net Wire'    t) = True
+isMD (Net Wand'    t) = True
+isMD (Net Wor'     t) = True
+isMD _                = False
+
 ||| 10.3.2 The continuous assignment statement
 ||| Variables can only be driven by one continuous assignment or by one primitive output or module output. 
 ||| IEEE 1800-2023
@@ -202,6 +217,12 @@ public export
 data SingleDriven : SVObject -> Type where
   SDV : SingleDriven (Var st)
   SDU : AllowedNetData st => SingleDriven (Net Uwire' st)
+
+public export
+isSD : SVObject -> Bool
+isSD (Var st)        = True 
+isSD (Net Uwire' st) = True
+isSD _               = False
 
 namespace MultiConnection
   ||| Unsafe, but simple and effective way to hold indexes of sinks and sources
@@ -233,7 +254,7 @@ namespace MultiConnection
   public export
   mtype : (sv : SVObjList) -> FinsList (sv.length) -> Maybe SVObject
   mtype sv []        = Nothing
-  mtype sv (f :: fs) = Just $ typeOf sv f
+  mtype sv (f :: fs) = Just $ unpOrDefault $ typeOf sv f
 
   public export
   typeOf : MultiConnection ms m subMs -> SVObject
