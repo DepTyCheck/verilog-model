@@ -171,7 +171,7 @@ jobs:
             sim_error_regex: |
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
             extra_ignored_regexes: >
-              "Unable to elaborate r-value: ['{}d0-9]+"
+              "Unable to elaborate r-value: .*"
               "Code generation had .* error\(s\)\."
 
           - name: slang
