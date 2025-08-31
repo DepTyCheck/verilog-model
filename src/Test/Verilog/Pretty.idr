@@ -403,7 +403,7 @@ unpackedDecls (mc :: mcs) (name::names) = unpackedDecls mcs names
 export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
                 (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => ExtendedModules ms -> Gen0 $ Doc opts
-prettyModules x _         End = pure $ empty -- line "yeah some shit"
+prettyModules x _         End = pure $ empty
 prettyModules x pms @{un} (NewCompositeModule m subMs mcs sdAssigns sdExprs mdAssigns mdExprs cont) = do
   -- Generate submodule name
   (name ** isnew) <- rawNewName x @{namesGen'} (allModuleNames pms) un
