@@ -3,13 +3,28 @@ tool: yosys-slang
 id: conflicting_init_values_for_signal
 title: Conflicting init values for signal
 issue_novelty: new
+issue_link: https://github.com/povik/yosys-slang/issues/222
 regex: >
   Conflicting init values for signal
 examples:
   - conflicting_init_values_for_signal_v1:
       first_found: 31.08.2025
+      minified_error: |
+        4.5. Executing OPT_MERGE pass (detect identical cells).
+        Finding identical cells in module `\a'.
+        ERROR: Conflicting init values for signal 1'0 (\w1 [1] = 1'0 != 1'x).
+      minified_example: |
+        module a(output bit [1:4] w1, input bit w2);
+          
+          not not1(w3, w4);
+          not not2(w5, w2);
+
+          assign w4 = w2;
+          assign w3 = w1;
+        endmodule: a
       full_error: |
         4.5. Executing OPT_MERGE pass (detect identical cells).
+        Finding identical cells in module `\fmys'.
         ERROR: Conflicting init values for signal 1'0 (\f [1] = 1'0 != 1'x).
       full_example: |
         module fmys(output bit [1:4] f, input bit emiirbxgm, input bit [1:2][1:2] bksb);
