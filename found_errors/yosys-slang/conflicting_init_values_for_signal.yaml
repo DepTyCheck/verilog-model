@@ -1,0 +1,29 @@
+stage: analysis
+tool: yosys-slang
+id: conflicting_init_values_for_signal
+title: Conflicting init values for signal
+issue_novelty: new
+regex: >
+  Conflicting init values for signal
+examples:
+  - conflicting_init_values_for_signal_v1:
+      first_found: 31.08.2025
+      full_error: |
+        4.5. Executing OPT_MERGE pass (detect identical cells).
+        ERROR: Conflicting init values for signal 1'0 (\f [1] = 1'0 != 1'x).
+      full_example: |
+        module fmys(output bit [1:4] f, input bit emiirbxgm, input bit [1:2][1:2] bksb);
+
+          not dbz(dmkwh, ue);
+          not slvhyb(pvc, emiirbxgm);
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   bit emiirbxgm -> logic emiirbxgm
+
+          // Single-driven assigns
+          assign f = 'b0;
+
+          // Multi-driven assigns
+          assign ue = emiirbxgm;
+          assign pvc = 'bx;
+          assign dmkwh = f;
+        endmodule: fmys
