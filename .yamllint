@@ -8,3 +8,5 @@ rules:
     level: warning
   empty-lines:
     level: warning
+  new-line-at-end-of-file:
+    level: warning
