@@ -1,0 +1,67 @@
+stage: synthesis
+tool: iverilog
+id: syntax_error_in_left_side_of_continuous_assignment
+title: Syntax error in left side of continuous assignment
+regex: >
+  Syntax error in left side of continuous assignment
+issue_novelty: new
+issue_link: https://github.com/steveicarus/iverilog/issues/1271
+short_desc: The connection name causes errors
+examples:
+  - syntax_error_in_left_side_of_continuous_assignment_v1:
+      first_found: 02.09.2025
+      minified_error: |
+        test.sv:2: syntax error
+        test.sv:2: error: Syntax error in left side of continuous assignment.
+      minified_example: |
+        module a(output logic wreal);
+          assign wreal = 1.0;
+        endmodule: a
+      full_error: |
+        generated-modules/88-seed_1536933318761006739,15581241790369801671.sv:48: syntax error
+        generated-modules/88-seed_1536933318761006739,15581241790369801671.sv:48: error: Syntax error in left side of continuous assignment.
+      full_example: |
+        module hcv
+          (input logic yajrhhtgum, input tri0 logic [4:0][3:3] cc [1:1][3:3][1:3][0:1]);
+
+          xor qbrhank(jy, rupfx, yajrhhtgum);
+          not npke(olxg, ihdx);  
+          not dhrmlo(zxfslbk, yajrhhtgum);
+
+          assign rupfx = 'bx;
+          assign jy = rupfx;
+          assign cc = '{'{'{'{'bz,'bz},'{'bx,'bz},'{'bx,'b1}}}};
+          assign ihdx = olxg;
+        endmodule: hcv
+
+        module efrttdxlh
+          (output real xafcgqyxgr [0:1]);
+
+          assign xafcgqyxgr = xafcgqyxgr;
+        endmodule: efrttdxlh
+
+        module fut
+          (output shortint podxwvtjdy, output real wreal, input bit [1:0][2:3] byqk, input bit [4:3][2:1] gecw, input shortint pdznz);
+          
+          tri0 logic [4:0][3:3] hp [1:1][3:3][1:3][0:1];
+          
+          hcv q(.yajrhhtgum(podxwvtjdy), .cc(hp));
+
+          assign podxwvtjdy = 'b1;
+          assign wreal = 'bz;
+          
+          assign hp = '{'{'{'{'b0,'b1},'{'b1,'bz},'{'b1,'bz}}}};
+        endmodule: fut
+
+        module uezldust
+          (output wor logic [4:4][1:3][1:3] jvbwr [0:2][4:2][3:3]);
+          
+          real zy [0:1];
+          real tnilpfeich [0:1];
+          
+          efrttdxlh u(.xafcgqyxgr(tnilpfeich));
+          efrttdxlh xtefjiu(.xafcgqyxgr(zy));
+          fut jpkapgv(.podxwvtjdy(yougw), .wreal(l), .byqk(l), .gecw(l), .pdznz(l));
+          fut jjtaxcqk(.podxwvtjdy(zaoeozuvrj), .wreal(ivhpokl), .byqk(l), .gecw(zaoeozuvrj), .pdznz(l));
+
+        endmodule: uezldust

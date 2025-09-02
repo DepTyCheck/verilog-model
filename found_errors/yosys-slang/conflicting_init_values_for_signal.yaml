@@ -2,8 +2,9 @@ stage: analysis
 tool: yosys-slang
 id: conflicting_init_values_for_signal
 title: Conflicting init values for signal
-issue_novelty: new
+issue_novelty: already_known
 issue_link: https://github.com/povik/yosys-slang/issues/222
+maintainers_response: bug
 regex: >
   Conflicting init values for signal
 examples:
