@@ -31,7 +31,7 @@ function main() {
     process.exit(1);
   }
   
-  const outputFile = path.join(process.cwd(), '..', outputPathArg);
+  const outputFile = path.join(process.cwd(), outputPathArg);
   
   const errors = [];
   for (const filePath of yamlFiles) {
