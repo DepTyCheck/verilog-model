@@ -32,9 +32,6 @@ examples:
           or qpp(lfcda, kupiupc, olwf);
           not bskm(olwf, lfcda);
 
-          // Top inputs -> top outputs assigns
-
-          // Assigns
           assign kupiupc = 'b0;
           assign kupiupc = 'bz;
           assign kupiupc = 'b1;
@@ -86,5 +83,3 @@ examples:
           assign jnsorqt = 'b0x11xz11;
           assign arynsmt = 'b1;
         endmodule: f
-
-        // Seed after: 4036331525392959525,17506386418243051159

@@ -19,12 +19,6 @@ examples:
           (input logic [0:3][4:4] cqfmkxy, input reg [2:2][3:0][4:1][2:0] tuandlau);
 
           or nxoixb(fedewp, fedewp, tuandlau);
-          // warning: implicit conversion of port connection truncates from 48 to 1 bits
-          // reg [2:2][3:0][4:1][2:0] fedewp -> logic fedewp
-
-          // Top inputs -> top outputs assigns
-
-          // Assigns
 
         endmodule: gsha
 
@@ -39,12 +33,6 @@ examples:
           );
 
           or jfnbnuewmr(vjcpmamhq, uzxwa, mwxbotd);
-          // warning: implicit conversion of port connection truncates from 3 to 1 bits
-          // logic [0:0][0:2] mwxbotd -> logic mwxbotd
-
-          // Top inputs -> top outputs assigns
-
-          // Assigns
 
         endmodule: drzpuza
 
@@ -56,9 +44,5 @@ examples:
           );
 
           not darbmui(ncjazspd, ncjazspd);
-
-          // Top inputs -> top outputs assigns
-
-          // Assigns
 
         endmodule: tovn

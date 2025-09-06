@@ -4,7 +4,7 @@ maintainers_response: bug
 stage: synthesis
 tool: iverilog
 id: packed_array_assignment_pattern_expects_elements_in_this_context
-title: Packed array assignment pattern expects <num> element(s) in this context
+title: Packed array assignment pattern expects <num> element(s)
 regex: >
   Packed array assignment pattern expects \d+ element\(s\) in this context
 examples:

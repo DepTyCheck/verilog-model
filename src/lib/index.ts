@@ -2,6 +2,11 @@ import { type FoundError } from '$lib/core';
 import { base } from '$app/paths';
 import type { IssueNovelty } from './core';
 
+export interface DisplayInfo {
+	text: string;
+	color: 'red' | 'blue' | 'purple' | 'gray' | 'green' | 'yellow' | 'indigo' | 'pink';
+}
+
 export function getFirstFound(error: FoundError): Date | null {
 	const dates: Date[] = error.examples
 		.map((v) => {
@@ -25,20 +30,20 @@ export function formatDateDMY(date: Date | null): string {
 	return `${dd}.${mm}.${yyyy}`;
 }
 
-export function displayIssueNovelty(status: IssueNovelty): string {
+export function displayIssueNovelty(status: IssueNovelty): DisplayInfo {
 	switch (status) {
 		case 'new':
-			return 'Brand new';
+			return { text: 'Brand new', color: 'pink' };
 		case 'already_known':
-			return 'Known before';
+			return { text: 'Known before', color: 'indigo' };
 		case 'unsupported':
-			return 'Unsupported';
+			return { text: 'Unsupported', color: 'green' };
 		case 'feature':
-			return 'Feature';
+			return { text: 'Feature', color: 'gray' };
 		case 'late':
-			return 'Late';
+			return { text: 'Late', color: 'gray' };
 		default:
-			return '';
+			return { text: '', color: 'gray' };
 	}
 }
 
