@@ -4,18 +4,28 @@ import public Test.Verilog.SVType
 
 %default total
 
-||| Single bit binary literal
+||| 6.3.1 Logic values
+|||
+||| The SystemVerilog value set consists of the following four basic values:
+||| 0—represents a logic zero or a false condition
+||| 1—represents a logic one or a true condition
+||| x—represents an unknown logic value
+||| z—represents a high-impedance state
+|||
+||| IEEE 1800-2023
 public export
 data Binary : State -> Type where
-  B2 : S2Value -> Binary S2
-  B4 : S4Value -> Binary S4
+  S : Binary a
+  Z : Binary a
+  X : Binary S4
+  H : Binary S4
 
-namespace BinaryVect
+namespace BinaryList
 
   public export
-  data BinaryVect : Nat -> State -> Type where
-    Nil  : BinaryVect 0 s
-    (::) : Binary s -> BinaryVect n s -> BinaryVect (S n) s
+  data BinaryList : State -> Type where
+    One  : Binary s -> BinaryList s
+    More : Binary s -> BinaryList s -> BinaryList s
 
 namespace TypeLiteralVect
 
@@ -34,8 +44,8 @@ namespace TypeLiteralVect
 
   public export
   data TypeLiteral : SVType -> Type where
-    RL  : BinaryVect 1 S4 -> TypeLiteral $ RVar t
-    SL  : BinaryVect 1 (states t) -> TypeLiteral $ SVar t
-    VL  : BinaryVect 1 (states t) -> TypeLiteral $ VVar t
-    PAL : {t : SVType} -> (p : PABasic t) => BinaryVect 1 (states t) -> TypeLiteral $ PackedArr t s e -- (bitsCnt $ PackedArr t s e)
+    RL  : BinaryList S4 -> TypeLiteral $ RVar t
+    SL  : BinaryList (states t) -> TypeLiteral $ SVar t
+    VL  : BinaryList (states t) -> TypeLiteral $ VVar t
+    PAL : {t : SVType} -> (p : PABasic t) => TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ PackedArr t s e
     UAL : TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ UnpackedArr t s e

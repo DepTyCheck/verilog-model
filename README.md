@@ -57,7 +57,7 @@ pack run verilog-model -h
 
 Install once and run as a standalone executable:
 ```console
-pack install verilog-model
+pack install-app verilog-model
 verilog-model --help
 ```
 

@@ -3,7 +3,7 @@
 import sys
 import argparse
 from pathlib import Path
-from ignored_errors_list import IgnoredErrorsList, UnexpectedErrorText, FoundMatch
+from ignored_errors_list import IgnoredErrorsList, UnexpectedErrorText, FoundMatch, KnownError
 from collections import Counter
 from found_error import (
     FoundError,
@@ -24,6 +24,18 @@ def parse_args():
         required=True,
     )
     parser.add_argument(
+        "--job-link",
+        type=str,
+        help="Path to generated modules",
+        required=True,
+    )
+    parser.add_argument(
+        "--tool-name",
+        type=str,
+        help="Analysis tool name",
+        required=True,
+    )
+    parser.add_argument(
         "--tool-cmd",
         type=str,
         help="Analysis tool command",
@@ -35,7 +47,6 @@ def parse_args():
         help="Regex for analysis errors",
         required=True,
     )
-
     parser.add_argument(
         "--sim-cmd",
         type=str,
@@ -48,7 +59,6 @@ def parse_args():
         help="Regex for simulation errors",
         required=False,
     )
-
     parser.add_argument(
         "--ignored-errors-dir",
         type=str,
@@ -56,9 +66,9 @@ def parse_args():
         required=True,
     )
     parser.add_argument(
-        "--error-distances-img",
+        "--error-distances-output",
         type=str,
-        help="Path to save error distances image",
+        help="Path to save error distances interactive plot",
         required=True,
     )
     parser.add_argument(
@@ -104,6 +114,7 @@ def main() -> None:
     failed_files: list[str] = []
     ignored_errors = IgnoredErrorsList(
         args.ignored_errors_dir,
+        args.tool_name,
         regex_list=args.extra_ignored_regexes,
     )
     # Strip trailing newlines from regex arguments
@@ -153,15 +164,19 @@ def main() -> None:
     if all_found_errors:
         print_pretty([f"Error in {error.file_name}: {error.text}" for error in all_found_errors])
 
-        # Compute NCD for all found errors
+        # Compute NCD across found and known errors using a single compute function
+        nodes_text = [err.text for err in all_found_errors] + [ke.pattern for ke in ignored_errors.errors()]
         ncd_results = compute_ncd_for_errors(
-            all_found_errors,
+            nodes_text,
             ".github/workflows/runner/ncd-xz.sh",
         )
         plot_error_distances_mds(
             all_found_errors,
             ncd_results,
-            output_path=args.error_distances_img,
+            known_errors=ignored_errors.errors(),
+            tool_name=args.tool_name,
+            job_link=args.job_link,
+            output_path=args.error_distances_output,
         )
 
     print_pretty(

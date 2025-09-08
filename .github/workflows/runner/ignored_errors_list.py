@@ -4,7 +4,6 @@ import re
 import yaml
 from enum import Enum
 
-
 UnexpectedErrorText = str
 
 
@@ -55,7 +54,7 @@ class FoundMatch:
 
 
 class IgnoredErrorsList:
-    def __init__(self, dir_path: str, regex_list=None):
+    def __init__(self, dir_path: str, tool: str, regex_list=None):
         """
         Initialize the IgnoredErrorsList with a directory path containing YAML files and/or a list of extra regexes.
         Args:
@@ -63,6 +62,7 @@ class IgnoredErrorsList:
             regex_list (list[str], optional): Additional regexes to ignore
         """
         self._errors: List[KnownError] = []
+        self._tool = tool
         self._load_errors(dir_path)
 
         self._extra_regexes: list[IgnoredError] = []
@@ -98,6 +98,9 @@ class IgnoredErrorsList:
             try:
                 with open(yaml_file, "r", encoding="utf-8") as f:
                     data = yaml.safe_load(f)
+                    tool = data.get("tool")
+                    if tool != self._tool:
+                        continue
                     error_id = data.get("id")
                     pattern = data.get("regex")
                     mode_raw = data.get("matching_mode")
@@ -156,3 +159,6 @@ class IgnoredErrorsList:
             Iterator[dict]: Iterator over error objects
         """
         return iter(self._errors)
+
+    def errors(self) -> List[KnownError]:
+        return self._errors.copy()

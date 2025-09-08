@@ -30,7 +30,7 @@ env:
   GENERATION_DIR: 'generated-modules'
   BUILD_DIR: '.build'
   PACKAGE_NAME: verilog-model
-  ERROR_DISTANCES_IMG: error_distances.png
+  ERROR_DISTANCES_OUT: error_distances.html
   GH_PAGES_PATH: verilog-gh-pages
 
 jobs:
@@ -164,7 +164,7 @@ jobs:
               sudo make install
             version: |
               iverilog -V
-            run: iverilog -g2012 -o a.out {file}
+            run: iverilog -g2012 -gno-xtypes -o a.out {file}
             error_regex: |
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
             sim_cmd: vvp a.out
@@ -423,10 +423,17 @@ jobs:
           cd ${{ matrix.tool.path }}
           git rev-parse HEAD
       - name: Install runner deps
-        run: sudo apt install -y bc python3 python3-pip python3-matplotlib python3-sklearn python3-numpy
+        run: sudo apt install -y bc python3 python3-pip python3-venv
+      - name: Setup python venv
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          python3 -m pip install --upgrade pip
+          pip install plotly pandas scikit-learn numpy textdistance
       - name: Run
         run : |
           set +e
+          source .venv/bin/activate
 
           git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
           cd "${{ env.GH_PAGES_PATH }}"
@@ -436,12 +443,13 @@ jobs:
 
           python3 .github/workflows/runner/main.py \
             --gen-path "${{ env.GENERATION_DIR }}" \
+            --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
             --tool-cmd "${{ matrix.tool.run }}" \
             --tool-error-regex "${{ matrix.tool.error_regex }}" \
             --sim-cmd "${{ matrix.tool.sim_cmd }}" \
             --sim-error-regex "${{ matrix.tool.sim_error_regex }}" \
             --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
-            --error-distances-img "$ERROR_DISTANCES_IMG" \
+            --error-distances-output "$ERROR_DISTANCES_OUT" \
             --extra-ignored-regexes ${{ join(matrix.tool.extra_ignored_regexes, ' ') }}
 
           EXIT_CODE=$?
@@ -449,11 +457,11 @@ jobs:
                 exit 1
           fi
       - name: Upload error distances artifact
-        if: always() && hashFiles('error_distances.png') != ''
+        if: always() && hashFiles(env.ERROR_DISTANCES_OUT) != ''
         uses: actions/upload-artifact@v4
         with:
           name: error-distances-${{ matrix.tool.name }}
-          path: ${{ env.ERROR_DISTANCES_IMG }}
+          path: ${{ env.ERROR_DISTANCES_OUT }}
 
   publish-container:
     name: Build and publish Docker image

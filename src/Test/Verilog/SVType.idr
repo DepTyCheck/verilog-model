@@ -44,25 +44,6 @@ data NetType = Supply0' | Supply1' | Triand' | Trior' | Trireg' | Tri0' | Tri1' 
 namespace States
   ||| 6.3.1 Logic values
   |||
-  ||| The SystemVerilog value set consists of the following four basic values:
-  ||| 0—represents a logic zero or a false condition
-  ||| 1—represents a logic one or a true condition
-  ||| x—represents an unknown logic value
-  ||| z—represents a high-impedance state
-  |||
-  ||| IEEE 1800-2023
-  namespace Logic4
-    ||| 0 or 1 or x or z
-    public export
-    data S4Value = Z | S | X | H
-
-  namespace Logic2
-    ||| 0 or 1
-    public export
-    data S2Value = Z | S
-
-  ||| 6.3.1 Logic values
-  |||
   ||| Several SystemVerilog data types are 4-state types, which can store all four logic values. All bits of 4-state
   ||| vectors can be independently set to one of the four basic values. Some SystemVerilog data types are 2-state,
   ||| and only store 0 or 1 values in each bit of a vector. Other exceptions are the event type (see 6.17), which has

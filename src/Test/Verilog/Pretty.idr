@@ -82,32 +82,23 @@ Show IntegerAtomType where
   show Integer'  = "integer"
   show Time'     = "time"
 
-Show S2Value where
-  show Z = "0"
+Show (Binary s) where
   show S = "1"
-
-Show S4Value where
   show Z = "0"
-  show S = "1"
   show X = "x"
   show H = "z"
 
-Show (Binary s) where
-  show (B2 b) = show b
-  show (B4 b) = show b
-
-Show (BinaryVect l s) where
-  show bv = "'b\{showLinear bv}" where
-    showLinear : BinaryVect l' s -> String
-    showLinear []        = ""
-    showLinear (x :: xs) = show x ++ showLinear xs 
+Show (BinaryList s) where
+  show bl = "'b\{showLinear bl}" where
+    showLinear : BinaryList s -> String
+    showLinear (One  x)    = show x
+    showLinear (More x xs) = show x ++ showLinear xs
 
 Show (TypeLiteralVect l t)
 
 ||| Single bit example:
 ||| logic m;
 ||| assign m = 'b1;
-||| TODO: print literals of different random lengths
 ||| TODO: print the length of literal sometimes
 |||
 ||| UAL x example:
