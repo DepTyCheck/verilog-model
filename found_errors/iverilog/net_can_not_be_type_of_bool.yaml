@@ -1,0 +1,32 @@
+stage: synthesis
+tool: iverilog
+id: net_can_not_be_type_of_bool
+title: Net can not be of type `bool`.
+regex: >
+  Net .* can not be of type
+examples:
+  - net_can_not_be_type_of_bool_v1:
+      first_found: 09.09.2025
+      minified_error: |
+        test.sv:1: error: Net `b` can not be of type `bool`.
+      minified_example: |
+        // command : iverilog -g2012 -gno-xtypes -o a.out test.sv
+        module a(input int b);
+        endmodule: a
+      full_error: |
+        error: Net `vlfpuizg` can not be of type `bool`.
+      full_example: |
+        module expx
+          ( output logic pwquv
+          , output tri1 logic [1:2][3:0]  bdxdnrfnkt
+          , output reg [3:4][0:3][3:0]  ne
+          , output longint djvkabv
+          , input longint vlfpuizg [3:3][3:0]
+          , input tri1 logic [3:1] qzzushi [0:0][0:1][0:0][4:4]
+          );
+          
+          // Single-driven assigns
+          assign pwquv = pwquv;
+          assign djvkabv = 'b11100;
+          assign ne = '{'{'{'bx0,'b1,'bx10x0,'bxx00x},'{'b01x0,'bx1z0,'b0xx00,'b10},'{'b0zxx,'b100x0,'b1xzx,'bzx},'{'bxzxz,'bx1,'bzzxxx,'b0111}},'{'{'bxz,'bz,'b0,'bz},'{'bzz1,'b0zz,'bz,'bxx},'{'bzzz1,'bxz10,'bz1zz,'b1z},'{'bxz1,'bzz,'bx1,'b01z1}}};
+        endmodule: expx

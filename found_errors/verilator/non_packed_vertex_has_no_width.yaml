@@ -1,0 +1,55 @@
+stage: synthesis
+tool: verilator
+id: non_packed_vertex_has_no_width
+title: Non packed vertex has no 'width'
+regex: >
+  Non packed vertex has no 'width'
+issue_novelty: new
+issue_link: https://github.com/verilator/verilator/issues/6254#issuecomment-3146668599
+short_desc: Maintainer suggested to avoid reporting bugs related to tristates
+examples:
+  - non_packed_vertex_has_no_width_v1:
+      first_found: 09.09.2025
+      minified_error: |
+        %Error: Internal Error: top.sv:1:39: ../V3Dfg.h:226: Non packed vertex has no 'width'
+      minified_example: |
+        module a(output tri0 logic [4:1][0:4] b [2:1]);
+        endmodule: a
+      full_error: |
+        %Error: Internal Error: top.sv:38:33: ../V3Dfg.h:226: Non packed vertex has no 'width'
+      full_example: |
+        module h
+          (output bit bkadodkl [2:0], output supply1 logic [3:3] lz [4:2][4:3][1:0], input time m);
+
+          not mpotwczv(mcao, m);
+
+          // Single-driven assigns
+          assign bkadodkl = '{'b0,'b1,'b1};
+        endmodule: h
+
+        module wealkggnza
+          ( output wand logic [0:4][4:4][4:2] fdrmaq [1:3][2:3][2:4][2:4]
+          , output wor logic [2:2][1:2][1:4][1:2] ilnu
+          , output shortint c
+          , output logic [2:1][4:2][4:3][3:0] sszhzqljs
+          , input shortreal glfaf
+          );
+
+          // Single-driven assigns
+          assign c = ilnu;
+          assign sszhzqljs = 'bz;
+
+          // Multi-driven assigns
+          assign fdrmaq = '{'{'{'{'bz,'b0,'b0},'{'bz,'bz,'b0},'{'bz,'b0,'bz}},'{'{'b0,'bx,'b0},'{'bz,'bx,'bx},'{'bx,'b1,'bx}}},'{'{'{'bx,'bx,'bx},'{'b1,'bx,'b1},'{'b0,'b0,'bz}},'{'{'bx,'b1,'b1},'{'bz,'b0,'bx},'{'bx,'bx,'b0}}},'{'{'{'b0,'b1,'b0},'{'bz,'b1,'bx},'{'bx,'bx,'b1}},'{'{'b0,'bz,'bx},'{'b0,'bz,'bx},'{'b0,'bz,'b1}}}};
+          assign ilnu = ilnu;
+        endmodule: wealkggnza
+
+        module zsoqcedcy
+          (output tri0 logic [4:1][0:4] bxjratkka [2:1], input uwire logic [3:3][0:3] xy [0:2][2:3][0:1][4:3]);
+          assign bxjratkka = bxjratkka;
+        endmodule: zsoqcedcy
+
+        module dz
+          (input wor logic [0:0][3:4][0:4][3:0] am [1:1]);
+          not ghomwbl(aw, aw);
+        endmodule: dz
