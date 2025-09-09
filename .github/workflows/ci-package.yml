@@ -444,6 +444,7 @@ jobs:
           python3 .github/workflows/runner/main.py \
             --gen-path "${{ env.GENERATION_DIR }}" \
             --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
+            --tool-name "${{ matrix.tool.name }}" \
             --tool-cmd "${{ matrix.tool.run }}" \
             --tool-error-regex "${{ matrix.tool.error_regex }}" \
             --sim-cmd "${{ matrix.tool.sim_cmd }}" \
