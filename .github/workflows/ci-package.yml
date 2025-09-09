@@ -139,6 +139,7 @@ jobs:
           #   build: build commands (runs only if cache miss)
           #   install: install commands
           #   version: command to print the version
+          #   python_runner_deps: python libs required for runner
           #   run: command to run the tool. Note that path to the .sv file will be concatenated to the end of the command.
           #   top_flag: flag to pass to the tool to specify the top module (if necessary)
           #   error_regex: regex to match the error (has to be in double quotes!!)
@@ -152,7 +153,7 @@ jobs:
           #
           #   P.S. ignored errors file should be named as <path>-ignored-errors.txt
 
-          - name: icarus verilog
+          - name: iverilog
             repo: https://github.com/steveicarus/iverilog.git
             deps: autoconf autotools-dev bison flex libfl-dev gperf make gcc g++ cmake python3
             path: iverilog
@@ -164,7 +165,7 @@ jobs:
               sudo make install
             version: |
               iverilog -V
-            run: iverilog -g2012 -gno-xtypes -o a.out {file}
+            run: iverilog -g2012 -o a.out {file}
             error_regex: |
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
             sim_cmd: vvp a.out
@@ -257,8 +258,7 @@ jobs:
                 cd tssv
                 sudo tree-sitter-linux-x64 generate --abi 14
                 sudo tree-sitter-linux-x64 build -o sv.so
-            install: |
-              sudo pip3 install tree-sitter==0.21.3
+            python_runner_deps: tree-sitter==0.21.3
             version: |
               sudo tree-sitter-linux-x64 -V
             run: python3 .github/workflows/conf/tree-sitter-sv/run_ts.py tssv/sv.so {file}
@@ -429,7 +429,7 @@ jobs:
           python3 -m venv .venv
           source .venv/bin/activate
           python3 -m pip install --upgrade pip
-          pip install plotly pandas scikit-learn numpy textdistance pyyaml
+          pip install plotly pandas scikit-learn numpy textdistance pyyaml ${{ matrix.tool.python_runner_deps }}
       - name: Run
         run : |
           set +e
