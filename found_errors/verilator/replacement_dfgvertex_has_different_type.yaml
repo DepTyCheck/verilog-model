@@ -1,0 +1,72 @@
+stage: synthesis
+tool: verilator
+id: replacement_dfgvertex_has_different_type
+title: Replacement DfgVertex has different type
+regex: >
+  Replacement DfgVertex has different type
+issue_novelty: new
+issue_link: https://github.com/verilator/verilator/issues/6254#issuecomment-3146668599
+short_desc: Maintainer suggested to avoid reporting bugs related to tristates
+examples:
+  - replacement_dfgvertex_has_different_type_v1:
+      first_found: 11.09.2025
+      full_error: |
+        %Error: Internal Error: top.sv:45:34: ../V3Dfg.h:269: Replacement DfgVertex has different type
+      full_example: |
+        module bfwxbx
+          ( output longint obrprbc
+          , output wire logic kk [4:4][4:3][2:1]
+          , output supply1 logic [2:1][1:2][0:2] pynjoxs [4:0][1:1][3:2]
+          , output byte apghvldc [3:4]
+          , input logic [2:3][2:1]  dscoal
+          , input bit [1:0] nshe [1:0]
+          );
+
+          not bymllgda(gnn, obrprbc);
+          and ckrrzwtsgf(obrprbc, obrprbc, obrprbc);
+          not wvon(kkkrnbp, kkkrnbp);
+
+          // Single-driven assigns
+          assign apghvldc = apghvldc;
+        endmodule: bfwxbx
+
+        module pw
+          ( output tri1 logic [0:0][4:3] tyvk [3:4]
+          , output bit [4:4][2:4][0:0]  dfoldt
+          , output bit iyzirrkatw [4:3]
+          , input shortreal p [2:2][3:3][4:1]
+          );
+
+          byte lkxymhioj [3:4];
+          supply1 logic [2:1][1:2][0:2] fd [4:0][1:1][3:2];
+          wire logic sdyqbccoj [4:4][4:3][2:1];
+          bit [1:0] bzyfgglct [1:0];
+
+          not jnt(lbfnfss, cnpw);
+          and v(dfoldt, ptlrkrrk, dfoldt);
+          bfwxbx rqkitetq(.obrprbc(idxlbby), .kk(sdyqbccoj), .pynjoxs(fd), .apghvldc(lkxymhioj), .dscoal(atjzlnuj), .nshe(bzyfgglct));
+          or xoxprocxdm(atjzlnuj, xomevf, dfoldt);
+
+          // Single-driven assigns
+          assign bzyfgglct = '{'{'b11,'b000},'{'b1,'b10}};
+
+          // Multi-driven assigns
+          assign cnpw = xomevf;
+        endmodule: pw
+
+        module oydu
+          ( output bit [4:3][4:2][2:2]  vvrquj
+          , output wand logic [0:4][1:1] avqgqzbjf [0:0][4:2][0:0]
+          , output wand logic [4:1][2:3][0:0]  frffhkz
+          , input real pnqupfbfui
+          , input shortint wq
+          , input shortreal hyazfy
+          );
+
+          // Single-driven assigns
+          assign vvrquj = '{'{'{'b1100},'{'b1110},'{'b0101}},'{'{'b1000},'{'b11000},'{'b01}}};
+
+          // Multi-driven assigns
+          assign avqgqzbjf = avqgqzbjf;
+          assign frffhkz = '{'{'{'bzxx},'{'b0}},'{'{'bx0},'{'b10}},'{'{'b10zx0},'{'b111x0}},'{'{'bzx10x},'{'b0z1}}};
+        endmodule: oydu
