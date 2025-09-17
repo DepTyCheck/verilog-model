@@ -64,17 +64,17 @@ Show NetType where
   show Wand'    = "wand"
   show Wor'     = "wor"
 
-Show NonIntegerType where
+Show Real where
   show Shortreal' = "shortreal"
   show Real'      = "real"
   show Realtime'  = "realtime"
 
-Show IntegerVectorType where
+Show Atom where
   show Bit'   = "bit"
   show Logic' = "logic"
   show Reg'   = "reg"
 
-Show IntegerAtomType where
+Show Vector where
   show Byte'     = "byte"
   show Shortint' = "shortint"
   show Int'      = "int"

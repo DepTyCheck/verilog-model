@@ -52,15 +52,7 @@ Test.Verilog.Connections.MultiConnection.[1mMultiConnectionsList[0m [38;5;9mn
   - (::): [38;5;9mnot covered[0m
   - Nil: [38;5;9mnot covered[0m
 
-Test.Verilog.SVType.IntegerAtomType.[1mIntegerAtomType[0m [38;5;9mnot covered[0m
-  - Byte': [38;5;9mnot covered[0m
-  - Int': [38;5;9mnot covered[0m
-  - Integer': [38;5;9mnot covered[0m
-  - Longint': [38;5;9mnot covered[0m
-  - Shortint': [38;5;9mnot covered[0m
-  - Time': [38;5;9mnot covered[0m
-
-Test.Verilog.SVType.IntegerVectorType.[1mIntegerVectorType[0m [38;5;9mnot covered[0m
+Test.Verilog.SVType.Atom.[1mAtom[0m [38;5;9mnot covered[0m
   - Bit': [38;5;9mnot covered[0m
   - Logic': [38;5;9mnot covered[0m
   - Reg': [38;5;9mnot covered[0m
@@ -79,7 +71,7 @@ Test.Verilog.SVType.[1mNetType[0m [38;5;11mcovered partially[0m (3 times)
   - Wire': [38;5;10mcovered[0m (1 time)
   - Wor': [38;5;9mnot covered[0m
 
-Test.Verilog.SVType.NonIntegerType.[1mNonIntegerType[0m [38;5;9mnot covered[0m
+Test.Verilog.SVType.Real.[1mReal[0m [38;5;9mnot covered[0m
   - Real': [38;5;9mnot covered[0m
   - Realtime': [38;5;9mnot covered[0m
   - Shortreal': [38;5;9mnot covered[0m
@@ -129,3 +121,11 @@ Test.Verilog.SVType.SVType.[1mState4S[0m [38;5;11mcovered partially[0m (3 ti
 Test.Verilog.SVType.SVType.[1mState4V[0m [38;5;9mnot covered[0m
   - V4I: [38;5;9mnot covered[0m
   - V4T: [38;5;9mnot covered[0m
+
+Test.Verilog.SVType.Vector.[1mVector[0m [38;5;9mnot covered[0m
+  - Byte': [38;5;9mnot covered[0m
+  - Int': [38;5;9mnot covered[0m
+  - Integer': [38;5;9mnot covered[0m
+  - Longint': [38;5;9mnot covered[0m
+  - Shortint': [38;5;9mnot covered[0m
+  - Time': [38;5;9mnot covered[0m

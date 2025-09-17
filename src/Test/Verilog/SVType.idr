@@ -57,7 +57,7 @@ namespace States
     (==) S4 S4 = True
     (==) _  _  = False
 
-namespace IntegerAtomType
+namespace Vector
 
   ||| 6.9 Vector declarations
   ||| A data object declared as reg, logic, or bit (or as a matching user-defined type or implicitly as logic)
@@ -65,10 +65,10 @@ namespace IntegerAtomType
   ||| of one of these types shall be declared by specifying a range and is known as a vector. Vectors are packed
   ||| arrays of scalars
   public export
-  data IntegerAtomType = Byte' | Shortint' | Int' | Longint' | Integer' | Time';
+  data Vector = Byte' | Shortint' | Int' | Longint' | Integer' | Time';
 
   public export
-  Eq IntegerAtomType where
+  Eq Vector where
     (==) Byte'     Byte'     = True
     (==) Shortint' Shortint' = True
     (==) Int'      Int'      = True
@@ -78,7 +78,7 @@ namespace IntegerAtomType
     (==) _         _         = False
 
   public export
-  bitsCnt : IntegerAtomType -> Nat
+  bitsCnt : Vector -> Nat
   bitsCnt Byte'     = 8
   bitsCnt Shortint' = 16
   bitsCnt Int'      = 32
@@ -87,7 +87,7 @@ namespace IntegerAtomType
   bitsCnt Time'     = 64
 
   public export
-  isSigned : IntegerAtomType -> Bool
+  isSigned : Vector -> Bool
   isSigned Byte'     = True
   isSigned Shortint' = True
   isSigned Int'      = True
@@ -96,7 +96,7 @@ namespace IntegerAtomType
   isSigned Time'     = False
 
   public export
-  states : IntegerAtomType -> State
+  states : Vector -> State
   states Byte'     = S2
   states Shortint' = S2
   states Int'      = S2
@@ -104,38 +104,38 @@ namespace IntegerAtomType
   states Integer'  = S4
   states Time'     = S4
 
-namespace IntegerVectorType
+namespace Atom
 
   public export
-  data IntegerVectorType = Bit' | Logic' | Reg';
+  data Atom = Bit' | Logic' | Reg';
 
   public export
-  Eq IntegerVectorType where
+  Eq Atom where
     (==) Bit'   Bit'   = True
     (==) Logic' Logic' = True
     (==) Reg'   Reg'   = True
     (==) _      _      = False
 
   public export
-  states : IntegerVectorType -> State
+  states : Atom -> State
   states Bit'   = S2
   states Logic' = S4
   states Reg'   = S4
 
-namespace NonIntegerType
+namespace Real
 
   public export
-  data NonIntegerType = Shortreal' | Real' | Realtime';
+  data Real = Shortreal' | Real' | Realtime';
 
   public export
-  Eq NonIntegerType where
+  Eq Real where
     (==) Shortreal' Shortreal' = True
     (==) Real'      Real'      = True
     (==) Realtime'  Realtime'  = True
     (==) _          _          = False
 
   public export
-  bitsCnt : NonIntegerType -> Nat
+  bitsCnt : Real -> Nat
   bitsCnt Shortreal' = 32
   bitsCnt Real'      = 64
   bitsCnt Realtime'  = 64
@@ -240,9 +240,9 @@ namespace SVType
   public export
   data SVType : Type where
     -- Implicit : SVType -- Declare an implicit net type
-    RVar : NonIntegerType -> SVType
-    SVar : IntegerVectorType -> SVType
-    VVar : IntegerAtomType -> SVType
+    RVar : Real -> SVType
+    SVar : Atom -> SVType
+    VVar : Vector -> SVType
     PackedArr : (t : SVType) -> (p : PABasic t) => Nat -> Nat -> SVType
     ||| The main difference between an unpacked array and a packed array is that
     ||| an unpacked array is not guaranteed to be represented as a contiguous set of bits
@@ -293,12 +293,12 @@ namespace SVType
     -- Packed struct, union, enum
 
   public export
-  data State4S : IntegerVectorType -> Type where
+  data State4S : Atom -> Type where
     S4L : State4S Logic'
     S4R : State4S Reg'
 
   public export
-  data State4V : IntegerAtomType -> Type where
+  data State4V : Vector -> Type where
     V4I : State4V Integer'
     V4T : State4V Time'
 
