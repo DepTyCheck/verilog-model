@@ -24,7 +24,7 @@ genSVType = deriveGen
 genSVObjListGen : Fuel -> Gen MaybeEmpty SVObjList
 genSVObjListGen = deriveGen
 
---Test.Verilog.Expression.genExpressions = deriveGen
+Test.Verilog.Expression.genExpressions = deriveGen
 --Test.Verilog.Expression.genExpressions' = deriveGen
 
 dseed : IO StdGen
@@ -48,11 +48,12 @@ printMCov cgi path = do
   Right () <- writeFile path $ show @{Colourful} cgi | Left err => die "Couldn't write the model coverage to file: \{show err}"
   pure ()
 
-test' : IO ()
-test' = do
-  osTime <- clockTime UTC
-  putStr "Derivation end time : "
-  printLn $ show (seconds osTime)
+handWritten : Fuel -> Gen MaybeEmpty (t ** objs ** used ** SVExpression t objs used)
+handWritten fuel = do
+  t <- genSVType fuel
+  objs <- genSVObjListGen fuel
+  (used ** expr) <- genExpressions fuel t objs
+  pure (t ** objs ** used ** expr)
 
 covering
 test : IO ()
@@ -61,7 +62,7 @@ test = do
   putStr "Derivation end time : "
   printLn $ show (seconds osTime)
   let intialCoverage = initCoverageInfo'' [`{SVExpression}]
-  let vals = unGenTryAllD' !dseed $ genExpressions' (limit 10)
+  let vals = unGenTryAllD' !dseed $ handWritten (limit 10)
   let vals = flip mapMaybe vals $ \gmd => snd gmd
   let vals = take (limit 5) vals
   let (coverages, exprs) = unzip vals
