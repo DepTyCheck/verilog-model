@@ -42,6 +42,7 @@ public export
 data NetType = Supply0' | Supply1' | Triand' | Trior' | Trireg' | Tri0' | Tri1' | Tri' | Uwire' | Wire' | Wand' | Wor';
 
 namespace States
+
   ||| 6.3.1 Logic values
   |||
   ||| Several SystemVerilog data types are 4-state types, which can store all four logic values. All bits of 4-state
@@ -59,11 +60,10 @@ namespace States
 
 namespace Vector
 
-  ||| 6.9 Vector declarations
-  ||| A data object declared as reg, logic, or bit (or as a matching user-defined type or implicitly as logic)
-  ||| without a range specification shall be considered 1-bit wide and is known as a scalar. A multibit data object
-  ||| of one of these types shall be declared by specifying a range and is known as a vector. Vectors are packed
-  ||| arrays of scalars
+  ||| The multibit data type.
+  ||| Bit-select and part-select operations can be applied to it.
+  |||
+  ||| In the IEEE 1800-2023 EBNF this type corresponds to `integer_atom_type`.
   public export
   data Vector = Byte' | Shortint' | Int' | Longint' | Integer' | Time';
 
@@ -106,6 +106,12 @@ namespace Vector
 
 namespace Atom
 
+  ||| The 1-bit wide data type.
+  |||
+  ||| A multibit data type is declared by specifying a range, creating a packed array.
+  ||| The `PABasic` predicate implements this restriction and allows only `Atom` values as basic elements.
+  |||
+  ||| In the IEEE 1800-2023 EBNF this type corresponds to `integer_vector_type`.
   public export
   data Atom = Bit' | Logic' | Reg';
 
@@ -241,8 +247,15 @@ namespace SVType
   data SVType : Type where
     -- Implicit : SVType -- Declare an implicit net type
     RVar : Real -> SVType
-    SVar : Atom -> SVType
+    AVar : Atom -> SVType
     VVar : Vector -> SVType
+    ||| 6.9 Vector declarations
+    ||| A data object declared as reg, logic, or bit (or as a matching user-defined type or implicitly as logic)
+    ||| without a range specification shall be considered 1-bit wide and is known as a scalar. A multibit data object
+    ||| of one of these types shall be declared by specifying a range and is known as a vector. Vectors are packed
+    ||| arrays of scalars
+    |||
+    ||| IEEE 1800-2023
     PackedArr : (t : SVType) -> (p : PABasic t) => Nat -> Nat -> SVType
     ||| The main difference between an unpacked array and a packed array is that
     ||| an unpacked array is not guaranteed to be represented as a contiguous set of bits
@@ -278,7 +291,7 @@ namespace SVType
   ||| recursively other packed arrays and packed structures.
   public export
   data PABasic : SVType -> Type where
-    PS : PABasic $ SVar s
+    PS : PABasic $ AVar s
     PA : {t : SVType} -> (p : PABasic t) => PABasic $ PackedArr t s e
 
   ||| 6.11.1 Integral types
@@ -287,25 +300,17 @@ namespace SVType
   ||| integer data type, packed array, packed structure, packed union, or enum.
   public export
   data SVIntegral : SVType -> Type where
-    ST : SVIntegral $ SVar t
+    AT : SVIntegral $ AVar t
     VT : SVIntegral $ VVar t
     PT : {t : SVType} -> (p : PABasic t) => SVIntegral $ PackedArr t s e
     -- Packed struct, union, enum
 
   public export
-  data State4S : Atom -> Type where
-    S4L : State4S Logic'
-    S4R : State4S Reg'
-
-  public export
-  data State4V : Vector -> Type where
-    V4I : State4V Integer'
-    V4T : State4V Time'
-
-  public export
   data State4 : SVIntegral svt -> Type where
-    SS : State4S t => State4 $ ST {t}
-    SV : State4V t => State4 $ VT {t}
+    A4L : State4 $ AT {t=Logic'}
+    S4R : State4 $ AT {t=Reg'}
+    V4I : State4 $ VT {t=Integer'}
+    V4T : State4 $ VT {t=Time'}
     SP : {t : SVType} -> (p : PABasic t) => (i : SVIntegral t) => State4 i -> State4 $ PT {t}
 
   ||| 6.7.1 Net declarations with built-in net types
@@ -314,8 +319,8 @@ namespace SVType
   |||   tri reg r;
   public export
   data NotReg : SVIntegral svt -> Type where
-    NRSL : NotReg $ ST {t=Logic'}
-    NRSB : NotReg $ ST {t=Bit'}
+    NRSL : NotReg $ AT {t=Logic'}
+    NRSB : NotReg $ AT {t=Bit'}
     NRPT : {t : SVType} -> (p : PABasic t) => (i : SVIntegral t) => NotReg i => NotReg $ PT {t}
 
   ||| 6.7.1 Net declarations with built-in net types
@@ -333,7 +338,7 @@ namespace SVType
   public export
   bitsCnt : SVType -> Nat
   bitsCnt (RVar x)            = bitsCnt x
-  bitsCnt (SVar x)            = 1
+  bitsCnt (AVar x)            = 1
   bitsCnt (VVar x)            = bitsCnt x
   bitsCnt (PackedArr   t s e) = S (max s e `minus` min s e) * bitsCnt t
   bitsCnt (UnpackedArr t s e) = bitsCnt t
@@ -341,7 +346,7 @@ namespace SVType
   public export
   isSigned : SVType -> Bool
   isSigned (RVar x)            = True
-  isSigned (SVar x)            = False
+  isSigned (AVar x)            = False
   isSigned (VVar x)            = isSigned x
   isSigned (PackedArr   t _ _) = isSigned t
   isSigned (UnpackedArr t _ _) = isSigned t
@@ -349,7 +354,7 @@ namespace SVType
   public export
   states : SVType -> State
   states (RVar x)            = S4
-  states (SVar x)            = states x
+  states (AVar x)            = states x
   states (VVar x)            = states x
   states (PackedArr   t s e) = states t
   states (UnpackedArr t s e) = states t
@@ -436,7 +441,7 @@ data ResolvedNet : SVObject -> Type where
 public export
 data VarOrPacked : SVType -> Type where
   VR : VarOrPacked $ RVar t
-  VS : VarOrPacked $ SVar t
+  VS : VarOrPacked $ AVar t
   VV : VarOrPacked $ VVar t
   VP : {t : SVType} -> (p : PABasic t) => VarOrPacked $ PackedArr t s e
 
@@ -446,7 +451,7 @@ data IsUnpackedArr : SVType -> Type where
 
 public export
 defaultNetType : SVObject
-defaultNetType = Net Wire' (SVar Logic') -- {p=NA {i=ST {t=Logic'}} {s=SS {t=Logic'}}}
+defaultNetType = Net Wire' (AVar Logic')
 
 namespace SVObjList
 

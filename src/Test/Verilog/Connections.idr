@@ -88,7 +88,7 @@ totalOutputs = length . allOutputs
 public export
 basicIntegral : SVType -> Bool
 basicIntegral (RVar x)            = False
-basicIntegral (SVar x)            = True
+basicIntegral (AVar x)            = True
 basicIntegral (VVar x)            = True
 basicIntegral (PackedArr   t _ _) = True
 basicIntegral (UnpackedArr x _ _) = basicIntegral x

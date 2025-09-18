@@ -45,7 +45,7 @@ namespace TypeLiteralVect
   public export
   data TypeLiteral : SVType -> Type where
     RL  : BinaryList S4 -> TypeLiteral $ RVar t
-    SL  : BinaryList (states t) -> TypeLiteral $ SVar t
+    AL  : BinaryList (states t) -> TypeLiteral $ AVar t
     VL  : BinaryList (states t) -> TypeLiteral $ VVar t
     PAL : {t : SVType} -> (p : PABasic t) => TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ PackedArr t s e
     UAL : TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ UnpackedArr t s e

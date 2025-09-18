@@ -32,11 +32,11 @@ import System.Directory
 
 StdModules : ModuleSigsList
 StdModules =
-  [ MkModuleSig [Var $ SVar Logic', Var $ SVar Logic'] [Var $ SVar Logic']
-  , MkModuleSig [Var $ SVar Logic', Var $ SVar Logic'] [Var $ SVar Logic']
-  , MkModuleSig [Var $ SVar Logic', Var $ SVar Logic'] [Var $ SVar Logic']
-  , MkModuleSig [Var $ SVar Logic', Var $ SVar Logic'] [Var $ SVar Logic']
-  , MkModuleSig [Var $ SVar Logic']                    [Var $ SVar Logic']
+  [ MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
+  , MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
+  , MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
+  , MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
+  , MkModuleSig [Var $ AVar Logic']                    [Var $ AVar Logic']
   ]
 
 StdModulesPV : PrintableModules StdModules
