@@ -19,10 +19,10 @@ import System.Clock
 %logging "deptycheck" 20
 
 genSVType : Fuel -> Gen MaybeEmpty SVType
-genSVType = deriveGen
+--genSVType = deriveGen
 
 genSVObjListGen : Fuel -> Gen MaybeEmpty SVObjList
-genSVObjListGen = deriveGen
+--genSVObjListGen = deriveGen
 
 --Test.Verilog.Expression.genExpressions = deriveGen
 --Test.Verilog.Expression.genExpressions' = deriveGen
@@ -47,6 +47,12 @@ printMCov : CoverageGenInfo a -> String -> IO ()
 printMCov cgi path = do
   Right () <- writeFile path $ show @{Colourful} cgi | Left err => die "Couldn't write the model coverage to file: \{show err}"
   pure ()
+
+test' : IO ()
+test' = do
+  osTime <- clockTime UTC
+  putStr "Derivation end time : "
+  printLn $ show (seconds osTime)
 
 covering
 test : IO ()
