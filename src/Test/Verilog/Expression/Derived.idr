@@ -18,8 +18,14 @@ import System.Clock
 
 %logging "deptycheck" 20
 
+genSVType : Fuel -> Gen MaybeEmpty SVType
+genSVType = deriveGen
+
+genSVObjListGen : Fuel -> Gen MaybeEmpty SVObjList
+genSVObjListGen = deriveGen
+
 --Test.Verilog.Expression.genExpressions = deriveGen
-Test.Verilog.Expression.genExpressions' = deriveGen
+--Test.Verilog.Expression.genExpressions' = deriveGen
 
 dseed : IO StdGen
 dseed = initSeed
