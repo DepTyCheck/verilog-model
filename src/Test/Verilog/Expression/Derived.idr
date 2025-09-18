@@ -19,7 +19,7 @@ import System.Clock
 %logging "deptycheck" 20
 
 --Test.Verilog.Expression.genExpressions = deriveGen
---Test.Verilog.Expression.genExpressions' = deriveGen
+Test.Verilog.Expression.genExpressions' = deriveGen
 
 dseed : IO StdGen
 dseed = initSeed
