@@ -63,7 +63,7 @@ namespace Vector
   ||| The multibit data type.
   ||| Bit-select and part-select operations can be applied to it.
   |||
-  ||| In the IEEE 1800-2023 EBNF this type corresponds to `integer_atom_type`.
+  ||| This type corresponds to `integer_atom_type` in the IEEE 1800-2023 EBNF.
   public export
   data Vector = Byte' | Shortint' | Int' | Longint' | Integer' | Time';
 
@@ -111,7 +111,7 @@ namespace Atom
   ||| A multibit data type is declared by specifying a range, creating a packed array.
   ||| The `PABasic` predicate implements this restriction and allows only `Atom` values as basic elements.
   |||
-  ||| In the IEEE 1800-2023 EBNF this type corresponds to `integer_vector_type`.
+  ||| This type corresponds to `integer_vector_type` in the IEEE 1800-2023 EBNF.
   public export
   data Atom = Bit' | Logic' | Reg';
 
