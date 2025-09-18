@@ -155,5 +155,9 @@ data SVExpression : (expressionType : SVType) -> (objects : SVObjList) -> (usedO
 
 export
 genExpressions : Fuel ->
-                 (expressionType : SVType) -> (objects : SVObjList) -> (usedObjects : TreeOfIndices objects) ->
-                 Gen MaybeEmpty (SVExpression expressionType objects usedObjects)
+                 (expressionType : SVType) -> (objects : SVObjList) ->
+                 Gen MaybeEmpty (usedObjects ** SVExpression expressionType objects usedObjects)
+
+export
+genExpressions' : Fuel ->
+                  Gen MaybeEmpty (expressionType ** objects ** usedObjects ** SVExpression expressionType objects usedObjects)
