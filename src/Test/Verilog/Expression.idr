@@ -161,3 +161,9 @@ genExpressions : Fuel ->
 export
 genExpressions' : Fuel ->
                   Gen MaybeEmpty (expressionType ** objects ** usedObjects ** SVExpression expressionType objects usedObjects)
+
+export
+genSVType : Fuel -> Gen MaybeEmpty SVType
+
+export
+genSVObjListGen : Fuel -> Gen MaybeEmpty SVObjList

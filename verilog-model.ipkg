@@ -39,3 +39,4 @@ modules = Test.Common.Utils
         , Test.Verilog.Pretty
         , Test.Verilog.Expression
         , Test.Verilog.Expression.Derived
+        , Test.Verilog.Expression.Profiling
