@@ -12,6 +12,8 @@ import System.Directory
 
 import public Test.Verilog.Expression
 
+import Test.Verilog.Expression.Derived
+
 import System.Clock
 
 
