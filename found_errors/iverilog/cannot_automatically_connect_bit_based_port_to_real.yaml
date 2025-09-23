@@ -5,9 +5,19 @@ title: Cannot automatically connect bit based port to real
 regex: >
   Cannot automatically connect bit based .* to real
 issue_novelty: new
+issue_link: https://github.com/steveicarus/iverilog/issues/1278
 examples:
   - cannot_automatically_connect_bit_based_port_to_real_v1:
       first_found: 14.09.2025
+      minified_error: >
+        top.sv:5: error: Cannot automatically connect bit based inout port 1 (a1) of module a to real signal b1.
+      minified_example: |
+        module a( input triand logic a1 );
+        endmodule: a
+
+        module b( input shortreal b1 );
+          a ex(.a1(b1));
+        endmodule: b
       full_error: >
         error: Cannot automatically connect bit based inout port 4 (icvwrbcj) of module bffmgj to real signal lom.
       full_example: |

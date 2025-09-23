@@ -5,7 +5,7 @@ title: Real is not supported
 issue_novelty: already_known
 issue_link: https://github.com/povik/yosys-slang/issues/181#issuecomment-3161067098
 regex: >
-  Feature unimplemented at [\/A-z0-9-]+slang_frontend\.cc:1379, see AST and code line dump above
+  Feature unimplemented at [\/A-z0-9-]+slang_frontend\.cc:\d+, see AST and code line dump above
 maintainers_response: low
 examples:
   - feature_unimplemented_see_ast_v1:
@@ -138,3 +138,42 @@ examples:
           assign q = '{'{'{'{'b1}}},'{'{'{'b1}}},'{'{'{'bx}}}};
           assign ikaiuxfbw = 'bz;
         endmodule: tnieawpwht
+  - feature_unimplemented_see_ast_v2:
+      first_found: 23.09.2025
+      full_error: >
+        ERROR: Feature unimplemented at /yosys-slang/src/slang_frontend.cc:1379, see AST and code line dump above
+      full_example: |
+        module gq
+          ( input supply0 logic [3:4][4:3][4:2][1:2] sojlgqklze [0:1]
+          , input trireg logic [4:2][3:0][2:2] joxjnumrhh [3:3][1:1][4:2][4:1]
+          , input bit indcnup [3:1][0:4]
+          , input uwire logic [3:4][3:2][3:4][4:4]  grvrtmc
+          );
+          
+          not mfaptrof(ewx, oy);
+          and lvuzt(zltglg, oy, pstnk);  
+          or dhvl(zltglg, h, pstnk);
+
+          // Multi-driven assigns
+          assign ewx = oy;
+          assign oy = 'b00zzz;
+          assign pstnk = grvrtmc;
+        endmodule: gq
+
+        module bglisuxguk
+          ( output trior logic pptu [4:1][0:3][2:1][1:0]
+          , output logic [1:4]  qj
+          , output tri logic [2:2][4:3] jdh [0:0][0:0][0:3]
+          , output logic kmuejvg [2:0]
+          , input real vu
+          );
+          
+          not rbhybaafx(qj, vu);
+          
+          // Single-driven assigns
+          assign kmuejvg = '{'bx0,'b1x11,'bx};
+          
+          // Multi-driven assigns
+          assign pptu = pptu;
+          assign jdh = jdh;
+        endmodule: bglisuxguk
