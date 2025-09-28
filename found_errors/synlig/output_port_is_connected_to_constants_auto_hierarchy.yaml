@@ -4,7 +4,7 @@ id: output_port_is_connected_to_constants_auto_hierarchy
 title: >
   Port is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }
 regex: >
-  Output port .* is connected to constants: ({ \$auto\$hierarchy\.cc:1462:execute\$\d+ .* }|[0-9'A-z]+|{ .*'.. \\.*})
+  Output port .* is connected to constants:
 issue_novelty: new
 issue_link: https://github.com/chipsalliance/synlig/issues/2771
 examples:
@@ -372,3 +372,67 @@ examples:
           assign ovt = ovt;
           assign aaxmrsyje = aaxmrsyje;
         endmodule: upmswy
+  - output_port_is_connected_to_constants_auto_hierarchy_arr:
+      first_found: 28.09.2025
+      full_error: >
+        ERROR: Output port okmmu.igey.n (uqtuefe) is connected to constants: { \zodkrqghz [8:1] 1'0 }
+      full_example: |
+        module uqtuefe
+          ( output time badkwax
+          , output triand logic [3:2][0:1][2:4] mf [3:3][0:1]
+          , output logic [1:3][2:0]  n
+          , output trior logic [4:1][0:0][1:3] gbyi [3:4][0:2]
+          );
+          
+          not hjzx(cfbgpsgsp, badkwax);
+          not vrpvuyew(badkwax, arlcswh);
+
+          // Single-driven assigns
+          assign n = '{'{'b1z1z,'bxz,'bx0},'{'b1xz1,'b0,'bx},'{'bxx,'bx0xx0,'bx}};
+        endmodule: uqtuefe
+
+        module okmmu
+          ( output shortint zodkrqghz
+          , output trior logic rszvvey
+          , output wire logic c [0:4][2:3][2:0]
+          , output supply0 logic tfhwwadcqs [0:1][1:3][0:0][4:2]
+          , input tri0 logic [2:1][1:1][0:1][0:4]  swac
+          );
+          
+          trior logic [4:1][0:0][1:3] cbrdrx [3:4][0:2];
+          triand logic [3:2][0:1][2:4] dmsj [3:3][0:1];
+          
+          uqtuefe igey(.badkwax(vvhtzqlxog), .mf(dmsj), .n(zodkrqghz), .gbyi(cbrdrx));
+          not gw(cbpaylbjuc, swac);
+          nand h(rszvvey, zodkrqghz, zdakk);
+
+          // Multi-driven assigns
+          assign swac = rszvvey;
+          assign dmsj = dmsj;
+          assign c = c;
+          assign cbpaylbjuc = zodkrqghz;
+        endmodule: okmmu
+
+        module bwtggwneo
+          (input triand logic jjymsq);
+          
+          or dhafvwaa(xgppnh, kg, kg);
+          xor tdpqwcbk(rdqlobs, kg, kg);
+          not ra(nhq, kg);  
+          nand f(yprv, kg, nhq);
+
+          // Multi-driven assigns
+          assign kg = 'b1zx0x;
+          assign rdqlobs = 'bzx00;
+          assign nhq = kg;
+          assign jjymsq = 'b00;
+          assign xgppnh = 'b0;
+        endmodule: bwtggwneo
+
+        module ctgmc
+          (input reg [0:0][4:4][4:4]  a, input triand logic [2:3]  rdlibzep, input reg [3:0][3:3][3:1] grrkjn [0:0], input wire logic [1:2][3:0][4:3] qz [2:0]);
+
+          // Multi-driven assigns
+          assign rdlibzep = '{'b0zzz0,'b0};
+          assign qz = '{'{'{'{'bx1xz,'b00},'{'bxx,'b1zzz1},'{'b10x,'b0},'{'bxzx,'bx100}},'{'{'bzzx,'b1},'{'b0x0,'b0z00z},'{'b001,'bzx0},'{'bx,'bx01xx}}},'{'{'{'b1,'bz00},'{'bz,'b10},'{'bxx1,'b10x},'{'b0x0x0,'b1z10}},'{'{'bx,'b10xx1},'{'bzx10z,'bx},'{'bzxz01,'b0zz1z},'{'b1,'bz0}}},'{'{'{'b111,'bx1},'{'b1101,'b101},'{'bx,'bx},'{'b00,'bzx1}},'{'{'b101,'b1z},'{'bxx1z,'bxx0z},'{'bz,'bxx1},'{'b10x,'b1}}}};
+        endmodule: ctgmc
