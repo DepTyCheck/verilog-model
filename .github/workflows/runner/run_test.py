@@ -2,6 +2,7 @@ import subprocess
 from find_top import find_top
 from handle_errors import FoundMatch, UnexpectedErrorText, extract_and_classify_errors, match_whole_output
 from ignored_errors_list import IgnoredErrorsList
+from error_match_in_test import ErrorMatchInTest
 
 COMMAND_TIMEOUT_MINUTES = 7
 COMMAND_TIMEOUT_SECONDS = COMMAND_TIMEOUT_MINUTES * 60
@@ -69,7 +70,7 @@ def print_file(file_content: str, file_path: str) -> None:
 
 def run_test(
     cmd: str, file_content: str, file_path: str, error_regex: str, ignored_errors: IgnoredErrorsList
-) -> tuple[bool, list[str], list[FoundMatch]]:
+) -> tuple[bool, list[str], list[ErrorMatchInTest]]:
     """
     Run a single test (analysis or simulation) and handle its errors.
     Returns:
@@ -83,6 +84,7 @@ def run_test(
             output,
             error_regex,
             ignored_errors,
+            test_path=file_path,
         )
 
         # Match whole output
@@ -92,7 +94,7 @@ def run_test(
             if unexpected_error_whole == None:
                 unexpected_errors.append("\n".join(output.splitlines()[:3]))
             elif isinstance(unexpected_error_whole, FoundMatch):
-                found_matches.append(unexpected_error_whole)
+                found_matches.append(ErrorMatchInTest(match=unexpected_error_whole, test_path=file_path))
 
         if len(unexpected_errors) > 0:
             print_file(file_content, file_path)

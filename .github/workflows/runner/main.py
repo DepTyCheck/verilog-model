@@ -10,6 +10,8 @@ from found_error import (
     compute_ncd_for_errors,
     plot_error_distances_mds,
 )
+from error_match_in_test import ErrorMatchInTest
+from known_errors_report import KnownErrorsReport
 from run_test import make_command, run_test
 from utils import print_pretty
 
@@ -78,6 +80,12 @@ def parse_args():
         default=[],
         help="Additional regexes to ignore (can be specified multiple times)",
     )
+    parser.add_argument(
+        "--known-errors-report-output",
+        type=str,
+        help="Path to save known errors report",
+        required=True,
+    )
 
     return parser.parse_args()
 
@@ -89,7 +97,7 @@ def run(
     file_content: str,
     ignored_errors: IgnoredErrorsList,
     all_found_errors: list[FoundError],
-) -> tuple[bool, list[UnexpectedErrorText], list[FoundMatch]]:
+) -> tuple[bool, list[UnexpectedErrorText], list[ErrorMatchInTest]]:
     real_cmd = make_command(
         cmd=raw_cmd,
         file_path=file_path_str,
@@ -124,6 +132,8 @@ def main() -> None:
     stats = Counter()
     all_found_errors: list[FoundError] = []
 
+    report = KnownErrorsReport()
+
     for file_path in Path(gen_path).glob("*.sv"):
         file_path_str = str(file_path)
         with open(file_path, "r", encoding="utf-8") as file:
@@ -139,6 +149,8 @@ def main() -> None:
             all_found_errors=all_found_errors,
         )
 
+        report.add_errors(cmd_found_matches)
+
         sim_res = True
         sim_unexpected_errors: list[UnexpectedErrorText] = []
 
@@ -152,6 +164,8 @@ def main() -> None:
                 ignored_errors=ignored_errors,
                 all_found_errors=all_found_errors,
             )
+
+            report.add_errors(sim_found_matches)
 
         if cmd_res and sim_res:
             stats["clean"] += 1
@@ -178,6 +192,8 @@ def main() -> None:
             job_link=args.job_link,
             output_path=args.error_distances_output,
         )
+
+    report.save(args.known_errors_report_output)
 
     print_pretty(
         [
