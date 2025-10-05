@@ -80,8 +80,8 @@ class IgnoredErrorsList:
         dir_path_obj = Path(dir_path)
         if not dir_path_obj.exists():
             print(
-                f"Warning: Directory '{
-                    dir_path}' does not exist. No ignored errors loaded."
+                f"""Warning: Directory {
+                    dir_path_obj.absolute()} does not exist. No ignored errors loaded."""
             )
             self._errors = []
             return
