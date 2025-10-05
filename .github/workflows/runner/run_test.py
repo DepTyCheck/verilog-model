@@ -33,8 +33,8 @@ def execute_command(cmd: str) -> tuple[str, int]:
         return output, result.returncode
     except subprocess.TimeoutExpired as timeout_error:
         print(
-            f"Command timed out after {
-              COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}"
+            f"""Command timed out after {
+              COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}"""
         )
         return f"Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}", 1
     except Exception as error:
