@@ -80,8 +80,8 @@ class IgnoredErrorsList:
         dir_path_obj = Path(dir_path)
         if not dir_path_obj.exists():
             print(
-                f"""Warning: Directory {
-                    dir_path_obj.absolute()} does not exist. No ignored errors loaded."""
+                f"""Warning: Directory '{
+                    dir_path_obj.absolute()}' does not exist. No ignored errors loaded."""
             )
             self._errors = []
             return
@@ -89,8 +89,8 @@ class IgnoredErrorsList:
         yaml_files = list(dir_path_obj.glob("*.yaml"))
         if not yaml_files:
             print(
-                f"Warning: No YAML files found in '{
-                    dir_path}'. No ignored errors loaded."
+                f"""Warning: No YAML files found in '{
+                    dir_path_obj.absolute()}'. No ignored errors loaded."""
             )
 
         errors: List[KnownError] = []
@@ -110,8 +110,8 @@ class IgnoredErrorsList:
                         errors.append(KnownError(id=error_id, pattern=pattern, mode=mode))
                     else:
                         print(
-                            f"Warning: {
-                                yaml_file} missing 'id' or 'regex', skipping."
+                            f"""Warning: {
+                                yaml_file} missing 'id' or 'regex', skipping."""
                         )
             except Exception as e:
                 print(f"Warning: Failed to parse {yaml_file}: {e}")
@@ -138,8 +138,8 @@ class IgnoredErrorsList:
                 match = re.search(ignored_error.pattern, input_text, re.MULTILINE)
                 if match:
                     print(
-                        f"Found ignored error (ignored error): Pattern: {
-                        ignored_error.pattern}\n"
+                        f"""Found ignored error (ignored error): Pattern: {
+                        ignored_error.pattern}\n"""
                     )
                     return FoundMatch(error=ignored_error, matched_text=match.group(0))
         return None
