@@ -20,5 +20,5 @@ data TMPExList : (mcs : MultiConnectionsList ms m subMs) -> FinsList (length mcs
   (::) : TMPExpression mcs (valueOf $ typeOf $ index mcs f) -> TMPExList mcs fs -> TMPExList mcs (f::fs)
 
 export
-genTMPExList : Fuel -> {ms : _} -> {m : _} -> {subMs : _} -> 
+genTMPExList : Fuel -> {ms : _} -> {m : _} -> {subMs : _} ->
                (mcs : MultiConnectionsList ms m subMs) -> (fs : FinsList $ length mcs) -> Gen MaybeEmpty $ TMPExList mcs fs

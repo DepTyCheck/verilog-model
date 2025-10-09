@@ -31,7 +31,7 @@ namespace FinsList
   data FinNotIn : FinsList srcs -> Fin srcs -> Type where
     FNIEmpty : FinNotIn [] f
     FNICons  : {x, f : Fin srcs} -> (0 _ : So $ x /= f) -> (fni: FinNotIn xs f) -> FinNotIn (x :: xs) f
-  
+
   -- public export
   -- data FinInFL : FinsList l -> Fin l -> Type where
   --   Here  : (n, n' : Fin l) => (0 _ : So $ n == n') => FinInFL (n::ns) n'

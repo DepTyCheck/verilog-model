@@ -124,7 +124,7 @@ jobs:
         run : pack run ${{ env.PACKAGE_NAME }} --to "${{ env.GENERATION_DIR }}" -n ${{ env.GEN_TESTS_NUMBER }} --seed-name --seed-content --coverage mcov  # Generate modules
       - name: Show mcov
         if: matrix.upstream-mode == 'latest-pack-collection'
-        run : cat mcov
+        run: cat mcov
       - uses: actions/upload-artifact@v4
         if: matrix.upstream-mode == 'latest-pack-collection'
         with:
@@ -412,11 +412,11 @@ jobs:
           extract: true
           fileName: ${{ matrix.tool.third_party_release_name_wildcard }}
       - name: Pre-Build tool
-        run : |
+        run: |
           ${{ matrix.tool.pre_build }}
       - name: Build tool
         if: steps.cache-build.outputs.cache-hit != 'true'
-        run : |
+        run: |
           cd ${{ matrix.tool.path }}
           ${{ matrix.tool.build }}
       - name: Save build
@@ -426,7 +426,7 @@ jobs:
           path: ${{ matrix.tool.path }}
           key: ${{ steps.cache-build.outputs.cache-primary-key }}
       - name: Install tool
-        run : |
+        run: |
           cd ${{ matrix.tool.path }}
           ${{ matrix.tool.install }}
       - name: Print version
@@ -445,7 +445,7 @@ jobs:
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
       - name: Run
-        run : |
+        run: |
           set +e
           source .venv/bin/activate
 
