@@ -28,7 +28,7 @@ defaults:
 env:
   PACK_DIR: /root/.pack
   GENERATION_DIR: 'generated-modules'
-  GEN_TESTS_NUMBER: 256
+  GEN_TESTS_COUNT: 256
   BUILD_DIR: '.build'
   PACKAGE_NAME: verilog-model
   ERROR_DISTANCES_OUT: error_distances.html
@@ -121,7 +121,13 @@ jobs:
       #   run: pack test ${{ env.PACKAGE_NAME }}
       - name: Gen SystemVerilog modules
         if: matrix.upstream-mode == 'latest-pack-collection'
-        run : pack run ${{ env.PACKAGE_NAME }} --to "${{ env.GENERATION_DIR }}" -n ${{ env.GEN_TESTS_NUMBER }} --seed-name --seed-content --coverage mcov  # Generate modules
+        run: |
+          pack run ${{ env.PACKAGE_NAME }} \
+            --to "${{ env.GENERATION_DIR }}" \
+            -n ${{ env.GEN_TESTS_COUNT }} \
+            --seed-name \
+            --seed-content \
+            --coverage mcov
       - name: Show mcov
         if: matrix.upstream-mode == 'latest-pack-collection'
         run: cat mcov
@@ -531,7 +537,7 @@ jobs:
             --current-tools-reports-dir run-stats \
             --tools-reports-pattern "*-run-stats.json" \
             --result-report ${{ env.REPORT_PATH }} \
-            --tests-number ${{ env.GEN_TESTS_NUMBER }}
+            --tests-number ${{ env.GEN_TESTS_COUNT }}
 
       - name: Bot Details
         id: bot-details
