@@ -30,13 +30,13 @@ namespace BinaryList
 namespace TypeLiteralVect
 
   public export
-  data TypeLiteral : SVType -> Type 
+  data TypeLiteral : SVType -> Type
 
   public export
   data TypeLiteralVect : Nat -> SVType-> Type where
     Nil  : TypeLiteralVect 0 t
     (::) : TypeLiteral t -> TypeLiteralVect n t -> TypeLiteralVect (S n) t
-  
+
   export
   toList : TypeLiteralVect l t -> List $ TypeLiteral t
   toList []      = []
