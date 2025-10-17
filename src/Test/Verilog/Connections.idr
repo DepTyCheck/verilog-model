@@ -252,15 +252,31 @@ namespace MultiConnection
   mOrElse (Just x) _ = x
 
   public export
-  mtype : (sv : SVObjList) -> FinsList (sv.length) -> Maybe SVObject
-  mtype sv []        = Nothing
-  mtype sv (f :: fs) = Just $ unpOrDefault $ typeOf sv f
+  mtype : SVObjList -> Maybe SVObject
+  mtype []       = Nothing
+  mtype (s :: _) = Just $ unpOrDefault s
+
+  public export
+  types : (sv : SVObjList) -> FinsList (sv.length) -> SVObjList
+  types sv []        = []
+  types sv (f :: fs) = typeOf sv f :: types sv fs
+
+  public export
+  findUnpNet : SVObjList -> Maybe SVObject
+  findUnpNet []        = Nothing
+  findUnpNet (s :: sv) = if isUnpacked s && isMD s then Just s else findUnpNet sv
+
+  public export
+  resolveConnType : {ms : _} -> {m : _} -> {subMs : _} -> 
+                    (ssk : FinsList $ subSnks' ms m subMs) -> (ssc : FinsList $ subSrcs' ms m subMs) -> SVObject
+  resolveConnType ssk ssc = let allSubPorts = types (subSnks ms m subMs) ssk ++ types (subSrcs ms m subMs) ssc in
+    mOrElse (findUnpNet allSubPorts) $ mOrElse (mtype allSubPorts) defaultNetType
 
   public export
   typeOf : MultiConnection ms m subMs -> SVObject
   typeOf (MkMC (Just f) _   _        _)   = typeOf (topSnks m) f
   typeOf (MkMC _        _   (Just f) _)   = typeOf (topSrcs m) f
-  typeOf (MkMC _        ssk _        ssc) = mOrElse (mtype (subSnks ms m subMs) ssk) $ mOrElse (mtype (subSrcs ms m subMs) ssc) defaultNetType
+  typeOf (MkMC _        ssk _        ssc) = resolveConnType {ms} {m} {subMs} ssk ssc
 
   public export
   data MMC : (ms : ModuleSigsList) -> (m : ModuleSig) -> (subMs : FinsList ms.length) -> Type where
