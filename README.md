@@ -43,3 +43,15 @@ npm run build
 ```
 
 You can preview the production build with `npm run preview`.
+
+## Other
+
+### Extract SystemVerilog Examples
+
+To extract SystemVerilog examples from YAML error files into individual `.sv` files:
+
+The script creates files named after example IDs in the `all_examples` directory.
+
+```bash
+node scripts/extract_sv_examples.js found_errors all_examples
+```
