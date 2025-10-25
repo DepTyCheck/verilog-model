@@ -8,7 +8,7 @@ import Test.Verilog.SVType
 -- |||
 -- ||| module a(output logic [1:0] a1);
 -- ||| endmodule: a
--- ||| 
+-- |||
 -- ||| module b(input bit b1);
 -- ||| endmodule: b
 -- |||

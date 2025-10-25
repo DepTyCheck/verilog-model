@@ -111,10 +111,10 @@ jobs:
         run: pack test ${{ env.PACKAGE_NAME }}
       - name: Gen SystemVerilog modules
         if: matrix.upstream-mode == 'latest-pack-collection'
-        run : pack run ${{ env.PACKAGE_NAME }} --to "${{ env.GENERATION_DIR }}" -n 128 --seed-name --seed-content --coverage mcov  # Generate modules
+        run: pack run ${{ env.PACKAGE_NAME }} --to "${{ env.GENERATION_DIR }}" -n 128 --seed-name --seed-content --coverage mcov  # Generate modules
       - name: Show mcov
         if: matrix.upstream-mode == 'latest-pack-collection'
-        run : cat mcov
+        run: cat mcov
       - uses: actions/upload-artifact@v4
         if: matrix.upstream-mode == 'latest-pack-collection'
         with:
@@ -399,11 +399,11 @@ jobs:
           extract: true
           fileName: ${{ matrix.tool.third_party_release_name_wildcard }}
       - name: Pre-Build tool
-        run : |
+        run: |
           ${{ matrix.tool.pre_build }}
       - name: Build tool
         if: steps.cache-build.outputs.cache-hit != 'true'
-        run : |
+        run: |
           cd ${{ matrix.tool.path }}
           ${{ matrix.tool.build }}
       - name: Save build
@@ -413,7 +413,7 @@ jobs:
           path: ${{ matrix.tool.path }}
           key: ${{ steps.cache-build.outputs.cache-primary-key }}
       - name: Install tool
-        run : |
+        run: |
           cd ${{ matrix.tool.path }}
           ${{ matrix.tool.install }}
       - name: Print version
@@ -431,7 +431,7 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install plotly pandas scikit-learn numpy textdistance pyyaml ${{ matrix.tool.python_runner_deps }}
       - name: Run
-        run : |
+        run: |
           set +e
           source .venv/bin/activate
 
@@ -487,7 +487,7 @@ jobs:
         with:
           path: ${{ env.BUILD_DIR }}
           key: build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-latest-pack-collection
-      
+
       - name: Touch ${{ env.BUILD_DIR }} dir (-_-)
         run: |
           set +e
