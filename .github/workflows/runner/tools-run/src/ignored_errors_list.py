@@ -1,8 +1,9 @@
 from pathlib import Path
 from typing import List
 import re
-import yaml
 from enum import Enum
+
+import yaml
 
 UnexpectedErrorText = str
 

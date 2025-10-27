@@ -1,15 +1,17 @@
 import subprocess
 import os
+import re
+import datetime
+
+from textdistance import LZMANCD
 from typing import List, Tuple, Dict
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
-from ignored_errors_list import KnownError
 from sklearn.manifold import MDS
-import re
-from utils import print_pretty
-from textdistance import ZLIBNCD
-import datetime
+
+from src.ignored_errors_list import KnownError
+from src.utils import print_pretty
 
 
 class FoundError:
@@ -50,7 +52,7 @@ def compute_ncd_for_errors(nodes_text: List[str], ncd_script_path: str) -> Dict[
             #     if os.path.exists(file2):
             #         os.remove(file2)
             try:
-                ncd_value = ZLIBNCD().distance(nodes_text[i], nodes_text[j])
+                ncd_value = LZMANCD().distance(nodes_text[i], nodes_text[j])
                 results[(i, j)] = ncd_value
             except Exception as e:
                 print(e)

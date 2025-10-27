@@ -1,6 +1,7 @@
 import re
-from ignored_errors_list import FoundMatch, IgnoredErrorsList, MatchingMode, UnexpectedErrorText
-from error_match_in_test import ErrorMatchInTest
+from src.ignored_errors_list import FoundMatch, IgnoredErrorsList, MatchingMode, UnexpectedErrorText
+from src.error_match_in_test import ErrorMatchInTest
+
 
 def extract_and_classify_errors(
     output: str,
@@ -34,7 +35,12 @@ def extract_and_classify_errors(
             print(f"\033[91mFound unexpected error: {error_text}\033[0m\n")
             found_errors.append(error_text)
         else:
-            found_matches.append(ErrorMatchInTest(match=found_match, test_path=test_path,))
+            found_matches.append(
+                ErrorMatchInTest(
+                    match=found_match,
+                    test_path=test_path,
+                )
+            )
 
     return found_errors, found_matches
 

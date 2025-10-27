@@ -1,8 +1,8 @@
 import subprocess
-from find_top import find_top
-from handle_errors import FoundMatch, UnexpectedErrorText, extract_and_classify_errors, match_whole_output
-from ignored_errors_list import IgnoredErrorsList
-from error_match_in_test import ErrorMatchInTest
+from src.find_top import find_top
+from src.handle_errors import FoundMatch, UnexpectedErrorText, extract_and_classify_errors, match_whole_output
+from src.ignored_errors_list import IgnoredErrorsList
+from src.error_match_in_test import ErrorMatchInTest
 
 COMMAND_TIMEOUT_MINUTES = 7
 COMMAND_TIMEOUT_SECONDS = COMMAND_TIMEOUT_MINUTES * 60
@@ -27,7 +27,14 @@ def execute_command(cmd: str) -> tuple[str, int]:
     print(f"Execute: {cmd}")
 
     try:
-        result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=COMMAND_TIMEOUT_SECONDS)
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            timeout=COMMAND_TIMEOUT_SECONDS,
+        )
         output = result.stdout
         print(f"Exit code: {result.returncode}. Output:\n{output}")
         return output, result.returncode
