@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"generate": "node scripts/gen_errors_data.js ./found_errors src/lib/generated/errors_data.ts",
+		"generate": "node scripts/gen_errors_data.js ./found_errors src/lib/generated/errors-data.ts",
 		"check:unique_ids": "node scripts/check_unique_ids.js ./found_errors",
 		"pre": "npm run check:unique_ids && npm run generate",
 		"dev": "npm run pre && vite dev",

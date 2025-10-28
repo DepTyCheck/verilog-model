@@ -8,7 +8,7 @@ regex: >
 issue_novelty: new
 issue_link: https://github.com/chipsalliance/synlig/issues/2774
 examples:
-  - network_netlist_contains_combinational_loop_v1:
+  - network_netlist_contains_combinational_loop_ex1:
       first_found: 20.08.2025
       minified_example: |
         module a(output logic [1:0] w1);

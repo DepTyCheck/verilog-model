@@ -9,7 +9,7 @@ issue_link: https://github.com/verilator/verilator/issues/6254#issuecomment-3146
 short_desc: Maintainer suggested to avoid reporting bugs related to tristates
 maintainers_response: low
 examples:
-  - const_unexpected_in_assignment_to_unpacked_array_v1:
+  - const_unexpected_in_assignment_to_unpacked_array_ex1:
       first_found: 01.06.2025
       full_error: |
         %Error: top.sv:5:44: CONST '32'hffffffff' unexpected in assignment to unpacked array

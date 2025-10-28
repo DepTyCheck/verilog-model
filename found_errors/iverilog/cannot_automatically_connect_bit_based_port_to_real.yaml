@@ -7,7 +7,7 @@ regex: >
 issue_novelty: new
 issue_link: https://github.com/steveicarus/iverilog/issues/1278
 examples:
-  - cannot_automatically_connect_bit_based_port_to_real_v1:
+  - cannot_automatically_connect_bit_based_port_to_real_ex1:
       first_found: 14.09.2025
       minified_error: >
         top.sv:5: error: Cannot automatically connect bit based inout port 1 (a1) of module a to real signal b1.

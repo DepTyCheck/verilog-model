@@ -5,7 +5,7 @@ title: Settle region did not converge
 regex: >
   Settle region did not converge
 examples:
-  - settle_region_did_not_converge_v1:
+  - settle_region_did_not_converge_ex1:
       first_found: 10.12.2024
       minified_example: |
         module a(output int o1);

@@ -6,7 +6,7 @@ issue_novelty: unsupported
 regex: >
   syntax error, unexpected '\[', expecting ',' or '=' or '\)'
 examples:
-  - yosys_syntax_error_unexpected_expecting_or_or_v1:
+  - yosys_syntax_error_unexpected_expecting_or_or_ex1:
       first_found: 24.05.2025
       full_error: |
         ERROR: syntax error, unexpected '[', expecting ',' or '=' or ')'

@@ -8,9 +8,9 @@ id: t_dll_api_cc_ivl_nexus_s
 title: ivl_nexus_s* ivl_signal_nex ... Assertion failed
 matching_mode: whole
 regex: >
-  t-dll-api\.cc:2501: ivl_nexus_s\* ivl_signal_nex\(ivl_signal_t, unsigned int\): Assertion `net->type_ == IVL_SIT_REG' failed
+  ivl_nexus_s\* ivl_signal_nex\(ivl_signal_t, unsigned int\): Assertion `net->type_ == IVL_SIT_REG' failed
 examples:
-  - t-dll-api_cc_ivl_nexus_s_v1:
+  - t-dll-api_cc_ivl_nexus_s_ex1:
       first_found: 03.02.2025
       minified_example: |
         module a(output uwire o1 [0:1]);

@@ -5,7 +5,7 @@ title: V3Gate.cpp Circular logic should have been rejected by okVisitor
 regex: never_matching_regex_ever # V3Gate\.cpp:872: Circular logic should have been rejected by okVisitor
 issue_novelty: late
 examples:
-  - circular_logic_should_have_been_rejected_v1:
+  - circular_logic_should_have_been_rejected_ex1:
       first_found: 07.04.2025
       minified_example: |
         module a(input i1);

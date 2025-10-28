@@ -7,7 +7,7 @@ regex: >
 issue_novelty: new
 issue_link: https://github.com/chipsalliance/synlig/issues/2772#issuecomment-3146510179
 examples:
-  - signal_with_non_constant_width_v1:
+  - signal_with_non_constant_width_ex1:
       first_found: 21.07.2025
       full_error: >
         ERROR: Signal `\khbfhwajrd' with non-constant width!

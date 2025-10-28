@@ -1,4 +1,4 @@
-src/lib/generated/errors_data.ts
+src/lib/generated/errors-data.ts
 .venv
 .devcontainer
 .pnpm-store

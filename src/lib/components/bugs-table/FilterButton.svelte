@@ -7,15 +7,15 @@
 	export let group: string[];
 	export let label: string;
 	export let name: string;
-	export let extraClass: string = '';
+	export let colorClass: string;
 </script>
 
 <div class="flex items-center justify-center">
-	<Button
-		color="alternative"
-		class="w-fit border-none px-4 py-2 whitespace-nowrap shadow-none {extraClass}"
-		style="border: none; box-shadow: none; font-size: 12px; font-weight: 700; text-transform: uppercase;"
-	>
+    <Button
+        color="alternative"
+        class="w-fit border-none px-4 py-2 whitespace-nowrap shadow-none {colorClass}"
+        style="border: none; box-shadow: none;"
+    >
 		{@html label}
 		{#if group.length > 0}
 			<FilterSolid class="ml-2 h-4 w-4" />

@@ -8,7 +8,7 @@ issue_novelty: new
 issue_link: https://github.com/verilator/verilator/issues/6254#issuecomment-3146668599
 short_desc: Maintainer suggested to avoid reporting bugs related to tristates
 examples:
-  - non_packed_vertex_has_no_width_v1:
+  - non_packed_vertex_has_no_width_ex1:
       first_found: 09.09.2025
       minified_error: |
         %Error: Internal Error: top.sv:1:39: ../V3Dfg.h:226: Non packed vertex has no 'width'

@@ -5,7 +5,7 @@ title: Failed to elaborate primitive output expression
 regex: >
   Failed to elaborate primitive output expression
 examples:
-  - failed_to_elaborate_primitive_output_expression_v1:
+  - failed_to_elaborate_primitive_output_expression_ex1:
       commit_hash: c7d37bcc2164b7b928fe8211f94553623fd2bae4
       first_found: 19.07.2025
       full_error: |

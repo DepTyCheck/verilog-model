@@ -6,7 +6,7 @@ regex: >
   Instance has the same name as port
 issue_novelty: unsupported
 examples:
-  - instance_has_the_same_name_as_port_v1:
+  - instance_has_the_same_name_as_port_ex1:
       first_found: 17.12.2024
       full_error: |
         %Error: top.sv:1:8: Unsupported in C: Instance has the same name as port: 'p'

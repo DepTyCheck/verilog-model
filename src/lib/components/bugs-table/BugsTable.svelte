@@ -4,7 +4,6 @@
 		TableBodyCell,
 		TableBodyRow,
 		Table,
-		TableHead,
 		Card,
 		Heading,
 		A,
@@ -12,8 +11,9 @@
 		Badge,
 		Button
 	} from 'flowbite-svelte';
-	import TableHeadCellSortable from './TableHeadCellSortable.svelte';
-	import FilterButton from './FilterButton.svelte';
+	import TableColSortHead from '$lib/components/bugs-table/TableColSortHead.svelte';
+	import TableColHead from '$lib/components/bugs-table/TableColHead.svelte';
+	import TableColFilterHead from '$lib/components/bugs-table/TableColFilterHead.svelte';
 	import { ArrowRightOutline } from 'flowbite-svelte-icons';
 	import {
 		type CheckBoxChoice,
@@ -23,7 +23,7 @@
 	} from '$lib/core';
 	import type { DisplayInfo } from '$lib/index';
 	import { githubUrl, depTyCheckGithubUrl } from '$lib/consts';
-	import { allFoundErrors } from '$lib/generated/errors_data';
+	import { allFoundErrors } from '$lib/generated/errors-data';
 	import { formatDateDMY, getFirstFound, displayIssueNovelty } from '$lib/index';
 	import {
 		createToolChoices,
@@ -41,11 +41,13 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { LinkHandler } from '$lib/index';
+	// import { getProcessedErrorsData } from '$lib/errors-utils';
+	// import ErrorStatsCell from '$lib/components/bugs-table/ErrorStatsCell.svelte';
+
+	// const errorsData = getProcessedErrorsData();
 
 	let scrollContainer: HTMLDivElement;
 	let bottomScrollbar: HTMLInputElement;
-	let showLeftShadow = false;
-	let showRightShadow = false;
 	let showBottomScrollbar = false;
 
 	let toolChoices: CheckBoxChoice[] = createToolChoices(allFoundErrors);
@@ -117,7 +119,7 @@
 		const stageParam = url.searchParams.get('stage');
 		stageGroup = stageParam ? stageParam.split(',') : [];
 		const sortParam = url.searchParams.get('sort');
-		if (sortParam && ['firstFound', 'title'].includes(sortParam)) {
+		if (sortParam && ['firstFound', 'title', 'stats'].includes(sortParam)) {
 			sortColumn = sortParam as SortableColumn;
 		}
 		const ascParam = url.searchParams.get('asc');
@@ -134,19 +136,18 @@
 
 	onMount(() => {
 		loadFromQueryParams(page.url);
-		// Initialize shadows after first render
 		requestAnimationFrame(() => {
 			if (scrollContainer) updateShadows(scrollContainer);
 		});
-		// Update on resize as table width may change
 		const onResize = () => {
-			if (scrollContainer) updateShadows(scrollContainer);
+	
+				if (scrollContainer) updateShadows(scrollContainer);
+		
 		};
 		window.addEventListener('resize', onResize);
 		return () => window.removeEventListener('resize', onResize);
 	});
 
-	// Update scrollbar visibility when filtered data changes
 	$: if (scrollContainer) {
 		requestAnimationFrame(() => {
 			updateShadows(scrollContainer);
@@ -165,6 +166,14 @@
 		if (sortColumn === 'firstFound') {
 			aVal = a ? (getFirstFound(a)?.getTime() ?? 0) : 0;
 			bVal = b ? (getFirstFound(b)?.getTime() ?? 0) : 0;
+		} else if (sortColumn === 'stats') {
+			// Sort by percentage occurrence
+			// const aStat = errorsData.errors[a.id];
+			// const bStat = errorsData.errors[b.id];
+			aVal = 1;
+			bVal = 2;
+			// aVal = aStat && totalRuns > 0 ? (aStat.count / totalRuns) * 100 : 0;
+			// bVal = bStat && totalRuns > 0 ? (bStat.count / totalRuns) * 100 : 0;
 		} else {
 			aVal = a[sortColumn] || '';
 			bVal = b[sortColumn] || '';
@@ -231,22 +240,20 @@
 		}
 	}
 
-	// Update query params when filter changes
 	$: if (browser && filteredErrors) updateQueryParams();
 
 	function updateShadows(el: HTMLElement | null) {
 		if (!el) return;
-		const maxScrollLeft = el.scrollWidth - el.clientWidth;
-		const current = el.scrollLeft;
-		showLeftShadow = current > 0;
-		showRightShadow = current < maxScrollLeft - 1;
-		showBottomScrollbar = maxScrollLeft > 0;
+		
+		showBottomScrollbar = el.scrollWidth > el.clientWidth;
 	}
 
 	function handleScroll(e: any) {
 		const el = e.target as HTMLElement;
 		updateShadows(el);
-		// Sync bottom scrollbar with table scroll
+
+		// Update bottom scrollbar position
+		// const bottomScrollbar = document.getElementById('bottom-scrollbar') as HTMLInputElement;
 		if (bottomScrollbar) {
 			const maxScroll = el.scrollWidth - el.clientWidth;
 			const scrollPercentage = maxScroll > 0 ? (el.scrollLeft / maxScroll) * 100 : 0;
@@ -255,12 +262,14 @@
 	}
 
 	function handleBottomScrollbarChange() {
+		// const bottomScrollbar = document.getElementById('bottom-scrollbar') as HTMLInputElement;
 		if (scrollContainer && bottomScrollbar) {
 			const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
 			const scrollLeft = (parseFloat(bottomScrollbar.value) / 100) * maxScroll;
 			scrollContainer.scrollLeft = scrollLeft;
 		}
 	}
+
 </script>
 
 <Card size="xl" class="max-w-none p-4 shadow-sm sm:p-6">
@@ -287,100 +296,87 @@
 			on:scroll|passive={handleScroll}
 			style="overflow-x: auto; max-width: 100%;"
 		>
-			<Table
-				hoverable={true}
-				divClass=""
-				class="min-w-max divide-y divide-gray-200 dark:divide-gray-600"
-			>
-				<TableHead>
-					<TableHeadCellSortable
-						label="№"
-						widthClass="px-4 py-3 w-12"
-						extraClass="text-gray-400 text-center"
-					/>
-					<TableHeadCellSortable
-						label="Title"
-						sortKey="title"
-						{sortColumn}
-						{sortAsc}
-						{setSort}
-						widthClass="px-4 py-3 w-32"
-						extraClass="text-gray-700"
-					/>
-					<TableHeadCellSortable label="" widthClass="">
-						<FilterButton
+			<table class="min-w-max w-full divide-y divide-gray-200 dark:divide-gray-600 text-sm">
+				<thead class="bg-gray-50 dark:bg-gray-700">
+					<tr>
+						<TableColHead
+							label="№"
+							widthClass="w-12"
+							colorClass="text-gray-400"
+						/>
+						<TableColSortHead
+							label="Title"
+							sortKey="title"
+							{sortColumn}
+							{sortAsc}
+							{setSort}
+						/>
+						<TableColFilterHead
 							choices={toolChoices}
 							bind:group={toolGroup}
 							label="Tool"
 							name="tools"
-							extraClass="text-gray-700"
 						/>
-					</TableHeadCellSortable>
-					<TableHeadCellSortable label="" widthClass="px-4 py-3 w-32" extraClass="text-center">
-						<FilterButton
+						<TableColFilterHead
 							choices={stageChoices}
 							bind:group={stageGroup}
 							label="Stage"
 							name="stage"
-							extraClass="text-gray-700"
 						/>
-					</TableHeadCellSortable>
-					<TableHeadCellSortable
-						label="First Found"
-						sortKey="firstFound"
-						{sortColumn}
-						{sortAsc}
-						{setSort}
-						extraClass="text-center text-gray-700"
-					/>
-					<TableHeadCellSortable label="" widthClass="" extraClass="text-center">
-						<FilterButton
+						<TableColSortHead
+							label="First Found"
+							sortKey="firstFound"
+							{sortColumn}
+							{sortAsc}
+							{setSort}
+						/>
+						<TableColFilterHead
 							choices={noveltyChoices}
 							bind:group={noveltyGroup}
 							label="Novelty"
 							name="novelty"
-							extraClass="text-gray-700"
 						/>
-					</TableHeadCellSortable>
-					<TableHeadCellSortable
-						label="Related<br>issue"
-						widthClass=""
-						extraClass="text-center text-gray-700"
-					/>
-					<TableHeadCellSortable label="" widthClass="px-4 py-3 w-32" extraClass="text-center">
-						<FilterButton
+						<TableColHead
+							label="Related<br>issue"
+						/>
+						<TableColFilterHead
 							choices={maintainersChoices}
 							bind:group={maintainersGroup}
 							label="Maintainers<br>response"
 							name="maintainers"
-							extraClass="text-gray-700"
 						/>
-					</TableHeadCellSortable>
-				</TableHead>
-				<TableBody>
+						<!-- <TableColSortHead
+							label="Stats"
+							sortKey="stats"
+							{sortColumn}
+							{sortAsc}
+							{setSort}
+						/> -->
+					</tr>
+				</thead>
+				<tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-600">
 					{#each sortedErrors as item, i}
-						<TableBodyRow>
-							<TableBodyCell class="w-12 px-4 py-3 text-center text-gray-400">{i + 1}</TableBodyCell
-							>
-							<TableBodyCell class="h-16 w-32 px-4 py-3">
+						<tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+							<td class="w-12 px-4 py-3 text-center text-gray-400">{i + 1}</td>
+							<td class="h-16 w-32 px-4 py-3">
 								<A
 									href={LinkHandler(`/error/${item.id}`)}
 									class="line-clamp-2 break-words whitespace-normal">{item.title}</A
 								>
-							</TableBodyCell>
-							<TableBodyCell class="w-32 px-4 py-3 text-center">{item.tool}</TableBodyCell>
-							<TableBodyCell class="w-32 px-4 py-3 text-center">{item.stage}</TableBodyCell>
-							<TableBodyCell class="w-32 px-4 py-3 text-center"
-								>{formatDateDMY(getFirstFound(item))}</TableBodyCell
-							>
-							<TableBodyCell class="w-32 px-4 py-3 text-center">
-								{@const noveltyDisplay = displayIssueNovelty(item.issue_novelty)}
-								{#if noveltyDisplay.text}
+							</td>
+							<td class="w-32 px-4 py-3 text-center">{item.tool}</td>
+							<td class="w-32 px-4 py-3 text-center">{item.stage}</td>
+							<td class="w-32 px-4 py-3 text-center">
+								{formatDateDMY(getFirstFound(item))}
+							</td>
+							<td class="w-32 px-4 py-3 text-center">
+								{#if displayIssueNovelty(item.issue_novelty).text}
+									{@const noveltyDisplay = displayIssueNovelty(item.issue_novelty)}
 									<Badge color={noveltyDisplay.color} large>{noveltyDisplay.text}</Badge>
 									<Tooltip type="auto">{getNoveltyTooltip(item.issue_novelty)}</Tooltip>
 								{/if}
-							</TableBodyCell>
-							<TableBodyCell class="w-32 px-4 py-3 text-center">
+							</td>
+							<td class="w-32 px-4 py-3 text-center">
 								{#if item.issue_link && item.issue_link.trim() !== ''}
 									{#if getIssueNumberFromLink(item.issue_link)}
 										<A href={item.issue_link} target="_blank" rel="noopener noreferrer">
@@ -392,8 +388,8 @@
 										</A>
 									{/if}
 								{/if}
-							</TableBodyCell>
-							<TableBodyCell class="w-32 px-4 py-3 text-center">
+							</td>
+							<td class="w-32 px-4 py-3 text-center">
 								{#if item.maintainers_response}
 									{@const resp = getMaintainersResponseDisplay(item.maintainers_response)}
 									<Badge color={resp.color} large rounded>{resp.text}</Badge>
@@ -401,32 +397,22 @@
 										>{getMaintainersResponseTooltip(item.maintainers_response)}</Tooltip
 									>
 								{/if}
-							</TableBodyCell>
-						</TableBodyRow>
+							</td>
+							<!-- <td class="w-32 px-4 py-3 text-center">
+								{#if errorsData.errors[item.id]}
+									<ErrorStatsCell errorId={item.id} errorsStats={errorsData} />
+								{/if}
+							</td> -->
+						</tr>
 					{/each}
-				</TableBody>
-			</Table>
+				</tbody>
+			</table>
 		</div>
-		<!-- {#if showLeftShadow}
-			<div
-				class="pointer-events-none absolute top-0 bottom-0 left-0 w-16
-				rounded-l-md bg-gradient-to-r from-gray-200 to-transparent dark:from-gray-800"
-			></div>
-		{/if}
-
-		{#if showRightShadow}
-			<div
-				class="pointer-events-none absolute top-0 right-0 bottom-0 w-16
-				rounded-r-md bg-gradient-to-l from-gray-200 to-transparent dark:from-gray-800"
-			></div>
-		{/if} -->
 	</div>
 </Card>
 
-<!-- Add bottom spacing to prevent overlap with floating scrollbar -->
 <div class="h-12"></div>
 
-<!-- Fixed bottom scrollbar for table horizontal scrolling -->
 {#if showBottomScrollbar}
 	<div
 		class="fixed right-8 bottom-4 left-8 z-50 rounded-xl border border-gray-200 bg-white/90 shadow-xl backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/90"

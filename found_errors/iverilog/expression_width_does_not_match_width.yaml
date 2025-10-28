@@ -7,7 +7,7 @@ title: Expression width does not match width
 regex: >
   Expression width \d+ does not match width \d+
 examples:
-  - expression_width_does_not_match_width_v1:
+  - expression_width_does_not_match_width_ex1:
       first_found: 10.12.2024
       minified_example: |
         module a(output integer o1, input int i1, input integer i2);

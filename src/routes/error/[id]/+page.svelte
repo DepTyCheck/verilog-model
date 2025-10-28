@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { allFoundErrors } from '$lib/generated/errors_data';
+	import { allFoundErrors } from '$lib/generated/errors-data';
 	import type { FoundError } from '$lib/core';
 	import { defaultMargin } from '$lib/styles';
 	import { formatDateDMY } from '$lib/index';
-	import VCard from './VCard.svelte';
-	import CodeBlock from './CodeBlock.svelte';
-	import FieldDisplay from './FieldDisplay.svelte';
+	import VCard from '$lib/components/full-issue-info/VCard.svelte';
+	import CodeBlock from '$lib/components/full-issue-info/CodeBlock.svelte';
+	import FieldDisplay from '$lib/components/full-issue-info/FieldDisplay.svelte';
 
 	let id: string = page.params.id;
 	let foundError: FoundError | null = null;

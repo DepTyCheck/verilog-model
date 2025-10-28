@@ -6,7 +6,7 @@ regex: >
   Output port connection '[A-z]+' connects real to non-real
 issue_novelty: unsupported
 examples:
-  - output_port_connection_connects_real_to_non_real_v1:
+  - output_port_connection_connects_real_to_non_real_ex1:
       first_found: 10.12.2024
       full_error: |
         %Error-UNSUPPORTED: top.sv:23:35: Unsupported: Output port connection 'gsannnig' connects real to non-real

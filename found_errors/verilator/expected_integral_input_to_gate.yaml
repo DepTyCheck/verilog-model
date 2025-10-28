@@ -7,7 +7,7 @@ issue_link: https://github.com/verilator/verilator/issues/5876
 regex: >
   Expected integral \(non-'real'\) input to
 examples:
-  - expected_integral_input_to_gate_v1:
+  - expected_integral_input_to_gate_ex1:
       first_found: 10.12.2024
       minified_example: |
         module a(input real i1);

@@ -4,7 +4,7 @@ tool: iverilog
 id: infinity_zero_tick
 title: Infinity zero tick
 examples:
-  - infinity_zero_tick_v1:
+  - infinity_zero_tick_ex1:
       first_found: 15.12.2024
       minified_example: |
         module one (output integer o1,  input bit i1);

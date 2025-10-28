@@ -6,7 +6,7 @@ regex: >
   Unsupported tristate port expression: VARREF '__Vcellinpt__
 issue_novelty: unsupported
 examples:
-  - unsupported_tristate_port_expression_varref_v1:
+  - unsupported_tristate_port_expression_varref_ex1:
       first_found: 04.03.2025
       full_error: |
         %Error-UNSUPPORTED: top.sv:21:69: Unsupported tristate port expression: VARREF '__Vcellinpt__udraazisl__uyocdlqy'

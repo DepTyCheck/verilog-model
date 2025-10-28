@@ -10,7 +10,7 @@ matching_mode: whole
 regex: >
   (compile_cleanup: \d+ unresolved items\nUnable to resolve label v0x[0-9a-f_]+|Unable to resolve label v0x[0-9a-f_]+\ncompile_cleanup: \d+ unresolved items)
 examples:
-  - unable_to_resolve_label_v1:
+  - unable_to_resolve_label_ex1:
       first_found: 04.03.2025
       minified_example: |
         module a (output logic b [2:1]);
@@ -41,7 +41,7 @@ examples:
         endmodule: bonufropgc
 
         // Seed after: 12068331556777782645,13712862608348962075
-  - unable_to_resolve_label_v2:
+  - unable_to_resolve_label_ex2:
     first_found: 20.07.2025
     full_error: |
       a.out: Program not runnable, 52 errors.

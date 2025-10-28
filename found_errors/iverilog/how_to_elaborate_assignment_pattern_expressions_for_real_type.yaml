@@ -6,7 +6,7 @@ regex: >
   I don't know how to elaborate assignment_pattern expressions for real type yet
 issue_novelty: unsupported
 examples:
-  - how_to_elaborate_assignment_pattern_expressions_for_real_type_v1:
+  - how_to_elaborate_assignment_pattern_expressions_for_real_type_ex1:
       first_found: 03.04.2025
       full_error: |
         sorry: I don't know how to elaborate assignment_pattern expressions for real type yet.

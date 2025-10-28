@@ -9,7 +9,7 @@ regex: >
   Assigning to input\/const variable:
 maintainers_response: wontfix
 examples:
-  - assigning_to_input_const_variable_v1:
+  - assigning_to_input_const_variable_ex1:
       first_found: 09.03.2025
       minified_example: |
         module a(input wire i1);

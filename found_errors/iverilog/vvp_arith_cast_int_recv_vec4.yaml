@@ -10,7 +10,7 @@ title: >
 regex: >
   vvp_arith_cast_int: recv_vec4 not implemented
 examples:
-  - vvp_arith_cast_int_recv_vec4_v1:
+  - vvp_arith_cast_int_recv_vec4_ex1:
       first_found: 10.12.2024
       minified_example: |
         module a(output integer b, output real c);

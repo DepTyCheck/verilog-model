@@ -8,7 +8,7 @@ issue_novelty: new
 issue_link: https://github.com/steveicarus/iverilog/issues/1265
 maintainers_response: bug
 examples:
-  - array_needs_an_array_index_here_v1:
+  - array_needs_an_array_index_here_ex1:
       first_found: 07.04.2025
       minified_example: |
         module a(output o1 [0:0], input i1 [0:0]);

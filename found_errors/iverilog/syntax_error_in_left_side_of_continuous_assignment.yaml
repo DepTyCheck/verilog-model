@@ -8,7 +8,7 @@ issue_novelty: new
 issue_link: https://github.com/steveicarus/iverilog/issues/1271
 short_desc: The connection name causes errors
 examples:
-  - syntax_error_in_left_side_of_continuous_assignment_v1:
+  - syntax_error_in_left_side_of_continuous_assignment_ex1:
       first_found: 02.09.2025
       minified_error: |
         test.sv:2: syntax error

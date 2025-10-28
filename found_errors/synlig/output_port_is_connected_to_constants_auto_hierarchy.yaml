@@ -8,7 +8,7 @@ regex: >
 issue_novelty: new
 issue_link: https://github.com/chipsalliance/synlig/issues/2771
 examples:
-  - output_port_is_connected_to_constants_auto_hierarchy_v1:
+  - output_port_is_connected_to_constants_auto_hierarchy_ex1:
       first_found: 21.07.2025
       full_error: >
         ERROR: Output port udbjmldhub.llfhyxo.agrbxoods (sbp) is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }
@@ -88,7 +88,7 @@ examples:
           assign xooszipend = '{'{'{'{'b1,'b1,'bz,'bz},'{'bx,'b0,'bx,'b0},'{'b0,'b0,'b1,'b0},'{'b1,'b0,'bx,'b0}},'{'{'bx,'b1,'b0,'b0},'{'bz,'b0,'b1,'bx},'{'bx,'b1,'b0,'bz},'{'b0,'bz,'b1,'b0}},'{'{'b0,'bx,'bz,'bz},'{'bx,'b0,'bx,'b1},'{'b1,'b0,'bx,'b0},'{'b1,'bx,'b0,'b0}},'{'{'b1,'bx,'b1,'b0},'{'bz,'b0,'b1,'b1},'{'bz,'bz,'bx,'b0},'{'b0,'bz,'bx,'bx}}}};
         endmodule: lq
 
-  - output_port_is_connected_to_constants_auto_hierarchy_v2:
+  - output_port_is_connected_to_constants_auto_hierarchy_ex2:
       first_found: 21.07.2025
       full_error: >
         ERROR: Output port qzjcl.zavpwmtnm.wfh (kxab) is connected to constants: 9'x

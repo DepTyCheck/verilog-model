@@ -5,7 +5,7 @@ title: Net can not be of type `bool`.
 regex: >
   Net .* can not be of type
 examples:
-  - net_can_not_be_type_of_bool_v1:
+  - net_can_not_be_type_of_bool_ex1:
       first_found: 09.09.2025
       minified_error: |
         test.sv:1: error: Net `b` can not be of type `bool`.

@@ -7,7 +7,7 @@ regex: >
   vvp_net\.cc:3347: virtual void vvp_net_fun_t::recv_real\(vvp_net_ptr_t, double, vvp_context_t\): Assertion `0' failed
 issue_novelty: late
 examples:
-  - vvp_net_fun_t_recv_real_v1:
+  - vvp_net_fun_t_recv_real_ex1:
       first_found: 16.04.2025
       full_error: |
         virtual void vvp_net_fun_t recv_real(vvp_net_ptr_t, double, vvp_context_t)

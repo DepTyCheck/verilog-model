@@ -8,7 +8,7 @@ issue_novelty: new
 issue_link: https://github.com/verilator/verilator/issues/6254#issuecomment-3146668599
 short_desc: Maintainer suggested to avoid reporting bugs related to tristates
 examples:
-  - replacement_dfgvertex_has_different_type_v1:
+  - replacement_dfgvertex_has_different_type_ex1:
       first_found: 11.09.2025
       full_error: |
         %Error: Internal Error: top.sv:45:34: ../V3Dfg.h:269: Replacement DfgVertex has different type

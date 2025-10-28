@@ -9,7 +9,7 @@ issue_link: https://github.com/steveicarus/iverilog/issues/1271#issuecomment-324
 short_desc: The connection name causes errors
 matching_mode: whole
 examples:
-  - syntax_error_in_in_instance_port_expression_v1:
+  - syntax_error_in_in_instance_port_expression_ex1:
       first_found: 02.09.2025
       minified_error: |
         test.sv:1: syntax error

@@ -8,7 +8,7 @@ regex: >
   Abort in [\/A-z0-9-]+slang_frontend\.cc:181
 maintainers_response: low
 examples:
-  - abort_in_181_v1:
+  - abort_in_181_ex1:
       first_found: 19.07.2025
       minified_error: |
         ERROR: Abort in /yosys-slang/src/slang_frontend.cc:181.

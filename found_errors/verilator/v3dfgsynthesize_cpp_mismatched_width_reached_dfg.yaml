@@ -8,7 +8,7 @@ regex: >
 issue_novelty: new
 issue_link: https://github.com/verilator/verilator/issues/6323
 examples:
-  - v3dfgsynthesize_cpp_mismatched_width_reached_dfg_v1:
+  - v3dfgsynthesize_cpp_mismatched_width_reached_dfg_ex1:
       first_found: 21.08.2025
       minified_error: |
         %Error: Internal Error: top.sv:7:13: ../V3DfgSynthesize.cpp:442: Mismatched width reached DFG
@@ -70,7 +70,7 @@ examples:
           assign bmb = 'bz;
           assign kjdpwtuo = 'bx;
         endmodule: jy
-  - v3dfgsynthesize_cpp_mismatched_width_reached_dfg_v2:
+  - v3dfgsynthesize_cpp_mismatched_width_reached_dfg_ex2:
       first_found: 13.09.2025
       full_error: |
         %Error: Internal Error: top.sv:37:25: ../V3DfgSynthesize.cpp:491: Mismatched width reached DFG

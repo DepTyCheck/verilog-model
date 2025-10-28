@@ -7,7 +7,7 @@ regex: >
 issue_novelty: feature
 short_desc: Flag `--no-std` prevents parsing standard input files
 examples:
-  - found_definition_of_std_as_a_package_v1:
+  - found_definition_of_std_as_a_package_ex1:
       first_found: 23.05.2025
       full_error: |
         %Error: top.sv:63:12: Found definition of 'std' as a PACKAGE but expected a variable

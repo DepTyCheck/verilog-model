@@ -7,7 +7,7 @@ regex: >
 issue_novelty: new
 issue_link: https://github.com/chipsalliance/synlig/issues/2772
 examples:
-  - failed_to_detect_width_of_signal_v1:
+  - failed_to_detect_width_of_signal_ex1:
       first_found: 21.07.2025
       full_error: >
         ERROR: Failed to detect width of signal access `\y'!

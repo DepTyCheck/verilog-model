@@ -8,7 +8,7 @@ issue_novelty: unsupported
 issue_link: https://github.com/verilator/verilator/issues/6254
 maintainers_response: low
 examples:
-  - array_initialization_should_have_been_removed_earlier_v1:
+  - array_initialization_should_have_been_removed_earlier_ex1:
       first_found: 07.07.2025
       minified_error: |
         %Error: Internal Error: test.sv:2:14: ../V3Slice.cpp:316: Array initialization should have been removed earlier

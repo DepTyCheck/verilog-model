@@ -8,7 +8,7 @@ regex: >
   Feature unimplemented at [\/A-z0-9-]+slang_frontend\.cc:\d+, see AST and code line dump above
 maintainers_response: low
 examples:
-  - feature_unimplemented_see_ast_v1:
+  - feature_unimplemented_see_ast_ex1:
       first_found: 19.07.2025
       minified_error: |
         Source line top.sv:5:16:   a a_inst(.a1(b1));
@@ -138,7 +138,7 @@ examples:
           assign q = '{'{'{'{'b1}}},'{'{'{'b1}}},'{'{'{'bx}}}};
           assign ikaiuxfbw = 'bz;
         endmodule: tnieawpwht
-  - feature_unimplemented_see_ast_v2:
+  - feature_unimplemented_see_ast_ex2:
       first_found: 23.09.2025
       full_error: >
         ERROR: Feature unimplemented at /yosys-slang/src/slang_frontend.cc:1379, see AST and code line dump above

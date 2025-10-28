@@ -1,5 +1,5 @@
 import type { EntryGenerator } from './$types';
-import { allFoundErrors } from '$lib/generated/errors_data';
+import { allFoundErrors } from '$lib/generated/errors-data';
 
 // https://svelte.dev/docs/kit/page-options#entries
 export const entries: EntryGenerator = () => {

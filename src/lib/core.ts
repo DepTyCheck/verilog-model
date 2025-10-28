@@ -33,4 +33,5 @@ export type SortableColumn =
 	| 'title'
 	| 'stage'
 	| 'issue_link'
-	| 'issue_novelty';
+	| 'issue_novelty'
+	| 'stats';

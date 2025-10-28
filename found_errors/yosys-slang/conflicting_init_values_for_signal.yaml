@@ -8,7 +8,7 @@ maintainers_response: bug
 regex: >
   Conflicting init values for signal
 examples:
-  - conflicting_init_values_for_signal_v1:
+  - conflicting_init_values_for_signal_ex1:
       first_found: 31.08.2025
       minified_error: |
         4.5. Executing OPT_MERGE pass (detect identical cells).

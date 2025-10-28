@@ -8,7 +8,7 @@ issue_novelty: new
 issue_link: https://github.com/steveicarus/iverilog/issues/1268
 maintainers_response: bug
 examples:
-  - cannot_be_driven_with_non_default_strength_v1:
+  - cannot_be_driven_with_non_default_strength_ex1:
       first_found: 02.07.2025
       minified_error: |
         top.sv:4: error: variable c; cannot be driven by a primitive or continuous assignment with non-default strength.
@@ -61,7 +61,7 @@ examples:
         endmodule: xvicefqhnc
 
         // Seed after: 4925075022431791883,10002677915001445999
-  - cannot_be_driven_with_non_default_strength_v2:
+  - cannot_be_driven_with_non_default_strength_ex2:
       first_found: 18.07.2025
       full_error: |
         error: Variable 'nm' cannot be driven by a primitive or continuous assignment with non-default strength.
