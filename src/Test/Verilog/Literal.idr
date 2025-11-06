@@ -30,13 +30,13 @@ namespace BinaryList
 namespace TypeLiteralVect
 
   public export
-  data TypeLiteral : SVType -> Type 
+  data TypeLiteral : SVType -> Type
 
   public export
   data TypeLiteralVect : Nat -> SVType-> Type where
     Nil  : TypeLiteralVect 0 t
     (::) : TypeLiteral t -> TypeLiteralVect n t -> TypeLiteralVect (S n) t
-  
+
   export
   toList : TypeLiteralVect l t -> List $ TypeLiteral t
   toList []      = []
@@ -44,8 +44,12 @@ namespace TypeLiteralVect
 
   public export
   data TypeLiteral : SVType -> Type where
-    RL  : BinaryList S4 -> TypeLiteral $ RVar t
-    AL  : BinaryList (states t) -> TypeLiteral $ AVar t
-    VL  : BinaryList (states t) -> TypeLiteral $ VVar t
-    PAL : {t : SVType} -> (p : PABasic t) => TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ PackedArr t s e
-    UAL : TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ UnpackedArr t s e
+    RL   : BinaryList S4 -> TypeLiteral $ RVar t
+    AL   : BinaryList (states t) -> TypeLiteral $ AVar t
+    VL   : BinaryList (states t) -> TypeLiteral $ VVar t
+    PALF : (p : PABasic t) => TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ PackedArr t (One $ MkPair s e)
+    PALM : (p : PABasic t) => TypeLiteralVect (S $ max s e `minus` min s e) (PackedArr t shape) ->
+           TypeLiteral $ PackedArr t (MkPair s e `More` shape)
+    UALF : (p : VarOrPacked t) => TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ UnpackedArr t (One $ MkPair s e)
+    UALM : {shape : ArrayShape} -> (p : VarOrPacked t) => TypeLiteralVect (S $ max s e `minus` min s e) (UnpackedArr t shape) ->
+           TypeLiteral $ UnpackedArr t (MkPair s e `More` shape)

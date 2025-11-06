@@ -101,19 +101,17 @@ Show (TypeLiteralVect l t)
 ||| assign m = 'b1;
 ||| TODO: print the length of literal sometimes
 |||
-||| UAL x example:
+||| Array example:
 ||| logic m [1:0][4:0];
 ||| assign m = '{'{'b1,'b0,'b1,'b0,'b1},'{'b0,'b1,'b0,'b1,'b0}};
-|||
-||| PAL x example:
-||| logic [1:0][4:0] m;
-||| assign m = 'b01010101;
 Show (TypeLiteral sv) where
-  show (RL  x) = show x
-  show (AL  x) = show x
-  show (VL  x) = show x
-  show (PAL x) = show x
-  show (UAL x) = show x
+  show (RL   x) = show x
+  show (AL   x) = show x
+  show (VL   x) = show x
+  show (PALF x) = show x
+  show (PALM x) = show x
+  show (UALF x) = show x
+  show (UALM x) = show x
 
 Show (TypeLiteralVect l t) where
   show x = "'{\{joinBy "," $ map show $ toList x}}"
@@ -124,21 +122,22 @@ pn "" = ""
 pn a = " \{a}"
 
 showBasic : SVType -> String
-showBasic (RVar x)            = show x
-showBasic (AVar x)            = show x
-showBasic (VVar x)            = show x
-showBasic (PackedArr   t k j) = showBasic t
-showBasic (UnpackedArr t k j) = showBasic t
+showBasic (RVar x)          = show x
+showBasic (AVar x)          = show x
+showBasic (VVar x)          = show x
+showBasic (PackedArr   t _) = showBasic t
+showBasic (UnpackedArr t _) = showBasic t
+
+showArrayDims : ArrayShape -> String
+showArrayDims (One (MkPair s e))    = "[\{show s}:\{show e}]"
+showArrayDims (MkPair s e `More` t) = "[\{show s}:\{show e}]" ++ showArrayDims t
 
 showPackedSVT : SVType -> String
-showPackedSVT (RVar x)              = show x
-showPackedSVT (AVar x)              = show x
-showPackedSVT (VVar x)              = show x
-showPackedSVT (PackedArr t {p} s e) = "\{showBasic t} [\{show s}:\{show e}]\{packDims t}" where
-  packDims : SVType -> String
-  packDims (PackedArr t s e) = "[\{show s}:\{show e}]" ++ packDims t
-  packDims _                 = ""
-showPackedSVT (UnpackedArr t   s e) = ""
+showPackedSVT (RVar x)                = show x
+showPackedSVT (AVar x)                = show x
+showPackedSVT (VVar x)                = show x
+showPackedSVT (PackedArr t {p} shape) = "\{showBasic t} \{showArrayDims shape}" where
+showPackedSVT (UnpackedArr t   _)     = ""
 
 ||| examples:
 ||| bit uP [3:0]; //1-D unpacked
@@ -152,18 +151,11 @@ showPackedSVT (UnpackedArr t   s e) = ""
 ||| int Array[0:7][0:31]; // array declaration using ranges
 ||| int Array[8][32];     // array declaration using sizes
 showSVType : SVType -> (name : String) -> String
-showSVType rv@(RVar x)                name = "\{show x}\{pn name}"
-showSVType sv@(AVar x)                name = "\{show x}\{pn name}"
-showSVType vv@(VVar x)                name = "\{show x}\{pn name}"
-showSVType pa@(PackedArr   t {p} s e) name = "\{showPackedSVT pa} \{pn name}"
-showSVType ua@(UnpackedArr t     s e) name = "\{showPackedSVT $ basic t} \{name} [\{show s}:\{show e}]\{unpDimensions t}" where
-  basic : SVType -> SVType
-  basic (UnpackedArr t _ _) = basic t
-  basic t                   = t
-  
-  unpDimensions : SVType -> String
-  unpDimensions (UnpackedArr t s e) = "[\{show s}:\{show e}]" ++ unpDimensions t
-  unpDimensions _                   = ""
+showSVType rv@(RVar x)              name = "\{show x}\{pn name}"
+showSVType sv@(AVar x)              name = "\{show x}\{pn name}"
+showSVType vv@(VVar x)              name = "\{show x}\{pn name}"
+showSVType pa@(PackedArr   t {p} _) name = "\{showPackedSVT pa} \{pn name}"
+showSVType ua@(UnpackedArr t     s) name = "\{showPackedSVT t} \{name} \{showArrayDims s}" where
 
 showSVObj : SVObject -> (name : String) -> String
 showSVObj (Net nt t) name = "\{show nt} \{showSVType t name}"
@@ -264,7 +256,7 @@ iMcsByF mcs func fin = findIndex resolve $ toVect mcs where
     resolve : MultiConnection ms m subMs -> Bool
     resolve sc = isElem fin $ func sc
 
-findMcsNameByF : (extractField : MultiConnection ms m subMs -> List $ Fin iport) -> 
+findMcsNameByF : (extractField : MultiConnection ms m subMs -> List $ Fin iport) ->
                  (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Fin iport -> String
 findMcsNameByF extract mcs mcsNames fin = case iMcsByF mcs extract fin of
   Just mcsFin => index mcsFin mcsNames
@@ -319,8 +311,8 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : Fi
                  (ctxInps : List SVObject) -> (ctxOuts : List SVObject) -> (exInps : List String) -> (exOuts : List String) -> List (Doc opts)
     printSubm' pre siNames soNames exM ctxInps ctxOuts exInps exOuts = do
       let warningsSubOuts = printAllImplicitCasts showSVObj (toList exM.outputs) exOuts ctxOuts soNames
-      let warningsSubInps = printAllImplicitCasts showSVObj ctxInps siNames (toList exM.inputs) exInps  
-      let warnings = if isNil warningsSubOuts || 
+      let warningsSubInps = printAllImplicitCasts showSVObj ctxInps siNames (toList exM.inputs) exInps
+      let warnings = if isNil warningsSubOuts ||
                         isNil warningsSubInps then warningsSubOuts ++ warningsSubInps else warningsSubOuts ++ [ "//" ] ++ warningsSubInps
       case isNil warnings of
         True  => [ pre, line "" ]
@@ -388,8 +380,8 @@ resolveOutputNames mcs mcsNames = map (findTOName mcs mcsNames) $ allFins (m.out
 ||| Net types aren't compatible with unpacked arrays. So connections to unpacked array ports must be declared explicitly.
 unpackedDecls : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> List String
 unpackedDecls []          _             = []
-unpackedDecls (mc@(MkMC Nothing ssk Nothing ssc) :: mcs) (name::names) = if (isUnpacked $ typeOf mc) 
-  then (showSVObj (typeOf mc) name) :: unpackedDecls mcs names 
+unpackedDecls (mc@(MkMC Nothing ssk Nothing ssc) :: mcs) (name::names) = if (isUnpacked $ typeOf mc)
+  then (showSVObj (typeOf mc) name) :: unpackedDecls mcs names
   else unpackedDecls mcs names
 unpackedDecls (mc :: mcs) (name::names) = unpackedDecls mcs names
 
