@@ -170,10 +170,10 @@ jobs:
             version: |
               iverilog -V
             run: iverilog -g2012 -o a.out {file}
-            error_regex: |
+            error_regex: >
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
             sim_cmd: vvp a.out
-            sim_error_regex: |
+            sim_error_regex: >
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
             extra_ignored_regexes: >
               "Unable to elaborate r-value: .*"
@@ -191,7 +191,7 @@ jobs:
             version: |
               slang --version
             run: slang -Weverything {file}
-            error_regex: |
+            error_regex: >
               error: [\S ]+$
 
           - name: verilator
@@ -207,10 +207,10 @@ jobs:
             version: |
               verilator --version
             run: rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/conf/verilator/testbench.cpp --timing -Wno-fatal --no-std +1800-2023ext+sv top.sv
-            error_regex: |
+            error_regex: >
               %Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$
             sim_cmd: make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop
-            sim_error_regex: |
+            sim_error_regex: >
               %Error:[\S ]+$
 
           - name: surelog
@@ -240,7 +240,7 @@ jobs:
             version: |
               sv2v --version
             run: sv2v -v {file}
-            error_regex: |
+            error_regex: >
               sv2v:(?!CallStack$).+
             extra_ignored_regexes: >
               "sv2v:Language\.SystemVerilog\.AST\.Type"
@@ -285,7 +285,7 @@ jobs:
               synlig --version
               synlig -h
             run: synlig -f systemverilog -o output.blif -S {file}
-            error_regex: |
+            error_regex: >
               ERROR: .*$
 
           - name: sv_parser
@@ -458,9 +458,9 @@ jobs:
             --sim-error-regex "${{ matrix.tool.sim_error_regex }}" \
             --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
             --error-distances-output "$ERROR_DISTANCES_OUT" \
-            --extra-ignored-regexes ${{ join(matrix.tool.extra_ignored_regexes, ' ') }} \
             --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
-            --commit "${{ env.COMMIT_HASH }}"
+            --commit "${{ env.COMMIT_HASH }}" \
+            --extra-ignored-regexes ${{ join(matrix.tool.extra_ignored_regexes, ' ') }}
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then
