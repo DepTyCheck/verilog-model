@@ -1,10 +1,15 @@
 rm -f mcov
 
-sync
+if [[ -z ${RUNNER_TEMP} ]]; then
+    TARGET_PATH="mcov"
+else
+    echo "RUNNER_TEMP: $RUNNER_TEMP"
+    TARGET_PATH="$RUNNER_TEMP/mcov"
+fi
 
-pack run verilog-model --coverage mcov -n 1 --seed 0,1
+pack run verilog-model --coverage $TARGET_PATH -n 1 --seed 0,1
 sleep 1
 sync
-cat mcov
+cat $TARGET_PATH
 
 rm -f mcov
