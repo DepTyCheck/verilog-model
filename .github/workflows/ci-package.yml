@@ -433,7 +433,9 @@ jobs:
           source .venv/bin/activate
           python3 -m pip install --upgrade pip
           pip install -r .github/workflows/runner/tools-run/requirements.txt
-          pip install ${{ matrix.tool.python_runner_deps }}
+          if [ -n "${{ matrix.tool.python_runner_deps }}" ]; then
+            pip install ${{ matrix.tool.python_runner_deps }}
+          fi
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
       - name: Run
