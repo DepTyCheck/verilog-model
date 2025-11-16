@@ -493,7 +493,7 @@ jobs:
   push-run-stats:
     name: Push run stats
     runs-on: ubuntu-latest
-    needs: [test-report-combiner, run-tools]
+    needs: [test-combined-report, run-tools]
     if: ${{ github.ref == 'refs/heads/master' }}
     permissions:
       contents: write
