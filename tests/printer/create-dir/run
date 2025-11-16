@@ -1,5 +1,11 @@
 rm -rf newdir
 
-pack run verilog-model -o newdir/newdir -n 1 --seed 0,1 --seed-name --seed-content && sync && cat newdir/newdir/*
+sync
+echo 3 | sudo tee /proc/sys/vm/drop_caches
+
+pack run verilog-model -o newdir/newdir -n 1 --seed 0,1 --seed-name --seed-content
+sync
+echo 3 | sudo tee /proc/sys/vm/drop_caches
+cat newdir/newdir/*
 
 rm -rf newdir
