@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-from typing import List
-import json
 
 
 @dataclass
@@ -8,14 +6,14 @@ class ErrorReport:
     error_id: str
     overall: int
     test_paths_count: int
-    commit: str
-    date: str
+    tests_paths: list[str]
 
 
 class ToolsReport:
-    def __init__(self, raw_json: str):
-        self.errors: List[ErrorReport] = self.parse(raw_json)
+    def __init__(self, data: dict):
+        self.errors: list[ErrorReport] = self.parse_errors(data)
+        self.commit = data["commit"]
+        self.date = data["date"]
 
-    def parse(self, raw_json: str) -> List[ErrorReport]:
-        data = json.loads(raw_json)
+    def parse_errors(self, data: dict) -> list[ErrorReport]:
         return [ErrorReport(**error) for error in data.get("errors", [])]

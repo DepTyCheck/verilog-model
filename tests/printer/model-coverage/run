@@ -1,12 +1,14 @@
 rm -f mcov
 
 sync
-echo 3 | tee /proc/sys/vm/drop_caches
 
 pack run verilog-model --coverage mcov -n 1 --seed 0,1
+sleep 1
+if [ -f mcov ]; then
+    dd if=/dev/null of=mcov conv=fsync 2>/dev/null
+fi
+sleep 1
 sync
-echo 3 | tee /proc/sys/vm/drop_caches
-ls
 cat mcov
 
 rm -f mcov

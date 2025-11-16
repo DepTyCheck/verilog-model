@@ -478,10 +478,21 @@ jobs:
           name: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
           path: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
 
+  test-report-combiner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: |
+          cd .github/workflows/runner/combined-report
+          python -m tests.test
+
   # push-run-stats:
   #   name: Push run stats
   #   runs-on: ubuntu-latest
-  #   needs: run-tools
+  #   needs: [test-report-combiner, run-tools]
   #   if: ${{ github.ref == 'refs/heads/master' }}
   #   permissions:
   #     contents: write
