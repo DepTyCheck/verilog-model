@@ -35,6 +35,8 @@ env:
   GH_PAGES_PATH: verilog-gh-pages
   RUN_STATS_PATTERN: 'run-stats.json'
   COMBINED_RUN_STATS_FILE: 'combined-run-stats.json'
+  ACTIONS_STEP_DEBUG: true
+  ACTIONS_RUNNER_DEBUG: true
 
 jobs:
 
@@ -478,7 +480,8 @@ jobs:
           name: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
           path: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
 
-  test-report-combiner:
+  test-combined-report:
+    name: Test combined report
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
