@@ -1,11 +1,11 @@
 rm -f mcov
 
 sync
-echo 3 | sudo tee /proc/sys/vm/drop_caches
+echo 3 | tee /proc/sys/vm/drop_caches
 
 pack run verilog-model --coverage mcov -n 1 --seed 0,1
 sync
-echo 3 | sudo tee /proc/sys/vm/drop_caches
+echo 3 | tee /proc/sys/vm/drop_caches
 ls
 cat mcov
 
