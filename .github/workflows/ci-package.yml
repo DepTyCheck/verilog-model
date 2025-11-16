@@ -507,12 +507,19 @@ jobs:
 
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
+      
+      - name: Calc report path
+        run: |
+          echo "RELATIVE_REPORT_PATH=src/lib/data/errors-stats.json" >> $GITHUB_OUTPUT
+          echo "REPORT_PATH=${{ env.GH_PAGES_PATH }}/${{ env.RELATIVE_REPORT_PATH }}" >> $GITHUB_OUTPUT
 
       - name: Combine statistics
         run: |
-          python3 .github/workflows/combine_run_stats.py \
-            --input-dir run-stats \
-            --output-file run-stats/combined-run-stats.csv \
+          python3 .github/workflows/runner/combined-report/main.py \
+            --previous-report ${{ env.REPORT_PATH }} \
+            --current-tools-reports-dir run-stats \
+            --tools-reports-pattern "*-run-stats.json" \
+            --result-report ${{ env.REPORT_PATH }} \
             --tests-number ${{ env.GEN_TESTS_NUMBER }}
 
       - name: Bot Details
@@ -524,7 +531,7 @@ jobs:
           cd ${{ env.GH_PAGES_PATH }}
           git config --global user.name "${{ steps.bot-details.outputs.name }}"
           git config --global user.email "${{ steps.bot-details.outputs.email }}"
-          git add src/lib/data/experimental.txt
+          git add ${{ env.RELATIVE_REPORT_PATH }}
           git commit -m "[ bot ] Update runs statistics"
           git remote set-url origin "https://x-access-token:${{ secrets.PAT_PUSH }}@github.com/${{ github.repository }}"
           git push origin gh-pages
