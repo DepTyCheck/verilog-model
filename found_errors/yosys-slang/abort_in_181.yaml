@@ -1,11 +1,11 @@
 stage: parsing
 tool: yosys-slang
 id: abort_in_181
-title: Abort in slang_frontend.cc:181
+title: Abort in slang_frontend.cc
 issue_novelty: already_known
 issue_link: https://github.com/povik/yosys-slang/issues/181#issuecomment-3161067098
 regex: >
-  Abort in [\/A-z0-9-]+slang_frontend\.cc:181
+  Abort in [\/A-z0-9-]+slang_frontend\.cc:
 maintainers_response: low
 examples:
   - abort_in_181_ex1:
@@ -25,22 +25,12 @@ examples:
           , input wor logic [4:2][3:0][0:2][3:2] dbmsvpty [4:4]
           );
 
-
           or o(ixiwcmrk, fm, ixiwcmrk);
-
           not jb(crev, yzksybsfoi);
-
           not kzx(j, a);
-          // warning: implicit conversion of port connection truncates from 3 to 1 bits
-          //   reg [4:4][3:1] a -> logic a
 
-
-          // Top inputs -> top outputs assigns
-
-          // Single-driven assigns
           assign yzksybsfoi = 'b1;
 
-          // Multi-driven assigns
         endmodule: cxkwwv
 
         module ryz
@@ -52,9 +42,7 @@ examples:
           , input bit [2:3][2:0][4:0][4:0] g
           );
 
-
           not ytvstdout(numzlvh, ty);
-
 
           // Top inputs -> top outputs assigns
           assign yjy = yslxoj;
@@ -79,32 +67,9 @@ examples:
           tri0 logic [0:1] swgxe [1:1];
 
           and mcrpv(bns, bns, nb);
-
           not q(yjkup, rydi);
-
           ryz kdstyzceff(.yjy(nb), .dstgumnmza(swgxe), .pcegsiuj(xvv), .yslxoj(uavf), .lo(wzfgspok), .g(uavf));
-          // warning: implicit conversion of port connection truncates from 64 to 1 bits
-          // warning: implicit conversion changes signedness from signed to unsigned
-          // warning: implicit conversion changes possible bit states from 2-state to 4-state
-          //   longint yjy -> wire logic nb
-          //
-          // warning: implicit conversion of port connection expands from 1 to 16 bits
-          // warning: implicit conversion changes signedness from unsigned to signed
-          // warning: implicit conversion changes possible bit states from 4-state to 2-state
-          //   wire logic uavf -> shortint yslxoj
-          //
-          // warning: implicit conversion of port connection expands from 1 to 150 bits
-          // warning: implicit conversion changes possible bit states from 4-state to 2-state
-          //   wire logic uavf -> bit [2:3][2:0][4:0][4:0] g
-
           or exxobc(uavf, uavf, uavf);
-
-
-          // Top inputs -> top outputs assigns
-
-          // Single-driven assigns
-
-          // Multi-driven assigns
         endmodule: sjwtqzdhon
 
         module rf
@@ -120,32 +85,9 @@ examples:
           tri0 logic [0:1] frj [1:1];
 
           cxkwwv vqicrvb(.ajjevafj(jghwrkvun), .mdnyba(kid), .a(wsmc), .dbmsvpty(t));
-          // warning: implicit conversion of port connection expands from 1 to 4 bits
-          // warning: implicit conversion changes possible bit states from 4-state to 2-state
-          //   wire logic jghwrkvun -> bit [1:4][3:3] ajjevafj
-          //
-          // warning: implicit conversion of port connection expands from 1 to 3 bits
-          //   wire logic wsmc -> reg [4:4][3:1] a
-
           xor yygtdxzzdx(jghwrkvun, wsmc, wsmc);
 
           ryz rvaapwdg(.yjy(wsmc), .dstgumnmza(frj), .pcegsiuj(wsmc), .yslxoj(jghwrkvun), .lo(qu), .g(kjyhhes));
-          // warning: implicit conversion of port connection truncates from 64 to 1 bits
-          // warning: implicit conversion changes signedness from signed to unsigned
-          // warning: implicit conversion changes possible bit states from 2-state to 4-state
-          //   longint yjy -> wire logic wsmc
-          //
-          // warning: implicit conversion of port connection expands from 1 to 16 bits
-          // warning: implicit conversion changes signedness from unsigned to signed
-          // warning: implicit conversion changes possible bit states from 4-state to 2-state
-          //   wire logic jghwrkvun -> shortint yslxoj
-          //
-          // warning: implicit conversion of port connection expands from 1 to 150 bits
-          // warning: implicit conversion changes possible bit states from 4-state to 2-state
-          //   wire logic kjyhhes -> bit [2:3][2:0][4:0][4:0] g
-
-
-          // Top inputs -> top outputs assigns
 
           // Single-driven assigns
           assign yojsgcygvv = '{'{'b0,'bx,'b0,'b0,'b1}};
