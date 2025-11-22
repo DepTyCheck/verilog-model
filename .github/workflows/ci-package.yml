@@ -37,11 +37,10 @@ env:
   COMBINED_RUN_STATS_FILE: 'combined-run-stats.json'
 
 jobs:
-
   get-upstream-matrix:
     name: Acquire matrix of upstream modes
     runs-on: ubuntu-latest
-    container: ghcr.io/stefan-hoeck/idris2-pack:latest
+    container: ghcr.io/l3odr0id/idris2-pack:nightly-251122-noble
     outputs:
       upstream-matrix: "${{ steps.get-upstream-matrix.outputs.upstream-matrix }}"
     steps:
@@ -63,7 +62,7 @@ jobs:
     name: Build and test `${{ github.repository }}`
     needs: get-upstream-matrix
     runs-on: ubuntu-latest
-    container: ghcr.io/stefan-hoeck/idris2-pack:latest
+    container: ghcr.io/l3odr0id/idris2-pack:nightly-251122-noble
     outputs:
       artifact-id: generated-modules
     strategy:
