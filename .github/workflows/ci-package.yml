@@ -516,8 +516,8 @@ jobs:
       
       - name: Calc report path
         run: |
-          echo "RELATIVE_REPORT_PATH=src/lib/data/errors-stats.json" >> $GITHUB_OUTPUT
-          echo "REPORT_PATH=${{ env.GH_PAGES_PATH }}/${{ env.RELATIVE_REPORT_PATH }}" >> $GITHUB_OUTPUT
+          echo "RELATIVE_REPORT_PATH=src/lib/data/errors-stats.json" >> $GITHUB_ENV
+          echo "REPORT_PATH=${{ env.GH_PAGES_PATH }}/${{ env.RELATIVE_REPORT_PATH }}" >> $GITHUB_ENV
 
       - name: Combine statistics
         run: |
