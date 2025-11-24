@@ -1,5 +1,8 @@
 rm -f mcov
 
-pack run verilog-model --coverage mcov -n 1 --seed 0,1 && cat mcov
+pack run verilog-model --coverage mcov -n 1 --seed 0,1
+sleep 1
+sync
+cat mcov
 
 rm -f mcov
