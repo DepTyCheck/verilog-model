@@ -41,7 +41,7 @@ jobs:
     name: Acquire matrix of upstream modes
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/l3odr0id/idris2-pack:latest
+      image: ghcr.io/l3odr0id/idris2-pack:nightly-251122-jammy
       env:
         HOME: /root
     outputs:
@@ -66,7 +66,7 @@ jobs:
     needs: get-upstream-matrix
     runs-on: ubuntu-latest
     container: 
-      image: ghcr.io/l3odr0id/idris2-pack:latest
+      image: ghcr.io/l3odr0id/idris2-pack:nightly-251122-jammy
       env:
         HOME: /root
     outputs:
