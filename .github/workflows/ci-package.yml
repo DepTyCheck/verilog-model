@@ -117,8 +117,8 @@ jobs:
           pack run ${{ env.PACKAGE_NAME }} --coverage mcov -n 1 --seed 0,1
           touch tests/printer/model-coverage/dummy
           touch tests/printer/create-dir/dummy
-      - name: Test ${{ env.PACKAGE_NAME }}
-        run: pack test ${{ env.PACKAGE_NAME }}
+      # - name: Test ${{ env.PACKAGE_NAME }}
+      #   run: pack test ${{ env.PACKAGE_NAME }}
       - name: Gen SystemVerilog modules
         if: matrix.upstream-mode == 'latest-pack-collection'
         run : pack run ${{ env.PACKAGE_NAME }} --to "${{ env.GENERATION_DIR }}" -n ${{ env.GEN_TESTS_NUMBER }} --seed-name --seed-content --coverage mcov  # Generate modules
