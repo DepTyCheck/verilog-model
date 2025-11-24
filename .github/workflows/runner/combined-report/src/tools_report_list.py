@@ -9,7 +9,9 @@ class ToolsReportsList:
     def __init__(self, dir_path: str, pattern: str):
         self.reports: List[ToolsReport] = []
 
-        for report_file in Path(dir_path).glob(pattern):
+        for report_file in Path(dir_path).rglob(pattern):
+            if not report_file.is_file():
+                continue
             with open(report_file, "r") as f:
                 data_dict = json.load(f)
                 self.reports.append(ToolsReport(data_dict))
