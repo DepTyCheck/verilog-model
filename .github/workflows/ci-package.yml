@@ -505,7 +505,11 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.PAT_PUSH }} # https://stackoverflow.com/a/77447725/15776812
+          persist-credentials: false # https://github.com/orgs/community/discussions/25702#discussioncomment-3248819
+
       - name: Download run statistics
         uses: actions/download-artifact@v4
         with:
