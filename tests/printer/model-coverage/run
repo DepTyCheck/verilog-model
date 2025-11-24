@@ -1,7 +1,7 @@
 rm -f mcov
 
 pack run verilog-model --coverage mcov -n 1 --seed 0,1
-sleep 1
+sleep 10
 sync
 cat mcov
 

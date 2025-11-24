@@ -1,7 +1,7 @@
 rm -rf newdir
 
 pack run verilog-model -o newdir/newdir -n 1 --seed 0,1 --seed-name --seed-content
-sleep 1
+sleep 10
 sync
 cat newdir/newdir/*
 
