@@ -40,10 +40,7 @@ jobs:
   get-upstream-matrix:
     name: Acquire matrix of upstream modes
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/stefan-hoeck/idris2-pack:latest
-      env:
-        HOME: /root
+    container: ghcr.io/stefan-hoeck/idris2-pack:latest
     outputs:
       upstream-matrix: "${{ steps.get-upstream-matrix.outputs.upstream-matrix }}"
     steps:
@@ -65,10 +62,7 @@ jobs:
     name: Build and test `${{ github.repository }}`
     needs: get-upstream-matrix
     runs-on: ubuntu-latest
-    container: 
-      image: ghcr.io/stefan-hoeck/idris2-pack:latest
-      env:
-        HOME: /root
+    container: ghcr.io/stefan-hoeck/idris2-pack:latest
     outputs:
       artifact-id: generated-modules
     strategy:
