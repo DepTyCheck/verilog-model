@@ -1,7 +1,8 @@
 import subprocess
-from find_top import find_top
-from handle_errors import FoundMatch, UnexpectedErrorText, extract_and_classify_errors, match_whole_output
-from ignored_errors_list import IgnoredErrorsList
+from src.find_top import find_top
+from src.handle_errors import FoundMatch, UnexpectedErrorText, extract_and_classify_errors, match_whole_output
+from src.ignored_errors_list import IgnoredErrorsList
+from src.error_match_in_test import ErrorMatchInTest
 
 COMMAND_TIMEOUT_MINUTES = 7
 COMMAND_TIMEOUT_SECONDS = COMMAND_TIMEOUT_MINUTES * 60
@@ -26,14 +27,21 @@ def execute_command(cmd: str) -> tuple[str, int]:
     print(f"Execute: {cmd}")
 
     try:
-        result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=COMMAND_TIMEOUT_SECONDS)
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            timeout=COMMAND_TIMEOUT_SECONDS,
+        )
         output = result.stdout
         print(f"Exit code: {result.returncode}. Output:\n{output}")
         return output, result.returncode
     except subprocess.TimeoutExpired as timeout_error:
         print(
-            f"Command timed out after {
-              COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}"
+            f"""Command timed out after {
+              COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}"""
         )
         return f"Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}", 1
     except Exception as error:
@@ -69,7 +77,7 @@ def print_file(file_content: str, file_path: str) -> None:
 
 def run_test(
     cmd: str, file_content: str, file_path: str, error_regex: str, ignored_errors: IgnoredErrorsList
-) -> tuple[bool, list[str], list[FoundMatch]]:
+) -> tuple[bool, list[str], list[ErrorMatchInTest]]:
     """
     Run a single test (analysis or simulation) and handle its errors.
     Returns:
@@ -83,6 +91,7 @@ def run_test(
             output,
             error_regex,
             ignored_errors,
+            test_path=file_path,
         )
 
         # Match whole output
@@ -92,7 +101,7 @@ def run_test(
             if unexpected_error_whole == None:
                 unexpected_errors.append("\n".join(output.splitlines()[:3]))
             elif isinstance(unexpected_error_whole, FoundMatch):
-                found_matches.append(unexpected_error_whole)
+                found_matches.append(ErrorMatchInTest(match=unexpected_error_whole, test_path=file_path))
 
         if len(unexpected_errors) > 0:
             print_file(file_content, file_path)

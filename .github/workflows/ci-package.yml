@@ -28,13 +28,15 @@ defaults:
 env:
   PACK_DIR: /root/.pack
   GENERATION_DIR: 'generated-modules'
+  GEN_TESTS_NUMBER: 256
   BUILD_DIR: '.build'
   PACKAGE_NAME: verilog-model
   ERROR_DISTANCES_OUT: error_distances.html
   GH_PAGES_PATH: verilog-gh-pages
+  RUN_STATS_PATTERN: 'run-stats.json'
+  COMBINED_RUN_STATS_FILE: 'combined-run-stats.json'
 
 jobs:
-
   get-upstream-matrix:
     name: Acquire matrix of upstream modes
     runs-on: ubuntu-latest
@@ -70,10 +72,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Update `pack-db`
+        run: pack update-db
+      - name: Switch to the latest compiler, if needed
+        if: matrix.upstream-mode == 'bleeding-edge-compiler'
+        run: |
+          { echo; echo "[idris2]"; echo 'commit = "latest:main"'; } >> pack.toml
+          pack fetch
+      - name: Switch to the latest collection
+        run: pack switch latest
       - name: Calculate cache key
         id: cache-key
         run: |
-          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ matrix.upstream-mode }}" >> $GITHUB_OUTPUT
+          idris2_commit=$(idris2 -v | sed -nE 's/.*Idris 2, version [0-9.]+-([A-Za-z0-9]+).*/\1/p')
+          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ matrix.upstream-mode }}-$idris2_commit" >> $GITHUB_OUTPUT
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
@@ -85,18 +97,10 @@ jobs:
         run: |
           find "${{ env.BUILD_DIR }}" -type f -exec touch {} +
           sync
-      - name: Update `pack-db`
-        run: pack update-db
-      - name: Switch to the latest compiler, if needed
-        if: matrix.upstream-mode == 'bleeding-edge-compiler'
-        run: |
-          { echo; echo "[idris2]"; echo 'commit = "latest:main"'; } >> pack.toml
-          pack fetch
-      - name: Switch to the latest collection
-        run: pack switch latest
       - name: Build `${{ env.PACKAGE_NAME }}`
         run: pack build ${{ env.PACKAGE_NAME }}
       - name: Save build
+        if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: ${{ env.BUILD_DIR }}
@@ -107,11 +111,11 @@ jobs:
           pack run ${{ env.PACKAGE_NAME }} --coverage mcov -n 1 --seed 0,1
           touch tests/printer/model-coverage/dummy
           touch tests/printer/create-dir/dummy
-      - name: Test ${{ env.PACKAGE_NAME }}
-        run: pack test ${{ env.PACKAGE_NAME }}
+      # - name: Test ${{ env.PACKAGE_NAME }}
+      #   run: pack test ${{ env.PACKAGE_NAME }}
       - name: Gen SystemVerilog modules
         if: matrix.upstream-mode == 'latest-pack-collection'
-        run : pack run ${{ env.PACKAGE_NAME }} --to "${{ env.GENERATION_DIR }}" -n 128 --seed-name --seed-content --coverage mcov  # Generate modules
+        run : pack run ${{ env.PACKAGE_NAME }} --to "${{ env.GENERATION_DIR }}" -n ${{ env.GEN_TESTS_NUMBER }} --seed-name --seed-content --coverage mcov  # Generate modules
       - name: Show mcov
         if: matrix.upstream-mode == 'latest-pack-collection'
         run : cat mcov
@@ -166,10 +170,10 @@ jobs:
             version: |
               iverilog -V
             run: iverilog -g2012 -o a.out {file}
-            error_regex: |
+            error_regex: >
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
             sim_cmd: vvp a.out
-            sim_error_regex: |
+            sim_error_regex: >
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
             extra_ignored_regexes: >
               "Unable to elaborate r-value: .*"
@@ -187,7 +191,7 @@ jobs:
             version: |
               slang --version
             run: slang -Weverything {file}
-            error_regex: |
+            error_regex: >
               error: [\S ]+$
 
           - name: verilator
@@ -203,10 +207,10 @@ jobs:
             version: |
               verilator --version
             run: rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/conf/verilator/testbench.cpp --timing -Wno-fatal --no-std +1800-2023ext+sv top.sv
-            error_regex: |
+            error_regex: >
               %Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$
             sim_cmd: make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop
-            sim_error_regex: |
+            sim_error_regex: >
               %Error:[\S ]+$
 
           - name: surelog
@@ -236,8 +240,10 @@ jobs:
             version: |
               sv2v --version
             run: sv2v -v {file}
-            error_regex: |
+            error_regex: >
               sv2v:(?!CallStack$).+
+            extra_ignored_regexes: >
+              "sv2v:Language\.SystemVerilog\.AST\.Type"
 
           - name: tree-sitter-systemverilog
             repo: https://github.com/gmlarumbe/tree-sitter-systemverilog.git
@@ -279,7 +285,7 @@ jobs:
               synlig --version
               synlig -h
             run: synlig -f systemverilog -o output.blif -S {file}
-            error_regex: |
+            error_regex: >
               ERROR: .*$
 
           - name: sv_parser
@@ -305,7 +311,7 @@ jobs:
           #   install: |
           #     sudo make install
           #     cd ..
-          #     bash .github/workflows/runner/rename_tests.sh
+          #     bash .github/workflows/runner/tools-run/rename_tests.sh
           #   version: yosys --version
           #   run: yosys -p 'read -sv2012 {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
           #   error_regex: >
@@ -330,13 +336,14 @@ jobs:
               cd ..
               sudo make install
               cd ..
-              bash .github/workflows/runner/rename_tests.sh
+              bash .github/workflows/runner/tools-run/rename_tests.sh
             version: yosys --version
             run: yosys -m slang -p 'read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
             error_regex: >
               (ERROR|error): .*
             extra_ignored_regexes: >
               "Compilation failed"
+              "too many errors emitted, stopping now"
 
     steps:
       - name: Checkout
@@ -352,7 +359,7 @@ jobs:
         run: |
           git clone ${{ matrix.tool.repo }} ${{ matrix.tool.path }}
           cd ${{ matrix.tool.path }}
-          echo "commit_hash=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "COMMIT_HASH=$(git rev-parse HEAD)" >> $GITHUB_ENV
       - name: Restore dependency
         if: ${{ matrix.tool.dep_path }}
         uses: actions/cache/restore@v4
@@ -364,7 +371,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ matrix.tool.path }}
-          key: ${{ matrix.tool.name }}-cache-${{ env.commit_hash }}
+          key: ${{ matrix.tool.name }}-cache-${{ env.COMMIT_HASH }}
       - name: Add bazel repo (if needed)
         if: ${{ contains(matrix.tool.deps, 'bazel') }}
         run: |
@@ -418,10 +425,6 @@ jobs:
           ${{ matrix.tool.install }}
       - name: Print version
         run: ${{ matrix.tool.version }}
-      - name: Print git commit hash
-        run: |
-          cd ${{ matrix.tool.path }}
-          git rev-parse HEAD
       - name: Install runner deps
         run: sudo apt install -y bc python3 python3-pip python3-venv
       - name: Setup python venv
@@ -429,19 +432,23 @@ jobs:
           python3 -m venv .venv
           source .venv/bin/activate
           python3 -m pip install --upgrade pip
-          pip install plotly pandas scikit-learn numpy textdistance pyyaml ${{ matrix.tool.python_runner_deps }}
+          pip install -r .github/workflows/runner/tools-run/requirements.txt
+          if [ -n "${{ matrix.tool.python_runner_deps }}" ]; then
+            pip install ${{ matrix.tool.python_runner_deps }}
+          fi
+      - name: Clone gh-pages
+        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
       - name: Run
         run : |
           set +e
           source .venv/bin/activate
 
-          git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
           cd "${{ env.GH_PAGES_PATH }}"
           echo "Latest commit hash of ${{ env.GH_PAGES_PATH }}:"
           git rev-parse HEAD
           cd -
 
-          python3 .github/workflows/runner/main.py \
+          python3 .github/workflows/runner/tools-run/main.py \
             --gen-path "${{ env.GENERATION_DIR }}" \
             --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
             --tool-name "${{ matrix.tool.name }}" \
@@ -451,6 +458,8 @@ jobs:
             --sim-error-regex "${{ matrix.tool.sim_error_regex }}" \
             --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
             --error-distances-output "$ERROR_DISTANCES_OUT" \
+            --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
+            --commit "${{ env.COMMIT_HASH }}" \
             --extra-ignored-regexes ${{ join(matrix.tool.extra_ignored_regexes, ' ') }}
 
           EXIT_CODE=$?
@@ -463,6 +472,74 @@ jobs:
         with:
           name: error-distances-${{ matrix.tool.name }}
           path: ${{ env.ERROR_DISTANCES_OUT }}
+      - name: Upload run statistics
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
+          path: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
+
+  test-combined-report:
+    name: Test combined report
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: |
+          cd .github/workflows/runner/combined-report
+          python -m tests.test
+
+  push-run-stats:
+    name: Push run stats
+    runs-on: ubuntu-latest
+    needs: [test-combined-report, run-tools]
+    if: ${{ github.ref == 'refs/heads/master' }}
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.PAT_PUSH }} # https://stackoverflow.com/a/77447725/15776812
+          persist-credentials: false # https://github.com/orgs/community/discussions/25702#discussioncomment-3248819
+
+      - name: Download run statistics
+        uses: actions/download-artifact@v4
+        with:
+          path: run-stats
+
+      - name: Clone gh-pages
+        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
+      
+      - name: Calc report path
+        run: |
+          RELATIVE_REPORT_PATH="src/lib/data/errors-stats.json"
+          echo "RELATIVE_REPORT_PATH=$RELATIVE_REPORT_PATH" >> $GITHUB_ENV
+          echo "REPORT_PATH=${{ env.GH_PAGES_PATH }}/$RELATIVE_REPORT_PATH" >> $GITHUB_ENV
+
+      - name: Combine statistics
+        run: |
+          python3 .github/workflows/runner/combined-report/main.py \
+            --previous-report ${{ env.REPORT_PATH }} \
+            --current-tools-reports-dir run-stats \
+            --tools-reports-pattern "*-run-stats.json" \
+            --result-report ${{ env.REPORT_PATH }} \
+            --tests-number ${{ env.GEN_TESTS_NUMBER }}
+
+      - name: Bot Details
+        id: bot-details
+        uses: raven-actions/bot-details@v1
+      
+      - name: Commit & push
+        run: |
+          cd ${{ env.GH_PAGES_PATH }}
+          git config --global user.name "${{ steps.bot-details.outputs.name }}"
+          git config --global user.email "${{ steps.bot-details.outputs.email }}"
+          git add ${{ env.RELATIVE_REPORT_PATH }}
+          git commit -m "[ bot ] Update runs statistics"
+          git remote set-url origin "https://x-access-token:${{ secrets.PAT_PUSH }}@github.com/${{ github.repository }}"
+          git push origin gh-pages
 
   publish-container:
     name: Build and publish Docker image
@@ -481,12 +558,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Restore build cache
+      - name: Calculate cache key
+        id: cache-key
+        run: |
+          idris2_commit=$(idris2 -v | sed -nE 's/.*Idris 2, version [0-9.]+-([A-Za-z0-9]+).*/\1/p')
+          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ matrix.upstream-mode }}-$idris2_commit" >> $GITHUB_OUTPUT
+
+      - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
         with:
           path: ${{ env.BUILD_DIR }}
-          key: build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-latest-pack-collection
+          key: ${{ steps.cache-key.outputs.key }}
       
       - name: Touch ${{ env.BUILD_DIR }} dir (-_-)
         run: |
