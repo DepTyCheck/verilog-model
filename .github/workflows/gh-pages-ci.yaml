@@ -2,15 +2,11 @@ name: Check & Deploy
 
 on:
   push:
-    paths:
-      - 'found_errors/**/*.yaml'
     branches:
       - gh-pages
     tags:
       - '**'
   pull_request:
-    paths:
-      - 'found_errors/**/*.yaml'
     branches:
       - gh-pages
 
