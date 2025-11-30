@@ -550,7 +550,7 @@ jobs:
   publish-container:
     name: Build and publish Docker image
     needs: run-tools
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
