@@ -16,15 +16,11 @@ class CombinedReport:
         self.previous_report = previous_report
         self.tools_reports_list = tools_reports_list
         self.tests_number = tests_number
+        self.date = datetime.now().isoformat()
 
     def combined_runs(self) -> list[RunInfo]:
-        date = (
-            self.tools_reports_list.reports[0].date
-            if len(self.tools_reports_list.reports) > 0
-            else datetime.now().isoformat()
-        )
         return self.previous_report.runs + [
-            RunInfo(date=date, amount=self.tests_number)
+            RunInfo(date=self.date, amount=self.tests_number)
         ]
 
     def combined_errors(self) -> dict[str, ErrorInfo]:
@@ -33,7 +29,7 @@ class CombinedReport:
         for tool_report in self.tools_reports_list.reports:
             for error_report in tool_report.errors:
                 err_id = error_report.error_id
-                last = LastOccurrence(commit=tool_report.commit, date=tool_report.date)
+                last = LastOccurrence(commit=tool_report.commit, date=self.date)
 
                 if err_id in list(data.keys()):
                     data[err_id].overall += error_report.overall
