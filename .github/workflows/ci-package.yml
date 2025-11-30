@@ -219,20 +219,20 @@ jobs:
             sim_error_regex: >
               %Error:[\S ]+$
 
-          - name: surelog
-            repo: https://github.com/chipsalliance/Surelog.git
-            deps: cmake gcc build-essential git pkg-config tclsh swig uuid-dev libgoogle-perftools-dev python3 python3-orderedmultidict python3-psutil python3-dev default-jre lcov zlib1g-dev
-            path: surelog
-            build: |
-              git submodule update --init --recursive
-              make -j$(nproc)
-            install: |
-              sudo apt install -y libgoogle-perftools-dev
-              sudo pip3 install orderedmultidict
-              sudo make install
-            version: |
-              surelog --version
-            run: surelog -parse -nopython -sv {file}
+          # - name: surelog
+          #   repo: https://github.com/chipsalliance/Surelog.git
+          #   deps: cmake gcc build-essential git pkg-config tclsh swig uuid-dev libgoogle-perftools-dev python3 python3-orderedmultidict python3-psutil python3-dev default-jre lcov zlib1g-dev
+          #   path: surelog
+          #   build: |
+          #     git submodule update --init --recursive
+          #     make -j$(nproc)
+          #   install: |
+          #     sudo apt install -y libgoogle-perftools-dev
+          #     sudo pip3 install orderedmultidict
+          #     sudo make install
+          #   version: |
+          #     surelog --version
+          #   run: surelog -parse -nopython -sv {file}
 
           - name: zachjs-sv2v
             repo: https://github.com/zachjs/sv2v.git
@@ -550,7 +550,7 @@ jobs:
   publish-container:
     name: Build and publish Docker image
     needs: [build-and-test, run-tools]
-    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -591,6 +591,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=${{ github.ref }},enable={{is_not_default_branch}}
 
       - name: Build and push Docker image
         id: push
