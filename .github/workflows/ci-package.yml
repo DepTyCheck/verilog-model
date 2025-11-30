@@ -64,6 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/stefan-hoeck/idris2-pack:latest
     outputs:
+      latest-cache-key: ${{ steps.export-key.outputs.latest_key }}
       artifact-id: generated-modules
     strategy:
       fail-fast: false
@@ -86,6 +87,11 @@ jobs:
         run: |
           idris2_commit=$(idris2 -v | sed -nE 's/.*Idris 2, version [0-9.]+-([A-Za-z0-9]+).*/\1/p')
           echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ matrix.upstream-mode }}-$idris2_commit" >> $GITHUB_OUTPUT
+      - name: Export key
+        id: export-key
+        if: matrix.upstream-mode == 'latest-pack-collection'
+        run: |
+          echo "latest_key=${{ steps.cache-key.outputs.key }}" >> $GITHUB_OUTPUT
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
@@ -494,7 +500,7 @@ jobs:
     name: Push run stats
     runs-on: ubuntu-latest
     needs: [test-combined-report, run-tools]
-    if: ${{ github.ref == 'refs/heads/master' }}
+    # if: ${{ github.ref == 'refs/heads/master' }}
     permissions:
       contents: write
     steps:
@@ -558,18 +564,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Calculate cache key
-        id: cache-key
-        run: |
-          idris2_commit=$(idris2 -v | sed -nE 's/.*Idris 2, version [0-9.]+-([A-Za-z0-9]+).*/\1/p')
-          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ matrix.upstream-mode }}-$idris2_commit" >> $GITHUB_OUTPUT
-
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
         with:
           path: ${{ env.BUILD_DIR }}
-          key: ${{ steps.cache-key.outputs.key }}
+          key: ${{ needs.build-and-test.outputs.latest-cache-key.latest_key }}
       
       - name: Touch ${{ env.BUILD_DIR }} dir (-_-)
         run: |

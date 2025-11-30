@@ -9,6 +9,9 @@ WORKDIR /app
 COPY . .
 COPY ${BUILD_DIR} ${BUILD_DIR}
 
+# Switch latest to match cached build
+RUN pack switch latest
+
 # Touch files trying to force build from cache
 RUN find ${BUILD_DIR} -type f -exec touch {} +
 
