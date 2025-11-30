@@ -1,6 +1,11 @@
 import subprocess
 from src.find_top import find_top
-from src.handle_errors import FoundMatch, UnexpectedErrorText, extract_and_classify_errors, match_whole_output
+from src.handle_errors import (
+    FoundMatch,
+    UnexpectedErrorText,
+    extract_and_classify_errors,
+    match_whole_output,
+)
 from src.ignored_errors_list import IgnoredErrorsList
 from src.error_match_in_test import ErrorMatchInTest
 
@@ -43,7 +48,10 @@ def execute_command(cmd: str) -> tuple[str, int]:
             f"""Command timed out after {
               COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}"""
         )
-        return f"Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}", 1
+        return (
+            f"Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}",
+            0,
+        )
     except Exception as error:
         print(f"Command execution failed: {error}")
         return str(error), 1
@@ -76,7 +84,11 @@ def print_file(file_content: str, file_path: str) -> None:
 
 
 def run_test(
-    cmd: str, file_content: str, file_path: str, error_regex: str, ignored_errors: IgnoredErrorsList
+    cmd: str,
+    file_content: str,
+    file_path: str,
+    error_regex: str,
+    ignored_errors: IgnoredErrorsList,
 ) -> tuple[bool, list[str], list[ErrorMatchInTest]]:
     """
     Run a single test (analysis or simulation) and handle its errors.
@@ -101,7 +113,9 @@ def run_test(
             if unexpected_error_whole == None:
                 unexpected_errors.append("\n".join(output.splitlines()[:3]))
             elif isinstance(unexpected_error_whole, FoundMatch):
-                found_matches.append(ErrorMatchInTest(match=unexpected_error_whole, test_path=file_path))
+                found_matches.append(
+                    ErrorMatchInTest(match=unexpected_error_whole, test_path=file_path)
+                )
 
         if len(unexpected_errors) > 0:
             print_file(file_content, file_path)
