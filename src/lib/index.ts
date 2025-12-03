@@ -1,6 +1,6 @@
 import { type FoundError } from '$lib/core';
-import { base } from '$app/paths';
-import type { IssueNovelty } from './core';
+import { resolve } from '$app/paths';
+import type { IssueNovelty, MaintainersResponse } from './core';
 
 export interface DisplayInfo {
 	text: string;
@@ -47,14 +47,58 @@ export function displayIssueNovelty(status: IssueNovelty): DisplayInfo {
 	}
 }
 
-export const LinkHandler = (link: string) => {
-	if (process.env.NODE_ENV === 'development') {
-		return link;
+export function getMaintainersResponseDisplay(tag: MaintainersResponse): DisplayInfo {
+	switch (tag) {
+		case 'bug':
+			return { text: 'Bug', color: 'red' };
+		case 'enhancement':
+			return { text: 'Enhancement', color: 'blue' };
+		case 'low':
+			return { text: 'Low priority', color: 'purple' };
+		case 'wontfix':
+			return { text: "Won't fix", color: 'gray' };
+		default:
+			return { text: 'No response', color: 'green' };
 	}
+}
 
-	if (link === '/') {
-		return base;
+export function getMaintainersResponseTooltip(status: MaintainersResponse): string {
+	switch (status) {
+		case 'bug':
+			return 'The maintainers have accepted this bug';
+		case 'enhancement':
+			return "This feature isn't implemented yet, but it's planned";
+		case 'low':
+			return 'The maintainers are unsure whether this feature is needed';
+		case 'wontfix':
+			return 'There are no plans to implement this feature';
+		case null:
+			return 'No response information available';
+		default:
+			return status;
 	}
+}
 
-	return base + link;
+export function getNoveltyTooltip(status: IssueNovelty): string {
+	switch (status) {
+		case 'new':
+			return 'This issue is reported for the first time';
+		case 'already_known':
+			return 'This issue was already known before';
+		case 'unsupported':
+			return 'This feature is not supported by the tool and is not planned in the near future';
+		case 'feature':
+			return 'Actually it is not a bug, but a feature';
+		case 'late':
+			return 'An issue was detected, but the maintainers resolved it before it was reported';
+		case null:
+			return 'No novelty information available';
+		default:
+			return `Novelty: ${status}`;
+	}
+}
+
+export const fixLink = (link: string | undefined) => {
+	if (!link) return '';
+	return resolve(link as any);
 };

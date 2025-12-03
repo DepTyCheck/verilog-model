@@ -1,28 +1,28 @@
-import rawErrorsData from '$lib/data/errors-data.json';
+import rawErrorsData from '$lib/data/errors-stats.json';
 
 export type LastErrorOccurrence = {
-    commit: string;
-    link: string;
-    date: Date;
-}
+	commit: string;
+	date: Date;
+};
 
 export type ErrorStat = {
-    error_id: string;
-    count: number;
-    last: LastErrorOccurrence;
-}
+	error_id: string;
+	overall: number;
+	test_paths_count: number;
+	last: LastErrorOccurrence;
+};
 
 export type RunStat = {
-    date: Date;
-    amount: number;
-}
+	date: Date;
+	amount: number;
+};
 
 export type ErrorsStats = {
-    errors: Record<string, ErrorStat>;
-    runs: RunStat[];
-}
+	errors: Record<string, ErrorStat>;
+	runs: RunStat[];
+};
 
-export function getProcessedErrorsData(): ErrorsStats {
+function getParsedErrorStats(): ErrorsStats {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const rawData = rawErrorsData as any;
 	return {
@@ -32,6 +32,7 @@ export function getProcessedErrorsData(): ErrorsStats {
 				errorId,
 				{
 					...error,
+					error_id: errorId,
 					last: {
 						...error.last,
 						date: new Date(error.last.date)
@@ -46,3 +47,5 @@ export function getProcessedErrorsData(): ErrorsStats {
 		}))
 	};
 }
+
+export const errorsStats = getParsedErrorStats();

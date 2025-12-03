@@ -1,27 +1,12 @@
 <script lang="ts">
-	import {
-		TableBody,
-		TableBodyCell,
-		TableBodyRow,
-		Table,
-		Card,
-		Heading,
-		A,
-		Tooltip,
-		Badge,
-		Button
-	} from 'flowbite-svelte';
+	import { Card, Heading, A, Tooltip, Badge, Button } from 'flowbite-svelte';
 	import TableColSortHead from '$lib/components/bugs-table/TableColSortHead.svelte';
 	import TableColHead from '$lib/components/bugs-table/TableColHead.svelte';
 	import TableColFilterHead from '$lib/components/bugs-table/TableColFilterHead.svelte';
+	import TableData from '$lib/components/bugs-table/TableData.svelte';
+	import BottomScrollbar from '$lib/components/bugs-table/BottomScrollbar.svelte';
 	import { ArrowRightOutline } from 'flowbite-svelte-icons';
-	import {
-		type CheckBoxChoice,
-		type SortableColumn,
-		type IssueNovelty,
-		type MaintainersResponse
-	} from '$lib/core';
-	import type { DisplayInfo } from '$lib/index';
+	import { type CheckBoxChoice, type SortableColumn } from '$lib/core';
 	import { githubUrl, depTyCheckGithubUrl } from '$lib/consts';
 	import { allFoundErrors } from '$lib/generated/errors-data';
 	import { formatDateDMY, getFirstFound, displayIssueNovelty } from '$lib/index';
@@ -35,20 +20,23 @@
 		createNoveltyFilter,
 		createMaintainersFilter,
 		createStageFilter
-	} from '$lib/table-utils';
+	} from '$lib/components/bugs-table/table-utils';
+	import { ErrorsSorter } from '$lib/components/bugs-table/bugs-table-utils';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { LinkHandler } from '$lib/index';
-	// import { getProcessedErrorsData } from '$lib/errors-utils';
-	// import ErrorStatsCell from '$lib/components/bugs-table/ErrorStatsCell.svelte';
-
-	// const errorsData = getProcessedErrorsData();
+	import {
+		fixLink,
+		getMaintainersResponseDisplay,
+		getMaintainersResponseTooltip,
+		getNoveltyTooltip
+	} from '$lib/index';
+	import { errorsStats } from '$lib/parsed-error-stats';
+	import ErrorStatsCell from '$lib/components/bugs-table/ErrorStatsCell.svelte';
+	import { errorPercentages } from '$lib/components/bugs-table/error-stats-utils';
 
 	let scrollContainer: HTMLDivElement;
-	let bottomScrollbar: HTMLInputElement;
-	let showBottomScrollbar = false;
 
 	let toolChoices: CheckBoxChoice[] = createToolChoices(allFoundErrors);
 	let stageChoices: CheckBoxChoice[] = createStageChoices(allFoundErrors);
@@ -76,25 +64,6 @@
 			repo: match[2],
 			issueNumber: match[3]
 		};
-	}
-
-	function getNoveltyTooltip(status: IssueNovelty): string {
-		switch (status) {
-			case 'new':
-				return 'This issue is reported for the first time';
-			case 'already_known':
-				return 'This issue was already known before';
-			case 'unsupported':
-				return 'This feature is not supported by the tool and is not planned in the near future';
-			case 'feature':
-				return 'Actually it is not a bug, but a feature';
-			case 'late':
-				return 'An issue was detected, but the maintainers resolved it before it was reported';
-			case null:
-				return 'No novelty information available';
-			default:
-				return `Novelty: ${status}`;
-		}
 	}
 
 	function updateQueryParams() {
@@ -136,24 +105,7 @@
 
 	onMount(() => {
 		loadFromQueryParams(page.url);
-		requestAnimationFrame(() => {
-			if (scrollContainer) updateShadows(scrollContainer);
-		});
-		const onResize = () => {
-	
-				if (scrollContainer) updateShadows(scrollContainer);
-		
-		};
-		window.addEventListener('resize', onResize);
-		return () => window.removeEventListener('resize', onResize);
 	});
-
-	$: if (scrollContainer) {
-		requestAnimationFrame(() => {
-			updateShadows(scrollContainer);
-		});
-	}
-
 	$: filteredErrors = applyFilters(allFoundErrors, [
 		createToolFilter(toolGroup),
 		createNoveltyFilter(noveltyGroup),
@@ -161,27 +113,7 @@
 		createStageFilter(stageGroup)
 	]);
 
-	$: sortedErrors = [...filteredErrors].sort((a, b) => {
-		let aVal, bVal;
-		if (sortColumn === 'firstFound') {
-			aVal = a ? (getFirstFound(a)?.getTime() ?? 0) : 0;
-			bVal = b ? (getFirstFound(b)?.getTime() ?? 0) : 0;
-		} else if (sortColumn === 'stats') {
-			// Sort by percentage occurrence
-			// const aStat = errorsData.errors[a.id];
-			// const bStat = errorsData.errors[b.id];
-			aVal = 1;
-			bVal = 2;
-			// aVal = aStat && totalRuns > 0 ? (aStat.count / totalRuns) * 100 : 0;
-			// bVal = bStat && totalRuns > 0 ? (bStat.count / totalRuns) * 100 : 0;
-		} else {
-			aVal = a[sortColumn] || '';
-			bVal = b[sortColumn] || '';
-		}
-		if (aVal < bVal) return sortAsc ? -1 : 1;
-		if (aVal > bVal) return sortAsc ? 1 : -1;
-		return 0;
-	});
+	$: sortedErrors = new ErrorsSorter(filteredErrors, errorPercentages).sorted(sortColumn, sortAsc);
 
 	function setSort(col: SortableColumn) {
 		if (sortColumn === col) {
@@ -208,68 +140,7 @@
 		return `#${issueNumber}`;
 	}
 
-	function getMaintainersResponseDisplay(tag: MaintainersResponse): DisplayInfo {
-		switch (tag) {
-			case 'bug':
-				return { text: 'Bug', color: 'red' };
-			case 'enhancement':
-				return { text: 'Enhancement', color: 'blue' };
-			case 'low':
-				return { text: 'Low priority', color: 'purple' };
-			case 'wontfix':
-				return { text: "Won't fix", color: 'gray' };
-			default:
-				return { text: 'No response', color: 'green' };
-		}
-	}
-
-	function getMaintainersResponseTooltip(status: MaintainersResponse): string {
-		switch (status) {
-			case 'bug':
-				return 'The maintainers have accepted this bug';
-			case 'enhancement':
-				return "This feature isn't implemented yet, but it's planned";
-			case 'low':
-				return 'The maintainers are unsure whether this feature is needed';
-			case 'wontfix':
-				return 'There are no plans to implement this feature';
-			case null:
-				return 'No response information available';
-			default:
-				return status;
-		}
-	}
-
 	$: if (browser && filteredErrors) updateQueryParams();
-
-	function updateShadows(el: HTMLElement | null) {
-		if (!el) return;
-		
-		showBottomScrollbar = el.scrollWidth > el.clientWidth;
-	}
-
-	function handleScroll(e: any) {
-		const el = e.target as HTMLElement;
-		updateShadows(el);
-
-		// Update bottom scrollbar position
-		// const bottomScrollbar = document.getElementById('bottom-scrollbar') as HTMLInputElement;
-		if (bottomScrollbar) {
-			const maxScroll = el.scrollWidth - el.clientWidth;
-			const scrollPercentage = maxScroll > 0 ? (el.scrollLeft / maxScroll) * 100 : 0;
-			bottomScrollbar.value = scrollPercentage.toString();
-		}
-	}
-
-	function handleBottomScrollbarChange() {
-		// const bottomScrollbar = document.getElementById('bottom-scrollbar') as HTMLInputElement;
-		if (scrollContainer && bottomScrollbar) {
-			const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-			const scrollLeft = (parseFloat(bottomScrollbar.value) / 100) * maxScroll;
-			scrollContainer.scrollLeft = scrollLeft;
-		}
-	}
-
 </script>
 
 <Card size="xl" class="max-w-none p-4 shadow-sm sm:p-6">
@@ -291,26 +162,12 @@
 		</div>
 	</div>
 	<div class="relative mt-6">
-		<div
-			bind:this={scrollContainer}
-			on:scroll|passive={handleScroll}
-			style="overflow-x: auto; max-width: 100%;"
-		>
-			<table class="min-w-max w-full divide-y divide-gray-200 dark:divide-gray-600 text-sm">
+		<div bind:this={scrollContainer} style="overflow-x: auto; max-width: 100%;">
+			<table class="w-full min-w-max divide-y divide-gray-200 text-sm dark:divide-gray-600">
 				<thead class="bg-gray-50 dark:bg-gray-700">
 					<tr>
-						<TableColHead
-							label="№"
-							widthClass="w-12"
-							colorClass="text-gray-400"
-						/>
-						<TableColSortHead
-							label="Title"
-							sortKey="title"
-							{sortColumn}
-							{sortAsc}
-							{setSort}
-						/>
+						<TableColHead label="№" widthClass="w-12" colorClass="text-gray-400" />
+						<TableColSortHead label="Title" sortKey="title" {sortColumn} {sortAsc} {setSort} />
 						<TableColFilterHead
 							choices={toolChoices}
 							bind:group={toolGroup}
@@ -336,47 +193,46 @@
 							label="Novelty"
 							name="novelty"
 						/>
-						<TableColHead
-							label="Related<br>issue"
-						/>
+						<TableColHead label="Related<br>issue" />
 						<TableColFilterHead
 							choices={maintainersChoices}
 							bind:group={maintainersGroup}
 							label="Maintainers<br>response"
 							name="maintainers"
 						/>
-						<!-- <TableColSortHead
+						<TableColSortHead
 							label="Stats"
 							sortKey="stats"
 							{sortColumn}
 							{sortAsc}
 							{setSort}
-						/> -->
+							hint="% of all runs / % of failed files / errors per failed file"
+						/>
 					</tr>
 				</thead>
-				<tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-600">
-					{#each sortedErrors as item, i}
+				<tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-600 dark:bg-gray-800">
+					{#each sortedErrors as item, i (item.id)}
 						<tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-							<td class="w-12 px-4 py-3 text-center text-gray-400">{i + 1}</td>
-							<td class="h-16 w-32 px-4 py-3">
+							<TableData widthClass="w-12" specialClass="text-gray-400">{i + 1}</TableData>
+							<TableData textAlign="text-left">
 								<A
-									href={LinkHandler(`/error/${item.id}`)}
-									class="line-clamp-2 break-words whitespace-normal">{item.title}</A
+									href={fixLink(`/error/${item.id}`)}
+									class="line-clamp-2 break-words whitespace-normal"
 								>
-							</td>
-							<td class="w-32 px-4 py-3 text-center">{item.tool}</td>
-							<td class="w-32 px-4 py-3 text-center">{item.stage}</td>
-							<td class="w-32 px-4 py-3 text-center">
-								{formatDateDMY(getFirstFound(item))}
-							</td>
-							<td class="w-32 px-4 py-3 text-center">
+									{item.title}
+								</A>
+							</TableData>
+							<TableData>{item.tool}</TableData>
+							<TableData>{item.stage}</TableData>
+							<TableData>{formatDateDMY(getFirstFound(item))}</TableData>
+							<TableData>
 								{#if displayIssueNovelty(item.issue_novelty).text}
 									{@const noveltyDisplay = displayIssueNovelty(item.issue_novelty)}
 									<Badge color={noveltyDisplay.color} large>{noveltyDisplay.text}</Badge>
 									<Tooltip type="auto">{getNoveltyTooltip(item.issue_novelty)}</Tooltip>
 								{/if}
-							</td>
-							<td class="w-32 px-4 py-3 text-center">
+							</TableData>
+							<TableData>
 								{#if item.issue_link && item.issue_link.trim() !== ''}
 									{#if getIssueNumberFromLink(item.issue_link)}
 										<A href={item.issue_link} target="_blank" rel="noopener noreferrer">
@@ -388,8 +244,8 @@
 										</A>
 									{/if}
 								{/if}
-							</td>
-							<td class="w-32 px-4 py-3 text-center">
+							</TableData>
+							<TableData>
 								{#if item.maintainers_response}
 									{@const resp = getMaintainersResponseDisplay(item.maintainers_response)}
 									<Badge color={resp.color} large rounded>{resp.text}</Badge>
@@ -397,12 +253,16 @@
 										>{getMaintainersResponseTooltip(item.maintainers_response)}</Tooltip
 									>
 								{/if}
-							</td>
-							<!-- <td class="w-32 px-4 py-3 text-center">
-								{#if errorsData.errors[item.id]}
-									<ErrorStatsCell errorId={item.id} errorsStats={errorsData} />
+							</TableData>
+							<TableData widthClass="w-48">
+								{#if errorsStats.errors[item.id]}
+									<ErrorStatsCell
+										errorId={item.id}
+										{errorsStats}
+										percentages={errorPercentages[item.id]}
+									/>
 								{/if}
-							</td> -->
+							</TableData>
 						</tr>
 					{/each}
 				</tbody>
@@ -413,22 +273,4 @@
 
 <div class="h-12"></div>
 
-{#if showBottomScrollbar}
-	<div
-		class="fixed right-8 bottom-4 left-8 z-50 rounded-xl border border-gray-200 bg-white/90 shadow-xl backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/90"
-	>
-		<div class="flex justify-center px-4 py-3">
-			<div class="w-full max-w-4xl">
-				<input
-					bind:this={bottomScrollbar}
-					type="range"
-					min="0"
-					max="100"
-					value="0"
-					on:input={handleBottomScrollbarChange}
-					class="h-3 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 dark:bg-gray-700"
-				/>
-			</div>
-		</div>
-	</div>
-{/if}
+<BottomScrollbar {scrollContainer} />

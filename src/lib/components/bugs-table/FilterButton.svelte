@@ -11,11 +11,11 @@
 </script>
 
 <div class="flex items-center justify-center">
-    <Button
-        color="alternative"
-        class="w-fit border-none px-4 py-2 whitespace-nowrap shadow-none {colorClass}"
-        style="border: none; box-shadow: none;"
-    >
+	<Button
+		color="alternative"
+		class="w-fit border-none px-4 py-2 whitespace-nowrap shadow-none {colorClass}"
+		style="border: none; box-shadow: none;"
+	>
 		{@html label}
 		{#if group.length > 0}
 			<FilterSolid class="ml-2 h-4 w-4" />

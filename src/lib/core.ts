@@ -27,11 +27,4 @@ export type FoundError = {
 	maintainers_response: MaintainersResponse;
 };
 
-export type SortableColumn =
-	| 'tool'
-	| 'firstFound'
-	| 'title'
-	| 'stage'
-	| 'issue_link'
-	| 'issue_novelty'
-	| 'stats';
+export type SortableColumn = 'firstFound' | 'title' | 'stats';

@@ -6,7 +6,15 @@
 	export let scope: 'col' | 'colgroup' | 'row' | 'rowgroup' | null = 'col';
 </script>
 
-<th {scope} class={`px-4 py-3 ${widthClass} ${tableHeaderText} ${colorClass}`} on:click on:keydown on:keyup on:keypress {...$$restProps}>
+<th
+	{scope}
+	class={`px-4 py-3 ${widthClass} ${tableHeaderText} ${colorClass}`}
+	on:click
+	on:keydown
+	on:keyup
+	on:keypress
+	{...$$restProps}
+>
 	{#if label}
 		<span class="whitespace-nowrap">{@html label}</span>
 	{/if}

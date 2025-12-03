@@ -8,7 +8,7 @@
 	import CodeBlock from '$lib/components/full-issue-info/CodeBlock.svelte';
 	import FieldDisplay from '$lib/components/full-issue-info/FieldDisplay.svelte';
 
-	let id: string = page.params.id;
+	let id: string = String(page.params.id);
 	let foundError: FoundError | null = null;
 	let errorMsg: string | null = '';
 

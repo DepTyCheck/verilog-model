@@ -24,7 +24,6 @@ jobs:
   lint-yaml:
     name: Validate YAML Syntax
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -41,8 +40,28 @@ jobs:
         run: |
           yamllint -c .yamllint found_errors/
 
-  build_site:
-    needs: lint-yaml
+  unit-tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+
+  build-site:
+    name: Build site
+    needs: [unit-tests, lint-yaml]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -65,8 +84,9 @@ jobs:
           path: 'build/'
 
   deploy:
+    name: Deploy site
     if: github.event_name == 'push'
-    needs: build_site
+    needs: build-site
     runs-on: ubuntu-latest
     permissions:
       pages: write

@@ -1,0 +1,8 @@
+{
+	"iverilog": "https://github.com/steveicarus/iverilog",
+	"synlig": "https://github.com/chipsalliance/synlig",
+	"verilator": "https://github.com/verilator/verilator",
+	"yosys": "https://github.com/YosysHQ/yosys",
+	"yosys-slang": "https://github.com/povik/yosys-slang",
+	"zachjs-sv2v": "https://github.com/zachjs/sv2v"
+}
