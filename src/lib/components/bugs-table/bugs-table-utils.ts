@@ -1,5 +1,5 @@
 import { getFirstFound } from '$lib';
-import type { FoundError, SortableColumn } from '$lib/core';
+import type { FoundError, SortableColumn, SortDirection } from '$lib/core';
 import type { ErrorPercentages } from './error-stats-utils';
 
 function compare<T>(a: T, b: T): number {
@@ -8,7 +8,7 @@ function compare<T>(a: T, b: T): number {
 	return 0;
 }
 
-export class ErrorsSorter {
+export class SortedIssues {
 	constructor(
 		private errors: FoundError[],
 		private errorPercentages: Record<string, ErrorPercentages>
@@ -32,7 +32,7 @@ export class ErrorsSorter {
 		return compare(aVal, bVal);
 	}
 
-	sorted(sortColumn: SortableColumn, sortAsc: boolean): FoundError[] {
+	sorted(sortColumn: SortableColumn, sortDest: SortDirection): FoundError[] {
 		let comparator: (a: FoundError, b: FoundError) => number;
 
 		switch (sortColumn) {
@@ -49,7 +49,7 @@ export class ErrorsSorter {
 
 		return [...this.errors].sort((a, b) => {
 			const result = comparator(a, b);
-			return sortAsc ? result : -result;
+			return sortDest === 'asc' ? result : -result;
 		});
 	}
 }

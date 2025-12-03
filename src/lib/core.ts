@@ -28,3 +28,5 @@ export type FoundError = {
 };
 
 export type SortableColumn = 'firstFound' | 'title' | 'stats';
+
+export type SortDirection = 'asc' | 'desc';

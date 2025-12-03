@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SortableColumn } from '$lib/core';
+	import type { SortableColumn, SortDirection } from '$lib/core';
 	import { CaretSortOutline, CaretUpSolid, CaretDownSolid } from 'flowbite-svelte-icons';
 	import { Button } from 'flowbite-svelte';
 	import { tableHeaderText, tableHeaderColor } from './table-styles';
@@ -8,7 +8,7 @@
 	export let label: string;
 	export let sortKey: SortableColumn;
 	export let sortColumn: SortableColumn | null = null;
-	export let sortAsc: boolean = true;
+	export let sortDest: SortDirection = 'asc';
 	export let setSort: (col: SortableColumn) => void;
 	export let scope: 'col' | 'colgroup' | 'row' | 'rowgroup' | null = 'col';
 	export let widthClass: string = 'px-4 py-3 w-32';
@@ -25,7 +25,7 @@
 		>
 			{@html label}
 			{#if sortKey && sortColumn === sortKey}
-				{#if sortAsc}
+				{#if sortDest === 'asc'}
 					<CaretUpSolid class="ml-2 h-4 w-4" />
 				{:else}
 					<CaretDownSolid class="ml-2 h-4 w-4" />

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sortErrors } from '../src/lib/components/bugs-table/bugs-table-utils';
+import { SortedIssues } from '../src/lib/components/bugs-table/bugs-table-utils';
 import type { FoundError } from '../src/lib/core';
 import type { ErrorPercentages } from '../src/lib/components/bugs-table/error-stats-utils';
 
@@ -85,7 +85,7 @@ const mockErrorPercentages: Record<string, ErrorPercentages> = {
 describe('sortErrors', () => {
     describe('sorting by title', () => {
         it('should sort errors by title in ascending order', () => {
-            const sorted = sortErrors(mockErrors, mockErrorPercentages, 'title', true);
+            const sorted = new SortedIssues(mockErrors, mockErrorPercentages).sorted('title', 'asc');
             expect(sorted.map(e => e.title)).toEqual([
                 'Alpha error',
                 'Beta error',
@@ -95,7 +95,7 @@ describe('sortErrors', () => {
         });
 
         it('should sort errors by title in descending order', () => {
-            const sorted = sortErrors(mockErrors, mockErrorPercentages, 'title', false);
+            const sorted = new SortedIssues(mockErrors, mockErrorPercentages).sorted('title', 'desc');
             expect(sorted.map(e => e.title)).toEqual([
                 'Zebra error',
                 'Gamma error',
@@ -107,7 +107,7 @@ describe('sortErrors', () => {
 
     describe('sorting by firstFound', () => {
         it('should sort errors by first found date in ascending order', () => {
-            const sorted = sortErrors(mockErrors, mockErrorPercentages, 'firstFound', true);
+            const sorted = new SortedIssues(mockErrors, mockErrorPercentages).sorted('firstFound', 'asc');
             expect(sorted.map(e => e.id)).toEqual([
                 'error4', // No date (0)
                 'error1', // 2024-01-15
@@ -117,7 +117,7 @@ describe('sortErrors', () => {
         });
 
         it('should sort errors by first found date in descending order', () => {
-            const sorted = sortErrors(mockErrors, mockErrorPercentages, 'firstFound', false);
+            const sorted = new SortedIssues(mockErrors, mockErrorPercentages).sorted('firstFound', 'desc');
             expect(sorted.map(e => e.id)).toEqual([
                 'error2', // 2024-03-20
                 'error3', // 2024-02-10
@@ -129,22 +129,22 @@ describe('sortErrors', () => {
 
     describe('sorting by stats', () => {
         it('should sort errors by overall percentage in ascending order', () => {
-            const sorted = sortErrors(mockErrors, mockErrorPercentages, 'stats', true);
+            const sorted = new SortedIssues(mockErrors, mockErrorPercentages).sorted('stats', 'asc');
             expect(sorted.map(e => e.id)).toEqual([
+                'error4', // 0.2%
                 'error2', // 0.39%
-                'error4', // 0.58%
-                'error1', // 29%
-                'error3', // 119%
+                'error1', // 0.78%
+                'error3', // 1.56%
             ]);
         });
 
         it('should sort errors by overall percentage in descending order', () => {
-            const sorted = sortErrors(mockErrors, mockErrorPercentages, 'stats', false);
+            const sorted = new SortedIssues(mockErrors, mockErrorPercentages).sorted('stats', 'desc');
             expect(sorted.map(e => e.id)).toEqual([
-                'error3', // 119%
-                'error1', // 29%
-                'error4', // 0.58%
+                'error3', // 1.56%
+                'error1', // 0.78%
                 'error2', // 0.39%
+                'error4', // 0.2%
             ]);
         });
 
@@ -161,7 +161,7 @@ describe('sortErrors', () => {
                 }
             ];
 
-            const sorted = sortErrors(errorsWithMissingStats, mockErrorPercentages, 'stats', true);
+            const sorted = new SortedIssues(errorsWithMissingStats, mockErrorPercentages).sorted('stats', 'asc');
             // error5 has no stats, should be treated as 0 and come first
             expect(sorted[0].id).toBe('error5');
         });
@@ -169,19 +169,19 @@ describe('sortErrors', () => {
 
     describe('edge cases', () => {
         it('should handle empty array', () => {
-            const sorted = sortErrors([], mockErrorPercentages, 'title', true);
+            const sorted = new SortedIssues([], mockErrorPercentages).sorted('title', 'asc');
             expect(sorted).toEqual([]);
         });
 
         it('should handle single element array', () => {
             const singleError = [mockErrors[0]];
-            const sorted = sortErrors(singleError, mockErrorPercentages, 'title', true);
+            const sorted = new SortedIssues(singleError, mockErrorPercentages).sorted('title', 'asc');
             expect(sorted).toEqual(singleError);
         });
 
         it('should not mutate the original array', () => {
             const original = [...mockErrors];
-            sortErrors(mockErrors, mockErrorPercentages, 'title', true);
+            new SortedIssues(mockErrors, mockErrorPercentages).sorted('title', 'asc');
             expect(mockErrors).toEqual(original);
         });
 
@@ -205,7 +205,7 @@ describe('sortErrors', () => {
                 }
             ];
 
-            const sorted = sortErrors(duplicateTitles, {}, 'title', true);
+            const sorted = new SortedIssues(duplicateTitles, {}).sorted('title', 'asc');
             expect(sorted).toHaveLength(2);
             expect(sorted[0].title).toBe('Same title');
             expect(sorted[1].title).toBe('Same title');

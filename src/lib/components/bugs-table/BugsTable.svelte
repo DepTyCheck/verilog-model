@@ -6,7 +6,7 @@
 	import TableData from '$lib/components/bugs-table/TableData.svelte';
 	import BottomScrollbar from '$lib/components/bugs-table/BottomScrollbar.svelte';
 	import { ArrowRightOutline } from 'flowbite-svelte-icons';
-	import { type CheckBoxChoice, type SortableColumn } from '$lib/core';
+	import { type CheckBoxChoice, type SortableColumn, type SortDirection } from '$lib/core';
 	import { githubUrl, depTyCheckGithubUrl } from '$lib/consts';
 	import { allFoundErrors } from '$lib/generated/errors-data';
 	import { formatDateDMY, getFirstFound, displayIssueNovelty } from '$lib/index';
@@ -21,7 +21,7 @@
 		createMaintainersFilter,
 		createStageFilter
 	} from '$lib/components/bugs-table/table-utils';
-	import { ErrorsSorter } from '$lib/components/bugs-table/bugs-table-utils';
+	import { SortedIssues } from '$lib/components/bugs-table/bugs-table-utils';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
@@ -52,7 +52,7 @@
 	let stageGroup: string[] = [];
 
 	let sortColumn: SortableColumn = 'title';
-	let sortAsc = true;
+	let sortDest: SortDirection = 'asc';
 
 	function parseGitHubUrl(
 		url: string
@@ -74,7 +74,7 @@
 		if (maintainersGroup.length > 0) params.set('maintainers', maintainersGroup.join(','));
 		if (stageGroup.length > 0) params.set('stage', stageGroup.join(','));
 		if (sortColumn) params.set('sort', sortColumn);
-		params.set('asc', sortAsc ? '1' : '0');
+		params.set('dir', sortDest);
 		goto(`?${params.toString()}`, { replaceState: true, keepFocus: true, noScroll: true });
 	}
 
@@ -91,8 +91,8 @@
 		if (sortParam && ['firstFound', 'title', 'stats'].includes(sortParam)) {
 			sortColumn = sortParam as SortableColumn;
 		}
-		const ascParam = url.searchParams.get('asc');
-		sortAsc = ascParam === '0' ? false : true;
+		const dirParam = url.searchParams.get('dir');
+		sortDest = dirParam === 'desc' ? 'desc' : 'asc';
 	}
 
 	function clearAllFilters() {
@@ -113,14 +113,14 @@
 		createStageFilter(stageGroup)
 	]);
 
-	$: sortedErrors = new ErrorsSorter(filteredErrors, errorPercentages).sorted(sortColumn, sortAsc);
+	$: sortedErrors = new SortedIssues(filteredErrors, errorPercentages).sorted(sortColumn, sortDest);
 
 	function setSort(col: SortableColumn) {
 		if (sortColumn === col) {
-			sortAsc = !sortAsc;
+			sortDest = sortDest === 'asc' ? 'desc' : 'asc';
 		} else {
 			sortColumn = col;
-			sortAsc = true;
+			sortDest = 'asc';
 		}
 		if (browser) updateQueryParams();
 	}
@@ -167,7 +167,7 @@
 				<thead class="bg-gray-50 dark:bg-gray-700">
 					<tr>
 						<TableColHead label="№" widthClass="w-12" colorClass="text-gray-400" />
-						<TableColSortHead label="Title" sortKey="title" {sortColumn} {sortAsc} {setSort} />
+						<TableColSortHead label="Title" sortKey="title" {sortColumn} {sortDest} {setSort} />
 						<TableColFilterHead
 							choices={toolChoices}
 							bind:group={toolGroup}
@@ -184,7 +184,7 @@
 							label="First Found"
 							sortKey="firstFound"
 							{sortColumn}
-							{sortAsc}
+							{sortDest}
 							{setSort}
 						/>
 						<TableColFilterHead
@@ -204,7 +204,7 @@
 							label="Stats"
 							sortKey="stats"
 							{sortColumn}
-							{sortAsc}
+							{sortDest}
 							{setSort}
 							hint="% of all runs / % of failed files / errors per failed file"
 						/>
