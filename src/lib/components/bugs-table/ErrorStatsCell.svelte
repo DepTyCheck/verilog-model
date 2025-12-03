@@ -46,6 +46,6 @@
 		</div>
 	</div>
 	<Tooltip type="auto">
-		{`Found ${errorStat.overall} times in ${errorStat.test_paths_count} files out of ${totalRuns} tests. On average ${errorsPerFailedTest} errors per failed file. Last time the issue occured in commit ${lastCommit} at ${lastDate}`}
+		{`Found ${errorStat.overall} times across ${errorStat.test_paths_count} files over ${totalRuns} runs. On average ${errorsPerFailedTest} errors per failing file. The most recent occurrence was in commit ${lastCommit} on ${lastDate}`}
 	</Tooltip>
 {/if}

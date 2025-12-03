@@ -206,7 +206,7 @@
 							{sortColumn}
 							{sortDest}
 							{setSort}
-							hint="% of all runs / % of failed files / errors per failed file"
+							hint="% of all runs / % of failed files / errors per failing file"
 						/>
 					</tr>
 				</thead>
