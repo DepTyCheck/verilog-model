@@ -87,11 +87,11 @@ totalOutputs = length . allOutputs
 
 public export
 basicIntegral : SVType -> Bool
-basicIntegral (RVar x)            = False
-basicIntegral (AVar x)            = True
-basicIntegral (VVar x)            = True
-basicIntegral (PackedArr   t _ _) = True
-basicIntegral (UnpackedArr x _ _) = basicIntegral x
+basicIntegral (RVar x)          = False
+basicIntegral (AVar x)          = True
+basicIntegral (VVar x)          = True
+basicIntegral (PackedArr   t _) = True
+basicIntegral (UnpackedArr x _) = basicIntegral x
 
 ||| 6.22.2 Equivalent types
 ||| c) Packed arrays, packed structures, packed unions, and built-in integral types are equivalent if they
@@ -115,7 +115,8 @@ data EquivalentSVT : SVType -> SVType -> Type where
 public export
 data EqSuperBasic : SVType -> SVType -> Type where
   VV : VarOrPacked t -> VarOrPacked t' -> EquivalentSVT t t' -> EqSuperBasic t t'
-  UU : EqSuperBasic t t' -> EqSuperBasic (UnpackedArr t s e) (UnpackedArr t' s' e')
+  UU : EqSuperBasic t t' ->
+       EqSuperBasic (UnpackedArr t {p} shape) (UnpackedArr t' {p = p'} shape')
 
 ||| Checks if two unpacked arrays have the same size.
 |||
@@ -128,9 +129,8 @@ data EqSuperBasic : SVType -> SVType -> Type where
 ||| endmodule: b
 public export
 data EqUnpackedArrSig : SVType -> SVType -> Type where
-  Other  : VarOrPacked t -> VarOrPacked t' -> EqUnpackedArrSig t t'
-  EqUArr : EqUnpackedArrSig t t' -> So ((max s e + min s' e') == (max s' e' + min s e)) ->
-    EqUnpackedArrSig (UnpackedArr t s e) (UnpackedArr t' s' e')
+  EqUArr : EqUnpackedArrSig t t' -> So (shape `isDimensionCompatibleWith` shape') ->
+    EqUnpackedArrSig (UnpackedArr t {p} shape) (UnpackedArr t' {p = p'} shape')
 
 public export
 data CanConnect : SVType -> SVType -> Type where
@@ -211,7 +211,7 @@ isMD (Net Wor'     t) = True
 isMD _                = False
 
 ||| 10.3.2 The continuous assignment statement
-||| Variables can only be driven by one continuous assignment or by one primitive output or module output. 
+||| Variables can only be driven by one continuous assignment or by one primitive output or module output.
 ||| IEEE 1800-2023
 public export
 data SingleDriven : SVObject -> Type where
@@ -220,7 +220,7 @@ data SingleDriven : SVObject -> Type where
 
 public export
 isSD : SVObject -> Bool
-isSD (Var st)        = True 
+isSD (Var st)        = True
 isSD (Net Uwire' st) = True
 isSD _               = False
 
@@ -267,7 +267,7 @@ namespace MultiConnection
   findUnpNet (s :: sv) = if isUnpacked s && isMD s then Just s else findUnpNet sv
 
   public export
-  resolveConnType : {ms : _} -> {m : _} -> {subMs : _} -> 
+  resolveConnType : {ms : _} -> {m : _} -> {subMs : _} ->
                     (ssk : FinsList $ subSnks' ms m subMs) -> (ssc : FinsList $ subSrcs' ms m subMs) -> SVObject
   resolveConnType ssk ssc = let allSubPorts = types (subSnks ms m subMs) ssk ++ types (subSrcs ms m subMs) ssc in
     mOrElse (findUnpNet allSubPorts) $ mOrElse (mtype allSubPorts) defaultNetType
@@ -352,10 +352,10 @@ ultraSuperReplace SSC = superReplaceSC
 
 public export
 typeOfPort : (ms : ModuleSigsList) -> (m : ModuleSig) -> (subMs : FinsList ms.length) -> FillMode ms m subMs n -> Fin n ->  SVObject
-typeOfPort ms m subMs TSK = typeOf (topSnks m)          
+typeOfPort ms m subMs TSK = typeOf (topSnks m)
 typeOfPort ms m subMs SSK = typeOf (subSnks ms m subMs)
-typeOfPort ms m subMs TSC = typeOf (topSrcs m)          
-typeOfPort ms m subMs SSC = typeOf (subSrcs ms m subMs) 
+typeOfPort ms m subMs TSC = typeOf (topSrcs m)
+typeOfPort ms m subMs SSC = typeOf (subSrcs ms m subMs)
 
 public export
 noSource : MultiConnection ms m subMs -> Bool
@@ -378,7 +378,7 @@ data FitAny : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.l
   ExistingAny : (f : Fin $ length rest) ->
                 (cap : CanAddPort {ms} {m} {subMs} mode $ index rest f) ->
                 (jmc : JustMC (ultraSuperReplace {ms} {m} {subMs} mode i $ index rest f) newMC) ->
-                (cc : CanConnect (valueOf $ typeOf $ index rest f) (valueOf $ typeOfPort ms m subMs mode i)) -> 
+                (cc : CanConnect (valueOf $ typeOf $ index rest f) (valueOf $ typeOfPort ms m subMs mode i)) ->
                 FitAny {ms} {m} {subMs} rest i mode $ replaceAt rest f newMC
 
 public export
@@ -398,7 +398,7 @@ data FillAny : {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.
                (pre : MultiConnectionsList ms m subMs) -> {n : _} -> (i : Nat) ->
                FillMode ms m subMs n -> (aft : MultiConnectionsList ms m subMs) -> Type where
   FANil  : FillAny pre Z mode pre
-  FACons : {jf : JustFin (natToFin' i n) f} -> (fit : FitAny {ms} {m} {subMs} {n} mid f mode aft) -> 
+  FACons : {jf : JustFin (natToFin' i n) f} -> (fit : FitAny {ms} {m} {subMs} {n} mid f mode aft) ->
            (rest : FillAny {ms} {m} {subMs} pre {n} i mode mid) ->
            FillAny {ms} {m} {subMs} pre {n} (S i) mode aft
 
@@ -434,7 +434,7 @@ genJF : Fuel -> {n : _} -> (mf : MFin n) -> Gen MaybeEmpty (f : Fin n ** JustFin
 
 export
 genFillAny : Fuel -> {ms : ModuleSigsList} -> {m : ModuleSig} -> {subMs : FinsList ms.length} ->
-                     (pre : MultiConnectionsList ms m subMs) -> {n : _} -> (i : Nat) -> (mode : FillMode ms m subMs n) -> 
+                     (pre : MultiConnectionsList ms m subMs) -> {n : _} -> (i : Nat) -> (mode : FillMode ms m subMs n) ->
                      Gen MaybeEmpty (aft : MultiConnectionsList ms m subMs ** FillAny {ms} {m} {subMs} {n} pre i mode aft)
 genFillAny x pre Z     mode = pure (pre ** FANil)
 genFillAny x pre (S i) mode = do
@@ -446,6 +446,6 @@ genFillAny x pre (S i) mode = do
 export
 genModules : Fuel -> (ms : ModuleSigsList) ->
   (Fuel -> {ms' : ModuleSigsList} -> {m' : ModuleSig} -> {subMs' : FinsList ms'.length} ->
-  (pre' : MultiConnectionsList ms' m' subMs') -> {n' : _} -> (i' : Nat) -> (mode' : FillMode ms' m' subMs' n') -> 
+  (pre' : MultiConnectionsList ms' m' subMs') -> {n' : _} -> (i' : Nat) -> (mode' : FillMode ms' m' subMs' n') ->
   Gen MaybeEmpty (aft' : MultiConnectionsList ms' m' subMs' ** FillAny {ms=ms'} {m=m'} {subMs=subMs'} {n=n'} pre' i' mode' aft')) =>
   Gen MaybeEmpty $ Modules ms
