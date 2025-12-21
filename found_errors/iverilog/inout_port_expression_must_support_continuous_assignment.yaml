@@ -1,0 +1,75 @@
+stage: synthesis
+tool: iverilog
+id: inout_port_expression_must_support_continuous_assignment
+title: Inout port expression must support continuous assignment
+regex: >
+  Inout port expression must support continuous assignment
+issue_novelty: new
+examples:
+  - inout_port_expression_must_support_continuous_assignment_ex1:
+      first_found: 21.12.2025
+      full_error: >
+        warning: input port hidcqr is coerced to inout.
+        error: Cannot automatically connect bit based inout port 1 (hidcqr) of module wxa to real signal cyodhdm.
+        warning: input port jea is coerced to inout.
+        error: Unresolved wire 'cyodhdm' cannot have multiple drivers.
+      full_example: |
+        module wxa
+          (input trior logic hidcqr, input tri1 logic jea, input logic [0:1]  upq, input supply1 logic eoohmknjrq [0:1][1:4][4:1][1:4]);
+
+          nand koylw(elrmqinpdg, drxhdb, drxhdb);
+          not fm(rtdd, hidcqr);
+          not uthmex(lzdipvmatn, tcs);
+          and tt(elrmqinpdg, drxhdb, tcs);
+
+
+          // Multi-driven assigns
+          assign drxhdb = 'b11z0x;
+        endmodule: wxa
+
+        module mzg
+          (output uwire logic [2:2] idgnynpog [1:1][2:2][2:3], input real cyodhdm);
+
+          supply1 logic t [0:1][1:4][4:1][1:4];
+
+          wxa baauyru(.hidcqr(cyodhdm), .jea(cyodhdm), .upq(xdz), .eoohmknjrq(t));
+          nand ao(xdz, cyodhdm, cyodhdm);
+
+          // Single-driven assigns
+          assign idgnynpog = '{'{'{'{'bz},'{'b0x}}}};
+
+          // Multi-driven assigns
+          assign xdz = 'b1;
+          assign t = '{'{'{'{'b10z11,'bz1,'b0zzz,'b1x0},'{'bz,'bzzx10,'bxx1,'b1},'{'b0z,'b11,'bxxx,'b0zx},'{'b1z100,'b0xzx,'bxz11,'b000x0}},'{'{'b1,'bx,'bz1x11,'bxxx},'{'b11x,'bx1z0x,'b0,'b0},'{'b111x1,'bz,'bz0x,'b1},'{'bz,'b01,'b00zz,'bz0z1}},'{'{'b0,'b11x0,'bxxx0z,'bz},'{'b1,'b101x,'b0,'bx},'{'bz0zxx,'b11z1z,'bz,'bz1},'{'bx0z,'bz0x1,'bz,'bz}},'{'{'bx10z0,'bz1,'b01x,'b11x1z},'{'bz,'bx1xz,'bzx0zz,'b0z00x},'{'b0xz,'bz,'bxzz11,'bxxxz},'{'b1z,'b0z,'bz0x,'b1}}},'{'{'{'b01zz,'bx0,'b0z01,'bzzzzz},'{'b01x1z,'b0z101,'b0,'bx000},'{'b00z,'bx011,'bzxz11,'b11},'{'b0z1,'bxxz,'bxxx0,'b11z}},'{'{'bx,'b1z,'bx1x,'b0z11},'{'b0xzx0,'b1,'bz1zx,'bxzz1},'{'bxz,'b0,'bz1x,'b1xz},'{'b10x,'b1x,'b1x1,'bz01}},'{'{'bx1xz0,'bz0,'bx0zz,'b0x1},'{'b1xzz1,'bx0xx,'bx0xz1,'bz110x},'{'b01z,'b1z,'bx0x1z,'bxz},'{'b0xz,'b10z,'b01zzx,'b0zxx}},'{'{'b1,'b01z1x,'b01x,'b0x1zx},'{'bz1x,'bz00,'b1z110,'b1},'{'b01z1,'b10,'b000,'bxz},'{'b1zx,'b01,'b1,'bxzz0}}}};
+        endmodule: mzg
+
+        module r
+          (output tri0 logic [4:1] piv [1:1], input bit [1:3][4:0]  xdzz, input bit [1:0][2:4]  aselvswqx);
+
+          not c(rhtliwg, xdzz);
+          and qyh(wysbtz, xdzz, rhtliwg);
+          or ylrcbnnqis(cvvms, smgxloyzm, pe);
+
+          // Multi-driven assigns
+          assign piv = piv;
+          assign smgxloyzm = smgxloyzm;
+          assign pe = pe;
+          assign rhtliwg = 'b0x;
+        endmodule: r
+
+        module gb
+          ( output tri1 logic [4:4][4:0][1:2] twvwjfn [3:1][0:0][1:2][1:3]
+          , output logic [3:3][0:3] v [4:0]
+          , output wor logic mipbjz [1:2][2:1][4:1][1:0]
+          , output time amg [1:3][0:1]
+          , input wire logic [3:4][3:2][1:3] iaezuv [3:3][2:1][2:2][0:3]
+          , input reg [4:3][1:4][3:0] hekjuflol [4:1]
+          );
+
+          nand wkzovrc(ydo, hrfbj, ar);
+          xor vhoytuzq(dzgphxwmw, uqow, dzgphxwmw);
+
+          // Single-driven assigns
+          assign v = '{'{'{'bxzz,'bx,'b0zx,'bx}},'{'{'bx,'bx0x0z,'b11000,'bz0}},'{'{'bx,'b0,'b1x,'bx}},'{'{'bz,'bx,'b0,'b01zx}},'{'{'b0,'bxz,'b01,'b0z0z0}}};
+          assign amg = amg;
+        endmodule: gb
