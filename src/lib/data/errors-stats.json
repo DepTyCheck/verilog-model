@@ -1,75 +1,75 @@
 {
   "errors": {
     "assigning_to_input_const_variable": {
-      "overall": 7412,
-      "test_paths_count": 3408,
+      "overall": 7594,
+      "test_paths_count": 3494,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "unsupported_trireg": {
-      "overall": 3981,
-      "test_paths_count": 2762,
+      "overall": 4125,
+      "test_paths_count": 2857,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "unsupported_tristate_construct_inititem": {
-      "overall": 1367,
-      "test_paths_count": 476,
+      "overall": 1396,
+      "test_paths_count": 491,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "non_packed_vertex_has_no_width": {
-      "overall": 108,
-      "test_paths_count": 108,
+      "overall": 111,
+      "test_paths_count": 111,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "wire_inputs_its_own_output": {
-      "overall": 1122,
-      "test_paths_count": 724,
+      "overall": 1154,
+      "test_paths_count": 745,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "const_unexpected_in_assignment_to_unpacked_array": {
-      "overall": 259,
-      "test_paths_count": 212,
+      "overall": 263,
+      "test_paths_count": 215,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "slices_of_arrays_in_assignments_have_different_unpacked_dimensions": {
-      "overall": 560,
-      "test_paths_count": 258,
+      "overall": 562,
+      "test_paths_count": 260,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "not_an_unpacked_array_but_in_unpacked_array_context": {
-      "overall": 517,
-      "test_paths_count": 413,
+      "overall": 529,
+      "test_paths_count": 422,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "output_port_connection_connects_real_to_non_real": {
-      "overall": 270,
-      "test_paths_count": 204,
+      "overall": 274,
+      "test_paths_count": 207,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "unsupported_tristate_construct_triand_not_graph": {
@@ -81,11 +81,11 @@
       }
     },
     "unsupported_tristate_construct_triand_graph": {
-      "overall": 427,
-      "test_paths_count": 82,
+      "overall": 429,
+      "test_paths_count": 83,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "variable_has_same_name_as": {
@@ -97,107 +97,107 @@
       }
     },
     "port_connection_to_inout_signal_requires_bits": {
-      "overall": 196,
-      "test_paths_count": 143,
+      "overall": 201,
+      "test_paths_count": 148,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "settle_region_did_not_converge": {
-      "overall": 44,
-      "test_paths_count": 44,
+      "overall": 46,
+      "test_paths_count": 46,
       "last": {
-        "commit": "c35dde7c9c5027b503042cea36329dc310524991",
-        "date": "2025-12-28T04:47:25.176488"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "gate_unexpected_in_assignment_to_unpacked_array": {
-      "overall": 368,
-      "test_paths_count": 171,
+      "overall": 371,
+      "test_paths_count": 173,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "array_needs_an_array_index_here": {
-      "overall": 563,
-      "test_paths_count": 518,
+      "overall": 578,
+      "test_paths_count": 533,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "failed_assertion_prts_unpacked_dimensions": {
-      "overall": 825,
-      "test_paths_count": 825,
+      "overall": 841,
+      "test_paths_count": 841,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "errors_in_port_declarations": {
-      "overall": 3185,
-      "test_paths_count": 2762,
+      "overall": 3299,
+      "test_paths_count": 2857,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "invalid_module_item": {
-      "overall": 499,
-      "test_paths_count": 386,
+      "overall": 520,
+      "test_paths_count": 400,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "scalar_type_is_not_a_valid_context_for_assignment_pattern": {
-      "overall": 876,
-      "test_paths_count": 335,
+      "overall": 936,
+      "test_paths_count": 344,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "cannot_be_driven_with_non_default_strength": {
-      "overall": 2573,
-      "test_paths_count": 1994,
+      "overall": 2650,
+      "test_paths_count": 2051,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "failed_to_elaborate_primitive_output_expression": {
-      "overall": 2573,
-      "test_paths_count": 1994,
+      "overall": 2650,
+      "test_paths_count": 2051,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "t_dll_api_cc_ivl_nexus_s": {
-      "overall": 1053,
-      "test_paths_count": 1053,
+      "overall": 1079,
+      "test_paths_count": 1079,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "packed_array_assignment_pattern_expects_elements_in_this_context": {
-      "overall": 517,
-      "test_paths_count": 269,
+      "overall": 539,
+      "test_paths_count": 277,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "expression_width_does_not_match_width": {
-      "overall": 1065,
-      "test_paths_count": 780,
+      "overall": 1082,
+      "test_paths_count": 795,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "how_to_elaborate_assignment_pattern_expressions_for_real_type": {
@@ -209,43 +209,43 @@
       }
     },
     "unable_to_resolve_label": {
-      "overall": 148,
-      "test_paths_count": 148,
+      "overall": 152,
+      "test_paths_count": 152,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "non_vector_type_cannot_have_packed_dimesions": {
-      "overall": 2534,
-      "test_paths_count": 2534,
+      "overall": 2620,
+      "test_paths_count": 2620,
       "last": {
         "commit": "d3812098d8feb2d04cc4cb55e034a1f2338db02f",
-        "date": "2025-12-30T04:37:39.631776"
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "abort_in_181": {
-      "overall": 2604,
-      "test_paths_count": 2604,
+      "overall": 2693,
+      "test_paths_count": 2693,
       "last": {
         "commit": "23e0653c85f6ed4127e665a2529b069ce550e967",
-        "date": "2025-12-30T04:37:39.631776"
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "net_type_not_supported": {
-      "overall": 14291,
-      "test_paths_count": 3627,
+      "overall": 14695,
+      "test_paths_count": 3722,
       "last": {
         "commit": "23e0653c85f6ed4127e665a2529b069ce550e967",
-        "date": "2025-12-30T04:37:39.631776"
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "feature_unimplemented_see_ast": {
-      "overall": 1745,
-      "test_paths_count": 1745,
+      "overall": 1797,
+      "test_paths_count": 1797,
       "last": {
         "commit": "23e0653c85f6ed4127e665a2529b069ce550e967",
-        "date": "2025-12-30T04:37:39.631776"
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "cannot_automatically_connect_bit_based_port_to_real": {
@@ -257,27 +257,27 @@
       }
     },
     "encountered_unhandled_type_in_process_port_real_var": {
-      "overall": 1084,
-      "test_paths_count": 1084,
+      "overall": 1119,
+      "test_paths_count": 1119,
       "last": {
         "commit": "2d838edc951fed056d2b5bf21a40ce1d161c24ba",
-        "date": "2025-12-30T04:37:39.631776"
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "failed_to_detect_width_of_signal": {
-      "overall": 360,
-      "test_paths_count": 360,
+      "overall": 373,
+      "test_paths_count": 373,
       "last": {
         "commit": "2d838edc951fed056d2b5bf21a40ce1d161c24ba",
-        "date": "2025-12-30T04:37:39.631776"
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "signal_with_non_constant_width": {
-      "overall": 587,
-      "test_paths_count": 587,
+      "overall": 609,
+      "test_paths_count": 609,
       "last": {
         "commit": "2d838edc951fed056d2b5bf21a40ce1d161c24ba",
-        "date": "2025-12-30T04:37:39.631776"
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "unresolved_wire_cannot_have_multiple_drivers": {
@@ -305,27 +305,27 @@
       }
     },
     "output_port_is_connected_to_constants_auto_hierarchy": {
-      "overall": 61,
-      "test_paths_count": 61,
+      "overall": 63,
+      "test_paths_count": 63,
       "last": {
         "commit": "2d838edc951fed056d2b5bf21a40ce1d161c24ba",
-        "date": "2025-12-30T04:37:39.631776"
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "uwire_must_have_single_driver": {
-      "overall": 4,
-      "test_paths_count": 4,
+      "overall": 5,
+      "test_paths_count": 5,
       "last": {
-        "commit": "aad14df3d7c419e069538fe0ab0965b7c31bdf8e",
-        "date": "2025-12-27T04:30:17.518519"
+        "commit": "e5943047da26a2e5e6d815d17e348a66f59c900e",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "replacement_dfgvertex_has_different_type": {
-      "overall": 13,
-      "test_paths_count": 13,
+      "overall": 14,
+      "test_paths_count": 14,
       "last": {
-        "commit": "aa942195314ae18e03ed821a1e123e956dbb11cb",
-        "date": "2025-12-30T04:37:39.631776"
+        "commit": "4080284e53b29930a1dfcff0b650995e6ce91f82",
+        "date": "2025-12-31T04:35:58.389096"
       }
     },
     "network_netlist_contains_combinational_loop": {
@@ -484,6 +484,10 @@
     },
     {
       "date": "2025-12-30T04:37:39.631776",
+      "amount": 256
+    },
+    {
+      "date": "2025-12-31T04:35:58.389096",
       "amount": 256
     }
   ]
