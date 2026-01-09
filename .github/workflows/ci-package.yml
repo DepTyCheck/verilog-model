@@ -73,6 +73,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Update `pack-db`
         run: pack update-db
       - name: Switch to the latest compiler, if needed
@@ -86,12 +88,12 @@ jobs:
         id: cache-key
         run: |
           idris2_commit=$(idris2 -v | sed -nE 's/.*Idris 2, version [0-9.]+-([A-Za-z0-9]+).*/\1/p')
-          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ matrix.upstream-mode }}-$idris2_commit" >> $GITHUB_OUTPUT
+          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ matrix.upstream-mode }}-$idris2_commit" >> "$GITHUB_OUTPUT"
       - name: Export key
         id: export-key
         if: matrix.upstream-mode == 'latest-pack-collection'
         run: |
-          echo "latest_key=${{ steps.cache-key.outputs.key }}" >> $GITHUB_OUTPUT
+          echo "latest_key=${{ steps.cache-key.outputs.key }}" >> "$GITHUB_OUTPUT"
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
@@ -218,7 +220,18 @@ jobs:
               sudo make install
             version: |
               verilator --version
-            run: rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/conf/verilator/testbench.cpp --timing -Wno-fatal --no-std +1800-2023ext+sv top.sv
+            run: |
+              rm -rf obj_dir && \
+              rm -f top.sv && \
+              cp {file} top.sv && \
+              verilator \
+                --cc \
+                --exe .github/workflows/conf/verilator/testbench.cpp \
+                --timing \
+                -Wno-fatal \
+                --no-std \
+                +1800-2023ext+sv \
+                top.sv
             error_regex: >
               %Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$
             sim_cmd: make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop
@@ -227,7 +240,10 @@ jobs:
 
           - name: surelog
             repo: https://github.com/chipsalliance/Surelog.git
-            deps: cmake gcc build-essential git pkg-config tclsh swig uuid-dev libgoogle-perftools-dev python3 python3-orderedmultidict python3-psutil python3-dev default-jre lcov zlib1g-dev
+            deps: >
+              cmake gcc build-essential git pkg-config tclsh swig uuid-dev
+              libgoogle-perftools-dev python3 python3-orderedmultidict
+              python3-psutil python3-dev default-jre lcov zlib1g-dev
             path: surelog
             build: |
               git submodule update --init --recursive
@@ -285,7 +301,10 @@ jobs:
 
           - name: synlig
             repo: https://github.com/chipsalliance/synlig.git
-            deps: gcc-11 g++-11 build-essential cmake tclsh ant default-jre swig google-perftools libgoogle-perftools-dev python3 python3-dev python3-pip uuid uuid-dev tcl-dev flex libfl-dev git pkg-config libreadline-dev bison libffi-dev wget python3-orderedmultidict
+            deps: >
+              gcc-11 g++-11 build-essential cmake tclsh ant default-jre swig google-perftools
+              libgoogle-perftools-dev python3 python3-dev python3-pip uuid uuid-dev tcl-dev flex
+              libfl-dev git pkg-config libreadline-dev bison libffi-dev wget python3-orderedmultidict
             path: synlig
             build: |
               git submodule sync
@@ -315,7 +334,9 @@ jobs:
 
           # - name: yosys
           #   repo: https://github.com/YosysHQ/yosys.git
-          #   deps: build-essential clang lld bison flex libreadline-dev gawk tcl-dev libffi-dev git graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
+          #   deps: >
+          #     build-essential clang lld bison flex libreadline-dev gawk tcl-dev libffi-dev git
+          #     graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
           #   path: yosys
           #   build: |
           #     git submodule update --init --recursive
@@ -331,7 +352,10 @@ jobs:
 
           - name: yosys-slang
             repo: https://github.com/povik/yosys-slang.git
-            deps: cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh uuid-dev build-essential lld libreadline-dev gawk libffi-dev git graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
+            deps: >
+              cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh
+              uuid-dev build-essential lld libreadline-dev gawk libffi-dev git graphviz xdot pkg-config
+              python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
             path: yosys-slang
             build: |
               git clone https://github.com/YosysHQ/yosys.git
@@ -360,6 +384,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Download Generated Files
         uses: actions/download-artifact@v4
         with:
@@ -371,13 +397,13 @@ jobs:
         run: |
           git clone ${{ matrix.tool.repo }} ${{ matrix.tool.path }}
           cd ${{ matrix.tool.path }}
-          echo "COMMIT_HASH=$(git rev-parse HEAD)" >> $GITHUB_ENV
-      - name: Restore dependency
-        if: ${{ matrix.tool.dep_path }}
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ matrix.tool.dep_path }}
-          key: ${{ matrix.tool.dep_name }}-cache-
+          echo "COMMIT_HASH=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      # - name: Restore dependency
+      #   if: ${{ matrix.tool.dep_path }}
+      #   uses: actions/cache/restore@v4
+      #   with:
+      #     path: ${{ matrix.tool.dep_path }}
+      #     key: ${{ matrix.tool.dep_name }}-cache-
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
@@ -495,6 +521,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
@@ -523,7 +551,7 @@ jobs:
 
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
-      
+
       - name: Calc report path
         run: |
           RELATIVE_REPORT_PATH="src/lib/data/errors-stats.json"
@@ -542,7 +570,7 @@ jobs:
       - name: Bot Details
         id: bot-details
         uses: raven-actions/bot-details@v1
-      
+
       - name: Commit & push
         run: |
           cd ${{ env.GH_PAGES_PATH }}
@@ -569,14 +597,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+        with:
+          persist-credentials: false
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
         with:
           path: ${{ env.BUILD_DIR }}
           key: ${{ needs.build-and-test.outputs.latest-cache-key }}
-      
+
       - name: Touch ${{ env.BUILD_DIR }} dir (-_-)
         run: |
           set +e
@@ -628,6 +657,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Read and Format Usernames
         run: |
           TAGGED_USERS=$(awk '{printf "@%s ", $0}' MAINTAINERS)

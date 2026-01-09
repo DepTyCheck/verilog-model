@@ -69,9 +69,12 @@ The generator produces SystemVerilog test designs.
 Each generated file corresponds to a **separate test**.
 
 - By default, tests are printed to the console, but you can specify a directory to save files using `--to`.
-- Every run produces different tests. You can set the seed manually to make results reproducible with `--seed` (the `--seed` option expects two numbers).
+- Every run produces different tests. 
+  You can set the seed manually to make results reproducible with `--seed` (the `--seed` option expects two numbers).
 
-  To see which seeds are actually used, add the `--seed-name` flag to include the seed in filenames, and the `--seed-content` flag to print the seed inside the file.
+  To see which seeds are actually used,
+  add the `--seed-name` flag to include the seed in filenames,
+  and the `--seed-content` flag to print the seed inside the file.
 
 
 For all available options, run:

@@ -12,9 +12,13 @@ trim_trailing_whitespace = true
 max_line_length = 152
 
 # Idris source files
-[*.{idr,ipkg,tex,yaff,lidr}]
+[*.{ipkg,tex,yaff,lidr}]
 indent_style = space
 indent_size = 2
+
+[*.idr]
+indent_style = space
+indent_size = unset # Allows custom indent and suppresses `Wrong amount of left-padding spaces`
 
 # Various configuration files
 [{*.yml,.ecrc}]

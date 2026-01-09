@@ -267,7 +267,7 @@ namespace MultiConnection
   findUnpNet (s :: sv) = if isUnpacked s && isMD s then Just s else findUnpNet sv
 
   public export
-  resolveConnType : {ms : _} -> {m : _} -> {subMs : _} -> 
+  resolveConnType : {ms : _} -> {m : _} -> {subMs : _} ->
                     (ssk : FinsList $ subSnks' ms m subMs) -> (ssc : FinsList $ subSrcs' ms m subMs) -> SVObject
   resolveConnType ssk ssc = let allSubPorts = types (subSnks ms m subMs) ssk ++ types (subSrcs ms m subMs) ssc in
     mOrElse (findUnpNet allSubPorts) $ mOrElse (mtype allSubPorts) defaultNetType
