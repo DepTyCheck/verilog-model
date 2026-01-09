@@ -38,6 +38,7 @@ the package manager for the Idris 2 programming language.
 You can either:
 
 - **Build manually:**
+
 1. Install `pack` (see [pack installation guide](https://github.com/stefan-hoeck/idris2-pack)).
 2. Build the project:
     ```console
@@ -69,13 +70,12 @@ The generator produces SystemVerilog test designs.
 Each generated file corresponds to a **separate test**.
 
 - By default, tests are printed to the console, but you can specify a directory to save files using `--to`.
-- Every run produces different tests. 
+- Every run produces different tests.
   You can set the seed manually to make results reproducible with `--seed` (the `--seed` option expects two numbers).
 
   To see which seeds are actually used,
   add the `--seed-name` flag to include the seed in filenames,
   and the `--seed-content` flag to print the seed inside the file.
-
 
 For all available options, run:
 ```console

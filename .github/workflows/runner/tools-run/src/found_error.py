@@ -20,7 +20,9 @@ class FoundError:
         self.file_name = file_name
 
 
-def compute_ncd_for_errors(nodes_text: List[str], ncd_script_path: str) -> Dict[Tuple[int, int], float]:
+def compute_ncd_for_errors(
+    nodes_text: List[str], ncd_script_path: str
+) -> Dict[Tuple[int, int], float]:
     """
     Compute NCD for each unique pair of text nodes using ncd-xz.sh.
     Returns a dictionary mapping (i, j) index pairs to the NCD value.
@@ -122,7 +124,12 @@ def plot_error_distances_mds(
                 x=x_coords[:n_found],
                 y=y_coords[:n_found],
                 mode="markers+text",
-                marker=dict(size=20, color="lightcoral", symbol="circle", line=dict(width=2, color="darkred")),
+                marker=dict(
+                    size=20,
+                    color="lightcoral",
+                    symbol="circle",
+                    line=dict(width=2, color="darkred"),
+                ),
                 text=found_labels,
                 textposition="top center",
                 textfont=dict(size=14, color="black"),
@@ -138,7 +145,12 @@ def plot_error_distances_mds(
                 x=x_coords[n_found:],
                 y=y_coords[n_found:],
                 mode="markers+text",
-                marker=dict(size=18, color="lightskyblue", symbol="circle", line=dict(width=2, color="darkblue")),
+                marker=dict(
+                    size=18,
+                    color="lightskyblue",
+                    symbol="circle",
+                    line=dict(width=2, color="darkblue"),
+                ),
                 text=known_labels,
                 textposition="top center",
                 textfont=dict(size=14, color="black"),

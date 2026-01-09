@@ -1,5 +1,10 @@
 import re
-from src.ignored_errors_list import FoundMatch, IgnoredErrorsList, MatchingMode, UnexpectedErrorText
+from src.ignored_errors_list import (
+    FoundMatch,
+    IgnoredErrorsList,
+    MatchingMode,
+    UnexpectedErrorText,
+)
 from src.error_match_in_test import ErrorMatchInTest
 
 

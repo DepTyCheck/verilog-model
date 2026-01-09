@@ -3,7 +3,12 @@
 import sys
 import argparse
 from pathlib import Path
-from src.ignored_errors_list import IgnoredErrorsList, UnexpectedErrorText, FoundMatch, KnownError
+from src.ignored_errors_list import (
+    IgnoredErrorsList,
+    UnexpectedErrorText,
+    FoundMatch,
+    KnownError,
+)
 from collections import Counter
 from src.found_error import (
     FoundError,
@@ -17,7 +22,9 @@ from src.utils import print_pretty
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run analysis and simulation tests over generated modules.")
+    parser = argparse.ArgumentParser(
+        description="Run analysis and simulation tests over generated modules."
+    )
 
     parser.add_argument(
         "--gen-path",
@@ -184,10 +191,14 @@ def main() -> None:
             failed_files.append(file_path_str)
 
     if all_found_errors:
-        print_pretty([f"Error in {error.file_name}: {error.text}" for error in all_found_errors])
+        print_pretty(
+            [f"Error in {error.file_name}: {error.text}" for error in all_found_errors]
+        )
 
         # Compute NCD across found and known errors using a single compute function
-        nodes_text = [err.text for err in all_found_errors] + [ke.pattern for ke in ignored_errors.errors()]
+        nodes_text = [err.text for err in all_found_errors] + [
+            ke.pattern for ke in ignored_errors.errors()
+        ]
         ncd_results = compute_ncd_for_errors(
             nodes_text,
             ".github/workflows/runner/tools-run/ncd-xz.sh",

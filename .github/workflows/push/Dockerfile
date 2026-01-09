@@ -25,3 +25,5 @@ RUN pack install-app ${PACKAGE_NAME}
 RUN pack run ${PACKAGE_NAME} --coverage mcov -n 1 --seed 0,1 && rm mcov
 
 CMD ["bash"]
+
+HEALTHCHECK CMD pack run ${PACKAGE_NAME} -n 1 --seed 0,1 || exit 1
