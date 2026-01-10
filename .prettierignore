@@ -1,0 +1,11 @@
+.venv
+build/
+.build/
+**/tests/**/failures
+**/tests/**/output
+generated
+
+.DS_Store
+.vscode
+.devcontainer
+__pycache__

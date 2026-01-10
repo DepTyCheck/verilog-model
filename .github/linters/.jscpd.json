@@ -1,8 +1,5 @@
 {
-  "ignore": [
-    "**/thirdparty/**",
-    "**/.github/**"
-  ],
+  "ignore": ["**/thirdparty/**", "**/.github/**"],
   "noSymlinks": "true",
   "exitCode": 10
 }

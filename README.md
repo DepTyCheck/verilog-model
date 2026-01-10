@@ -41,9 +41,9 @@ You can either:
 
 1. Install `pack` (see [pack installation guide](https://github.com/stefan-hoeck/idris2-pack)).
 2. Build the project:
-    ```console
-    pack build verilog-model
-    ```
+   ```console
+   pack build verilog-model
+   ```
 
 - **Use the prebuilt Docker container** from the [packages](https://github.com/deptycheck/verilog-model/pkgs/container/verilog-model).
 
@@ -52,11 +52,13 @@ You can either:
 After building, you have two options to run the generator:
 
 Run directly with `pack`:
+
 ```console
 pack run verilog-model -h
 ```
 
 Install once and run as a standalone executable:
+
 ```console
 pack install-app verilog-model
 verilog-model --help
@@ -78,11 +80,13 @@ Each generated file corresponds to a **separate test**.
   and the `--seed-content` flag to print the seed inside the file.
 
 For all available options, run:
+
 ```console
 verilog-model -h
 ```
 
 Here is a basic usage example. Generate 10 tests in the tests folder with a fixed seed:
+
 ```console
 verilog-model --to ./tests -n 10 --seed 12345,6789
 ```

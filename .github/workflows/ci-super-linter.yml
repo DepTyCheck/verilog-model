@@ -4,9 +4,9 @@ name: Lint
 on:
   push:
     branches:
-      - '**'
+      - "**"
     tags:
-      - '**'
+      - "**"
   pull_request:
     branches:
       - main
@@ -26,16 +26,16 @@ jobs:
     name: Lint Code Base
     # Disable PR from the same repo
     if: github.event_name != 'pull_request' ||
-        github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
+      github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
           # Full git history is needed to get a proper
           # list of changed files within `super-linter`
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Lint Code Base
         uses: super-linter/super-linter/slim@v8
@@ -43,7 +43,3 @@ jobs:
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IGNORE_GENERATED_FILES: true
-          VALIDATE_CPP: false
-          PRETTIER_COMMAND_OPTIONS: --log-level debug
-          # VALIDATE_JSON_PRETTIER: false # Very uninformative output. Jsons are validated by BIOME
-          # MARKDOWN_PRETTIER: false # Markdownlint is enough

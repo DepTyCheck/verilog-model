@@ -18,7 +18,8 @@ indent_size = 2
 
 [*.idr]
 indent_style = space
-indent_size = unset # Allows custom indent and suppresses `Wrong amount of left-padding spaces`
+# Allows custom indent and suppresses `Wrong amount of left-padding spaces`
+indent_size = unset
 
 # Various configuration files
 [{*.yml,.ecrc}]

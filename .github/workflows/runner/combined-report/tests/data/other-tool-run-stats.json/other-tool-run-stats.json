@@ -14,9 +14,7 @@
       "error_id": "new_error_id",
       "overall": 1,
       "test_paths_count": 1,
-      "tests_paths": [
-        "generated/29-seed_549568144774216018,3128299129089410139.sv"
-      ]
+      "tests_paths": ["generated/29-seed_549568144774216018,3128299129089410139.sv"]
     }
   ],
   "commit": "abc12345",

@@ -2,8 +2,7 @@
   "json": {
     "formatter": {
       "indentStyle": "space",
-      "indentWidth": 2,
-      "expand": "always"
+      "indentWidth": 2
     }
   },
   "formatter": {

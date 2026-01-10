@@ -7,13 +7,13 @@ on:
       - main
       - master
     tags:
-      - '**'
+      - "**"
   pull_request:
     branches:
       - main
       - master
   schedule:
-    - cron: '0 1 * * *'
+    - cron: "0 1 * * *"
 
 permissions: read-all
 
@@ -27,14 +27,14 @@ defaults:
 
 env:
   PACK_DIR: /root/.pack
-  GENERATION_DIR: 'generated-modules'
+  GENERATION_DIR: "generated-modules"
   GEN_TESTS_COUNT: 256
-  BUILD_DIR: '.build'
+  BUILD_DIR: ".build"
   PACKAGE_NAME: verilog-model
   ERROR_DISTANCES_OUT: error_distances.html
   GH_PAGES_PATH: verilog-gh-pages
-  RUN_STATS_PATTERN: 'run-stats.json'
-  COMBINED_RUN_STATS_FILE: 'combined-run-stats.json'
+  RUN_STATS_PATTERN: "run-stats.json"
+  COMBINED_RUN_STATS_FILE: "combined-run-stats.json"
 
 jobs:
   get-upstream-matrix:
@@ -282,16 +282,16 @@ jobs:
               sudo mv tree-sitter-linux-x64 /usr/local/bin/tree-sitter-linux-x64
               sudo chmod +x /usr/local/bin/tree-sitter-linux-x64
             build: |
-                cd ..
-                sudo apt -qq -y install curl
-                touch "$HOME/.bash_profile"
-                # From https://nodejs.org/en/download
-                curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
-                . "$HOME/.nvm/nvm.sh"
-                nvm install 22
-                cd tssv
-                sudo tree-sitter-linux-x64 generate --abi 14
-                sudo tree-sitter-linux-x64 build -o sv.so
+              cd ..
+              sudo apt -qq -y install curl
+              touch "$HOME/.bash_profile"
+              # From https://nodejs.org/en/download
+              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+              . "$HOME/.nvm/nvm.sh"
+              nvm install 22
+              cd tssv
+              sudo tree-sitter-linux-x64 generate --abi 14
+              sudo tree-sitter-linux-x64 build -o sv.so
             python_runner_deps: tree-sitter==0.21.3
             version: |
               sudo tree-sitter-linux-x64 -V
@@ -644,7 +644,6 @@ jobs:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
-
 
   create-issue-on-failure:
     name: Create an issue on failure
