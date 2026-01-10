@@ -43,3 +43,7 @@ jobs:
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IGNORE_GENERATED_FILES: true
+          VALIDATE_CPP: false
+          PRETTIER_COMMAND_OPTIONS: --log-level debug
+          # VALIDATE_JSON_PRETTIER: false # Very uninformative output. Jsons are validated by BIOME
+          # MARKDOWN_PRETTIER: false # Markdownlint is enough
