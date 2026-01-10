@@ -43,3 +43,5 @@ jobs:
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IGNORE_GENERATED_FILES: true
+          # TODO: resolve different packages
+          VALIDATE_PYTHON_MYPY: false

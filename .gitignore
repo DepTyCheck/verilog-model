@@ -1,4 +1,5 @@
 .venv
+.macos-venv
 build/
 .build/
 **/tests/**/failures
