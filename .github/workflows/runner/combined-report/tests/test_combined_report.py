@@ -11,9 +11,7 @@ class TestCombinedReport(unittest.TestCase):
         trl = ToolsReportsList(dir_path="./tests/data", pattern=r"*-run-stats.json")
         self.tests_number = 1337
 
-        self.combined_report = CombinedReport(
-            previous_report=p, tools_reports_list=trl, tests_number=self.tests_number
-        )
+        self.combined_report = CombinedReport(previous_report=p, tools_reports_list=trl, tests_number=self.tests_number)
 
     def test_runs(self):
         runs = self.combined_report.combined_runs()

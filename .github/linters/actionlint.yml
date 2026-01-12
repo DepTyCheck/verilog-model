@@ -1,8 +1,8 @@
 paths:
-  .github/workflows/ci-package.yml:
+  .github/workflows/**/*.{yml,yaml}:
     ignore:
       - "unpinned-uses"
-
-  .github/workflows/ci-super-linter.yml:
+  
+  .github/workflows/runner/tools-run/tests/data/**/*.{yml,yaml}:
     ignore:
-      - "unpinned-uses"
+      - "syntax-check"

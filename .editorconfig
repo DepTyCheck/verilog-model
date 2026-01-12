@@ -52,5 +52,5 @@ max_line_length = off
 indent_style = space
 indent_size = 4
 
-[/.github/workflows/runner/tools-run/tests/data/*.yml]
+[/.github/workflows/runner/tools-run/tests/data/ignored_errors/*.yaml]
 max_line_length = unset

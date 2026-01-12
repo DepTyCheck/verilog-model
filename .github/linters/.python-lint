@@ -1,3 +1,6 @@
+[MAIN]
+max-line-length=152
+
 [MESSAGES CONTROL]
 
 disable=
@@ -9,4 +12,7 @@ disable=
   too-few-public-methods,
 
   # Used for testing
-  relative-beyond-top-level
+  relative-beyond-top-level,
+
+  # We don't think it's bad code
+  no-else-return
