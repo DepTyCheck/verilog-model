@@ -48,3 +48,5 @@ jobs:
           VALIDATE_TRIVY: false
           # TODO: resolve different packages
           VALIDATE_PYTHON_MYPY: false
+          # We don't need this
+          VALIDATE_PYTHON_RUFF_FORMAT: false

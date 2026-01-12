@@ -127,7 +127,7 @@ class IgnoredErrorsList:
             for ignored_error in self._extra_regexes:
                 match = re.search(ignored_error.pattern, input_text, re.MULTILINE)
                 if match:
-                    print(f"\Found ignored error (ignored error): Pattern: {ignored_error.pattern}\n")
+                    print(f"Found ignored error (ignored error): Pattern: {ignored_error.pattern}\n")
                     return FoundMatch(error=ignored_error, matched_text=match.group(0))
         return None
 

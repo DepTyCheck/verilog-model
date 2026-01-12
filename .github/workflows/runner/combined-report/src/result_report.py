@@ -11,9 +11,7 @@ class ResultReport:
 
     def save(self, file_path: str):
         data = {
-            "errors": {
-                error_id: error.to_dict() for error_id, error in self.errors.items()
-            },
+            "errors": {error_id: error.to_dict() for error_id, error in self.errors.items()},
             "runs": [run.to_dict() for run in self.runs],
         }
         with open(file_path, "w") as file:

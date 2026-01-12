@@ -1,4 +1,8 @@
 paths:
-  .github/workflows/*.{yml,yaml}:
+  .github/workflows/ci-package.yml:
+    ignore:
+      - "unpinned-uses"
+
+  .github/workflows/ci-super-linter.yml:
     ignore:
       - "unpinned-uses"
