@@ -139,9 +139,24 @@ jobs:
           name: generated-modules
           path: "${{ env.GENERATION_DIR }}"
 
+  test-tools-run:
+    name: Test tools run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: |
+          cd .github/workflows/runner/tools-run
+          pip install -r requirements.txt
+          python3 -m tests.test
+          
   run-tools:
     name: ${{ matrix.tool.name }}
-    needs: build-and-test
+    needs: [test-tools-run, build-and-test]
     timeout-minutes: 90
     runs-on: ubuntu-latest
     strategy:

@@ -1,0 +1,68 @@
+stage: synthesis
+tool: someTool
+id: ignored_error_2
+title: Cannot automatically connect bit based port to real
+regex: >
+  Cannot automatically connect bit based .* to real
+issue_novelty: new
+issue_link: https://github.com/steveicarus/iverilog/issues/1278
+examples:
+  - cannot_automatically_connect_bit_based_port_to_real_ex1:
+      first_found: 14.09.2025
+      minified_error: >
+        top.sv:5: error: Cannot automatically connect bit based inout port 1 (a1) of module a to real signal b1.
+      minified_example: |
+        module a( input triand logic a1 );
+        endmodule: a
+
+        module b( input shortreal b1 );
+          a ex(.a1(b1));
+        endmodule: b
+      full_error: >
+        error: Cannot automatically connect bit based inout port 4 (icvwrbcj) of module bffmgj to real signal lom.
+      full_example: |
+        module bffmgj
+          ( output logic [4:0][1:3][1:1]  zgmhcqsh
+          , output supply1 logic [2:4][3:0][3:3] glnssyxnef [3:3][1:1][2:2][1:1]
+          , output logic [0:0][3:4][0:2] cy [4:2]
+          , input triand logic [1:0][0:1][3:1][0:1]  icvwrbcj
+          , input bit [2:0][4:4][3:0][0:0]  xdratcma
+          , input wand logic [4:2] idfdo [1:2]
+          , input bit [1:3][3:1][0:2][4:0]  xk
+          );
+
+          not jckewyi(zgmhcqsh, icvwrbcj);
+          not amuuca(tezensiee, icvwrbcj);
+
+          // Single-driven assigns
+          assign cy = cy;
+
+          // Multi-driven assigns
+          assign tezensiee = zgmhcqsh;
+          assign icvwrbcj = '{'{'{'{'b00x,'b1x1x},'{'bz,'bxx0},'{'b0z1z,'b1zxzx}},'{'{'bx01x,'bx1011},'{'b10,'b0},'{'b100,'b01}}},'{'{'{'b0zzz0,'b1x1},'{'bzz1,'b1},'{'bz0xzx,'b0}},'{'{'b1,'b1},'{'bx1,'bzxx0x},'{'b001,'bx100x}}}};
+          assign glnssyxnef = glnssyxnef;
+          assign idfdo = '{'{'b1xxx,'b0,'bz0xxx},'{'bxzzz1,'bzz,'b00z01}};
+        endmodule: bffmgj
+
+        module zsuzekuyxc
+          ( output triand logic lfhztuaay
+          , input tri0 logic [2:1][2:0][3:1][3:0] ms [2:4][3:3][2:1]
+          , input shortreal lom
+          , input integer pkzelto [4:3]
+          , input logic [3:1][3:3]  ys
+          );
+
+          logic [0:0][3:4][0:2] kn [4:2];
+          supply1 logic [2:4][3:0][3:3] gydvktydea [3:3][1:1][2:2][1:1];
+          wand logic [4:2] brdjwj [1:2];
+
+          not ffegjku(ycr, lfhztuaay);
+          bffmgj ex(.zgmhcqsh(xex), .glnssyxnef(gydvktydea), .cy(kn), .icvwrbcj(lom), .xdratcma(lfhztuaay), .idfdo(brdjwj), .xk(ys));
+          or gptudeno(ycr, pnntvtpsha, ydktavq);
+          not ndehgzki(lfhztuaay, ydktavq);
+
+          // Multi-driven assigns
+          assign pnntvtpsha = 'bzz;
+          assign ms = ms;
+          assign lfhztuaay = xex;
+        endmodule: zsuzekuyxc

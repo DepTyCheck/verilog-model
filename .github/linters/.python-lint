@@ -2,11 +2,11 @@
 
 disable=
   # Docs things
-  missing-module-docstring
-  missing-class-docstring
-  missing-function-docstring
+  missing-module-docstring,
+  missing-class-docstring,
+  missing-function-docstring,
 
-  too-few-public-methods
+  too-few-public-methods,
 
   # Used for testing
   relative-beyond-top-level

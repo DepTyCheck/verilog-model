@@ -2,27 +2,51 @@ import subprocess
 import os
 import re
 import datetime
+from typing import List, Tuple, Dict
 
 from textdistance import LZMANCD
-from typing import List, Tuple, Dict
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.manifold import MDS
 
-from src.ignored_errors_list import KnownError
+from src.ignored_errors_list import IgnoredErrorsList, KnownError
+from src.unexpected_error import UnexpectedError
 from src.utils import print_pretty
 
 
-class FoundError:
-    def __init__(self, text: str, file_name: str):
-        self.text = text
-        self.file_name = file_name
+class MDSDistancesReport:
+    def __init__(
+        self,
+        new_errors: List[UnexpectedError],
+        ignored_errors: IgnoredErrorsList,
+        tool_name: str,
+        job_link: str,
+    ):
+        self.new_errors = new_errors
+        self.ignored_errors = ignored_errors
+        self.tool_name = tool_name
+        self.job_link = job_link
+
+    def save(self, output_path: str = "error_distances.html"):
+        # Compute NCD across found and known errors using a single compute function
+        nodes_text = [err.tool_output_error_text for err in self.new_errors] + [ke.pattern for ke in self.ignored_errors.errors()]
+        distances: Dict[Tuple[int, int], float] = compute_ncd_for_errors(
+            nodes_text,
+            ".github/workflows/runner/tools-run/ncd-xz.sh",
+        )
+        # Make plot
+        plot_error_distances_mds(
+            self.new_errors,
+            distances,
+            self.ignored_errors.errors(),
+            self.tool_name,
+            self.job_link,
+            output_path,
+        )
 
 
-def compute_ncd_for_errors(
-    nodes_text: List[str], ncd_script_path: str
-) -> Dict[Tuple[int, int], float]:
+def compute_ncd_for_errors(nodes_text: List[str], ncd_script_path: str) -> Dict[Tuple[int, int], float]:
     """
     Compute NCD for each unique pair of text nodes using ncd-xz.sh.
     Returns a dictionary mapping (i, j) index pairs to the NCD value.
@@ -63,7 +87,7 @@ def compute_ncd_for_errors(
 
 
 def plot_error_distances_mds(
-    errors: List[FoundError],
+    errors: List[UnexpectedError],
     distances: Dict[Tuple[int, int], float],
     known_errors: List[KnownError],
     tool_name: str,
@@ -101,14 +125,14 @@ def plot_error_distances_mds(
     found_labels: List[str] = []
     found_hover: List[str] = []
     for idx in range(n_found):
-        base_name = os.path.basename(errors[idx].file_name)
+        base_name = os.path.basename(errors[idx].test_file_path)
         match = re.match(r"(\d+)-", base_name)
         if match:
             label = match.group(1)
         else:
             label = base_name
         found_labels.append(label)
-        found_hover.append(f"Test: {label}<br>Error: {errors[idx].text}")
+        found_hover.append(f"Test: {label}<br>Error: {errors[idx].test_file_path}")
 
     known_labels: List[str] = []
     known_hover: List[str] = []

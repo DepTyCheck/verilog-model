@@ -1,3 +1,0 @@
-set noparent
-
-filter=-legal/copyright,-build/include_subdir,-whitespace/comments

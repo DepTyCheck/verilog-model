@@ -10,3 +10,6 @@ generated
 .vscode
 .devcontainer
 __pycache__
+
+a.out
+error_distances.html
