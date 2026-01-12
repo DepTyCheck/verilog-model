@@ -106,7 +106,7 @@ class MDSDistancesReport:
             fig.add_trace(self._create_found_errors_trace(x_coords, y_coords, n_found))
 
         if n_known > 0:
-            fig.add_trace(self._create_known_errors_trace(x_coords, y_coords, n_known))
+            fig.add_trace(self._create_known_errors_trace(x_coords, y_coords))
 
         fig.update_layout(
             title=(
@@ -169,7 +169,7 @@ class MDSDistancesReport:
             name="New errors",
         )
 
-    def _create_known_errors_trace(self, x_coords: np.ndarray, y_coords: np.ndarray, n_known: int) -> go.Scatter:
+    def _create_known_errors_trace(self, x_coords: np.ndarray, y_coords: np.ndarray) -> go.Scatter:
         known_labels: List[str] = []
         known_hover: List[str] = []
         n_found = len(self.new_errors)
@@ -197,21 +197,3 @@ class MDSDistancesReport:
             hovertext=known_hover,
             name="Known errors",
         )
-
-
-def compute_ncd_for_errors(nodes_text: List[str]) -> Dict[Tuple[int, int], float]:
-    """
-    Compute NCD for each unique pair of text nodes using ncd-xz.sh.
-    Returns a dictionary mapping (i, j) index pairs to the NCD value.
-    """
-    results: Dict[Tuple[int, int], float] = {}
-    n = len(nodes_text)
-    for i in range(n):
-        for j in range(i + 1, n):
-            try:
-                ncd_value = LZMANCD().distance(nodes_text[i], nodes_text[j])
-                results[(i, j)] = ncd_value
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                print(e)
-                results[(i, j)] = None
-    return results

@@ -18,4 +18,6 @@ disable=
   super-init-not-called,
   import-error,
   broad-exception-caught,
+  broad-exception-raised,
+  unspecified-encoding,
   wrong-import-order

@@ -11,9 +11,9 @@ def main():
     ts_lib_path = sys.argv[1]
     file_path = sys.argv[2]
 
-    SV = tree_sitter.Language(ts_lib_path, "systemverilog")
+    sv = tree_sitter.Language(ts_lib_path, "systemverilog")
     parser = tree_sitter.Parser()
-    parser.set_language(SV)
+    parser.set_language(sv)
 
     try:
         with open(file_path, "r", encoding="utf-8") as f:

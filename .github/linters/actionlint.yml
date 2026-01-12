@@ -3,6 +3,6 @@ paths:
     ignore:
       - "unpinned-uses"
 
-  .github/workflows/runner/tools-run/tests/data/ignored_errors/**/*.{yml,yaml}:
+  .github/workflows/runner/tools-run/tests/data/ignored_errors/*.{yml,yaml}:
     ignore:
       - "syntax-check"
