@@ -28,7 +28,7 @@ def find_top(file_content: str) -> str:
 @dataclass
 class ExecutionResult:
     command_executed_successfully: bool
-    result_code_is_OK: bool
+    result_code_is_ok: bool
     output: CommandOutput
 
 
@@ -80,18 +80,19 @@ class RunCommand:
                 stderr=subprocess.STDOUT,
                 text=True,
                 timeout=COMMAND_TIMEOUT_SECONDS,
+                check=False,
             )
             output = result.stdout
             print(f"Exit code: {result.returncode}. Output:\n{output}")
 
-            return ExecutionResult(command_executed_successfully=True, result_code_is_OK=result.returncode == 0, output=CommandOutput(out=output))
+            return ExecutionResult(command_executed_successfully=True, result_code_is_ok=result.returncode == 0, output=CommandOutput(out=output))
 
         except subprocess.TimeoutExpired as timeout_error:
             print(f"""Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}""")
 
             return ExecutionResult(
                 command_executed_successfully=True,
-                result_code_is_OK=False,
+                result_code_is_ok=False,
                 output=CommandOutput(out=f"Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}"),
             )
 
@@ -100,6 +101,6 @@ class RunCommand:
 
             return ExecutionResult(
                 command_executed_successfully=False,
-                result_code_is_OK=False,
+                result_code_is_ok=False,
                 output=CommandOutput(out=str(error)),
             )

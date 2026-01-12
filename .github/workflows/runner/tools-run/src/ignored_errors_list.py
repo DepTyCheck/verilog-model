@@ -16,12 +16,12 @@ class KnownError:
     Represents a known error pattern that can be ignored, identified by a unique ID and a regex pattern.
 
     Attributes:
-        id (str): Unique identifier for the known error.
+        error_id (str): Unique identifier for the known error.
         pattern (str): Regex pattern that matches the error message.
     """
 
-    def __init__(self, id: str, pattern: str, mode: MatchingMode) -> None:
-        self.id = id
+    def __init__(self, error_id: str, pattern: str, mode: MatchingMode) -> None:
+        self.error_id = error_id
         self.pattern = pattern
         self.mode = mode
 
@@ -100,7 +100,7 @@ class IgnoredErrorsList:
                     mode = MatchingMode.WHOLE if mode_raw == "whole" else MatchingMode.SPECIFIC
                     if error_id is not None and pattern is not None:
                         pattern = pattern.rstrip("\n")
-                        errors.append(KnownError(id=error_id, pattern=pattern, mode=mode))
+                        errors.append(KnownError(error_id=error_id, pattern=pattern, mode=mode))
                     else:
                         print(f"Warning: {yaml_file} missing 'id' or 'regex', skipping.")
             except Exception as e:
@@ -120,7 +120,7 @@ class IgnoredErrorsList:
         for error in known_errors_to_match:
             match = re.search(error.pattern, input_text, re.MULTILINE)
             if match:
-                print(f"Found ignored error.\nID: {error.id}\nPattern: {error.pattern}\n")
+                print(f"Found ignored error.\nID: {error.error_id}\nPattern: {error.pattern}\n")
                 return FoundMatch(error=error, matched_text=match.group(0))
 
         if mode == MatchingMode.SPECIFIC:

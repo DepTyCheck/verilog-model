@@ -92,7 +92,7 @@ class TestsList:
         )
         cmd_result = cmd.execute()
 
-        if cmd_result.result_code_is_OK:
+        if cmd_result.result_code_is_ok:
             return True, AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True)
         else:
             analyzis_result = cmd_result.output.analyze(

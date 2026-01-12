@@ -31,7 +31,7 @@ class KnownErrorsReport:
     def add_error(self, error: ErrorMatchInTest):
         if not isinstance(error.match.error, KnownError):
             return
-        error_id = error.match.error.id
+        error_id = error.match.error.error_id
 
         existing_error = None
         for errors_count in self.found_errors:

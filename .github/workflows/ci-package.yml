@@ -251,7 +251,7 @@ jobs:
               %Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$
             sim_cmd: make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop
             sim_error_regex: >
-              %Error[-A-z]*:[\S ]+$
+              %Error[-A-z]*:[\S ]+
 
           - name: surelog
             repo: https://github.com/chipsalliance/Surelog.git

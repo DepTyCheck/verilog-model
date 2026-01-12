@@ -9,10 +9,13 @@ disable=
   missing-class-docstring,
   missing-function-docstring,
 
-  too-few-public-methods,
-
   # Used for testing
   relative-beyond-top-level,
 
   # We don't think it's bad code
-  no-else-return
+  too-few-public-methods,
+  no-else-return,
+  super-init-not-called,
+  import-error,
+  broad-exception-caught,
+  wrong-import-order
