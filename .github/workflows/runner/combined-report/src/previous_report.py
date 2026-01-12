@@ -1,7 +1,7 @@
-from typing import Dict, List
 import json
+from typing import Dict, List
 
-from src.report_structure import ErrorInfo, RunInfo, LastOccurrence
+from src.report_structure import ErrorInfo, LastOccurrence, RunInfo
 
 
 class PreviousReport:
@@ -22,9 +22,7 @@ class PreviousReport:
 
         errors_data = data.get("errors", {})
         for error_id, error_info in errors_data.items():
-            last_occurrence = LastOccurrence(
-                commit=error_info["last"]["commit"], date=error_info["last"]["date"]
-            )
+            last_occurrence = LastOccurrence(commit=error_info["last"]["commit"], date=error_info["last"]["date"])
             errors[error_id] = ErrorInfo(
                 overall=error_info["overall"],
                 test_paths_count=error_info["test_paths_count"],

@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
 import sys
-
 from pathlib import Path
 
-from src.parse_args import parse_args
-from src.tests_list import TestsList
-from src.mds_distances_report import MDSDistancesReport
 from src.ignored_errors_list import IgnoredErrorsList
 from src.known_errors_report import KnownErrorsReport
+from src.mds_distances_report import MDSDistancesReport
+from src.parse_args import parse_args
+from src.print_stats import print_failed_tests_paths, print_issues_count
+from src.tests_list import TestsList
 from src.tool_error_regex import ToolErrorRegex
-from src.print_stats import print_issues_count, print_failed_tests_paths
 from src.utils import print_pretty
 
 

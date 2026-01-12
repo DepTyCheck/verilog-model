@@ -1,18 +1,15 @@
-import subprocess
+import datetime
 import os
 import re
-import datetime
-from typing import List, Tuple, Dict
+from typing import Dict, List, Tuple
 
-from textdistance import LZMANCD
 import numpy as np
 import plotly.graph_objects as go
-import plotly.express as px
 from sklearn.manifold import MDS
-
 from src.ignored_errors_list import IgnoredErrorsList, KnownError
 from src.unexpected_error import UnexpectedError
 from src.utils import print_pretty
+from textdistance import LZMANCD
 
 
 class MDSDistancesReport:

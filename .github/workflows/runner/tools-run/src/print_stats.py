@@ -1,5 +1,5 @@
-from src.utils import print_pretty
 from src.tests_list import TestsRunResult
+from src.utils import print_pretty
 
 
 def print_issues_count(result: TestsRunResult) -> None:

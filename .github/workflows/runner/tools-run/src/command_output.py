@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
-from src.ignored_errors_list import IgnoredErrorsList, FoundMatch
-from src.unexpected_error import UnexpectedError
-from src.tool_error_regex import ToolErrorRegex
 from src.error_match_in_test import ErrorMatchInTest
 from src.handle_errors import ExtractedErrorsByToolRegex, WholeOutputMatch
+from src.ignored_errors_list import FoundMatch, IgnoredErrorsList
+from src.tool_error_regex import ToolErrorRegex
+from src.unexpected_error import UnexpectedError
 
 
 @dataclass
@@ -56,7 +56,7 @@ class CommandOutput:
             # Match whole output
             whole_output_match = WholeOutputMatch(self.out, ignored_errors_list)
 
-            if whole_output_match.found_match != None:
+            if whole_output_match.found_match is not None:
                 return FoundWholeMatch(
                     found_match=whole_output_match.found_match,
                     test_path=file_path,

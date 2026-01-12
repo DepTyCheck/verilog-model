@@ -1,9 +1,9 @@
 import re
 
-from src.ignored_errors_list import IgnoredErrorsList, MatchingMode
-from src.unexpected_error import UnexpectedError
 from src.error_match_in_test import ErrorMatchInTest
+from src.ignored_errors_list import IgnoredErrorsList, MatchingMode
 from src.tool_error_regex import ToolErrorRegex
+from src.unexpected_error import UnexpectedError
 
 
 class ExtractedErrorsByToolRegex:
@@ -25,7 +25,7 @@ class ExtractedErrorsByToolRegex:
                 error_text = match.group(0)
                 print(f"Matched error: {error_text}")
                 found_match = ignored_errors.match(error_text, mode=MatchingMode.SPECIFIC)
-                if found_match == None:
+                if found_match is None:
                     print(f"\033[91mFound unexpected error: {error_text}\033[0m\n")
                     self.unexpected_errors.append(
                         UnexpectedError(
@@ -58,5 +58,5 @@ class WholeOutputMatch:
 
         self.found_match = ignored_errors.match(output, mode=MatchingMode.WHOLE)
 
-        if self.found_match == None:
-            print(f"\033[91mCould't match whole output\033[0m\n")
+        if self.found_match is None:
+            print("\033[91mCould't match whole output\033[0m\n")

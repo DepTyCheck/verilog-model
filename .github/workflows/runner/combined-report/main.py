@@ -1,12 +1,8 @@
-import sys
 import argparse
-from pathlib import Path
 
-
+from src.combined_report import CombinedReport
 from src.previous_report import PreviousReport
 from src.tools_report_list import ToolsReportsList
-from src.combined_report import CombinedReport
-from src.result_report import ResultReport
 
 
 def parse_args():

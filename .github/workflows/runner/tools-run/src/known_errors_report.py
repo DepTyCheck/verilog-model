@@ -1,6 +1,6 @@
-from typing import List, Set
 import json
 from datetime import datetime
+from typing import List, Set
 
 from src.error_match_in_test import ErrorMatchInTest
 from src.ignored_errors_list import KnownError

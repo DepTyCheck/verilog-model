@@ -1,7 +1,6 @@
-from dataclasses import dataclass
 import re
 import subprocess
-
+from dataclasses import dataclass
 
 from src.command_output import CommandOutput
 

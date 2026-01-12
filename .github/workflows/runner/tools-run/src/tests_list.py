@@ -1,13 +1,13 @@
 from dataclasses import dataclass
-from typing import Iterator
 from pathlib import Path
+from typing import Iterator
 
-from src.ignored_errors_list import IgnoredErrorsList
-from src.unexpected_error import UnexpectedError
-from src.tool_error_regex import ToolErrorRegex
-from src.run_command import RunCommand
 from src.command_output import AnalyzisResult
 from src.error_match_in_test import ErrorMatchInTest
+from src.ignored_errors_list import IgnoredErrorsList
+from src.run_command import RunCommand
+from src.tool_error_regex import ToolErrorRegex
+from src.unexpected_error import UnexpectedError
 
 
 @dataclass
@@ -68,8 +68,8 @@ class TestsList:
                 matches.extend(sim_result.found_matches)
                 unexpected_errors.extend(sim_result.unexpected_errors)
 
-            only_synth_no_unexpected_errors = sim_result == None and len(synth_result.unexpected_errors) == 0
-            synth_and_sim_no_unexpected = sim_result != None and len(synth_result.unexpected_errors) + len(sim_result.unexpected_errors) == 0
+            only_synth_no_unexpected_errors = (sim_result is None) and len(synth_result.unexpected_errors) == 0
+            synth_and_sim_no_unexpected = (sim_result is not None) and len(synth_result.unexpected_errors) + len(sim_result.unexpected_errors) == 0
 
             if synth_success and sim_success:
                 run_stats["clean"] += 1

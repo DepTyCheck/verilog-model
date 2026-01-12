@@ -1,6 +1,6 @@
 import json
-
 from typing import List
+
 from src.report_structure import ErrorInfo, RunInfo
 
 

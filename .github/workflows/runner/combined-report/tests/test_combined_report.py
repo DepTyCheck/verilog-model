@@ -1,8 +1,8 @@
 import unittest
 
+from src.combined_report import CombinedReport
 from src.previous_report import PreviousReport
 from src.tools_report_list import ToolsReportsList
-from src.combined_report import CombinedReport
 
 
 class TestCombinedReport(unittest.TestCase):

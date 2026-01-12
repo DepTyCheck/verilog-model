@@ -1,5 +1,5 @@
-import unittest
 import json
+import unittest
 
 from src.tools_report import ToolsReport
 
