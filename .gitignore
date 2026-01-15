@@ -1,10 +1,15 @@
 .venv
+.macos-venv
 build/
 .build/
 **/tests/**/failures
 **/tests/**/output
+generated
 
 .DS_Store
 .vscode
 .devcontainer
 __pycache__
+
+a.out
+error_distances.html

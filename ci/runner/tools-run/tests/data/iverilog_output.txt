@@ -1,0 +1,5 @@
+test.sv:29: error: Variable 'l' cannot be driven by a primitive or continuous assignment with non-default strength.
+test.sv:29: error: Failed to elaborate primitive output expression anz.l.
+test.sv:59: warning: input port hqnjnjv is coerced to inout.
+test.sv:59: assert: elaborate.cc:1700: failed assertion prts[0]->unpacked_dimensions()==0
+Aborted (core dumped)

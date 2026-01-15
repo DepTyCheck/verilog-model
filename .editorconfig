@@ -12,9 +12,14 @@ trim_trailing_whitespace = true
 max_line_length = 152
 
 # Idris source files
-[*.{idr,ipkg,tex,yaff,lidr}]
+[*.{ipkg,tex,yaff,lidr}]
 indent_style = space
 indent_size = 2
+
+[*.idr]
+indent_style = space
+# Allows custom indent and suppresses `Wrong amount of left-padding spaces`
+indent_size = unset
 
 # Various configuration files
 [{*.yml,.ecrc}]
@@ -27,12 +32,12 @@ indent_size = 4
 
 [*.{md,rst}]
 indent_style = space
-indent_size = 2
+indent_size = unset
 
 [{*.sh,run,*.bat}]
 indent_style = space
 indent_size = 2
-shell_variant = posix
+shell_variant = bash
 switch_case_indent = true
 space_redirects = true
 
@@ -46,3 +51,6 @@ max_line_length = off
 [*.py]
 indent_style = space
 indent_size = 4
+
+[/ci/runner/tools-run/tests/data/**/*]
+max_line_length = unset

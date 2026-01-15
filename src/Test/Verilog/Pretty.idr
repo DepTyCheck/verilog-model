@@ -160,7 +160,7 @@ showSVType ua@(UnpackedArr t     s e) name = "\{showPackedSVT $ basic t} \{name}
   basic : SVType -> SVType
   basic (UnpackedArr t _ _) = basic t
   basic t                   = t
-  
+
   unpDimensions : SVType -> String
   unpDimensions (UnpackedArr t s e) = "[\{show s}:\{show e}]" ++ unpDimensions t
   unpDimensions _                   = ""
@@ -264,7 +264,7 @@ iMcsByF mcs func fin = findIndex resolve $ toVect mcs where
     resolve : MultiConnection ms m subMs -> Bool
     resolve sc = isElem fin $ func sc
 
-findMcsNameByF : (extractField : MultiConnection ms m subMs -> List $ Fin iport) -> 
+findMcsNameByF : (extractField : MultiConnection ms m subMs -> List $ Fin iport) ->
                  (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Fin iport -> String
 findMcsNameByF extract mcs mcsNames fin = case iMcsByF mcs extract fin of
   Just mcsFin => index mcsFin mcsNames
@@ -319,8 +319,8 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : Fi
                  (ctxInps : List SVObject) -> (ctxOuts : List SVObject) -> (exInps : List String) -> (exOuts : List String) -> List (Doc opts)
     printSubm' pre siNames soNames exM ctxInps ctxOuts exInps exOuts = do
       let warningsSubOuts = printAllImplicitCasts showSVObj (toList exM.outputs) exOuts ctxOuts soNames
-      let warningsSubInps = printAllImplicitCasts showSVObj ctxInps siNames (toList exM.inputs) exInps  
-      let warnings = if isNil warningsSubOuts || 
+      let warningsSubInps = printAllImplicitCasts showSVObj ctxInps siNames (toList exM.inputs) exInps
+      let warnings = if isNil warningsSubOuts ||
                         isNil warningsSubInps then warningsSubOuts ++ warningsSubInps else warningsSubOuts ++ [ "//" ] ++ warningsSubInps
       case isNil warnings of
         True  => [ pre, line "" ]
@@ -388,8 +388,8 @@ resolveOutputNames mcs mcsNames = map (findTOName mcs mcsNames) $ allFins (m.out
 ||| Net types aren't compatible with unpacked arrays. So connections to unpacked array ports must be declared explicitly.
 unpackedDecls : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> List String
 unpackedDecls []          _             = []
-unpackedDecls (mc@(MkMC Nothing ssk Nothing ssc) :: mcs) (name::names) = if (isUnpacked $ typeOf mc) 
-  then (showSVObj (typeOf mc) name) :: unpackedDecls mcs names 
+unpackedDecls (mc@(MkMC Nothing ssk Nothing ssc) :: mcs) (name::names) = if (isUnpacked $ typeOf mc)
+  then (showSVObj (typeOf mc) name) :: unpackedDecls mcs names
   else unpackedDecls mcs names
 unpackedDecls (mc :: mcs) (name::names) = unpackedDecls mcs names
 

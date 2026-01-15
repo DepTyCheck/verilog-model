@@ -7,13 +7,13 @@ on:
       - main
       - master
     tags:
-      - '**'
+      - "**"
   pull_request:
     branches:
       - main
       - master
   schedule:
-    - cron: '0 1 * * *'
+    - cron: "0 1 * * *"
 
 permissions: read-all
 
@@ -27,14 +27,14 @@ defaults:
 
 env:
   PACK_DIR: /root/.pack
-  GENERATION_DIR: 'generated-modules'
-  GEN_TESTS_NUMBER: 256
-  BUILD_DIR: '.build'
+  GENERATION_DIR: "generated-modules"
+  GEN_TESTS_COUNT: 256
+  BUILD_DIR: ".build"
   PACKAGE_NAME: verilog-model
   ERROR_DISTANCES_OUT: error_distances.html
   GH_PAGES_PATH: verilog-gh-pages
-  RUN_STATS_PATTERN: 'run-stats.json'
-  COMBINED_RUN_STATS_FILE: 'combined-run-stats.json'
+  RUN_STATS_PATTERN: "run-stats.json"
+  COMBINED_RUN_STATS_FILE: "combined-run-stats.json"
 
 jobs:
   get-upstream-matrix:
@@ -73,6 +73,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Update `pack-db`
         run: pack update-db
       - name: Switch to the latest compiler, if needed
@@ -86,12 +88,12 @@ jobs:
         id: cache-key
         run: |
           idris2_commit=$(idris2 -v | sed -nE 's/.*Idris 2, version [0-9.]+-([A-Za-z0-9]+).*/\1/p')
-          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ matrix.upstream-mode }}-$idris2_commit" >> $GITHUB_OUTPUT
+          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ matrix.upstream-mode }}-$idris2_commit" >> "$GITHUB_OUTPUT"
       - name: Export key
         id: export-key
         if: matrix.upstream-mode == 'latest-pack-collection'
         run: |
-          echo "latest_key=${{ steps.cache-key.outputs.key }}" >> $GITHUB_OUTPUT
+          echo "latest_key=${{ steps.cache-key.outputs.key }}" >> "$GITHUB_OUTPUT"
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
@@ -121,19 +123,40 @@ jobs:
       #   run: pack test ${{ env.PACKAGE_NAME }}
       - name: Gen SystemVerilog modules
         if: matrix.upstream-mode == 'latest-pack-collection'
-        run : pack run ${{ env.PACKAGE_NAME }} --to "${{ env.GENERATION_DIR }}" -n ${{ env.GEN_TESTS_NUMBER }} --seed-name --seed-content --coverage mcov  # Generate modules
+        run: |
+          pack run ${{ env.PACKAGE_NAME }} \
+            --to "${{ env.GENERATION_DIR }}" \
+            -n ${{ env.GEN_TESTS_COUNT }} \
+            --seed-name \
+            --seed-content \
+            --coverage mcov
       - name: Show mcov
         if: matrix.upstream-mode == 'latest-pack-collection'
-        run : cat mcov
+        run: cat mcov
       - uses: actions/upload-artifact@v4
         if: matrix.upstream-mode == 'latest-pack-collection'
         with:
           name: generated-modules
           path: "${{ env.GENERATION_DIR }}"
 
+  test-tools-run:
+    name: Test tools run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: |
+          cd ci/runner/tools-run
+          pip install -r requirements.txt
+          python3 -m tests.test
+
   run-tools:
     name: ${{ matrix.tool.name }}
-    needs: build-and-test
+    needs: [test-tools-run, build-and-test]
     timeout-minutes: 90
     runs-on: ubuntu-latest
     strategy:
@@ -212,16 +235,30 @@ jobs:
               sudo make install
             version: |
               verilator --version
-            run: rm -rf obj_dir && rm -f top.sv && cp {file} top.sv && verilator --cc --exe .github/workflows/conf/verilator/testbench.cpp --timing -Wno-fatal --no-std +1800-2023ext+sv top.sv
+            run: |
+              rm -rf obj_dir && \
+              rm -f top.sv && \
+              cp {file} top.sv && \
+              verilator \
+                --cc \
+                --exe ci/conf/verilator/testbench.cpp \
+                --timing \
+                -Wno-fatal \
+                --no-std \
+                +1800-2023ext+sv \
+                top.sv
             error_regex: >
               %Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$
             sim_cmd: make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop
             sim_error_regex: >
-              %Error:[\S ]+$
+              %Error[-A-z]*:[\S ]+
 
           - name: surelog
             repo: https://github.com/chipsalliance/Surelog.git
-            deps: cmake gcc build-essential git pkg-config tclsh swig uuid-dev libgoogle-perftools-dev python3 python3-orderedmultidict python3-psutil python3-dev default-jre lcov zlib1g-dev
+            deps: >
+              cmake gcc build-essential git pkg-config tclsh swig uuid-dev
+              libgoogle-perftools-dev python3 python3-orderedmultidict
+              python3-psutil python3-dev default-jre lcov zlib1g-dev
             path: surelog
             build: |
               git submodule update --init --recursive
@@ -260,26 +297,29 @@ jobs:
               sudo mv tree-sitter-linux-x64 /usr/local/bin/tree-sitter-linux-x64
               sudo chmod +x /usr/local/bin/tree-sitter-linux-x64
             build: |
-                cd ..
-                sudo apt -qq -y install curl
-                touch "$HOME/.bash_profile"
-                # From https://nodejs.org/en/download
-                curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
-                . "$HOME/.nvm/nvm.sh"
-                nvm install 22
-                cd tssv
-                sudo tree-sitter-linux-x64 generate --abi 14
-                sudo tree-sitter-linux-x64 build -o sv.so
+              cd ..
+              sudo apt -qq -y install curl
+              touch "$HOME/.bash_profile"
+              # From https://nodejs.org/en/download
+              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+              . "$HOME/.nvm/nvm.sh"
+              nvm install 22
+              cd tssv
+              sudo tree-sitter-linux-x64 generate --abi 14
+              sudo tree-sitter-linux-x64 build -o sv.so
             python_runner_deps: tree-sitter==0.21.3
             version: |
               sudo tree-sitter-linux-x64 -V
-            run: python3 .github/workflows/conf/tree-sitter-sv/run_ts.py tssv/sv.so {file}
+            run: python3 ci/conf/tree-sitter-sv/run_ts.py tssv/sv.so {file}
             third_party_release_repo: tree-sitter/tree-sitter
             third_party_release_name_wildcard: tree-sitter-linux-x64.gz
 
           - name: synlig
             repo: https://github.com/chipsalliance/synlig.git
-            deps: gcc-11 g++-11 build-essential cmake tclsh ant default-jre swig google-perftools libgoogle-perftools-dev python3 python3-dev python3-pip uuid uuid-dev tcl-dev flex libfl-dev git pkg-config libreadline-dev bison libffi-dev wget python3-orderedmultidict
+            deps: >
+              gcc-11 g++-11 build-essential cmake tclsh ant default-jre swig google-perftools
+              libgoogle-perftools-dev python3 python3-dev python3-pip uuid uuid-dev tcl-dev flex
+              libfl-dev git pkg-config libreadline-dev bison libffi-dev wget python3-orderedmultidict
             path: synlig
             build: |
               git submodule sync
@@ -309,7 +349,9 @@ jobs:
 
           # - name: yosys
           #   repo: https://github.com/YosysHQ/yosys.git
-          #   deps: build-essential clang lld bison flex libreadline-dev gawk tcl-dev libffi-dev git graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
+          #   deps: >
+          #     build-essential clang lld bison flex libreadline-dev gawk tcl-dev libffi-dev git
+          #     graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
           #   path: yosys
           #   build: |
           #     git submodule update --init --recursive
@@ -317,7 +359,7 @@ jobs:
           #   install: |
           #     sudo make install
           #     cd ..
-          #     bash .github/workflows/runner/tools-run/rename_tests.sh
+          #     bash ci/runner/tools-run/rename_tests.sh
           #   version: yosys --version
           #   run: yosys -p 'read -sv2012 {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
           #   error_regex: >
@@ -325,7 +367,10 @@ jobs:
 
           - name: yosys-slang
             repo: https://github.com/povik/yosys-slang.git
-            deps: cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh uuid-dev build-essential lld libreadline-dev gawk libffi-dev git graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
+            deps: >
+              cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh
+              uuid-dev build-essential lld libreadline-dev gawk libffi-dev git graphviz xdot pkg-config
+              python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
             path: yosys-slang
             build: |
               git clone https://github.com/YosysHQ/yosys.git
@@ -342,7 +387,7 @@ jobs:
               cd ..
               sudo make install
               cd ..
-              bash .github/workflows/runner/tools-run/rename_tests.sh
+              bash ci/runner/tools-run/rename_tests.sh
             version: yosys --version
             run: yosys -m slang -p 'read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
             error_regex: >
@@ -354,6 +399,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Download Generated Files
         uses: actions/download-artifact@v4
         with:
@@ -365,13 +412,13 @@ jobs:
         run: |
           git clone ${{ matrix.tool.repo }} ${{ matrix.tool.path }}
           cd ${{ matrix.tool.path }}
-          echo "COMMIT_HASH=$(git rev-parse HEAD)" >> $GITHUB_ENV
-      - name: Restore dependency
-        if: ${{ matrix.tool.dep_path }}
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ matrix.tool.dep_path }}
-          key: ${{ matrix.tool.dep_name }}-cache-
+          echo "COMMIT_HASH=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      # - name: Restore dependency
+      #   if: ${{ matrix.tool.dep_path }}
+      #   uses: actions/cache/restore@v4
+      #   with:
+      #     path: ${{ matrix.tool.dep_path }}
+      #     key: ${{ matrix.tool.dep_name }}-cache-
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
@@ -397,7 +444,7 @@ jobs:
           sudo apt -y install curl
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
           sh setup.sh -y
-          source $HOME/.cargo/env
+          source "$HOME/.cargo/env"
           rustup install ${{ matrix.tool.rust_ver }}
           rustup default ${{ matrix.tool.rust_ver }}
       - name: Update haskell (if needed)
@@ -412,11 +459,11 @@ jobs:
           extract: true
           fileName: ${{ matrix.tool.third_party_release_name_wildcard }}
       - name: Pre-Build tool
-        run : |
+        run: |
           ${{ matrix.tool.pre_build }}
       - name: Build tool
         if: steps.cache-build.outputs.cache-hit != 'true'
-        run : |
+        run: |
           cd ${{ matrix.tool.path }}
           ${{ matrix.tool.build }}
       - name: Save build
@@ -426,7 +473,7 @@ jobs:
           path: ${{ matrix.tool.path }}
           key: ${{ steps.cache-build.outputs.cache-primary-key }}
       - name: Install tool
-        run : |
+        run: |
           cd ${{ matrix.tool.path }}
           ${{ matrix.tool.install }}
       - name: Print version
@@ -438,14 +485,14 @@ jobs:
           python3 -m venv .venv
           source .venv/bin/activate
           python3 -m pip install --upgrade pip
-          pip install -r .github/workflows/runner/tools-run/requirements.txt
+          pip install -r ci/runner/tools-run/requirements.txt
           if [ -n "${{ matrix.tool.python_runner_deps }}" ]; then
             pip install ${{ matrix.tool.python_runner_deps }}
           fi
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
       - name: Run
-        run : |
+        run: |
           set +e
           source .venv/bin/activate
 
@@ -454,7 +501,7 @@ jobs:
           git rev-parse HEAD
           cd -
 
-          python3 .github/workflows/runner/tools-run/main.py \
+          python3 ci/runner/tools-run/main.py \
             --gen-path "${{ env.GENERATION_DIR }}" \
             --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
             --tool-name "${{ matrix.tool.name }}" \
@@ -466,7 +513,7 @@ jobs:
             --error-distances-output "$ERROR_DISTANCES_OUT" \
             --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
             --commit "${{ env.COMMIT_HASH }}" \
-            --extra-ignored-regexes ${{ join(matrix.tool.extra_ignored_regexes, ' ') }}
+            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then
@@ -489,11 +536,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
       - run: |
-          cd .github/workflows/runner/combined-report
+          cd ci/runner/combined-report
           python -m tests.test
 
   push-run-stats:
@@ -517,26 +566,26 @@ jobs:
 
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
-      
+
       - name: Calc report path
         run: |
           RELATIVE_REPORT_PATH="src/lib/data/errors-stats.json"
-          echo "RELATIVE_REPORT_PATH=$RELATIVE_REPORT_PATH" >> $GITHUB_ENV
-          echo "REPORT_PATH=${{ env.GH_PAGES_PATH }}/$RELATIVE_REPORT_PATH" >> $GITHUB_ENV
+          echo "RELATIVE_REPORT_PATH=$RELATIVE_REPORT_PATH" >> "$GITHUB_ENV"
+          echo "REPORT_PATH=${{ env.GH_PAGES_PATH }}/$RELATIVE_REPORT_PATH" >> "$GITHUB_ENV"
 
       - name: Combine statistics
         run: |
-          python3 .github/workflows/runner/combined-report/main.py \
+          python3 ci/runner/combined-report/main.py \
             --previous-report ${{ env.REPORT_PATH }} \
             --current-tools-reports-dir run-stats \
             --tools-reports-pattern "*-run-stats.json" \
             --result-report ${{ env.REPORT_PATH }} \
-            --tests-number ${{ env.GEN_TESTS_NUMBER }}
+            --tests-number ${{ env.GEN_TESTS_COUNT }}
 
       - name: Bot Details
         id: bot-details
         uses: raven-actions/bot-details@v1
-      
+
       - name: Commit & push
         run: |
           cd ${{ env.GH_PAGES_PATH }}
@@ -563,14 +612,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+        with:
+          persist-credentials: false
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
         with:
           path: ${{ env.BUILD_DIR }}
           key: ${{ needs.build-and-test.outputs.latest-cache-key }}
-      
+
       - name: Touch ${{ env.BUILD_DIR }} dir (-_-)
         run: |
           set +e
@@ -598,7 +648,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: .github/workflows/push/Dockerfile
+          file: ci/push/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -609,7 +659,6 @@ jobs:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
-
 
   create-issue-on-failure:
     name: Create an issue on failure
@@ -622,10 +671,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Read and Format Usernames
         run: |
           TAGGED_USERS=$(awk '{printf "@%s ", $0}' MAINTAINERS)
-          echo "TAGGED_USERS=${TAGGED_USERS}" >> $GITHUB_ENV
+          echo "TAGGED_USERS=${TAGGED_USERS}" >> "$GITHUB_ENV"
       - name: Create Issue
         uses: actions/github-script@v7
         with:

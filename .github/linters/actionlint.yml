@@ -1,0 +1,4 @@
+paths:
+  .github/workflows/**/*.{yml,yaml}:
+    ignore:
+      - "unpinned-uses"

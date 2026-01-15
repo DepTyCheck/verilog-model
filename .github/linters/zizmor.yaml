@@ -1,0 +1,7 @@
+rules:
+  excessive-permissions:
+    disable: true
+  template-injection:
+    disable: true
+  unpinned-uses:
+    disable: true

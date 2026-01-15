@@ -1,0 +1,27 @@
+[MAIN]
+max-line-length=152
+
+[DESIGN]
+max-args=7
+max-positional-arguments=7
+
+[MESSAGES CONTROL]
+
+disable=
+  # Docs things
+  missing-module-docstring,
+  missing-class-docstring,
+  missing-function-docstring,
+
+  # Used for testing
+  relative-beyond-top-level,
+
+  # We don't think it's bad code
+  too-few-public-methods,
+  no-else-return,
+  super-init-not-called,
+  import-error,
+  broad-exception-caught,
+  broad-exception-raised,
+  # import order is set by isort
+  wrong-import-order
