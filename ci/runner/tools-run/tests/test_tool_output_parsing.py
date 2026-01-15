@@ -17,6 +17,4 @@ class TestToolOutputParsing(unittest.TestCase):
                 tool_error_regex=ToolErrorRegex(r"%Error[-A-z]*:[\S ]+"),
                 file_path="does_not_matter",
             )
-            print(res.found_matches)
-            print(res.unexpected_errors)
-            print(res.all_errors_are_known)
+            self.assertEqual(len(res.found_matches), 1)
