@@ -7,7 +7,7 @@ from src.tools_report import ToolsReport
 class TestToolsReport(unittest.TestCase):
 
     def test_parsing(self):
-        with open("./tests/data/some-tool-run-stats.json", "r") as f:
+        with open("./tests/data/some-tool-run-stats.json", "r", encoding="utf-8") as f:
             data_dict = json.load(f)
 
         p = ToolsReport(data_dict)

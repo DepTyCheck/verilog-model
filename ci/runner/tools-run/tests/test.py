@@ -1,6 +1,7 @@
 import unittest
 
 from .test_parsing_ignored_errors_list import TestIgnoredErrorsList
+from .test_tool_output_parsing import TestToolOutputParsing
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()
@@ -8,6 +9,7 @@ if __name__ == "__main__":
     loader = unittest.TestLoader()
     test_cases = [
         TestIgnoredErrorsList,
+        TestToolOutputParsing,
     ]
     for test_case in test_cases:
         suite.addTests(loader.loadTestsFromTestCase(test_case))

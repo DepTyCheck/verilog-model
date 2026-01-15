@@ -12,7 +12,7 @@ class PreviousReport:
         self.errors, self.runs = self.parse(file_path)
 
     def parse(self, file_path: str):
-        with open(file_path, "r") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             raw_json = file.read()
 
         data = json.loads(raw_json)

@@ -12,6 +12,6 @@ class ToolsReportsList:
         for report_file in Path(dir_path).rglob(pattern):
             if not report_file.is_file():
                 continue
-            with open(report_file, "r") as f:
+            with open(report_file, "r", encoding="utf-8") as f:
                 data_dict = json.load(f)
                 self.reports.append(ToolsReport(data_dict))
