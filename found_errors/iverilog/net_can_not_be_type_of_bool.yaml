@@ -2,6 +2,7 @@ stage: synthesis
 tool: iverilog
 id: net_can_not_be_type_of_bool
 title: Net can not be of type `bool`.
+short_desc: iverilog doesn't support the `int` type from SystemVerilog. Instead, it's implemented through the Verilog-AMS extension
 regex: >
   Net .* can not be of type
 examples:
