@@ -25,13 +25,15 @@ class TestsList:
         self,
         files: Iterator[Path],
         ignored_errors_list: IgnoredErrorsList,
-        tool_error_regex: ToolErrorRegex,
+        main_error_regex: ToolErrorRegex,
+        sim_error_regex: ToolErrorRegex | None,
         raw_synth_cmd: str,
         raw_sim_cmd: str | None,
     ):
         self.files = files
         self.ignored_errors_list = ignored_errors_list
-        self.tool_error_regex = tool_error_regex
+        self.main_error_regex = main_error_regex
+        self.sim_error_regex = sim_error_regex
         self.raw_synth_cmd = raw_synth_cmd
         self.raw_sim_cmd = raw_sim_cmd
 
@@ -53,6 +55,7 @@ class TestsList:
                 file_path_str=file_path_str,
                 file_content=file_content,
                 raw_cmd=self.raw_synth_cmd,
+                error_regex=self.main_error_regex,
             )
             matches.extend(synth_result.found_matches)
             unexpected_errors.extend(synth_result.unexpected_errors)
@@ -64,6 +67,7 @@ class TestsList:
                     file_path_str=file_path_str,
                     file_content=file_content,
                     raw_cmd=self.raw_sim_cmd,
+                    error_regex=self.sim_error_regex,
                 )
                 matches.extend(sim_result.found_matches)
                 unexpected_errors.extend(sim_result.unexpected_errors)
@@ -84,7 +88,7 @@ class TestsList:
             unexpected_errors=unexpected_errors,
         )
 
-    def run_single(self, file_path_str: str, file_content: str, raw_cmd: str) -> tuple[bool, AnalyzisResult]:
+    def run_single(self, file_path_str: str, file_content: str, raw_cmd: str, error_regex: ToolErrorRegex) -> tuple[bool, AnalyzisResult]:
         cmd = RunCommand(
             raw_str_cmd=raw_cmd,
             file_path=file_path_str,
@@ -97,7 +101,7 @@ class TestsList:
         else:
             analyzis_result = cmd_result.output.analyze(
                 ignored_errors_list=self.ignored_errors_list,
-                tool_error_regex=self.tool_error_regex,
+                tool_error_regex=error_regex,
                 file_path=file_path_str,
             )
             return False, analyzis_result
