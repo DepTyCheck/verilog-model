@@ -3,7 +3,9 @@ FROM ghcr.io/stefan-hoeck/idris2-pack:latest
 ENV BUILD_DIR=.build
 ENV PACKAGE_NAME=verilog-model
 
-WORKDIR /app
+ARG WORK_DIR=/app
+
+WORKDIR ${WORK_DIR}
 
 # Copy Idris sources and cached .build
 COPY . .

@@ -13,6 +13,11 @@ import Debug.Trace
 import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
 
+import Test.Common.Gen
+import Test.Common.Pretty
+
+-- import Test.Verilog.Connections -- DEV
+
 import Test.Common.UniqueFins.Derived
 import Test.Verilog.Connections.Derived
 import Test.Verilog.TMPExpression.Derived
@@ -30,24 +35,6 @@ import System.Directory
 
 %default total
 
-StdModules : ModuleSigsList
-StdModules =
-  [ MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
-  , MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
-  , MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
-  , MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
-  , MkModuleSig [Var $ AVar Logic']                    [Var $ AVar Logic']
-  ]
-
-StdModulesPV : PrintableModules StdModules
-StdModulesPV =
-  [
-    MkPrintableModule "and"  (StdModule 2 1)
-  , MkPrintableModule "or"   (StdModule 2 1)
-  , MkPrintableModule "nand" (StdModule 2 1)
-  , MkPrintableModule "xor"  (StdModule 2 1)
-  , MkPrintableModule "not"  (StdModule 1 1)
-  ]
 
 record Config m where
   constructor MkConfig
@@ -61,6 +48,7 @@ record Config m where
   seedInName : m Bool
   seedInFile : m Bool
   silent     : m Bool
+  lang       : m Lang
 
 allNothing : Config Maybe
 allNothing = MkConfig
@@ -74,6 +62,7 @@ allNothing = MkConfig
   , seedInName = Nothing
   , seedInFile = Nothing
   , silent     = Nothing
+  , lang       = Nothing
   }
 
 Cfg : Type
@@ -91,12 +80,13 @@ defaultConfig = pure $ MkConfig
   , seedInName = False
   , seedInFile = False
   , silent     = False
+  , lang       = SystemVerilog
   }
 
 -- TODO to do this with `barbies`
 mergeCfg : (forall a. m a -> n a -> k a) -> Config m -> Config n -> Config k
-mergeCfg f (MkConfig h rs lo tc mf td cf sn sf s) (MkConfig h' rs' lo' tc' mf' td' cf' sn' sf' s') =
- MkConfig  (f h h') (f rs rs') (f lo lo') (f tc tc') (f mf mf') (f td td') (f cf cf') (f sn sn') (f sf sf') (f s s')
+mergeCfg f (MkConfig h rs lo tc mf td cf sn sf s l) (MkConfig h' rs' lo' tc' mf' td' cf' sn' sf' s' l') =
+ MkConfig  (f h h') (f rs rs') (f lo lo') (f tc tc') (f mf mf') (f td td') (f cf cf') (f sn sn') (f sf sf') (f s s') (f l l')
 
 parseSeed : String -> Either String $ Config Maybe
 parseSeed str = do
@@ -131,6 +121,11 @@ parseTestsDir str = Right $ {testsDir := Just $ Just str} allNothing
 parseCovFile : String -> Either String $ Config Maybe
 parseCovFile str = Right $ {covFile := Just $ Just str} allNothing
 
+parseLang : String -> Either String $ Config Maybe
+parseLang "sv"   = Right $ {lang := Just SystemVerilog} allNothing
+parseLang "vhdl" = Right $ {lang := Just VHDL} allNothing
+parseLang _      = Left "invalid language value"
+
 cliOpts : List $ OptDescr $ Config Maybe
 cliOpts =
   [ MkOpt ['h'] ["help"]
@@ -163,6 +158,9 @@ cliOpts =
   , MkOpt [] ["silent"]
       (NoArg $ {silent := Just $ True} allNothing)
       "Disables all output to the console and files, useful for benchmarking."
+  , MkOpt ['l'] ["lang"]
+      (ReqArg' parseLang "<sv|vhdl>")
+      "Sets the HDL output language (default: sv)."
   ]
 
 tail'' : List a -> List a
@@ -236,37 +234,6 @@ printMCov cgi path = do
   Right () <- writeFile path $ show @{Colourful} cgi | Left err => die "Couldn't write the model coverage to file: \{show err}"
   pure ()
 
-selectPorts' : (mcs : MultiConnectionsList ms m subMs) -> List (Fin $ length mcs) -> SVObjList
-selectPorts' p []        = []
-selectPorts' p (x :: xs) = (typeOf $ index p x) :: selectPorts' p xs
-
-
-gen : Fuel -> Gen MaybeEmpty $ ExtendedModules StdModules
-gen x = do
-  rawMS <- genModules x StdModules @{genFillAny}
-  res <- extend x rawMS
-  pure res where
-    extend : Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ ExtendedModules ms
-    extend _ End = pure End
-    extend x modules@(NewCompositeModule m {ms} subMs {mcs} _ cont) = do
-      -- Extend the rest
-      contEx <- extend x cont
-
-      -- Gen Assigns
-      let sdf = sdFins $ allFins $ length mcs
-      (rawSDAssigns ** sduf) <- genUF x $ sdf.length
-      let sdAssigns = listLookUp sdf rawSDAssigns
-
-      let mdf = mdFins $ allFins $ length mcs
-      (rawMDAssigns ** mduf) <- genUF x $ mdf.length
-      let mdAssigns = listLookUp mdf rawMDAssigns
-
-      -- Gen Expressions
-      sdExprs <- genTMPExList x mcs sdAssigns
-      mdExprs <- genTMPExList x mcs mdAssigns
-
-      pure $ NewCompositeModule m subMs mcs sdAssigns sdExprs mdAssigns mdExprs contEx
-
 covering
 main : IO ()
 main = do
@@ -283,7 +250,7 @@ main = do
     exitSuccess
 
   let cgi = initCoverageInfo'' [`{Modules} ] -- TODO: Add expression type
-  let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel >>= map (render cfg.layoutOpts) . prettyModules (limit 1000) StdModulesPV
+  let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel (cfg.lang) >>= map (render cfg.layoutOpts) . printDesigns (limit 1000)
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>
                                                         if nonTrivial md then Just (fst gmd, mcov, md) else Nothing
   let vals = take (limit cfg.testsCnt) vals

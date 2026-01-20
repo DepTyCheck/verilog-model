@@ -32,8 +32,15 @@ modules = Test.Common.Utils
         , Test.Verilog.TMPExpression
         , Test.Verilog.Warnings
         , Test.Verilog.UniqueNames
+        , Test.Verilog.PrintableModules
+        , Test.Verilog.Defaults
+        , Test.Verilog.VerilogDesign
         , Test.Verilog.UniqueNames.Derived
+        , Test.Verilog.Pretty
+        , Test.VHDL.Pretty
+        , Test.VHDL.VHDLDesign
+        , Test.Common.Gen
+        , Test.Common.Pretty
         , Test.Common.UniqueFins.Derived
         , Test.Verilog.Connections.Derived
         , Test.Verilog.TMPExpression.Derived
-        , Test.Verilog.Pretty
