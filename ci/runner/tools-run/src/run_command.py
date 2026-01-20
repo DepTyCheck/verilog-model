@@ -10,7 +10,7 @@ COMMAND_TIMEOUT_SECONDS = COMMAND_TIMEOUT_MINUTES * 60
 
 def find_top(file_content: str) -> str:
     """
-    Find the top module name in the given file content.
+    Find the top module name in the given SystemVerilog design.
 
     Args:
         file_content (str): The content of the file to search for the top module
@@ -25,6 +25,23 @@ def find_top(file_content: str) -> str:
     raise Exception("No top module found")
 
 
+def find_top_entity_vhdl(file_content: str) -> str:
+    """
+    Find the top entity name in the given VHDL design.
+
+    Args:
+        file_content (str): The content of the file to search for the top entity
+
+    Returns:
+        str: The name of the top entity, or None if no top entity is found
+    """
+    matches = re.findall(r"(?<=entity )(.*)(?<= is)", file_content, re.MULTILINE)
+    if matches:
+        return matches[-1]
+
+    raise Exception("No top entity found")
+
+
 @dataclass
 class ExecutionResult:
     command_executed_successfully: bool
@@ -33,8 +50,15 @@ class ExecutionResult:
 
 
 class RunCommand:
-    def __init__(self, raw_str_cmd: str, file_path: str, file_content: str):
+    def __init__(
+        self,
+        raw_str_cmd: str,
+        file_path: str,
+        file_content: str,
+        cwd: str | None = None,
+    ):
         self.cmd = self.make_command(raw_str_cmd, file_path, file_content)
+        self.cwd = cwd
 
     def make_command(self, cmd: str, file_path: str, file_content: str) -> str:
         """
@@ -51,6 +75,8 @@ class RunCommand:
         command = cmd
         if "{top_module}" in command:
             command = command.replace("{top_module}", find_top(file_content))
+        if "{vhdl_top_entity}" in command:
+            command = command.replace("{vhdl_top_entity}", find_top_entity_vhdl(file_content))
         command = command.replace("{file}", file_path)
         return command
 
@@ -81,11 +107,16 @@ class RunCommand:
                 text=True,
                 timeout=COMMAND_TIMEOUT_SECONDS,
                 check=False,
+                cwd=self.cwd,
             )
             output = result.stdout
             print(f"Exit code: {result.returncode}. Output:\n{output}")
 
-            return ExecutionResult(command_executed_successfully=True, result_code_is_ok=result.returncode == 0, output=CommandOutput(out=output))
+            return ExecutionResult(
+                command_executed_successfully=True,
+                result_code_is_ok=result.returncode == 0,
+                output=CommandOutput(out=output),
+            )
 
         except subprocess.TimeoutExpired as timeout_error:
             print(f"""Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}""")

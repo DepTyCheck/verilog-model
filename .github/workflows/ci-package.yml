@@ -59,7 +59,7 @@ jobs:
           fi >> "$GITHUB_OUTPUT"
 
   build-and-test:
-    name: Build and test `${{ github.repository }}`
+    name: Build and test ${{ github.repository }}
     needs: get-upstream-matrix
     runs-on: ubuntu-latest
     container: ghcr.io/stefan-hoeck/idris2-pack:latest

@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator
+import tempfile
+import os
 
 from src.command_output import AnalyzisResult
 from src.error_match_in_test import ErrorMatchInTest
@@ -47,40 +49,44 @@ class TestsList:
         run_stats["failed"] = 0
 
         for file_path in self.files:
-            file_path_str = str(file_path)
+            file_path_absolute = file_path.resolve()
+            file_path_str = str(file_path_absolute)
             with open(file_path, "r", encoding="utf-8") as file:
                 file_content = file.read()
 
-            synth_success, synth_result = self.run_single(
-                file_path_str=file_path_str,
-                file_content=file_content,
-                raw_cmd=self.raw_synth_cmd,
-                error_regex=self.main_error_regex,
-            )
-            matches.extend(synth_result.found_matches)
-            unexpected_errors.extend(synth_result.unexpected_errors)
-
-            sim_result = None
-            if synth_success:
-                print("Run sim")
-                sim_success, sim_result = self.run_single(
+            with tempfile.TemporaryDirectory(dir=Path.cwd()) as tmp_dir:
+                synth_success, synth_result = self.run_single(
                     file_path_str=file_path_str,
                     file_content=file_content,
-                    raw_cmd=self.raw_sim_cmd,
-                    error_regex=self.sim_error_regex,
+                    raw_cmd=self.raw_synth_cmd,
+                    error_regex=self.main_error_regex,
+                    cwd=tmp_dir,
                 )
-                matches.extend(sim_result.found_matches)
-                unexpected_errors.extend(sim_result.unexpected_errors)
+                matches.extend(synth_result.found_matches)
+                unexpected_errors.extend(synth_result.unexpected_errors)
 
-            only_synth_no_unexpected_errors = (sim_result is None) and len(synth_result.unexpected_errors) == 0
-            synth_and_sim_no_unexpected = (sim_result is not None) and len(synth_result.unexpected_errors) + len(sim_result.unexpected_errors) == 0
+                sim_result = None
+                if synth_success:
+                    print("Run sim")
+                    sim_success, sim_result = self.run_single(
+                        file_path_str=file_path_str,
+                        file_content=file_content,
+                        raw_cmd=self.raw_sim_cmd,
+                        error_regex=self.sim_error_regex,
+                        cwd=tmp_dir,
+                    )
+                    matches.extend(sim_result.found_matches)
+                    unexpected_errors.extend(sim_result.unexpected_errors)
 
-            if synth_success and sim_success:
-                run_stats["clean"] += 1
-            elif only_synth_no_unexpected_errors or synth_and_sim_no_unexpected:
-                run_stats["handled_errors"] += 1
-            else:
-                run_stats["failed"] += 1
+                only_synth_no_unexpected_errors = (sim_result is None) and len(synth_result.unexpected_errors) == 0
+                synth_and_sim_no_unexpected = (sim_result is not None) and len(synth_result.unexpected_errors) + len(sim_result.unexpected_errors) == 0
+
+                if synth_success and sim_success:
+                    run_stats["clean"] += 1
+                elif only_synth_no_unexpected_errors or synth_and_sim_no_unexpected:
+                    run_stats["handled_errors"] += 1
+                else:
+                    run_stats["failed"] += 1
 
         return TestsRunResult(
             run_stats=run_stats,
@@ -88,11 +94,19 @@ class TestsList:
             unexpected_errors=unexpected_errors,
         )
 
-    def run_single(self, file_path_str: str, file_content: str, raw_cmd: str, error_regex: ToolErrorRegex) -> tuple[bool, AnalyzisResult]:
+    def run_single(
+        self,
+        file_path_str: str,
+        file_content: str,
+        raw_cmd: str,
+        error_regex: ToolErrorRegex,
+        cwd: str,
+    ) -> tuple[bool, AnalyzisResult]:
         cmd = RunCommand(
             raw_str_cmd=raw_cmd,
             file_path=file_path_str,
             file_content=file_content,
+            cwd=cwd,
         )
         cmd_result = cmd.execute()
 
