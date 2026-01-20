@@ -203,12 +203,16 @@ ensureParentDir path = case init $ split (=='/') path of
   []   => pure ()
   dirs => createDir'' $ joinBy "/" dirs
 
+startComment : Lang -> String
+startComment SystemVerilog = "//"
+startComment VHDL          = "--"
+
 content : Cfg -> String -> StdGen -> StdGen -> String
 content cfg generatedModule initialSeed seedAfter = case cfg.seedInFile of
   False => generatedModule
-  True  => "// Seed: \{showSeed initialSeed}\n\n"
+  True  => "\{startComment cfg.lang} Seed: \{showSeed initialSeed}\n\n"
         ++ generatedModule
-        ++ "\n// Seed after: \{showSeed seedAfter}\n"
+        ++ "\n\{startComment cfg.lang} Seed after: \{showSeed seedAfter}\n"
 
 fileName : Cfg -> String -> Nat -> StdGen -> String
 fileName cfg path idx initialSeed = do
