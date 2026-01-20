@@ -27,8 +27,7 @@ defaults:
 
 env:
   PACK_DIR: /root/.pack
-  SV_GENERATION_DIR: "generated-sv"
-  VHDL_GENERATION_DIR: "generated-vhdl"
+  GENERATION_DIR_PATTERN: "generated-"
   GEN_TESTS_COUNT: 256
   BUILD_DIR: ".build"
   PACKAGE_NAME: verilog-model
@@ -154,16 +153,8 @@ jobs:
           sync
       - name: Set env vars
         run: |
-          if [ "${{ matrix.language }}" == "sv" ]; then
-            echo "OUT_DIR=${{ env.SV_GENERATION_DIR }}" >> "$GITHUB_ENV"
-            echo "COV_DIR=mcov" >> "$GITHUB_ENV"
-          elif [ "${{ matrix.language }}" == "vhdl" ]; then
-            echo "OUT_DIR=${{ env.VHDL_GENERATION_DIR }}" >> "$GITHUB_ENV"
-            echo "COV_DIR=m_cov_vhdl" >> "$GITHUB_ENV"
-          else
-            echo "Error: Unknown language ${{ matrix.language }}"
-            exit 1
-          fi
+          echo "OUT_DIR=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.language }}" >> "$GITHUB_ENV"
+          echo "COV_DIR=mcov_${{ matrix.language }}" >> "$GITHUB_ENV"
       - name: Generate modules
         run: |
           pack run ${{ env.PACKAGE_NAME }} \
@@ -177,7 +168,7 @@ jobs:
         run: cat ${{ env.COV_DIR }}
       - uses: actions/upload-artifact@v4
         with:
-          name: "modules-${{ matrix.language }}"
+          name: "${{ env.GENERATION_DIR_PATTERN }}${{ matrix.language }}"
           path: "${{ env.OUT_DIR }}"
 
   test-tools-run:
@@ -472,14 +463,7 @@ jobs:
           persist-credentials: false
       - name: Determine Gen Path
         run: |
-          if [ "${{ matrix.tool.language }}" == "sv" ]; then
-            echo "GEN_PATH=${{ env.SV_GENERATION_DIR }}" >> "$GITHUB_ENV"
-          elif [ "${{ matrix.tool.language }}" == "vhdl" ]; then
-            echo "GEN_PATH=${{ env.VHDL_GENERATION_DIR }}" >> "$GITHUB_ENV"
-          else
-            echo "Error: Unknown language ${{ matrix.tool.language }}"
-            exit 1
-          fi
+          echo "GEN_PATH=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.tool.language }}" >> "$GITHUB_ENV"
       - name: Download Generated Files
         uses: actions/download-artifact@v4
         with:

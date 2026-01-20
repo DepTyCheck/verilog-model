@@ -2,9 +2,8 @@ module Test.Verilog.PrintableModules
 
 import Data.Vect
 
-import Test.Verilog.UniqueNames
-
-import Test.Verilog.Connections
+import public Test.Verilog.Connections
+import public Test.Verilog.UniqueNames
 
 ||| For standart gates in SystemVerilog only position-based connections are allowed.
 ||| For user modules, interfaces, primitives and programs both position-based and name-based connections are allowed.

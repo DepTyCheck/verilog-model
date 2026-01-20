@@ -16,8 +16,6 @@ import Test.DepTyCheck.Gen.Coverage
 import Test.Common.Gen
 import Test.Common.Pretty
 
--- import Test.Verilog.Connections -- DEV
-
 import Test.Common.UniqueFins.Derived
 import Test.Verilog.Connections.Derived
 import Test.Verilog.TMPExpression.Derived
@@ -250,7 +248,7 @@ main = do
     exitSuccess
 
   let cgi = initCoverageInfo'' [`{Modules} ] -- TODO: Add expression type
-  let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel (cfg.lang) >>= map (render cfg.layoutOpts) . printDesigns (limit 1000)
+  let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel (cfg.lang) >>= map (render cfg.layoutOpts) . printDesign (limit 1000)
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>
                                                         if nonTrivial md then Just (fst gmd, mcov, md) else Nothing
   let vals = take (limit cfg.testsCnt) vals

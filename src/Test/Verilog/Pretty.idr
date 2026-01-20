@@ -19,7 +19,7 @@ import Test.Verilog.UniqueNames.Derived
 import Test.Verilog.PrintableModules
 
 import Test.Verilog.SVType
-import public Test.Verilog.Connections
+import Test.Verilog.Connections
 import Test.Verilog.Assign
 import Test.Verilog.Literal
 import Test.Verilog.TMPExpression

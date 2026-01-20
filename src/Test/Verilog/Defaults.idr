@@ -1,7 +1,7 @@
 module Test.Verilog.Defaults
 
-import Test.Verilog.Connections
-import Test.Verilog.PrintableModules
+import public Test.Verilog.Connections
+import public Test.Verilog.PrintableModules
 
 public export
 StdModules : ModuleSigsList
