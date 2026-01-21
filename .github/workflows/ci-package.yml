@@ -237,7 +237,7 @@ jobs:
             sim_cmd: vvp a.out
             sim_error_regex: >
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
-            extra_ignored_regexes: >
+            extra_ignored_regexes: >-
               "Unable to elaborate r-value: .*"
               "Code generation had .* error\(s\)\."
 
@@ -323,7 +323,7 @@ jobs:
             run: sv2v -v {file}
             error_regex: >
               sv2v:(?!CallStack$).+
-            extra_ignored_regexes: >
+            extra_ignored_regexes: >-
               "sv2v:Language\.SystemVerilog\.AST\.Type"
 
           - name: tree-sitter-systemverilog
@@ -434,7 +434,7 @@ jobs:
             run: yosys -m slang -p 'read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
             error_regex: >
               (ERROR|error): .*
-            extra_ignored_regexes: >
+            extra_ignored_regexes: >-
               "Compilation failed"
               "too many errors emitted, stopping now"
 
@@ -577,8 +577,8 @@ jobs:
             --error-distances-output "$ERROR_DISTANCES_OUT" \
             --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
             --commit "${{ env.COMMIT_HASH }}" \
-            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }} \
-            --assets ${{ matrix.tool.assets }}
+            --assets ${{ matrix.tool.assets }} \
+            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then

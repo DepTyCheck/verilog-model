@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import logging
 import sys
 from pathlib import Path
 
@@ -16,7 +17,7 @@ from src.utils import print_pretty
 
 
 def main() -> None:
-    configure_logger()
+    configure_logger(level=logging.DEBUG)
 
     args = parse_args()
 

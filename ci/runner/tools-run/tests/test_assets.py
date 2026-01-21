@@ -12,7 +12,7 @@ from .test_parsing_ignored_errors_list import create_ignored_errors_list
 
 class TestAssets(unittest.TestCase):
     def test_assets_copying(self):
-        asset_path = f"tests/data/ignored_errors/ignored_error_2.yaml"
+        asset_path = "tests/data/ignored_errors/ignored_error_2.yaml"
         test_file_path = "tests/data/generated-modules.sv"
 
         configure_logger(level=logging.ERROR)
