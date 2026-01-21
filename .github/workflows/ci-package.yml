@@ -352,6 +352,7 @@ jobs:
             run: python3 ci/conf/tree-sitter-sv/run_ts.py tssv/sv.so {file}
             third_party_release_repo: tree-sitter/tree-sitter
             third_party_release_name_wildcard: tree-sitter-linux-x64.gz
+            assets: "ci/conf/tree-sitter-sv/run_ts.py"
 
           - name: synlig
             language: sv
