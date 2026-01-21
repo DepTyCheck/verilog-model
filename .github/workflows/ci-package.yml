@@ -282,6 +282,7 @@ jobs:
                 --no-std \
                 +1800-2023ext+sv \
                 top.sv
+            assets: "ci/conf/verilator/testbench.cpp"
             error_regex: >
               %Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$
             sim_cmd: make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop
@@ -576,7 +577,8 @@ jobs:
             --error-distances-output "$ERROR_DISTANCES_OUT" \
             --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
             --commit "${{ env.COMMIT_HASH }}" \
-            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
+            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }} \
+            --assets ${{ matrix.tool.assets }}
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then

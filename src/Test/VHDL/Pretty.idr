@@ -13,4 +13,8 @@ prettyDesign x _ = pure $ vsep
   [
     line "entity helloworld is"
   , line "end helloworld;"
+  , line ""
+  , line "architecture behaviour of helloworld is"
+  , line "begin"
+  , line "end behaviour;"
  ]

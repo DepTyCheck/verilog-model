@@ -1,7 +1,7 @@
-import unittest
 import os
 import tempfile
-from pathlib import Path
+import unittest
+
 from src.run_command import RunCommand
 
 

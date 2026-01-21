@@ -77,5 +77,12 @@ def parse_args():
         help="Commit",
         required=True,
     )
+    parser.add_argument(
+        "--assets",
+        type=str,
+        nargs="*",
+        default=[],
+        help="Assets to copy to the working directory",
+    )
 
     return parser.parse_args()

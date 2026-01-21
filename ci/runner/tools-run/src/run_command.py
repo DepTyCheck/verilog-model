@@ -3,20 +3,18 @@ import subprocess
 from dataclasses import dataclass
 
 from src.command_output import CommandOutput
+from src.logger import get_logger
 
 COMMAND_TIMEOUT_MINUTES = 7
 COMMAND_TIMEOUT_SECONDS = COMMAND_TIMEOUT_MINUTES * 60
 
 
-def find_top(file_content: str) -> str:
+def find_top_module_sv(file_content: str) -> str:
     """
     Find the top module name in the given SystemVerilog design.
 
-    Args:
-        file_content (str): The content of the file to search for the top module
-
     Returns:
-        str: The name of the top module, or None if no top module is found
+        str: The name of the top module
     """
     matches = re.findall(r"(?<=module )[A-z]+", file_content, re.MULTILINE)
     if matches:
@@ -29,13 +27,10 @@ def find_top_entity_vhdl(file_content: str) -> str:
     """
     Find the top entity name in the given VHDL design.
 
-    Args:
-        file_content (str): The content of the file to search for the top entity
-
     Returns:
-        str: The name of the top entity, or None if no top entity is found
+        str: The name of the top entity
     """
-    matches = re.findall(r"(?<=entity )(.*)(?<= is)", file_content, re.MULTILINE)
+    matches = re.findall(r"(?<=entity )[A-z]+", file_content, re.MULTILINE)
     if matches:
         return matches[-1]
 
@@ -74,7 +69,7 @@ class RunCommand:
         """
         command = cmd
         if "{top_module}" in command:
-            command = command.replace("{top_module}", find_top(file_content))
+            command = command.replace("{top_module}", find_top_module_sv(file_content))
         if "{vhdl_top_entity}" in command:
             command = command.replace("{vhdl_top_entity}", find_top_entity_vhdl(file_content))
         command = command.replace("{file}", file_path)
@@ -96,7 +91,7 @@ class RunCommand:
             If the command execution fails due to an exception, returns the error message
             and exit code 1.
         """
-        print(f"Execute: {self.cmd}")
+        get_logger().info(f"Execute: {self.cmd}")
 
         try:
             result = subprocess.run(
@@ -110,7 +105,7 @@ class RunCommand:
                 cwd=self.cwd,
             )
             output = result.stdout
-            print(f"Exit code: {result.returncode}. Output:\n{output}")
+            get_logger().debug(f"Exit code: {result.returncode}. Output:\n{output}")
 
             return ExecutionResult(
                 command_executed_successfully=True,
@@ -119,7 +114,7 @@ class RunCommand:
             )
 
         except subprocess.TimeoutExpired as timeout_error:
-            print(f"""Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}""")
+            get_logger().warning(f"""Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}""")
 
             return ExecutionResult(
                 command_executed_successfully=True,
@@ -128,7 +123,7 @@ class RunCommand:
             )
 
         except Exception as error:
-            print(f"Command execution failed: {error}")
+            get_logger().error(f"Command execution failed: {error}")
 
             return ExecutionResult(
                 command_executed_successfully=False,
