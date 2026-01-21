@@ -6,7 +6,7 @@ def get_logger():
 
 
 def configure_logger(
-    format: str = "%(asctime)s - %(relativeCreated)d ms - %(levelname)s - %(funcName)s - %(message)s",
+    fmt: str = "%(asctime)s - %(relativeCreated)d ms - %(levelname)s - %(funcName)s - %(message)s",
     level: int = logging.INFO,
 ):
     tools_run_logger = get_logger()
@@ -18,7 +18,7 @@ def configure_logger(
     handler = logging.StreamHandler()
     handler.setLevel(level)
 
-    formatter = logging.Formatter(format)
+    formatter = logging.Formatter(fmt)
     handler.setFormatter(formatter)
 
     tools_run_logger.addHandler(handler)
