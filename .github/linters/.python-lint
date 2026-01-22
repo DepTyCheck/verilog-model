@@ -23,5 +23,6 @@ disable=
   import-error,
   broad-exception-caught,
   broad-exception-raised,
+  logging-fstring-interpolation,
   # import order is set by isort
   wrong-import-order

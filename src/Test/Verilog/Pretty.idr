@@ -10,19 +10,21 @@ import Data.List.Elem
 
 import Data.Fin.Split
 import Data.Fuel
-import public Data.Vect
+import Data.Vect
 import Data.Vect.Extra
 
 import Data.Fin.ToFin
 
-import public Test.Verilog.UniqueNames.Derived
+import Test.Verilog.UniqueNames.Derived
+import Test.Verilog.PrintableModules
 
-import public Test.Verilog.SVType
-import public Test.Verilog.Connections
-import public Test.Verilog.Assign
-import public Test.Verilog.Literal
-import public Test.Verilog.TMPExpression
-import public Test.Verilog.Warnings
+import Test.Verilog.SVType
+import Test.Verilog.Connections
+import Test.Verilog.Assign
+import Test.Verilog.Literal
+import Test.Verilog.TMPExpression
+import Test.Verilog.Warnings
+import Test.Verilog.VerilogDesign
 
 import Test.DepTyCheck.Gen
 import Text.PrettyPrint.Bernardy
@@ -169,51 +171,11 @@ showSVObj : SVObject -> (name : String) -> String
 showSVObj (Net nt t) name = "\{show nt} \{showSVType t name}"
 showSVObj (Var    t) name = showSVType t name
 
-||| For standart gates in SystemVerilog only position-based connections are allowed.
-||| For user modules, interfaces, primitives and programs both position-based and name-based connections are allowed.
-||| This type stores the names of inputs and outputs, if they exist
-public export
-data InsOuts : (ins, outs : Nat) -> Type where
-  StdModule  : (ins, outs : Nat) -> InsOuts ins outs
-  UserModule : (inputs : Vect ins String) -> (outputs : Vect outs String) -> InsOuts ins outs
-
-public export
-record PrintableModule inps outs where
-  constructor MkPrintableModule
-  name    : String
-  insOuts : InsOuts inps outs
-
-namespace PrintableModules
-
-  public export
-  data PrintableModules : (ms : ModuleSigsList) -> Type where
-    Nil  : PrintableModules []
-    (::) : PrintableModule m.inpsCount m.outsCount -> PrintableModules ms -> PrintableModules (m :: ms)
-
-  public export
-  length : PrintableModules _ -> Nat
-  length [] = Z
-  length (l :: ls) = S $ length ls
-
-  public export %inline
-  (.length) : PrintableModules _ -> Nat
-  (.length) = length
-
-  public export
-  index : {ms : _} -> (ps : PrintableModules ms) -> (fin: Fin ms.length) -> PrintableModule ((index ms fin).inpsCount) ((index ms fin).outsCount)
-  index (m::_ ) FZ     = m
-  index (_::ms) (FS i) = index ms i
-
 nameBasedConnections : List String -> List String -> List String
 nameBasedConnections = zipWith $ \external, internal => ".\{external}(\{internal})"
 
 concatInpsOuts : {opts : _} -> List String -> List String -> Doc opts
 concatInpsOuts inputs outputs = (tuple $ line <$> outputs ++ inputs) <+> symbol ';'
-
-public export
-allModuleNames : PrintableModules ms -> SVect ms.length
-allModuleNames []        = []
-allModuleNames (x :: xs) = x.name :: allModuleNames xs
 
 printConnections : String -> (cons: SVObjList) -> Vect (cons.length) String -> List String
 printConnections keyword cons names = zipWith (\conn, name => "\{keyword} \{showSVObj conn name}") (toList cons) (toList names)
@@ -309,7 +271,7 @@ findSOSVT : MultiConnectionsList ms m subMs -> Fin (subSrcs' ms m subMs) -> SVOb
 findSOSVT = findSubPortType extractSubSrcs
 
 
-parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : FinsList ms.length) (pms : PrintableModules ms)
+parameters {opts : LayoutOpts} (m : ModuleSig) (ms : ModuleSigsList)  (subMs : FinsList ms.length) (pms : PrintableModules ms)
            (mcs : MultiConnectionsList ms m subMs) (mcsNames : Vect (length mcs) String)
 
   printSubmodules : List String -> List (Fin (length (subMs.asList)), Fin (length ms)) -> List $ Doc opts
@@ -358,22 +320,6 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms: ModuleSigsList)  (subMs : Fi
 
           printSubm' (pre <+> concatInpsOuts inpsJoined outsJoined) siNames soNames (index ms msIdx) ctxInps ctxOuts (toList exInps) (toList exOuts)
 
-public export
-data ExtendedModules : ModuleSigsList -> Type where
-
-  End : ExtendedModules ms
-  ||| A module with assigns and literals
-  NewCompositeModule :
-    (m : ModuleSig) ->
-    (subMs : FinsList ms.length) ->
-    (mcs : MultiConnectionsList ms m subMs) ->
-    (sdAssigns : FinsList $ length mcs) ->
-    (sdExprs : TMPExList mcs sdAssigns) ->
-    (mdAssigns : FinsList $ length mcs) ->
-    (mdExprs : TMPExList mcs mdAssigns) ->
-    (cont : ExtendedModules $ m::ms) ->
-    ExtendedModules ms
-
 
 resolveInputNames : {m : _} -> (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Vect (m.inpsCount) String
 resolveInputNames mcs mcsNames = map (findTIName mcs mcsNames) $ allFins (m.inpsCount)
@@ -395,7 +341,7 @@ unpackedDecls (mc :: mcs) (name::names) = unpackedDecls mcs names
 
 export
 prettyModules : {opts : _} -> {ms : _} -> Fuel ->
-                (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => ExtendedModules ms -> Gen0 $ Doc opts
+                (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => VerilogDesign ms -> Gen0 $ Doc opts
 prettyModules x _         End = pure $ empty
 prettyModules x pms @{un} (NewCompositeModule m subMs mcs sdAssigns sdExprs mdAssigns mdExprs cont) = do
   -- Generate submodule name

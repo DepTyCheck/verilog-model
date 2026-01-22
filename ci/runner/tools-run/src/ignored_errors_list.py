@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List
 
 import yaml
+from src.logger import get_logger
 
 
 class MatchingMode(Enum):
@@ -78,13 +79,13 @@ class IgnoredErrorsList:
         """
         dir_path_obj = Path(dir_path)
         if not dir_path_obj.exists():
-            print(f"Warning: Directory '{dir_path_obj.absolute()}' does not exist. No ignored errors loaded.")
+            get_logger().warning(f"Warning: Directory '{dir_path_obj.absolute()}' does not exist. No ignored errors loaded.")
             self._errors = []
             return
 
         yaml_files = list(dir_path_obj.glob("*.yaml"))
         if not yaml_files:
-            print(f"Warning: No YAML files found in '{dir_path_obj.absolute()}'. No ignored errors loaded.")
+            get_logger().warning(f"Warning: No YAML files found in '{dir_path_obj.absolute()}'. No ignored errors loaded.")
 
         errors: List[KnownError] = []
         for yaml_file in yaml_files:
@@ -102,9 +103,9 @@ class IgnoredErrorsList:
                         pattern = pattern.rstrip("\n")
                         errors.append(KnownError(error_id=error_id, pattern=pattern, mode=mode))
                     else:
-                        print(f"Warning: {yaml_file} missing 'id' or 'regex', skipping.")
+                        get_logger().warning(f"Warning: {yaml_file} missing 'id' or 'regex', skipping.")
             except Exception as e:
-                print(f"Warning: Failed to parse {yaml_file}: {e}")
+                get_logger().warning(f"Warning: Failed to parse {yaml_file}: {e}")
         self._errors = errors
 
     def match(self, input_text: str, mode: MatchingMode) -> FoundMatch | None:
@@ -120,14 +121,14 @@ class IgnoredErrorsList:
         for error in known_errors_to_match:
             match = re.search(error.pattern, input_text, re.MULTILINE)
             if match:
-                print(f"Found ignored error.\nID: {error.error_id}\nPattern: {error.pattern}\n")
+                get_logger().info(f"Found ignored error.\nID: {error.error_id}\nPattern: {error.pattern}\n")
                 return FoundMatch(error=error, matched_text=match.group(0))
 
         if mode == MatchingMode.SPECIFIC:
             for ignored_error in self._extra_regexes:
                 match = re.search(ignored_error.pattern, input_text, re.MULTILINE)
                 if match:
-                    print(f"Found ignored error (ignored error): Pattern: {ignored_error.pattern}\n")
+                    get_logger().info(f"Found ignored error (ignored error): Pattern: {ignored_error.pattern}\n")
                     return FoundMatch(error=ignored_error, matched_text=match.group(0))
         return None
 

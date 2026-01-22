@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
+import logging
 import sys
 from pathlib import Path
 
+from src.assets import Assets
 from src.ignored_errors_list import IgnoredErrorsList
 from src.known_errors_report import KnownErrorsReport
+from src.logger import configure_logger
 from src.mds_distances_report import MDSDistancesReport
 from src.parse_args import parse_args
 from src.print_stats import print_failed_tests_paths, print_issues_count
@@ -14,6 +17,8 @@ from src.utils import print_pretty
 
 
 def main() -> None:
+    configure_logger(level=logging.DEBUG)
+
     args = parse_args()
 
     ignored_errors = IgnoredErrorsList(
@@ -29,6 +34,7 @@ def main() -> None:
         sim_error_regex=ToolErrorRegex(raw_str_regex=args.sim_error_regex) if args.sim_error_regex else None,
         raw_synth_cmd=args.tool_cmd,
         raw_sim_cmd=args.sim_cmd,
+        assets=Assets(args.assets),
     ).run_all()
 
     KnownErrorsReport(commit=args.commit).save(args.run_statistics_output)

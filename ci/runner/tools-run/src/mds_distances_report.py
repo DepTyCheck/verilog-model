@@ -7,6 +7,7 @@ import numpy as np
 import plotly.graph_objects as go
 from sklearn.manifold import MDS
 from src.ignored_errors_list import IgnoredErrorsList
+from src.logger import get_logger
 from src.unexpected_error import UnexpectedError
 from src.utils import print_pretty
 from textdistance import LZMANCD
@@ -47,7 +48,7 @@ def compute_ncd_for_errors(nodes_text: List[str]) -> Dict[Tuple[int, int], float
                 ncd_value = LZMANCD().distance(nodes_text[i], nodes_text[j])
                 results[(i, j)] = ncd_value
             except Exception as e:
-                print(e)
+                get_logger().error(e)
                 results[(i, j)] = None
     return results
 
@@ -134,7 +135,7 @@ class MDSDistancesReport:
         mds = MDS(n_components=2, dissimilarity="precomputed", random_state=42)
         coords = mds.fit_transform(dist_matrix)
         if coords is None:
-            print("MDS failed to compute coordinates.")
+            get_logger().error("MDS failed to compute coordinates.")
             return None, None
         return coords[:, 0], coords[:, 1]
 

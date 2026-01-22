@@ -3,7 +3,9 @@ FROM ghcr.io/stefan-hoeck/idris2-pack:latest
 ENV BUILD_DIR=.build
 ENV PACKAGE_NAME=verilog-model
 
-WORKDIR /app
+ARG WORK_DIR=/app
+
+WORKDIR ${WORK_DIR}
 
 # Copy Idris sources and cached .build
 COPY . .
@@ -12,7 +14,7 @@ COPY ${BUILD_DIR} ${BUILD_DIR}
 # Switch latest to match cached build
 RUN pack switch latest
 
-# Touch files trying to force build from cache
+# Try to force build from cache
 RUN find ${BUILD_DIR} -type f -exec touch {} +
 
 # Build

@@ -27,7 +27,7 @@ defaults:
 
 env:
   PACK_DIR: /root/.pack
-  GENERATION_DIR: "generated-modules"
+  GENERATION_DIR_PATTERN: "generated-"
   GEN_TESTS_COUNT: 256
   BUILD_DIR: ".build"
   PACKAGE_NAME: verilog-model
@@ -65,7 +65,7 @@ jobs:
     container: ghcr.io/stefan-hoeck/idris2-pack:latest
     outputs:
       latest-cache-key: ${{ steps.export-key.outputs.latest_key }}
-      artifact-id: generated-modules
+      build-path: ${{ steps.export-key.outputs.build_path }}
     strategy:
       fail-fast: false
       matrix:
@@ -94,6 +94,7 @@ jobs:
         if: matrix.upstream-mode == 'latest-pack-collection'
         run: |
           echo "latest_key=${{ steps.cache-key.outputs.key }}" >> "$GITHUB_OUTPUT"
+          echo "build_path=$PWD" >> "$GITHUB_OUTPUT"
       - name: Restore from cache
         id: cache-build
         uses: actions/cache/restore@v4
@@ -113,31 +114,62 @@ jobs:
         with:
           path: ${{ env.BUILD_DIR }}
           key: ${{ steps.cache-key.outputs.key }}
-      - name: Fix file system  ¯\_(ツ)_/¯
-        run: |
-          set -x +e
-          pack run ${{ env.PACKAGE_NAME }} --coverage mcov -n 1 --seed 0,1
-          touch tests/printer/model-coverage/dummy
-          touch tests/printer/create-dir/dummy
+      # - name: Fix file system  ¯\_(ツ)_/¯
+      #   run: |
+      #     set -x +e
+      #     pack run ${{ env.PACKAGE_NAME }} --coverage mcov -n 1 --seed 0,1
+      #     touch tests/printer/model-coverage/dummy
+      #     touch tests/printer/create-dir/dummy
       # - name: Test ${{ env.PACKAGE_NAME }}
       #   run: pack test ${{ env.PACKAGE_NAME }}
-      - name: Gen SystemVerilog modules
-        if: matrix.upstream-mode == 'latest-pack-collection'
+
+  generate-modules:
+    name: Generate ${{ matrix.language }} modules
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    container: ghcr.io/stefan-hoeck/idris2-pack:latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [sv, vhdl]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Update `pack-db`
+        run: pack update-db
+      - name: Switch to the latest collection
+        run: pack switch latest
+      - name: Restore from cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.BUILD_DIR }}
+          key: ${{ needs.build-and-test.outputs.latest-cache-key }}
+          fail-on-cache-miss: true
+      - name: Touch files
+        run: |
+          find "${{ env.BUILD_DIR }}" -type f -exec touch {} +
+          sync
+      - name: Set env vars
+        run: |
+          echo "OUT_DIR=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.language }}" >> "$GITHUB_ENV"
+          echo "COV_DIR=mcov_${{ matrix.language }}" >> "$GITHUB_ENV"
+      - name: Generate modules
         run: |
           pack run ${{ env.PACKAGE_NAME }} \
-            --to "${{ env.GENERATION_DIR }}" \
+            --to "${{ env.OUT_DIR }}" \
             -n ${{ env.GEN_TESTS_COUNT }} \
+            --lang ${{ matrix.language }} \
             --seed-name \
             --seed-content \
-            --coverage mcov
-      - name: Show mcov
-        if: matrix.upstream-mode == 'latest-pack-collection'
-        run: cat mcov
+            --coverage "${{ env.COV_DIR }}"
+      - name: Show coverage
+        run: cat ${{ env.COV_DIR }}
       - uses: actions/upload-artifact@v4
-        if: matrix.upstream-mode == 'latest-pack-collection'
         with:
-          name: generated-modules
-          path: "${{ env.GENERATION_DIR }}"
+          name: "${{ env.GENERATION_DIR_PATTERN }}${{ matrix.language }}"
+          path: "${{ env.OUT_DIR }}"
 
   test-tools-run:
     name: Test tools run
@@ -156,7 +188,7 @@ jobs:
 
   run-tools:
     name: ${{ matrix.tool.name }}
-    needs: [test-tools-run, build-and-test]
+    needs: [test-tools-run, generate-modules]
     timeout-minutes: 90
     runs-on: ubuntu-latest
     strategy:
@@ -187,6 +219,7 @@ jobs:
           #   P.S. ignored errors file should be named as <path>-ignored-errors.txt
 
           - name: iverilog
+            language: sv
             repo: https://github.com/steveicarus/iverilog.git
             deps: autoconf autotools-dev bison flex libfl-dev gperf make gcc g++ cmake python3
             path: iverilog
@@ -204,11 +237,12 @@ jobs:
             sim_cmd: vvp a.out
             sim_error_regex: >
               (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
-            extra_ignored_regexes: >
+            extra_ignored_regexes: >-
               "Unable to elaborate r-value: .*"
               "Code generation had .* error\(s\)\."
 
           - name: slang
+            language: sv
             repo: https://github.com/MikePopoloski/slang.git
             deps: cmake
             path: slang
@@ -224,6 +258,7 @@ jobs:
               error: [\S ]+$
 
           - name: verilator
+            language: sv
             repo: https://github.com/verilator/verilator.git
             deps: autoconf autotools-dev bison flex help2man libfl-dev libelf-dev cmake
             path: verilator
@@ -247,6 +282,7 @@ jobs:
                 --no-std \
                 +1800-2023ext+sv \
                 top.sv
+            assets: "ci/conf/verilator/testbench.cpp"
             error_regex: >
               %Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$
             sim_cmd: make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop
@@ -254,6 +290,7 @@ jobs:
               %Error[-A-z]*:[\S ]+
 
           - name: surelog
+            language: sv
             repo: https://github.com/chipsalliance/Surelog.git
             deps: >
               cmake gcc build-essential git pkg-config tclsh swig uuid-dev
@@ -272,6 +309,7 @@ jobs:
             run: surelog -parse -nopython -sv {file}
 
           - name: zachjs-sv2v
+            language: sv
             repo: https://github.com/zachjs/sv2v.git
             deps: haskell-stack
             path: zachjs-sv2v
@@ -285,10 +323,11 @@ jobs:
             run: sv2v -v {file}
             error_regex: >
               sv2v:(?!CallStack$).+
-            extra_ignored_regexes: >
+            extra_ignored_regexes: >-
               "sv2v:Language\.SystemVerilog\.AST\.Type"
 
           - name: tree-sitter-systemverilog
+            language: sv
             repo: https://github.com/gmlarumbe/tree-sitter-systemverilog.git
             deps: gcc python3
             path: tssv
@@ -313,8 +352,12 @@ jobs:
             run: python3 ci/conf/tree-sitter-sv/run_ts.py tssv/sv.so {file}
             third_party_release_repo: tree-sitter/tree-sitter
             third_party_release_name_wildcard: tree-sitter-linux-x64.gz
+            assets: >-
+              ci/conf/tree-sitter-sv/run_ts.py
+              tssv/sv.so
 
           - name: synlig
+            language: sv
             repo: https://github.com/chipsalliance/synlig.git
             deps: >
               gcc-11 g++-11 build-essential cmake tclsh ant default-jre swig google-perftools
@@ -335,6 +378,7 @@ jobs:
               ERROR: .*$
 
           - name: sv_parser
+            language: sv
             repo: https://github.com/dalance/sv-parser.git
             deps: cargo
             rust_ver: "1.81"
@@ -366,6 +410,7 @@ jobs:
           #     ERROR:[A-z0-9, \"'\[\]=()]+
 
           - name: yosys-slang
+            language: sv
             repo: https://github.com/povik/yosys-slang.git
             deps: >
               cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh
@@ -392,20 +437,40 @@ jobs:
             run: yosys -m slang -p 'read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
             error_regex: >
               (ERROR|error): .*
-            extra_ignored_regexes: >
+            extra_ignored_regexes: >-
               "Compilation failed"
               "too many errors emitted, stopping now"
+
+          - name: ghdl
+            language: vhdl
+            repo: https://github.com/ghdl/ghdl.git
+            deps: llvm gnat clang libc++-dev libc++abi-dev
+            path: ghdl
+            build: |
+              mkdir build
+              cd build
+              ../configure --with-llvm-config --prefix=/usr/local
+              make
+            install: |
+              cd build
+              sudo make install
+            version: ghdl -v
+            run: ghdl -a {file} && ghdl -e {vhdl_top_entity}
+            sim_cmd: ghdl -r {vhdl_top_entity}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Determine Gen Path
+        run: |
+          echo "GEN_PATH=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.tool.language }}" >> "$GITHUB_ENV"
       - name: Download Generated Files
         uses: actions/download-artifact@v4
         with:
-          name: generated-modules
-          path: "${{ env.GENERATION_DIR }}"
+          name: "${{ env.GEN_PATH }}"
+          path: "${{ env.GEN_PATH }}"
       - name: Update apt
         run: sudo apt update -qq
       - name: Clone tool
@@ -502,7 +567,7 @@ jobs:
           cd -
 
           python3 ci/runner/tools-run/main.py \
-            --gen-path "${{ env.GENERATION_DIR }}" \
+            --gen-path "${{ env.GEN_PATH }}" \
             --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
             --tool-name "${{ matrix.tool.name }}" \
             --tool-cmd "${{ matrix.tool.run }}" \
@@ -513,6 +578,7 @@ jobs:
             --error-distances-output "$ERROR_DISTANCES_OUT" \
             --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
             --commit "${{ env.COMMIT_HASH }}" \
+            --assets ${{ matrix.tool.assets }} \
             --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
 
           EXIT_CODE=$?
@@ -620,20 +686,17 @@ jobs:
         with:
           path: ${{ env.BUILD_DIR }}
           key: ${{ needs.build-and-test.outputs.latest-cache-key }}
-
       - name: Touch ${{ env.BUILD_DIR }} dir (-_-)
         run: |
           set +e
           ls -la
           mkdir ${{ env.BUILD_DIR }}
-
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v5
@@ -642,17 +705,17 @@ jobs:
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value=${{ github.ref }},enable={{is_not_default_branch}}
-
       - name: Build and push Docker image
         id: push
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ci/push/Dockerfile
+          file: Dockerfile
           push: true
+          build-args: |
+            WORK_DIR=${{ needs.build-and-test.outputs.build-path }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         with:

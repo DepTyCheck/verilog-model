@@ -33,9 +33,7 @@ toVect : SVect l -> Vect l String
 toVect [] = []
 toVect (x :: xs) = x :: toVect xs
 
-public export
 data UniqNames : (l : Nat) -> SVect l -> Type
-public export
 data NameNotIn : (l : Nat) -> (names : SVect l) -> (name : String) -> Type
 
 public export
