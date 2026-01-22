@@ -457,8 +457,6 @@ jobs:
             version: ghdl -v
             run: ghdl -a {file} && ghdl -e {vhdl_top_entity}
             sim_cmd: ghdl -r {vhdl_top_entity}
-            error_regex: >
-              d65fi76ugyihno
 
     steps:
       - name: Checkout
