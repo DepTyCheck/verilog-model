@@ -2,14 +2,15 @@ module Test.Common.Gen
 
 import Data.Fuel
 
+import Test.Common.Design
+
 import Test.Verilog.VerilogDesign
 import Test.Verilog.Defaults
 import Test.VHDL.VHDLDesign
 
 import Test.DepTyCheck.Gen
 
-public export
-data Lang = SystemVerilog | VHDL
+%default total
 
 public export
 data GenResult : Lang -> Type where

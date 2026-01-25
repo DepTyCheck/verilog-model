@@ -5,6 +5,8 @@ import Test.DepTyCheck.Gen
 
 import public Test.Common.Utils
 
+%default total
+
 public export
 data UniqueFins : (n : Nat) -> (fs : FinsList n) -> Type where
   Nil  : UniqueFins n []
