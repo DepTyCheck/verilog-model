@@ -3,6 +3,7 @@ module Test.Common.Gen
 import Data.Fuel
 
 import Test.Common.Design
+import Test.Common.DataType
 
 import Test.Verilog.VerilogDesign
 import Test.Verilog.Defaults
