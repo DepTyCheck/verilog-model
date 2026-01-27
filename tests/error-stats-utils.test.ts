@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { getToolLink, ErrorStatsCalculator, linkToCommit, getParsedErrorStats } from '../src/lib/components/bugs-table/error-stats-utils';
+import { getParsedErrorStats } from '../src/lib/parsed-error-stats';
+import { getToolLink, ErrorStatsCalculator, linkToCommit } from '../src/lib/components/bugs-table/error-stats-utils';
 import testErrorsStatsRaw from './data/test-errors-stats.json';
 import { allFoundErrors as prodFoundErrors } from '../src/lib/generated/errors-data';
 
