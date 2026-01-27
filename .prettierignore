@@ -1,3 +1,10 @@
+# Manually written files
+/found_errors/**
+
+# Generated files
+/src/lib/generated/**
+/src/lib/data/**
+
 # Package Managers
 package-lock.json
 pnpm-lock.yaml

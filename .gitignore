@@ -2,6 +2,7 @@ src/lib/generated/errors-data.ts
 .venv
 .devcontainer
 .pnpm-store
+.vscode
 
 node_modules
 

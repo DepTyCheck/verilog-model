@@ -1,28 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { getToolLink, ErrorStatsCalculator, linkToCommit } from '../src/lib/components/bugs-table/error-stats-utils';
-import type { ErrorsStats } from '../src/lib/parsed-error-stats';
+import { getToolLink, ErrorStatsCalculator, linkToCommit, getParsedErrorStats } from '../src/lib/components/bugs-table/error-stats-utils';
 import testErrorsStatsRaw from './data/test-errors-stats.json';
 import { allFoundErrors as prodFoundErrors } from '../src/lib/generated/errors-data';
 
-const testErrorsStats: ErrorsStats = {
-    errors: Object.fromEntries(
-        Object.entries(testErrorsStatsRaw.errors).map(([id, err]) => [
-            id,
-            {
-                ...err,
-                error_id: id,
-                last: {
-                    ...err.last,
-                    date: new Date(err.last.date)
-                }
-            }
-        ])
-    ) as any,
-    runs: testErrorsStatsRaw.runs.map(run => ({
-        ...run,
-        date: new Date(run.date)
-    }))
-};
+const testErrorsStats = getParsedErrorStats(testErrorsStatsRaw);
+
 
 const calculator = new ErrorStatsCalculator(testErrorsStats, prodFoundErrors);
 

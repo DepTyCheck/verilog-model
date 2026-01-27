@@ -4,7 +4,7 @@ id: syntax_error_in_in_instance_port_expression
 title: Syntax error in instance port expression(s)
 regex: >
   Syntax error in instance port expression.*\v.*Invalid module instantiation
-issue_novelty: new
+issue_novelty: feature
 issue_link: https://github.com/steveicarus/iverilog/issues/1271#issuecomment-3246159542
 short_desc: wreal is a Verilog-AMS keyword, which is an extension enabled by default in iverilog
 matching_mode: whole

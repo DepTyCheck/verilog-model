@@ -12,16 +12,23 @@
 
 	const errorStat = errorsStats.errors[errorId];
 
-	let overallPercentage = 0;
-	let testPathsPercentage = 0;
+	let overallPercentage = '0';
+	let testPathsPercentage = '0';
 	let totalRuns = 0;
 	let linkToolGithub = '';
 	let errorsPerFailedTest = '0';
 
+	function formatPercentage(percentage: number): string {
+		if (percentage < 0.005) {
+			return '< 0.01';
+		}
+		return percentage.toFixed(2);
+	}
+
 	try {
 		totalRuns = percentages!.totalRuns;
-		overallPercentage = percentages!.overall;
-		testPathsPercentage = percentages!.testFiles;
+		overallPercentage = formatPercentage(percentages!.overall);
+		testPathsPercentage = formatPercentage(percentages!.testFiles);
 		errorsPerFailedTest = (errorStat.overall / errorStat.test_paths_count).toFixed(2);
 
 		linkToolGithub = linkToCommitForErrStat(errorStat);

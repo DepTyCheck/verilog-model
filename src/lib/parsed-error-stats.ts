@@ -22,9 +22,8 @@ export type ErrorsStats = {
 	runs: RunStat[];
 };
 
-function getParsedErrorStats(): ErrorsStats {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const rawData = rawErrorsData as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getParsedErrorStats(rawData: any = rawErrorsData): ErrorsStats {
 	return {
 		errors: Object.fromEntries(
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any

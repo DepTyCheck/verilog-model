@@ -3,7 +3,7 @@ tool: verilator
 id: assigning_to_input_const_variable
 title: >
   Assigning to input/const variable
-issue_novelty: new
+issue_novelty: feature
 issue_link: https://github.com/verilator/verilator/issues/5875
 regex: >
   Assigning to input\/const variable:
