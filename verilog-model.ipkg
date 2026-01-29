@@ -25,6 +25,9 @@ depends = collection-utils
 
 modules = Test.Common.Utils
         , Test.Common.UniqueFins
+        , Test.Common.UniqueNames
+        , Test.Common.UniqueNames.Derived
+
         , Test.Verilog.SVType
         , Test.Verilog.Connections
         , Test.Verilog.Assign
@@ -36,11 +39,22 @@ modules = Test.Common.Utils
         , Test.Verilog.Defaults
         , Test.Verilog.VerilogDesign
         , Test.Verilog.UniqueNames.Derived
+
+        , Test.Common.UniqueNames
+        , Test.Common.UniqueNames.Derived
+
+        , Test.VHDL.UniqueNames
+        , Test.VHDL.Defaults
+        , Test.VHDL.VHDLDesign
+
+        , Test.Common.Design
+        , Test.Common.Gen
+        
+        , Test.Common.PrintableDesigns
+        , Test.Common.UniqueFins.Derived
         , Test.Verilog.Pretty
         , Test.VHDL.Pretty
-        , Test.VHDL.VHDLDesign
-        , Test.Common.Gen
-        , Test.Common.Pretty
-        , Test.Common.UniqueFins.Derived
+
         , Test.Verilog.Connections.Derived
         , Test.Verilog.TMPExpression.Derived
+        , Test.Common.Design.Derived

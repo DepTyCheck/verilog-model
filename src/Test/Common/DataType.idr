@@ -2,8 +2,8 @@ module Test.Common.DataType
 
 import Data.Fin
 
-import Test.Verilog.SVType
-import Test.VHDL.VHDLType
+import public Test.Verilog.SVType
+import public Test.VHDL.VHDLType
 
 public export
 data Lang = SystemVerilog | VHDL

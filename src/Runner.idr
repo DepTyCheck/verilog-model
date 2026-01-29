@@ -14,11 +14,12 @@ import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
 
 import Test.Common.Gen
-import Test.Common.Pretty
 
 import Test.Common.UniqueFins.Derived
 import Test.Verilog.Connections.Derived
 import Test.Verilog.TMPExpression.Derived
+import Test.Common.Design.Derived
+import Test.Common.UniqueNames.Derived
 
 import Test.Verilog.Pretty
 

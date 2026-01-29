@@ -270,6 +270,7 @@ jobs:
               sudo make install
             version: |
               verilator --version
+            # -Wno-ASSIGNW flag added due to https://github.com/verilator/verilator/issues/5875 
             run: |
               rm -rf obj_dir && \
               rm -f top.sv && \
@@ -279,6 +280,7 @@ jobs:
                 --exe ci/conf/verilator/testbench.cpp \
                 --timing \
                 -Wno-fatal \
+                -Wno-ASSIGNIN \
                 --no-std \
                 +1800-2023ext+sv \
                 top.sv
