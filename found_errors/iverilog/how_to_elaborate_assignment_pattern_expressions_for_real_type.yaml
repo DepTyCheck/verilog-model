@@ -17,9 +17,9 @@ examples:
 
         module hjf
           (output wire lig, output real mhuyoy [4:0][2:4], output real irrpjsuiui [0:0], output logic [0:1] xylvvl [2:1]);
-          
+
           // Top inputs -> top outputs assigs
-          
+
           // Assigns
           assign irrpjsuiui = '{'b1};
         endmodule: hjf

@@ -149,9 +149,9 @@ examples:
           , input bit indcnup [3:1][0:4]
           , input uwire logic [3:4][3:2][3:4][4:4]  grvrtmc
           );
-          
+
           not mfaptrof(ewx, oy);
-          and lvuzt(zltglg, oy, pstnk);  
+          and lvuzt(zltglg, oy, pstnk);
           or dhvl(zltglg, h, pstnk);
 
           // Multi-driven assigns
@@ -167,12 +167,12 @@ examples:
           , output logic kmuejvg [2:0]
           , input real vu
           );
-          
+
           not rbhybaafx(qj, vu);
-          
+
           // Single-driven assigns
           assign kmuejvg = '{'bx0,'b1x11,'bx};
-          
+
           // Multi-driven assigns
           assign pptu = pptu;
           assign jdh = jdh;

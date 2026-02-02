@@ -107,4 +107,3 @@ examples:
           assign jvbuffuq = '{'bx};
           assign a = '{'b10,'b11};
         endmodule: xkmwnqaduh
-

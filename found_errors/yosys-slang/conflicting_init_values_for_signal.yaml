@@ -16,7 +16,7 @@ examples:
         ERROR: Conflicting init values for signal 1'0 (\w1 [1] = 1'0 != 1'x).
       minified_example: |
         module a(output bit [1:4] w1, input bit w2);
-          
+
           not not1(w3, w4);
           not not2(w5, w2);
 

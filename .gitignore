@@ -1,5 +1,6 @@
 src/lib/generated/errors-data.ts
 .venv
+.macos-venv
 .devcontainer
 .pnpm-store
 .vscode

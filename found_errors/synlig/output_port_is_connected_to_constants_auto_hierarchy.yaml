@@ -383,7 +383,7 @@ examples:
           , output logic [1:3][2:0]  n
           , output trior logic [4:1][0:0][1:3] gbyi [3:4][0:2]
           );
-          
+
           not hjzx(cfbgpsgsp, badkwax);
           not vrpvuyew(badkwax, arlcswh);
 
@@ -398,10 +398,10 @@ examples:
           , output supply0 logic tfhwwadcqs [0:1][1:3][0:0][4:2]
           , input tri0 logic [2:1][1:1][0:1][0:4]  swac
           );
-          
+
           trior logic [4:1][0:0][1:3] cbrdrx [3:4][0:2];
           triand logic [3:2][0:1][2:4] dmsj [3:3][0:1];
-          
+
           uqtuefe igey(.badkwax(vvhtzqlxog), .mf(dmsj), .n(zodkrqghz), .gbyi(cbrdrx));
           not gw(cbpaylbjuc, swac);
           nand h(rszvvey, zodkrqghz, zdakk);
@@ -415,10 +415,10 @@ examples:
 
         module bwtggwneo
           (input triand logic jjymsq);
-          
+
           or dhafvwaa(xgppnh, kg, kg);
           xor tdpqwcbk(rdqlobs, kg, kg);
-          not ra(nhq, kg);  
+          not ra(nhq, kg);
           nand f(yprv, kg, nhq);
 
           // Multi-driven assigns

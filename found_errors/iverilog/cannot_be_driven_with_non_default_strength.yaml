@@ -26,10 +26,7 @@ examples:
           (output logic lbrkx, output logic [2:3] cvawpgb, output logic xnhyjs [4:3]);
 
           xor al(lbrkx, eyezhdj, eyezhdj);
-
           not ctwm(eyezhdj, lbrkx);
-
-          // Top inputs -> top outputs assigns
 
           // Assigns
           assign cvawpgb = 'b1x;
@@ -93,12 +90,6 @@ examples:
 
         module sjmhw
           (input supply1 logic [0:3][1:2] svkeknmyib [4:3][3:2], input bit [1:2][3:0][2:3] ohyhcc);
-
-
-
-          // Top inputs -> top outputs assigns
-
-          // Single-driven assigns
 
           // Multi-driven assigns
           assign svkeknmyib = '{'{'b0,'bx},'{'b1,'bx}};
