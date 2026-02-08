@@ -1,4 +1,5 @@
 stage: analysis
+lang: sv
 tool: synlig
 id: output_port_is_connected_to_constants_auto_hierarchy
 title: >
@@ -6,7 +7,10 @@ title: >
 regex: >
   Output port .* is connected to constants:
 issue_novelty: new
-issue_link: https://github.com/chipsalliance/synlig/issues/2771
+issue_links:
+  - url: https://github.com/chipsalliance/synlig/issues/2771
+    link_name: >
+      #2771
 examples:
   - output_port_is_connected_to_constants_auto_hierarchy_ex1:
       first_found: 21.07.2025

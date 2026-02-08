@@ -1,10 +1,14 @@
 stage: synthesis
+lang: sv
 tool: verilator
 id: assigning_to_input_const_variable
 title: >
   Assigning to input/const variable
 issue_novelty: feature
-issue_link: https://github.com/verilator/verilator/issues/5875
+issue_links:
+  - url: https://github.com/verilator/verilator/issues/5875
+    link_name: >
+      #5875
 regex: >
   Assigning to input\/const variable:
 maintainers_response: wontfix

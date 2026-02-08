@@ -5,6 +5,13 @@ export type CheckBoxChoice = {
 
 export type IssueNovelty = 'new' | 'already_known' | 'unsupported' | 'feature' | 'late' | null;
 export type MaintainersResponse = 'bug' | 'enhancement' | 'low' | 'wontfix' | null;
+export type IssueType = 'crash' | 'bad_message' | 'infinite_loop' | null;
+
+export type IssueLink = {
+	url: string;
+	link_name?: string;
+	link_icon?: string;
+};
 
 export type FoundErrorExample = {
 	id: string;
@@ -17,12 +24,14 @@ export type FoundErrorExample = {
 
 export type FoundError = {
 	stage?: string | null;
+	lang: string;
 	tool: string;
 	id: string;
 	title: string;
 	short_desc?: string | null;
 	examples: FoundErrorExample[];
-	issue_link?: string | null;
+	issue_type: IssueType | null;
+	issue_links?: IssueLink[];
 	issue_novelty: IssueNovelty;
 	maintainers_response: MaintainersResponse;
 };

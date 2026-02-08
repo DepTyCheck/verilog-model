@@ -34,6 +34,7 @@
 	} from '$lib/index';
 	import { errorsStats } from '$lib/parsed-error-stats';
 	import ErrorStatsCell from '$lib/components/bugs-table/ErrorStatsCell.svelte';
+	import IssueLinksCell from '$lib/components/bugs-table/IssueLinksCell.svelte';
 	import { errorPercentages } from '$lib/components/bugs-table/error-stats-utils';
 
 	let scrollContainer: HTMLDivElement;
@@ -131,15 +132,6 @@
 		return parsed && parsed.issueNumber ? String(parsed.issueNumber) : null;
 	}
 
-	function formatLinkText(link: string | null | undefined): string {
-		if (!link) return '';
-
-		const issueNumber = getIssueNumberFromLink(link);
-		if (!issueNumber) return '';
-
-		return `#${issueNumber}`;
-	}
-
 	$: if (browser && filteredErrors) updateQueryParams();
 </script>
 
@@ -193,7 +185,7 @@
 							label="Novelty"
 							name="novelty"
 						/>
-						<TableColHead label="Related<br>issue" />
+						<TableColHead label="Related<br>issues" />
 						<TableColFilterHead
 							choices={maintainersChoices}
 							bind:group={maintainersGroup}
@@ -233,17 +225,7 @@
 								{/if}
 							</TableData>
 							<TableData>
-								{#if item.issue_link && item.issue_link.trim() !== ''}
-									{#if getIssueNumberFromLink(item.issue_link)}
-										<A href={item.issue_link} target="_blank" rel="noopener noreferrer">
-											{formatLinkText(item.issue_link)}
-										</A>
-									{:else}
-										<A href={item.issue_link} target="_blank" rel="noopener noreferrer">
-											<ArrowRightOutline class="ms-1 h-5 w-5" />
-										</A>
-									{/if}
-								{/if}
+								<IssueLinksCell issueLinks={item.issue_links} />
 							</TableData>
 							<TableData>
 								{#if item.maintainers_response}

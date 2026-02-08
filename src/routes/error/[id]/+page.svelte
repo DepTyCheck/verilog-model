@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { A } from 'flowbite-svelte';
 	import { page } from '$app/state';
 	import { allFoundErrors } from '$lib/generated/errors-data';
 	import type { FoundError } from '$lib/core';
@@ -32,12 +33,13 @@
 			{#if foundError.short_desc}
 				<FieldDisplay label="Description" value={foundError.short_desc} />
 			{/if}
-			{#if foundError.issue_link}
-				<FieldDisplay
-					label="Related issue"
-					value={foundError.issue_link}
-					linkUrl={foundError.issue_link}
-				/>
+			{#if foundError.issue_links && foundError.issue_links.length > 0}
+				<div class="text-xs text-gray-500">Related issues</div>
+			{/if}
+			{#if foundError.issue_links && foundError.issue_links.length > 0}
+				{#each foundError.issue_links as link}
+					<A href={link.url} class="underline" target="_blank" rel="noopener">{link.link_name || link.url}</A>
+				{/each}
 			{/if}
 		</VCard>
 		<h2 class="mt-6 mb-2 text-lg font-semibold">Examples:</h2>

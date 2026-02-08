@@ -1,11 +1,15 @@
 stage: synthesis
+lang: sv
 tool: iverilog
 id: cannot_automatically_connect_bit_based_port_to_real
 title: Cannot automatically connect bit based port to real
 regex: >
   Cannot automatically connect bit based .* to real
 issue_novelty: new
-issue_link: https://github.com/steveicarus/iverilog/issues/1278
+issue_links:
+  - url: https://github.com/steveicarus/iverilog/issues/1278
+    link_name: >
+      #1278
 examples:
   - cannot_automatically_connect_bit_based_port_to_real_ex1:
       first_found: 14.09.2025

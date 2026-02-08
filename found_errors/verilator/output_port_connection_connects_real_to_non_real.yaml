@@ -1,4 +1,5 @@
 stage: synthesis
+lang: sv
 tool: verilator
 id: output_port_connection_connects_real_to_non_real
 title: Output port connection connects real to non-real

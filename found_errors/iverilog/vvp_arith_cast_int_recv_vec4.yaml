@@ -1,5 +1,9 @@
 issue_novelty: new
-issue_link: https://github.com/steveicarus/iverilog/issues/1222
+lang: sv
+issue_links:
+  - url: https://github.com/steveicarus/iverilog/issues/1222
+    link_name: >
+      #1222
 maintainers_response: enhancement
 stage: simulation
 tool: iverilog

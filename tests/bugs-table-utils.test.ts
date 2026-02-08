@@ -8,8 +8,10 @@ const mockErrors: FoundError[] = [
     {
         id: 'error1',
         title: 'Zebra error',
+        lang: 'sv',
         tool: 'iverilog',
         issue_novelty: 'new',
+        issue_type: null,
         maintainers_response: 'bug',
         examples: [
             {
@@ -21,8 +23,10 @@ const mockErrors: FoundError[] = [
     {
         id: 'error2',
         title: 'Alpha error',
+        lang: 'sv',
         tool: 'verilator',
         issue_novelty: 'already_known',
+        issue_type: null,
         maintainers_response: 'enhancement',
         examples: [
             {
@@ -34,8 +38,10 @@ const mockErrors: FoundError[] = [
     {
         id: 'error3',
         title: 'Beta error',
+        lang: 'sv',
         tool: 'iverilog',
         issue_novelty: 'new',
+        issue_type: null,
         maintainers_response: null,
         examples: [
             {
@@ -47,8 +53,10 @@ const mockErrors: FoundError[] = [
     {
         id: 'error4',
         title: 'Gamma error',
+        lang: 'sv',
         tool: 'verilator',
         issue_novelty: null,
+        issue_type: null,
         maintainers_response: 'low',
         examples: [
             {
@@ -154,8 +162,10 @@ describe('sortErrors', () => {
                 {
                     id: 'error5',
                     title: 'Error without stats',
+                    lang: 'sv',
                     tool: 'iverilog',
                     issue_novelty: null,
+                    issue_type: null,
                     maintainers_response: null,
                     examples: []
                 }
@@ -190,16 +200,20 @@ describe('sortErrors', () => {
                 {
                     id: 'dup1',
                     title: 'Same title',
+                    lang: 'sv',
                     tool: 'iverilog',
                     issue_novelty: null,
+                    issue_type: null,
                     maintainers_response: null,
                     examples: []
                 },
                 {
                     id: 'dup2',
                     title: 'Same title',
+                    lang: 'sv',
                     tool: 'verilator',
                     issue_novelty: null,
+                    issue_type: null,
                     maintainers_response: null,
                     examples: []
                 }

@@ -28,7 +28,7 @@ To initialize syntax highlighter:
 
 ```bash
 npx shiki-codegen \
-    --langs verilog \
+    --langs verilog,vhdl \
     --themes github-dark-default \
     --engine javascript \
     ./src/lib/generated/shiki.bundle.ts

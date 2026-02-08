@@ -1,11 +1,15 @@
 stage: synthesis
+lang: sv
 tool: iverilog
 id: array_needs_an_array_index_here
 title: Array needs an array index here
 regex: >
   Array \w+ needs an array index here\.
 issue_novelty: new
-issue_link: https://github.com/steveicarus/iverilog/issues/1265
+issue_links:
+  - url: https://github.com/steveicarus/iverilog/issues/1265
+    link_name: >
+      #1265
 maintainers_response: bug
 examples:
   - array_needs_an_array_index_here_ex1:

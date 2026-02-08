@@ -1,4 +1,5 @@
 stage: simulation
+lang: sv
 tool: iverilog
 id: vvp_net_fun_t_recv_real
 title: >

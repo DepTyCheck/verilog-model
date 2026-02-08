@@ -1,4 +1,5 @@
 stage: simulation
+lang: sv
 tool: verilator
 id: settle_region_did_not_converge
 title: Settle region did not converge

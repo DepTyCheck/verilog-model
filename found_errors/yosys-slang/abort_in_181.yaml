@@ -1,9 +1,13 @@
 stage: parsing
+lang: sv
 tool: yosys-slang
 id: abort_in_181
 title: Abort in slang_frontend.cc
 issue_novelty: already_known
-issue_link: https://github.com/povik/yosys-slang/issues/181#issuecomment-3161067098
+issue_links:
+  - url: https://github.com/povik/yosys-slang/issues/181#issuecomment-3161067098
+    link_name: >
+      #181
 regex: >
   Abort in [\/A-z0-9-]+slang_frontend\.cc:
 maintainers_response: low

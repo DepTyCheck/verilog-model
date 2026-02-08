@@ -1,4 +1,5 @@
 stage: analysis
+lang: sv
 tool: synlig
 id: network_netlist_contains_combinational_loop
 title: >
@@ -6,7 +7,10 @@ title: >
 regex: >
   Can't open ABC output file `.*output\.blif'\.
 issue_novelty: new
-issue_link: https://github.com/chipsalliance/synlig/issues/2774
+issue_links:
+  - url: https://github.com/chipsalliance/synlig/issues/2774
+    link_name: >
+      #2774
 examples:
   - network_netlist_contains_combinational_loop_ex1:
       first_found: 20.08.2025
