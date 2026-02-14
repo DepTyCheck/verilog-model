@@ -7,10 +7,14 @@ issue_novelty: already_known
 issue_links:
   - url: https://github.com/povik/yosys-slang/issues/282
     link_name: >
-      new #282
+      moved to #282
+    link_icon: open_issue.svg
   - url: https://github.com/povik/yosys-slang/issues/181#issuecomment-3161067098
     link_name: >
-      old #181
+      reported in #181
+    link_icon: closed_not_planned.svg
+issue_type:
+  - crash
 regex: >
   Feature unimplemented at [\/A-z0-9-]+slang_frontend\.cc:\d+, see AST and code line dump above
 maintainers_response: enhancement

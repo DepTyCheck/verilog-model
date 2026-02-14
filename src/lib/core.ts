@@ -8,7 +8,8 @@ export type MaintainersResponse = 'bug' | 'enhancement' | 'low' | 'wontfix' | nu
 export type IssueType = 'crash' | 'bad_message' | 'infinite_loop' | null;
 
 export type IssueLink = {
-	url: string;
+	url?: string;
+	local_id?: string;
 	link_name?: string;
 	link_icon?: string;
 };
@@ -30,7 +31,7 @@ export type FoundError = {
 	title: string;
 	short_desc?: string | null;
 	examples: FoundErrorExample[];
-	issue_type: IssueType | null;
+	issue_type: IssueType[] | null;
 	issue_links?: IssueLink[];
 	issue_novelty: IssueNovelty;
 	maintainers_response: MaintainersResponse;

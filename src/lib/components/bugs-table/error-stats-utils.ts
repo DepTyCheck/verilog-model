@@ -24,7 +24,7 @@ export class ErrorStatsCalculator {
 	constructor(
 		private errorsStats: ErrorsStats,
 		private foundErrors: FoundError[]
-	) { }
+	) {}
 
 	linkToCommitForErrStat(errStat: ErrorStat): string {
 		const foundError = this.foundErrors.find((e) => e.id === errStat.error_id);
@@ -47,9 +47,7 @@ export class ErrorStatsCalculator {
 
 	issueOccurancePct(errStat: ErrorStat): ErrorPercentages {
 		const totalRuns = this.runsForErrorsStat(errStat);
-		let pcts = [errStat.overall, errStat.test_paths_count].map((count) =>
-			(count / totalRuns) * 100
-		);
+		let pcts = [errStat.overall, errStat.test_paths_count].map((count) => (count / totalRuns) * 100);
 		return { overall: pcts[0], testFiles: pcts[1], totalRuns };
 	}
 
@@ -59,7 +57,7 @@ export class ErrorStatsCalculator {
 			try {
 				const { overall, testFiles, totalRuns } = this.issueOccurancePct(errorStat);
 				result[errorId] = { overall, testFiles, totalRuns };
-			} catch (e) { }
+			} catch (e) {}
 		}
 		return result;
 	}

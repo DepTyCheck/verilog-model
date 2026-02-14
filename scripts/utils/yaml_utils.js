@@ -36,7 +36,17 @@ function cleanIssueLinks(issueLinks) {
   if (!Array.isArray(issueLinks)) return [];
 
   return issueLinks.map(link => {
-    const cleanLink = { url: link.url };
+    const cleanLink = {};
+
+    // Only add url if it exists and is not null/undefined
+    if (link.url != null) {
+      cleanLink.url = String(link.url).trim();
+    }
+
+    // Only add local_id if it exists and is not null/undefined
+    if (link.local_id != null) {
+      cleanLink.local_id = String(link.local_id).trim();
+    }
 
     // Only add link_name if it exists and is not null/undefined
     if (link.link_name != null) {

@@ -15,11 +15,9 @@
 		createStageChoices,
 		createNoveltyChoices,
 		createMaintainersChoices,
+		createIssueTypeChoices,
 		applyFilters,
-		createToolFilter,
-		createNoveltyFilter,
-		createMaintainersFilter,
-		createStageFilter
+		createFilter
 	} from '$lib/components/bugs-table/table-utils';
 	import { SortedIssues } from '$lib/components/bugs-table/bugs-table-utils';
 	import { page } from '$app/state';
@@ -30,7 +28,8 @@
 		fixLink,
 		getMaintainersResponseDisplay,
 		getMaintainersResponseTooltip,
-		getNoveltyTooltip
+		getNoveltyTooltip,
+		getIssueTypeDisplay
 	} from '$lib/index';
 	import { errorsStats } from '$lib/parsed-error-stats';
 	import ErrorStatsCell from '$lib/components/bugs-table/ErrorStatsCell.svelte';
@@ -46,11 +45,26 @@
 		allFoundErrors,
 		getMaintainersResponseDisplay
 	);
+	let issueTypeChoices: CheckBoxChoice[] = createIssueTypeChoices(allFoundErrors);
 
-	let noveltyGroup: string[] = [];
-	let maintainersGroup: string[] = [];
 	let toolGroup: string[] = [];
 	let stageGroup: string[] = [];
+	let issueTypeGroup: string[] = [];
+	let noveltyGroup: string[] = [];
+	let maintainersGroup: string[] = [];
+
+	const filterDefs: Array<{
+		param: string;
+		get: () => string[];
+		set: (v: string[]) => void;
+		getValue: (e: FoundError) => any;
+	}> = [
+		{ param: 'tools', get: () => toolGroup, set: (v) => (toolGroup = v), getValue: (e) => e.tool },
+		{ param: 'stage', get: () => stageGroup, set: (v) => (stageGroup = v), getValue: (e) => e.stage },
+		{ param: 'issue_type', get: () => issueTypeGroup, set: (v) => (issueTypeGroup = v), getValue: (e) => e.issue_type },
+		{ param: 'novelty', get: () => noveltyGroup, set: (v) => (noveltyGroup = v), getValue: (e) => e.issue_novelty },
+		{ param: 'maintainers', get: () => maintainersGroup, set: (v) => (maintainersGroup = v), getValue: (e) => e.maintainers_response }
+	];
 
 	let sortColumn: SortableColumn = 'title';
 	let sortDest: SortDirection = 'asc';
@@ -70,24 +84,20 @@
 	function updateQueryParams() {
 		if (!browser) return;
 		const params = new URLSearchParams();
-		if (toolGroup.length > 0) params.set('tools', toolGroup.join(','));
-		if (noveltyGroup.length > 0) params.set('novelty', noveltyGroup.join(','));
-		if (maintainersGroup.length > 0) params.set('maintainers', maintainersGroup.join(','));
-		if (stageGroup.length > 0) params.set('stage', stageGroup.join(','));
+		for (const f of filterDefs) {
+			const values = f.get();
+			if (values.length > 0) params.set(f.param, values.join(','));
+		}
 		if (sortColumn) params.set('sort', sortColumn);
 		params.set('dir', sortDest);
 		goto(`?${params.toString()}`, { replaceState: true, keepFocus: true, noScroll: true });
 	}
 
 	function loadFromQueryParams(url: URL) {
-		const toolsParam = url.searchParams.get('tools');
-		toolGroup = toolsParam ? toolsParam.split(',') : [];
-		const noveltyParam = url.searchParams.get('novelty');
-		noveltyGroup = noveltyParam ? noveltyParam.split(',') : [];
-		const maintainersParam = url.searchParams.get('maintainers');
-		maintainersGroup = maintainersParam ? maintainersParam.split(',') : [];
-		const stageParam = url.searchParams.get('stage');
-		stageGroup = stageParam ? stageParam.split(',') : [];
+		for (const f of filterDefs) {
+			const p = url.searchParams.get(f.param);
+			f.set(p ? p.split(',') : []);
+		}
 		const sortParam = url.searchParams.get('sort');
 		if (sortParam && ['firstFound', 'title', 'stats'].includes(sortParam)) {
 			sortColumn = sortParam as SortableColumn;
@@ -97,10 +107,7 @@
 	}
 
 	function clearAllFilters() {
-		toolGroup = [];
-		noveltyGroup = [];
-		maintainersGroup = [];
-		stageGroup = [];
+		for (const f of filterDefs) f.set([]);
 		if (browser) updateQueryParams();
 	}
 
@@ -108,10 +115,11 @@
 		loadFromQueryParams(page.url);
 	});
 	$: filteredErrors = applyFilters(allFoundErrors, [
-		createToolFilter(toolGroup),
-		createNoveltyFilter(noveltyGroup),
-		createMaintainersFilter(maintainersGroup),
-		createStageFilter(stageGroup)
+		createFilter(toolGroup, (e) => e.tool),
+		createFilter(stageGroup, (e) => e.stage),
+		createFilter(issueTypeGroup, (e) => e.issue_type),
+		createFilter(noveltyGroup, (e) => e.issue_novelty),
+		createFilter(maintainersGroup, (e) => e.maintainers_response)
 	]);
 
 	$: sortedErrors = new SortedIssues(filteredErrors, errorPercentages).sorted(sortColumn, sortDest);
@@ -166,18 +174,24 @@
 							label="Tool"
 							name="tools"
 						/>
-						<TableColFilterHead
-							choices={stageChoices}
-							bind:group={stageGroup}
-							label="Stage"
-							name="stage"
-						/>
 						<TableColSortHead
 							label="First Found"
 							sortKey="firstFound"
 							{sortColumn}
 							{sortDest}
 							{setSort}
+						/>
+						<TableColFilterHead
+							choices={issueTypeChoices}
+							bind:group={issueTypeGroup}
+							label="Issue type"
+							name="issue_type"
+						/>
+						<TableColFilterHead
+							choices={stageChoices}
+							bind:group={stageGroup}
+							label="Stage"
+							name="stage"
 						/>
 						<TableColFilterHead
 							choices={noveltyChoices}
@@ -215,8 +229,18 @@
 								</A>
 							</TableData>
 							<TableData>{item.tool}</TableData>
-							<TableData>{item.stage}</TableData>
 							<TableData>{formatDateDMY(getFirstFound(item))}</TableData>
+							<TableData>
+								{#if item.issue_type}
+									<div class="flex flex-wrap gap-x-2 gap-y-1">
+										{#each item.issue_type as itype}
+											{@const display = getIssueTypeDisplay(itype)}
+											<Badge color={display.color} rounded>{display.text}</Badge>
+										{/each}
+									</div>
+								{/if}
+							</TableData>
+							<TableData>{item.stage}</TableData>
 							<TableData>
 								{#if displayIssueNovelty(item.issue_novelty).text}
 									{@const noveltyDisplay = displayIssueNovelty(item.issue_novelty)}

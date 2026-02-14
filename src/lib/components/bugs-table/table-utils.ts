@@ -1,12 +1,8 @@
-import type { FoundError, CheckBoxChoice, MaintainersResponse } from '$lib/core';
+import type { FoundError, CheckBoxChoice, IssueType, MaintainersResponse } from '$lib/core';
 import type { DisplayInfo } from '$lib/index';
-import { displayIssueNovelty } from '$lib/index';
+import { displayIssueNovelty, getIssueTypeDisplay } from '$lib/index';
 
-export function createChoices<T>(
-	errors: FoundError[],
-	getValue: (error: FoundError) => T,
-	getLabel: (value: T) => string
-): CheckBoxChoice[] {
+export function createChoices<T>(errors: FoundError[], getValue: (error: FoundError) => T, getLabel: (value: T) => string): CheckBoxChoice[] {
 	return Array.from(new Set(errors.map(getValue)))
 		.filter((value) => value !== null && value !== undefined)
 		.map((value) => ({
@@ -51,16 +47,22 @@ export function createMaintainersChoices(
 	);
 }
 
-export function applyFilter<T>(
+type FilterValue = string | null | undefined;
+
+export function applyFilter(
 	errors: FoundError[],
 	selectedValues: string[],
-	getValue: (error: FoundError) => T
+	getValue: (error: FoundError) => FilterValue | FilterValue[]
 ): FoundError[] {
 	if (selectedValues.length === 0) return errors;
 
 	return errors.filter((error) => {
 		const value = getValue(error);
-		return value !== null && value !== undefined && selectedValues.includes(String(value));
+		if (value === null || value === undefined) return false;
+		if (Array.isArray(value)) {
+			return value.some((v) => v !== null && v !== undefined && selectedValues.includes(String(v)));
+		}
+		return selectedValues.includes(String(value));
 	});
 }
 
@@ -68,7 +70,7 @@ export function applyFilters(
 	errors: FoundError[],
 	filters: Array<{
 		selectedValues: string[];
-		getValue: (error: FoundError) => string | null | undefined;
+		getValue: (error: FoundError) => FilterValue | FilterValue[];
 	}>
 ): FoundError[] {
 	return filters.reduce((filteredErrors, filter) => {
@@ -76,30 +78,21 @@ export function applyFilters(
 	}, errors);
 }
 
-export function createToolFilter(selectedValues: string[]) {
-	return {
-		selectedValues,
-		getValue: (error: FoundError) => error.tool
-	};
+export function createFilter(selectedValues: string[], getValue: (error: FoundError) => FilterValue | FilterValue[]) {
+	return { selectedValues, getValue };
 }
 
-export function createNoveltyFilter(selectedValues: string[]) {
-	return {
-		selectedValues,
-		getValue: (error: FoundError) => error.issue_novelty
-	};
-}
-
-export function createMaintainersFilter(selectedValues: string[]) {
-	return {
-		selectedValues,
-		getValue: (error: FoundError) => error.maintainers_response
-	};
-}
-
-export function createStageFilter(selectedValues: string[]) {
-	return {
-		selectedValues,
-		getValue: (error: FoundError) => error.stage
-	};
+export function createIssueTypeChoices(errors: FoundError[]): CheckBoxChoice[] {
+	const allTypes = new Set<IssueType>();
+	for (const error of errors) {
+		if (error.issue_type) {
+			for (const t of error.issue_type) {
+				allTypes.add(t);
+			}
+		}
+	}
+	return Array.from(allTypes)
+		.filter((t): t is NonNullable<IssueType> => t !== null)
+		.map((t) => ({ value: t, label: getIssueTypeDisplay(t).text }))
+		.sort((a, b) => a.label.localeCompare(b.label));
 }

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { A } from 'flowbite-svelte';
 	import { page } from '$app/state';
 	import { allFoundErrors } from '$lib/generated/errors-data';
 	import type { FoundError } from '$lib/core';
@@ -8,6 +7,7 @@
 	import VCard from '$lib/components/full-issue-info/VCard.svelte';
 	import CodeBlock from '$lib/components/full-issue-info/CodeBlock.svelte';
 	import FieldDisplay from '$lib/components/full-issue-info/FieldDisplay.svelte';
+	import IssueLinkAnchor from '$lib/components/IssueLinkAnchor.svelte';
 
 	let id: string = String(page.params.id);
 	let foundError: FoundError | null = null;
@@ -38,7 +38,7 @@
 			{/if}
 			{#if foundError.issue_links && foundError.issue_links.length > 0}
 				{#each foundError.issue_links as link}
-					<A href={link.url} class="underline" target="_blank" rel="noopener">{link.link_name || link.url}</A>
+					<IssueLinkAnchor {link} class="underline text-primary-600 hover:text-primary-800" />
 				{/each}
 			{/if}
 		</VCard>

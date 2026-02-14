@@ -5,9 +5,17 @@ id: abort_in_181
 title: Abort in slang_frontend.cc
 issue_novelty: already_known
 issue_links:
+  - local_id: real_is_unsupported_for_conversion_to_bits
+    link_name: >
+      Replaced by
+    link_icon: logo_no_bg.png
   - url: https://github.com/povik/yosys-slang/issues/181#issuecomment-3161067098
     link_name: >
       #181
+    link_icon: closed_not_planned.svg
+issue_type:
+  - crash
+  - bad_message
 regex: >
   Abort in [\/A-z0-9-]+slang_frontend\.cc:
 maintainers_response: low

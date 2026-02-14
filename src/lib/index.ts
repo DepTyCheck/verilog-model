@@ -1,6 +1,6 @@
 import { type FoundError } from '$lib/core';
 import { resolve } from '$app/paths';
-import type { IssueNovelty, MaintainersResponse } from './core';
+import type { IssueNovelty, IssueType, MaintainersResponse } from './core';
 
 export interface DisplayInfo {
 	text: string;
@@ -42,6 +42,19 @@ export function displayIssueNovelty(status: IssueNovelty): DisplayInfo {
 			return { text: 'Feature', color: 'gray' };
 		case 'late':
 			return { text: 'Late', color: 'gray' };
+		default:
+			return { text: '', color: 'gray' };
+	}
+}
+
+export function getIssueTypeDisplay(type: IssueType): DisplayInfo {
+	switch (type) {
+		case 'crash':
+			return { text: 'Crash', color: 'red' };
+		case 'bad_message':
+			return { text: 'Bad message', color: 'yellow' };
+		case 'infinite_loop':
+			return { text: 'Infinite loop', color: 'purple' };
 		default:
 			return { text: '', color: 'gray' };
 	}

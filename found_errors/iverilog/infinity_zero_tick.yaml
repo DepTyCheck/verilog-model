@@ -4,6 +4,8 @@ short_desc: The first simulation tick runs indefinitely
 tool: iverilog
 id: infinity_zero_tick
 title: Infinity zero tick
+issue_type:
+  - infinite_loop
 examples:
   - infinity_zero_tick_ex1:
       first_found: 15.12.2024

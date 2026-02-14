@@ -3,7 +3,7 @@ lang: sv
 tool: yosys-slang
 id: real_is_unsupported_for_conversion_to_bits
 title: Real is unsupported for conversion to bits
-issue_novelty: already_known
+issue_novelty: unsupported
 issue_links:
   - url: https://github.com/povik/yosys-slang/issues/282
     link_name: >
