@@ -33,7 +33,7 @@
 
 	function getIconPath(link: IssueLink): string | null {
 		if (!link.link_icon) return null;
-		return `/icons/${link.link_icon}`;
+		return fixLink(`/icons/${link.link_icon}`);
 	}
 </script>
 
