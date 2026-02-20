@@ -6,6 +6,8 @@ import Test.Common.UniqueNames
 
 import Test.DepTyCheck.Gen
 
+%default total
+
 export
 VHDLKeywords : SVect ?
 VHDLKeywords = [
@@ -24,9 +26,9 @@ VHDLKeywords = [
 ]
 
 export
-genOneNames : {l : Nat} -> Fuel -> (names : SVect l) -> (un : UniqNames l names) ->
+genOneName : {l : Nat} -> Fuel -> (names : SVect l) -> (un : UniqNames l names) ->
               Gen MaybeEmpty (out : String ** UniqNames (S l) (out :: names))
-genOneNames = genOneUniqueName VHDLKeywords
+genOneName = genOneUniqueName VHDLKeywords
 
 export
 genManyNames : {l : Nat} -> Fuel -> (n : Nat) -> (names : SVect l) -> (un : UniqNames l names) ->

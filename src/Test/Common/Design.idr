@@ -2,6 +2,7 @@ module Test.Common.Design
 
 import Data.Fin
 import Data.Fuel
+import Data.Vect
 
 import Test.DepTyCheck.Gen
 
@@ -33,58 +34,112 @@ namespace DesignUnitSig
     Nil  : DesignUnitSigsList l
     (::) : DesignUnitSig l -> DesignUnitSigsList l -> DesignUnitSigsList l
 
-  %name DesignUnitSigsList ds
+  %name DesignUnitSigsList usl
 
   public export
   length : DesignUnitSigsList l -> Nat
   length []      = Z
-  length (_::ms) = S $ length ms
+  length (_::usl) = S $ length usl
 
   public export %inline
   (.length) : DesignUnitSigsList l -> Nat
   (.length) = length
 
   public export
-  index : (ms : DesignUnitSigsList l) -> Fin ms.length -> DesignUnitSig l
-  index (m::_ ) FZ     = m
-  index (_::ms) (FS i) = index ms i
-
-namespace DesignUnit
-
-  public export
-  data DesignUnits : DesignUnitSigsList l -> Type
+  index : (usl : DesignUnitSigsList l) -> Fin usl.length -> DesignUnitSig l
+  index (sig::_ ) FZ    = sig
+  index (_::usl) (FS i) = index usl i
 
 namespace MultiConnection
 
   public export
-  totalTops : DesignUnitSig l -> Nat
-  totalTops du = du.inpsCount + du.outsCount
+  totalTops : DesignUnitSig l -> DataTypesList l
+  totalTops s = s.inputs ++ s.outputs
 
   public export
-  totalSubs : (uu : DesignUnitSigsList l) -> (subUs : FinsList uu.length) -> Nat
-  totalSubs uu []      = 0
-  totalSubs uu (f::fs) = (totalTops $ index uu f) + totalSubs uu fs
+  totalTops' : DesignUnitSig l -> Nat
+  totalTops' s = (totalTops s).length
 
   public export
-  data MultiConnection : (l : Lang) -> (uu : DesignUnitSigsList l) -> 
-                         (u : DesignUnitSig l) -> (subUs : FinsList uu.length) -> Type where
-    MkMC : (MFin $ totalTops u) -> (subs : FinsList $ totalSubs uu subUs) -> MultiConnection l uu u subUs
+  totalSubs : (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> DataTypesList l
+  totalSubs usl []      = []
+  totalSubs usl (f::fs) = (totalTops $ index usl f) ++ totalSubs usl fs
+
+  public export
+  totalSubs' : (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> Nat
+  totalSubs' usl []      = 0
+  totalSubs' usl (f::fs) = (totalTops' $ index usl f) + totalSubs' usl fs
+
+
+  public export
+  data MCNotEmpty : MFin a -> FinsList b -> Type where
+    JustTop : MCNotEmpty (Just x) sub
+    JustSub : MCNotEmpty top      (x :: xs)
+
+  public export
+  data MultiConnection : (l : Lang) -> (s : DesignUnitSig l) ->
+                         (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> Type where
+    MkMC : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+           (top : MFin $ totalTops' s) -> (subs : FinsList $ totalSubs' usl subUs) -> (ne : MCNotEmpty top subs) => MultiConnection l s usl subUs
   
   public export
-  data MultiConnectionsList : (l : Lang) -> (uu : DesignUnitSigsList l) -> 
-                              (u : DesignUnitSig l) -> (subUs : FinsList uu.length) -> Type where
-    Nil  : MultiConnectionsList l uu u subUs
-    (::) : MultiConnection l uu u subUs -> MultiConnectionsList l uu u subUs -> MultiConnectionsList l uu u subUs
+  data MultiConnectionsList : (l : Lang) -> (s : DesignUnitSig l) ->
+                              (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> Type where
+    Nil  : MultiConnectionsList l s usl subUs
+    (::) : MultiConnection l s usl subUs -> MultiConnectionsList l s usl subUs -> MultiConnectionsList l s usl subUs
   
   public export
-  length : MultiConnectionsList l uu u subUs -> Nat
-  length []      = Z
-  length (_::ms) = S $ length ms
+  length : MultiConnectionsList l s usl subUs -> Nat
+  length []       = Z
+  length (_::mcs) = S $ length mcs
 
   public export
-  index : (ms : MultiConnectionsList l uu u subUs) -> Fin (length ms) -> MultiConnection l uu u subUs
-  index (m::_ ) FZ     = m
-  index (_::ms) (FS i) = index ms i
+  index : (mcs : MultiConnectionsList l s usl subUs) -> Fin (length mcs) -> MultiConnection l s usl subUs
+  index (mc::_ ) FZ     = mc
+  index (_::mcs) (FS i) = index mcs i
+
+  public export
+  toVect : (mcs : MultiConnectionsList l s usl subUs) -> Vect (length mcs) $ MultiConnection l s usl subUs
+  toVect []         = []
+  toVect (m :: mcs) = m :: toVect mcs
+
+  public export
+  typeOf : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+          MultiConnection l s usl subUs -> DataType l
+  typeOf MkMC Nothing [] impossible
+  typeOf MkMC Nothing [] impossible
+  typeOf {l = SystemVerilog} (MkMC Nothing (f :: _)) = SVT $ 1 -- todo: change
+  typeOf {l = SystemVerilog} (MkMC (Just f) _      ) = index (totalTops s) f
+  typeOf {l = VHDL}          (MkMC Nothing (f :: _)) = VHT $ StdLogic'
+  typeOf {l = VHDL}          (MkMC (Just f) _      ) = index (totalTops s) f
+
+  ||| Find type of port by fin 
+  public export
+  findTypeTop : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+                Fin (totalTops' s) -> (mcs : MultiConnectionsList l s usl subUs) -> Maybe $ DataType l
+  findTypeTop f []        = Nothing -- impossible
+  findTypeTop f (   (MkMC Nothing  subs) :: xs) = findTypeTop f xs
+  findTypeTop f (mc@(MkMC (Just x) subs) :: xs) = case f == x of
+    False => findTypeTop f xs
+    True  => Just $ typeOf mc
+
+  public export
+  topiToTotal : {s : _} -> Fin (s.inpsCount) -> Fin (totalTops' s)
+  topiToTotal {s} f = fixDTLFin $ weakenN s.outsCount f
+
+  public export
+  topoToTotal : {s : _} -> Fin (s.outsCount) -> Fin (totalTops' s)
+  topoToTotal {s} f = fixDTLFin $ shift s.inpsCount f
+
+  public export
+  findTypeTI : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+              Fin (s.inpsCount) -> (mcs : MultiConnectionsList l s usl subUs) -> Maybe $ DataType l
+  findTypeTI f = findTypeTop $ topiToTotal f
+
+  public export
+  findTypeTO : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+              Fin (s.outsCount) -> (mcs : MultiConnectionsList l s usl subUs) -> Maybe $ DataType l
+  findTypeTO f = findTypeTop $ topoToTotal f
 
 namespace GenMulticonns
 
@@ -99,68 +154,80 @@ namespace GenMulticonns
     JF : JustFin (Just x) x
 
   public export
-  newTop : Fin (totalTops u) -> MultiConnection l uu u subUs
+  newTop : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+           Fin (totalTops' s) -> MultiConnection l s usl subUs
   newTop f = MkMC (Just f) []
 
   public export
-  newSub : Fin (totalSubs uu subUs) -> MultiConnection l uu u subUs
+  newSub : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+           Fin (totalSubs' usl subUs) -> MultiConnection l s usl subUs
   newSub f = MkMC Nothing [ f ]
 
   public export
-  addSub : Fin (totalSubs uu subUs) -> MultiConnection l uu u subUs ->  MultiConnection l uu u subUs
-  addSub f (MkMC top subs) = MkMC top $ f :: subs
+  addSub : Fin (totalSubs' usl subUs) -> MultiConnection l s usl subUs ->  MultiConnection l s usl subUs
+  addSub f (MkMC top subs) = MkMC top (f :: subs)
 
   public export
-  insertAt0 : (pre : MultiConnectionsList l uu u subUs) -> MultiConnection l uu u subUs -> MultiConnectionsList l uu u subUs
+  insertAt0 : (pre : MultiConnectionsList l s usl subUs) -> MultiConnection l s usl subUs -> MultiConnectionsList l s usl subUs
   insertAt0 pre mc = mc :: pre
 
   public export
-  replaceAt : (pre : MultiConnectionsList l uu u subUs) -> Fin (length pre) -> MultiConnection l uu u subUs -> MultiConnectionsList l uu u subUs
+  replaceAt : (pre : MultiConnectionsList l s usl subUs) -> Fin (length pre) -> MultiConnection l s usl subUs -> MultiConnectionsList l s usl subUs
   replaceAt []        FZ     _ impossible
   replaceAt []        (FS _) _ impossible
   replaceAt (_ :: xs) FZ     mc = mc :: xs
-  replaceAt (x :: xs) (FS i) mc = replaceAt xs i mc
+  replaceAt (x :: xs) (FS i) mc = x :: replaceAt xs i mc
 
   public export
-  data FillTop : (l : Lang) ->(uu : DesignUnitSigsList l) -> 
-                 (u : DesignUnitSig l) -> (subUs : FinsList uu.length) ->
-                 MultiConnectionsList l uu u subUs -> (topi : Nat) -> MultiConnectionsList l uu u subUs -> Type where
-    TEnd      : FillTop l uu u subUs pre 0 pre
-    TNew      : {jf : JustFin (natToFin' k $ totalTops u) topF} -> 
-                FillTop l uu u subUs pre (S k) $ insertAt0 pre   $ newTop topF
+  data FillTop : (l : Lang) -> (s : DesignUnitSig l) ->
+                 (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) ->
+                 MultiConnectionsList l s usl subUs -> (topi : Nat) -> MultiConnectionsList l s usl subUs -> Type where
+    TEnd      : FillTop l s usl subUs pre 0 pre
+    TNew      : (recur : FillTop l s usl subUs pre k mid) ->
+                {jf : JustFin (natToFin' k $ totalTops' s) topF} ->
+                FillTop l s usl subUs pre (S k) $ insertAt0 mid   $ newTop topF
   
   public export
-  data FillSub : (l : Lang) ->(uu : DesignUnitSigsList l) -> 
-                 (u : DesignUnitSig l) -> (subUs : FinsList uu.length) ->
-                 MultiConnectionsList l uu u subUs -> (subi : Nat) -> MultiConnectionsList l uu u subUs -> Type where
-    SEnd      : FillSub l uu u subUs pre 0 pre
-    SNew      :                           {jf : JustFin (natToFin' k $ totalSubs uu subUs) subF} -> 
-                FillSub l uu u subUs pre (S k) $ insertAt0 pre   $ newSub subF
-    SExisting : (f : Fin $ length pre) -> {jf : JustFin (natToFin' k $ totalSubs uu subUs) subF} -> 
-                FillSub l uu u subUs pre (S k) $ replaceAt pre f $ addSub subF $ index pre f
+  data FillSub : (l : Lang) -> (s : DesignUnitSig l) ->
+                 (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) ->
+                 MultiConnectionsList l s usl subUs -> (subi : Nat) -> MultiConnectionsList l s usl subUs -> Type where
+    SEnd      : FillSub l s usl subUs pre 0 pre
+    SNew      : (recur : FillSub l s usl subUs pre k mid) ->
+                {jf : JustFin (natToFin' k $ totalSubs' usl subUs) subF} -> 
+                FillSub l s usl subUs pre (S k) $ insertAt0 mid   $ newSub subF
+    SExisting : (recur : FillSub l s usl subUs pre k mid) ->
+                (f : Fin $ length mid) -> {jf : JustFin (natToFin' k $ totalSubs' usl subUs) subF} ->
+                FillSub l s usl subUs pre (S k) $ replaceAt mid f $ addSub subF $ index mid f
 
   public export
-  data GenMulticonns : (l : Lang) ->(uu : DesignUnitSigsList l) -> 
-                       (u : DesignUnitSig l) -> (subUs : FinsList uu.length) -> 
-                       MultiConnectionsList l uu u subUs -> Type where
-    GenMC : (ft : FillTop l uu u subUs []        (totalTops u)        filledTop) -> 
-            (fs : FillSub l uu u subUs filledTop (totalSubs uu subUs) filledSub) ->
-            GenMulticonns l uu u subUs filledSub
+  data GenMulticonns : (l : Lang) -> (s : DesignUnitSig l) ->
+                       (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> 
+                       MultiConnectionsList l s usl subUs -> Type where
+    GenMC : (ft : FillTop l s usl subUs []        (totalTops' s)         filledTop) -> 
+            (fs : FillSub l s usl subUs filledTop (totalSubs' usl subUs) filledSub) ->
+            GenMulticonns l s usl subUs filledSub
 
 namespace DesignUnit
 
   public export
-  data DesignUnits : DesignUnitSigsList l -> Type where
-    End : DesignUnits uu
-    New :
-      (u : DesignUnitSig l) ->
-      {uu : _} ->
-      (subUs : FinsList uu.length) ->
-      (mcs : MultiConnectionsList l uu u subUs) ->
-      {0 _ : GenMulticonns l uu u subUs mcs} ->
-      (cont : DesignUnits {l} $ u::uu) ->
-      DesignUnits {l} uu
+  data DesignUnit : {l : _} -> 
+                    (s : DesignUnitSig l) -> 
+                    (usl : DesignUnitSigsList l) -> 
+                    (subUs : FinsList usl.length) ->
+                    (mcs : MultiConnectionsList l s usl subUs) -> Type where
+    MkDesign : (s : DesignUnitSig l) ->
+               {usl : _} ->
+               (subUs : FinsList usl.length) ->
+               (mcs : MultiConnectionsList l s usl subUs) ->
+               {0 _ : GenMulticonns l s usl subUs mcs} ->
+               DesignUnit {l} s usl subUs mcs
+
+  public export
+  data DesignUnitsList : DesignUnitSigsList l -> Type where
+    Nil  : DesignUnitsList usl
+    (::) : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : _} -> 
+           DesignUnit {l} s usl subUs mcs -> DesignUnitsList {l} (s::usl) -> DesignUnitsList {l} usl
 
 export
-genDesignUnits : Fuel -> (l : Lang) -> (dus : DesignUnitSigsList l) ->
-  Gen MaybeEmpty $ DesignUnits dus
+genDesignUnitsList : Fuel -> (l : Lang) -> (usl : DesignUnitSigsList l) ->
+  Gen MaybeEmpty $ DesignUnitsList usl

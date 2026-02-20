@@ -13,15 +13,13 @@ import Debug.Trace
 import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
 
-import Test.Common.Gen
-
 import Test.Common.UniqueFins.Derived
+import Test.Common.UniqueNames.Derived
 import Test.Verilog.Connections.Derived
 import Test.Verilog.TMPExpression.Derived
 import Test.Common.Design.Derived
-import Test.Common.UniqueNames.Derived
 
-import Test.Verilog.Pretty
+import Test.Common.Gen
 
 import Data.Fin.ToFin
 
@@ -33,7 +31,6 @@ import System.Random.Pure.StdGen
 import System.Directory
 
 %default total
-
 
 record Config m where
   constructor MkConfig

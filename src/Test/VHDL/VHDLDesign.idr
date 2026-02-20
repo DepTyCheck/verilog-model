@@ -11,26 +11,23 @@ import Test.VHDL.Defaults
 
 import Test.DepTyCheck.Gen
 
+%default total
+
 public export
 data VHDLDesign : DesignUnitSigsList VHDL -> Type where
   End : VHDLDesign dus
-  New :
-    (u : DesignUnitSig VHDL) ->
-    {uu : _} ->
-    (subUs : FinsList uu.length) ->
-    (mcs : MultiConnectionsList VHDL uu u subUs) ->
-    (cont : VHDLDesign $ u::uu) ->
-    VHDLDesign uu
+  New : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : _} -> 
+        (basic : DesignUnit {l=VHDL} s usl subUs mcs) -> (cont : VHDLDesign $ s::usl) -> VHDLDesign usl
 
 export
 genVHDL : Fuel -> Gen MaybeEmpty $ VHDLDesign StdDesigns
 genVHDL x = do
-  raw <- genDesignUnits x VHDL StdDesigns
+  raw <- genDesignUnitsList x VHDL StdDesigns
   res <- extend x raw
   pure res where
-    extend : Fuel -> {ms : _} -> DesignUnits ms -> Gen MaybeEmpty $ VHDLDesign ms
-    extend x End = pure End
-    extend x (New u {uu} subUs mcs cont) = do
+    extend : Fuel -> {dus : _} -> DesignUnitsList dus -> Gen MaybeEmpty $ VHDLDesign dus
+    extend x [] = pure End
+    extend x (design::cont) = do
       contEx <- extend x cont
 
-      pure $ New u {uu} subUs mcs contEx
+      pure $ New design contEx

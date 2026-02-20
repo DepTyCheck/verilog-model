@@ -12,5 +12,4 @@ GenOrderTuning "GenMC".dataCon where
   isConstructor = itIsConstructor
   deriveFirst _ _ = [`{ft}, `{filledTop}, `{fs}, `{filledSub}]
 
-Test.Common.Design.genDesignUnits = deriveGen
--- Test.Common.Design.debugGenMCs = deriveGen
+Test.Common.Design.genDesignUnitsList = deriveGen

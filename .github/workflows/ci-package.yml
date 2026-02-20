@@ -457,8 +457,8 @@ jobs:
               cd build
               sudo make install
             version: ghdl -v
-            run: ghdl -a {file} && ghdl -e {vhdl_top_entity}
-            sim_cmd: ghdl -r {vhdl_top_entity}
+            run: ghdl -a --std=19 {file} && ghdl -e --std=19 {vhdl_top_entity}
+            sim_cmd: ghdl -r --std=19 {vhdl_top_entity}
 
     steps:
       - name: Checkout

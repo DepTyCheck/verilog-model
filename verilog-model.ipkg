@@ -40,6 +40,10 @@ modules = Test.Common.Utils
         , Test.Verilog.VerilogDesign
         , Test.Verilog.UniqueNames.Derived
 
+        , Test.Verilog.Connections.Derived
+        , Test.Verilog.TMPExpression.Derived
+        , Test.Common.Design.Derived
+
         , Test.Common.UniqueNames
         , Test.Common.UniqueNames.Derived
 
@@ -50,11 +54,7 @@ modules = Test.Common.Utils
         , Test.Common.Design
         , Test.Common.Gen
         
-        , Test.Common.PrintableDesigns
         , Test.Common.UniqueFins.Derived
+        , Test.Common.PrintableDesigns
         , Test.Verilog.Pretty
         , Test.VHDL.Pretty
-
-        , Test.Verilog.Connections.Derived
-        , Test.Verilog.TMPExpression.Derived
-        , Test.Common.Design.Derived
