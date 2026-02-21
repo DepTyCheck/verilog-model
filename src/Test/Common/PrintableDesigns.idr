@@ -121,34 +121,23 @@ export
 printIt : (n : Nat) -> (Fin n -> Gen0 $ Doc opts) -> Gen0 $ List $ Doc opts
 printIt n f = traverse f $ List.allFins n
 
--- namespace DTL
-
---   public export
---   (++) : DataTypesList l -> DataTypesList l -> DataTypesList l
---   Nil       ++ ys = ys
---   (x :: xs) ++ ys = x :: (xs ++ ys)
-
 public export
-toTotalSubsInpIdx : {usl : DesignUnitSigsList l} -> 
+toTotalSubsInpIdx : {usl : DesignUnitSigsList l} ->
                     {subUs : FinsList usl.length} ->
                     (idx : Fin subUs.length) ->
                     Fin (index usl (index subUs idx)).inpsCount ->
                     Fin (totalSubs' usl subUs)
-toTotalSubsInpIdx  {subUs = (f::fs)} idx x with 0 (sym $ dtlistLen (index usl f).inputs (index usl f).outputs)
-                                              | 0 (((index usl f).inputs ++ (index usl f).outputs).length)
-  toTotalSubsInpIdx FZ     portNum | Refl | _ = indexSum $ Left  $ weakenN (index usl f).outsCount $ portNum
-  toTotalSubsInpIdx (FS i) portNum | Refl | _ = indexSum $ Right $ toTotalSubsInpIdx i portNum
+toTotalSubsInpIdx {subUs = (f::fs)} FZ     portNum = fixDTLFin $ indexSum $ Left  $ fixDTLFin $ weakenN (index usl f).outsCount portNum
+toTotalSubsInpIdx {subUs = (f::fs)} (FS i) portNum = fixDTLFin $ indexSum $ Right $ toTotalSubsInpIdx i portNum
 
 public export
-toTotalSubsOutIdx : {usl : DesignUnitSigsList l} -> 
+toTotalSubsOutIdx : {usl : DesignUnitSigsList l} ->
                     {subUs : FinsList usl.length} ->
                     (idx : Fin subUs.length) ->
                     Fin (index usl (index subUs idx)).outsCount ->
                     Fin (totalSubs' usl subUs)
-toTotalSubsOutIdx {subUs = (f::fs)} idx x with 0 (sym $ dtlistLen (index usl f).inputs (index usl f).outputs)
-                                             | 0 (((index usl f).inputs ++ (index usl f).outputs).length)
-  toTotalSubsOutIdx FZ     portNum | Refl | _ = indexSum $ Left  $ shift (index usl f).inpsCount $ portNum
-  toTotalSubsOutIdx (FS i) portNum | Refl | _ = indexSum $ Right $ toTotalSubsOutIdx i portNum
+toTotalSubsOutIdx {subUs = (f::fs)} FZ     portNum = fixDTLFin $ indexSum $ Left  $ fixDTLFin $ shift (index usl f).inpsCount portNum
+toTotalSubsOutIdx {subUs = (f::fs)} (FS i) portNum = fixDTLFin $ indexSum $ Right $ toTotalSubsOutIdx i portNum
 
 export
 isElem : Eq a => (x : a) -> (xs : List a) -> Bool

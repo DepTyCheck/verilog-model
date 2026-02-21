@@ -14,24 +14,28 @@ data Lang = SystemVerilog | VHDL
 public export
 data DataType : Lang -> Type where
   SVT : Nat   -> DataType SystemVerilog
-  VHT : VHDLType -> DataType VHDL
+  VHD : VHDLType -> DataType VHDL
 
 public export
 data DataTypesList : Lang -> Type where
-  Nil  : DataTypesList n
-  (::) : DataType n -> DataTypesList n -> DataTypesList n
+  Nil  : DataTypesList l
+  (::) : DataType l -> DataTypesList l -> DataTypesList l
 
 %name DataTypesList ds
 
 public export
-(.asList) : DataTypesList n -> List $ DataType n
+(.asList) : DataTypesList l -> List $ DataType l
 (.asList) []      = []
 (.asList) (x::xs) = x :: xs.asList
 
 public export
-(.length) : DataTypesList n -> Nat
-(.length) []      = 0
-(.length) (x::xs) = S xs.length
+length : DataTypesList l -> Nat
+length []      = Z
+length (_::usl) = S $ length usl
+
+public export %inline
+(.length) : DataTypesList l -> Nat
+(.length) = length
 
 public export
 index : (fs : DataTypesList s) -> Fin fs.length -> DataType s

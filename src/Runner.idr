@@ -45,6 +45,7 @@ record Config m where
   seedInFile : m Bool
   silent     : m Bool
   lang       : m Lang
+  printMode  : m PrintMode
 
 allNothing : Config Maybe
 allNothing = MkConfig
@@ -59,6 +60,7 @@ allNothing = MkConfig
   , seedInFile = Nothing
   , silent     = Nothing
   , lang       = Nothing
+  , printMode  = Nothing
   }
 
 Cfg : Type
@@ -77,12 +79,13 @@ defaultConfig = pure $ MkConfig
   , seedInFile = False
   , silent     = False
   , lang       = SystemVerilog
+  , printMode  = HDL
   }
 
 -- TODO to do this with `barbies`
 mergeCfg : (forall a. m a -> n a -> k a) -> Config m -> Config n -> Config k
-mergeCfg f (MkConfig h rs lo tc mf td cf sn sf s l) (MkConfig h' rs' lo' tc' mf' td' cf' sn' sf' s' l') =
- MkConfig  (f h h') (f rs rs') (f lo lo') (f tc tc') (f mf mf') (f td td') (f cf cf') (f sn sn') (f sf sf') (f s s') (f l l')
+mergeCfg f (MkConfig h rs lo tc mf td cf sn sf s l pm) (MkConfig h' rs' lo' tc' mf' td' cf' sn' sf' s' l' pm') =
+ MkConfig  (f h h') (f rs rs') (f lo lo') (f tc tc') (f mf mf') (f td td') (f cf cf') (f sn sn') (f sf sf') (f s s') (f l l') (f pm pm')
 
 parseSeed : String -> Either String $ Config Maybe
 parseSeed str = do
@@ -122,6 +125,11 @@ parseLang "sv"   = Right $ {lang := Just SystemVerilog} allNothing
 parseLang "vhdl" = Right $ {lang := Just VHDL} allNothing
 parseLang _      = Left "invalid language value"
 
+parsePrintMode : String -> Either String $ Config Maybe
+parsePrintMode "hdl" = Right $ {printMode := Just HDL}      allNothing
+parsePrintMode "gv"  = Right $ {printMode := Just GraphViz} allNothing
+parsePrintMode _     = Left "invalid print mode value"
+
 cliOpts : List $ OptDescr $ Config Maybe
 cliOpts =
   [ MkOpt ['h'] ["help"]
@@ -157,6 +165,9 @@ cliOpts =
   , MkOpt ['l'] ["lang"]
       (ReqArg' parseLang "<sv|vhdl>")
       "Sets the HDL output language (default: sv)."
+  , MkOpt [] ["mode"]
+      (ReqArg' parsePrintMode "<hdl|gv>")
+      "Sets the output mode: HDL design or Graphviz representation."
   ]
 
 tail'' : List a -> List a
@@ -182,7 +193,7 @@ createDir' p = foldlM createDirHelper (Right ()) $ inits $ toList $ split (=='/'
     Left FileExists => Right ()
     e               => e
 
-showSeed: StdGen -> String
+showSeed : StdGen -> String
 showSeed gen = let (seed, gamma) = extractRaw gen in "\{show seed},\{show gamma}"
 
 forS_ : Monad f => (seed : s) -> LazyList a -> (s -> a -> f s) -> f ()
@@ -250,7 +261,7 @@ main = do
     exitSuccess
 
   let cgi = initCoverageInfo'' [`{Modules} ] -- TODO: Add expression type
-  let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel (cfg.lang) >>= map (render cfg.layoutOpts) . printDesign (limit 1000)
+  let vals = unGenTryAllD' cfg.randomSeed $ gen cfg.modelFuel (cfg.lang) >>= map (render cfg.layoutOpts) . (printDesign cfg.printMode) (limit 1000)
   let vals = flip mapMaybe vals $ \gmd => snd gmd >>= \(mcov, md) : (ModelCoverage, String) =>
                                                         if nonTrivial md then Just (fst gmd, mcov, md) else Nothing
   let vals = take (limit cfg.testsCnt) vals

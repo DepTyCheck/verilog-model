@@ -67,9 +67,11 @@ namespace MultiConnection
 
   public export
   totalSubs' : (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> Nat
-  totalSubs' usl []      = 0
-  totalSubs' usl (f::fs) = (totalTops' $ index usl f) + totalSubs' usl fs
+  totalSubs' usl subUs = length $ totalSubs usl subUs
 
+  public export
+  typeOfSubPort : (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> Fin (totalSubs' usl subUs) -> DataType l
+  typeOfSubPort usl subUs = index (totalSubs usl subUs)
 
   public export
   data MCNotEmpty : MFin a -> FinsList b -> Type where
@@ -110,7 +112,7 @@ namespace MultiConnection
   typeOf MkMC Nothing [] impossible
   typeOf {l = SystemVerilog} (MkMC Nothing (f :: _)) = SVT $ 1 -- todo: change
   typeOf {l = SystemVerilog} (MkMC (Just f) _      ) = index (totalTops s) f
-  typeOf {l = VHDL}          (MkMC Nothing (f :: _)) = VHT $ StdLogic'
+  typeOf {l = VHDL}          (MkMC Nothing (f :: _)) = index (totalSubs usl subUs) f
   typeOf {l = VHDL}          (MkMC (Just f) _      ) = index (totalTops s) f
 
   ||| Find type of port by fin 
@@ -140,6 +142,53 @@ namespace MultiConnection
   findTypeTO : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
               Fin (s.outsCount) -> (mcs : MultiConnectionsList l s usl subUs) -> Maybe $ DataType l
   findTypeTO f = findTypeTop $ topoToTotal f
+
+namespace CAP
+
+  public export
+  isResolved : DataType l -> Bool
+  isResolved (SVT _)        = True -- TODO: make uwire net unresolved
+  isResolved (VHD StdLogic) = True
+  isResolved (VHD _)        = False
+
+  isTopSink : {s : _} -> MFin (totalTops' s) -> Bool
+  isTopSink Nothing  = False
+  isTopSink (Just f) = finToNat f < s.inpsCount
+
+  subsOnlySinks : (subs : FinsList $ totalSubs' usl subUs) -> Bool
+  subsOnlySinks []        = True
+  subsOnlySinks (f :: fs) = False || subsOnlySinks fs
+
+  public export
+  noSource : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection l s usl subUs -> Bool
+  noSource (MkMC top subs) = isTopSink top && subsOnlySinks subs
+
+  public export
+  data CanAddSubPort : MultiConnection l s usl subUs -> Type where
+    NoSource : CanAddSubPort mc
+    IsMultidriven : So (isResolved $ typeOf mc) => CanAddSubPort mc
+    -- no source or multidriven
+
+namespace Connection
+
+  public export
+  data SamePredefinedEnumeration : PredefinedEnumeration -> PredefinedEnumeration -> Type where
+    SCC : SamePredefinedEnumeration CHARACTER CHARACTER
+    SBB : SamePredefinedEnumeration BIT BIT
+    SBO : SamePredefinedEnumeration BOOLEAN BOOLEAN
+    SSS : SamePredefinedEnumeration SEVERITY_LEVEL SEVERITY_LEVEL
+
+  public export
+  data CanConnectVHDL : DataType VHDL -> DataType VHDL -> Type where
+    CCInt : CanConnectVHDL (VHD $ Integer') (VHD $ Integer')
+    CCPhy : CanConnectVHDL (VHD $ Physical) (VHD $ Physical)
+    CCRea : CanConnectVHDL (VHD $ Real) (VHD $ Real)
+    CCEn  : SamePredefinedEnumeration e e' -> CanConnectVHDL (VHD $ Enum e) (VHD $ Enum e')
+
+  public export
+  data CanConnect : (l : Lang) -> DataType l -> DataType l -> Type where
+    CCSV : CanConnect SystemVerilog t t'
+    CCVH : CanConnectVHDL t t' -> CanConnect VHDL t t'
 
 namespace GenMulticonns
 
@@ -197,7 +246,10 @@ namespace GenMulticonns
                 FillSub l s usl subUs pre (S k) $ insertAt0 mid   $ newSub subF
     SExisting : (recur : FillSub l s usl subUs pre k mid) ->
                 (f : Fin $ length mid) -> {jf : JustFin (natToFin' k $ totalSubs' usl subUs) subF} ->
+                (cc : CanConnect l (typeOf $ index mid f)  (typeOfSubPort usl subUs subF)) ->
                 FillSub l s usl subUs pre (S k) $ replaceAt mid f $ addSub subF $ index mid f
+                -- `index mid f` is where we add port
+                -- subF is which port we add
 
   public export
   data GenMulticonns : (l : Lang) -> (s : DesignUnitSig l) ->

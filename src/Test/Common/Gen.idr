@@ -31,7 +31,11 @@ gen x VHDL          = do
   design <- genVHDL x
   pure $ GenVHDL design
 
+public export
+data PrintMode = HDL | GraphViz
+
 export
-printDesign : {opts : _} -> Fuel -> GenResult l -> Gen0 $ Doc opts
-printDesign x (GenSV   design) = prettyModules x StdModulesPV design
-printDesign x (GenVHDL design) = prettyDesign  x StdVHDLPrintable design
+printDesign : {opts : _} -> PrintMode -> Fuel -> GenResult l -> Gen0 $ Doc opts
+-- printDesign GraphViz x res              = ?knjm 
+-- printDesign HDL      x (GenSV   design) = prettyModules x StdModulesPV design
+-- printDesign HDL      x (GenVHDL design) = prettyDesign  x StdVHDLPrintable design

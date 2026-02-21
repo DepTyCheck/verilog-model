@@ -19,13 +19,20 @@ import Text.PrettyPrint.Bernardy
 %default total
 
 dtToVt : DataType VHDL -> VHDLType
-dtToVt (VHT x) = x
+dtToVt (VHD x) = x
 
 vtypeOf : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection VHDL s usl subUs -> VHDLType
 vtypeOf mc = dtToVt $ typeOf mc
 
 printType : (type : VHDLType) -> Gen0 String
-printType StdLogic' = pure $ "std_logic"
+printType (Enum CHARACTER)      = pure $ "character"
+printType (Enum BIT)            = pure $ "bit"
+printType (Enum BOOLEAN)        = pure $ "boolean"
+printType (Enum SEVERITY_LEVEL) = pure $ "severity_level"
+printType Integer'              = pure $ "integer"
+printType Physical              = pure $ "time"
+printType Real                  = pure $ "real"
+printType StdLogic              = pure $ "std_logic"
 
 printPort : (name : String) -> (dir : String) -> (type : VHDLType) -> Gen0 String
 printPort name dir t = do
@@ -121,14 +128,14 @@ parameters {opts : LayoutOpts} (entityName : String) (archName : String)
   printInpPort : Fin (s.inpsCount) -> Gen0 $ Doc opts
   printInpPort f = case findTypeTI {l=VHDL} f mcs of
     Nothing        => pure $ line "(error: printInpPort nothing f: \{show $ finToNat f})" -- impossible
-    (Just $ VHT t) => do
+    (Just $ VHD t) => do
       ps <- printPort (index f topInpNames) "in" t
       pure $ line ps
 
   printOutPort : Fin (s.outsCount) -> Gen0 $ Doc opts
   printOutPort f = case findTypeTO {l=VHDL} f mcs of
     Nothing        => pure $ line "(error: printOutPort nothing f: \{show $ finToNat f})" -- impossible
-    (Just $ VHT t) => do
+    (Just $ VHD t) => do
       ps <- printPort (index f topOutNames) "out" t
       pure $ line ps
 
