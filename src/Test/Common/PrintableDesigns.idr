@@ -25,22 +25,22 @@ emptyLine = line ""
 ||| For user modules, interfaces, primitives and prograusl both position-based and name-based connections are allowed.
 ||| This type stores the names of inputs and outputs, if they exist
 public export
-data InsOuts : (ins, outs : Nat) -> Type where
-  StdModule  : (ins, outs : Nat) -> InsOuts ins outs
-  UserModule : (inpNames : Vect ins String) -> (outNames : Vect outs String) -> InsOuts ins outs
+data PortNames : Nat -> Type where
+  StdModule  : (ports : Nat) -> PortNames ports
+  UserModule : (ports : Vect ins String) -> PortNames $ length ports
 
 public export
-record PrintableDesign inps outs where
+record PrintableDesign portsCnt where
   constructor MkPrintableDesign
   name    : String
-  insOuts : InsOuts inps outs
+  portNames : PortNames portsCnt
 
 namespace PrintableDesigns
 
   public export
   data PrintableDesigns : (l : Lang) -> (usl : DesignUnitSigsList l) -> Type where
     Nil  : PrintableDesigns l []
-    (::) : PrintableDesign m.inpsCount m.outsCount -> PrintableDesigns l usl -> PrintableDesigns l (m :: usl)
+    (::) : PrintableDesign m.ports.length -> PrintableDesigns l usl -> PrintableDesigns l (m :: usl)
 
   public export
   length : PrintableDesigns l usl -> Nat
@@ -53,7 +53,7 @@ namespace PrintableDesigns
 
   public export
   index : {usl : _} -> (ps : PrintableDesigns l usl) -> (fin: Fin usl.length) -> 
-          PrintableDesign ((index usl fin).inpsCount) ((index usl fin).outsCount)
+          PrintableDesign ((index usl fin).ports.length)
   index (m::_ ) FZ     = m
   index (_::usl) (FS i) = index usl i
 
@@ -125,19 +125,19 @@ public export
 toTotalSubsInpIdx : {usl : DesignUnitSigsList l} ->
                     {subUs : FinsList usl.length} ->
                     (idx : Fin subUs.length) ->
-                    Fin (index usl (index subUs idx)).inpsCount ->
+                    Fin (index usl (index subUs idx)).ports.length ->
                     Fin (totalSubs' usl subUs)
-toTotalSubsInpIdx {subUs = (f::fs)} FZ     portNum = fixDTLFin $ indexSum $ Left  $ fixDTLFin $ weakenN (index usl f).outsCount portNum
-toTotalSubsInpIdx {subUs = (f::fs)} (FS i) portNum = fixDTLFin $ indexSum $ Right $ toTotalSubsInpIdx i portNum
+toTotalSubsInpIdx {subUs = (f::fs)} FZ     portNum = ?hnj -- fixDTLFin $ indexSum $ Left  $ fixDTLFin $ ?das --t portNum
+toTotalSubsInpIdx {subUs = (f::fs)} (FS i) portNum = indexSum $ Right ?dsadsa -- $ toTotalSubsInpIdx i portNum
 
-public export
-toTotalSubsOutIdx : {usl : DesignUnitSigsList l} ->
-                    {subUs : FinsList usl.length} ->
-                    (idx : Fin subUs.length) ->
-                    Fin (index usl (index subUs idx)).outsCount ->
-                    Fin (totalSubs' usl subUs)
-toTotalSubsOutIdx {subUs = (f::fs)} FZ     portNum = fixDTLFin $ indexSum $ Left  $ fixDTLFin $ shift (index usl f).inpsCount portNum
-toTotalSubsOutIdx {subUs = (f::fs)} (FS i) portNum = fixDTLFin $ indexSum $ Right $ toTotalSubsOutIdx i portNum
+-- public export
+-- toTotalSubsOutIdx : {usl : DesignUnitSigsList l} ->
+--                     {subUs : FinsList usl.length} ->
+--                     (idx : Fin subUs.length) ->
+--                     Fin (index usl (index subUs idx)).outsCount ->
+--                     Fin (totalSubs' usl subUs)
+-- toTotalSubsOutIdx {subUs = (f::fs)} FZ     portNum = fixDTLFin $ indexSum $ Left  $ fixDTLFin $ shift (index usl f).inpsCount portNum
+-- toTotalSubsOutIdx {subUs = (f::fs)} (FS i) portNum = fixDTLFin $ indexSum $ Right $ toTotalSubsOutIdx i portNum
 
 export
 isElem : Eq a => (x : a) -> (xs : List a) -> Bool

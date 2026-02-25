@@ -31,3 +31,6 @@ data VHDLType : Type where
   StdLogic : VHDLType
   -- STD_LOGIC_VECTOR
   -- resolved SIGNED and UNSIGNED from IEEE.NUMERIC_STD
+
+public export
+data VHDLPortMode = In | Out | InOut | Buffer | Linkage;
