@@ -7,7 +7,6 @@ import Test.Verilog.Defaults
 import Test.Verilog.Pretty
 import Test.VHDL.Defaults
 import Test.VHDL.Pretty
-import Test.GraphViz.Pretty
 
 import Test.DepTyCheck.Gen
 import Text.PrettyPrint.Bernardy
