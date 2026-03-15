@@ -28,7 +28,7 @@ def main() -> None:
     )
 
     tests_result = TestsList(
-        files=Path(args.gen_path).glob("*.sv"),
+        files=Path(args.gen_path).glob(args.file_pattern),
         ignored_errors_list=ignored_errors,
         main_error_regex=ToolErrorRegex(raw_str_regex=args.tool_error_regex),
         sim_error_regex=ToolErrorRegex(raw_str_regex=args.sim_error_regex) if args.sim_error_regex else None,

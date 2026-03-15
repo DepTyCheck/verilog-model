@@ -47,7 +47,7 @@ class RunStatsCounter:
 class TestsList:
     def __init__(
         self,
-        files: Iterator[Path],
+        files: list[Path],
         ignored_errors_list: IgnoredErrorsList,
         main_error_regex: ToolErrorRegex,
         sim_error_regex: ToolErrorRegex | None,
