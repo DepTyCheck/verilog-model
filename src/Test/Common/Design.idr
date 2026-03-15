@@ -203,26 +203,7 @@ namespace DesignUnitSig
   --   FNE : BusNotEmpty l s usl subUs (x::xs) ssk
   --   SNE : BusNotEmpty l s usl subUs ssc (x::xs)
 
-  -- ||| 6.5.6.3 Port clauses
-  -- |||
-  -- ||| if a formal signal port is associated with
-  -- ||| an actual that is itself a port, then the following restrictions apply depending upon the mode (see 6.5.2), if
-  -- ||| any, of the formal signal port:
-  -- ||| a) For a formal signal port of mode in the associated actual shall be a port of mode in, out, inout, or
-  -- ||| buffer. This restriction applies both to an actual that is associated as a name in the actual part of an
-  -- ||| association element and to an actual that is associated as part of an expression in the actual part of an
-  -- ||| association element.
-  -- ||| b) For a formal signal port of mode out, the associated actual shall be a port of mode out, inout, or
-  -- ||| buffer.
-  -- ||| c) For a formal signal port of mode inout, the associated actual shall be a port of mode out, inout, or
-  -- ||| buffer.
-  -- ||| d) For a formal signal port of mode buffer, the associated actual shall be a port of mode out, inout, or
-  -- ||| buffer.
-  -- ||| e) For a formal signal port of mode linkage, the associated actual may be a port of any mode.
-  -- |||
-  -- ||| IEEE 1076-2019
-  -- |||
-  -- ||| So out, inout, buffer and linkage can drive
+
   -- public export
   -- data IsBusDrivenGood : (l : Lang) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> 
   --                    (ssc : FinsList $ totalSubs' usl subUs) -> (ssk : FinsList $ totalSubs' usl subUs) -> (t : DataType l) -> Type
@@ -585,9 +566,11 @@ namespace MultiConnection
 --   -- subsOnlySinks []        = True
 --   -- subsOnlySinks (f :: fs) = False || subsOnlySinks fs
 
---   -- public export
---   -- noSource : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection l s usl subUs -> Bool
---   -- noSource (MkMC top subs) = isTopSink top && subsOnlySinks subs
+  public export
+  noSource : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection l s usl subUs -> Bool
+  noSource (MkMC Nothing tsk []        ssk) = True
+  noSource (MkMC Nothing tsk (x :: fs) ssk) = False
+  noSource (MkMC (Just x) tsk ssc      ssk) = False
 
   -- public export
   -- data CanDrive : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
@@ -600,7 +583,7 @@ namespace MultiConnection
   public export
   canDrive : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
              MultiConnection l s usl subUs -> Fin (totalSubs' usl subUs) -> Bool
-  canDrive mc f with ((not $ isSubSource {usl} {subUs} f) || (isResolved $ typeOf mc)) -- f is sink or mc is multidriven
+  canDrive mc f with ((not $ isSubSource {usl} {subUs} f) || (isResolved $ typeOf mc) || noSource mc) -- f is sink or mc is multidriven or has no source
     canDrive (MkMC Nothing tsk []  ssk) f | False = True
     canDrive (MkMC tsc     tsk ssc ssk) f | False = False
     canDrive mc                         f | True  = True
@@ -694,22 +677,50 @@ namespace GenMulticonns
   --   True  => mc :: compatibleMCSs mcs p
 
 
+
+  ||| For actual Linkage only Linkage formal is allowed
   public export
   checkLinkage : VHDLPortMode -> VHDLPortMode -> Bool
-  checkLinkage In b = True
-  checkLinkage Out b = True
-  checkLinkage InOut b = True
-  checkLinkage Buffer b = True
-  checkLinkage Linkage In = False
-  checkLinkage Linkage Out = False
-  checkLinkage Linkage InOut = False
-  checkLinkage Linkage Buffer = False
   checkLinkage Linkage Linkage = True
+  checkLinkage In      Linkage = False
+  checkLinkage Out     Linkage = False
+  checkLinkage InOut   Linkage = False
+  checkLinkage Buffer  Linkage = False
+  checkLinkage _       _       = True
+  
+
+  ||| 6.5.6.3 Port clauses
+  |||
+  ||| if a formal signal port is associated with
+  ||| an actual that is itself a port, then the following restrictions apply depending upon the mode (see 6.5.2), if
+  ||| any, of the formal signal port:
+  ||| a) For a formal signal port of mode in the associated actual shall be a port of mode in, out, inout, or
+  ||| buffer. This restriction applies both to an actual that is associated as a name in the actual part of an
+  ||| association element and to an actual that is associated as part of an expression in the actual part of an
+  ||| association element.
+  ||| b) For a formal signal port of mode out, the associated actual shall be a port of mode out, inout, or
+  ||| buffer.
+  ||| c) For a formal signal port of mode inout, the associated actual shall be a port of mode out, inout, or
+  ||| buffer.
+  ||| d) For a formal signal port of mode buffer, the associated actual shall be a port of mode out, inout, or
+  ||| buffer.
+  ||| e) For a formal signal port of mode linkage, the associated actual may be a port of any mode.
+  |||
+  ||| IEEE 1076-2019
+  -- The logic corresponds to material conditional (. . )
+  public export
+  checkDirectionVHDL : VHDLPortMode -> VHDLPortMode -> Bool
+  checkDirectionVHDL formal actual with (writePortModeVHDL formal)
+    checkDirectionVHDL formal actual | False = True -- formal is in or linkage
+    checkDirectionVHDL formal actual | True  = case writePortModeVHDL actual of
+      False => False -- write to read is prohibited
+      True  => True  -- write to write is allowed
   
   public export
   checkPortModes : {l : _} -> PortMode l -> PortMode l -> Bool
-  checkPortModes {l = SystemVerilog} pm pm' = True
-  checkPortModes {l = VHDL} (VHP pm) (VHP pm') = checkLinkage pm pm'
+  checkPortModes {l = SystemVerilog} pm           pm'          = True
+  checkPortModes {l = VHDL}          (VHP formal) (VHP actual) = checkDirectionVHDL formal actual
+                                                              && checkLinkage formal actual
 
   -- data 
 
@@ -731,8 +742,8 @@ namespace GenMulticonns
   public export
   portModesCompatible : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
                         MultiConnection l s usl subUs -> Fin (totalSubs' usl subUs) -> Bool
-  portModesCompatible (MkMC (Just x) Nothing ssc ssk @{ne} @{OnlyTSC}) f = checkPortModes (topPortMode s x) (subPortMode usl subUs f)  
-  portModesCompatible (MkMC Nothing (Just x) ssc ssk @{ne} @{OnlyTSK}) f = checkPortModes (topPortMode s x) (subPortMode usl subUs f)  
+  portModesCompatible (MkMC (Just x) Nothing ssc ssk @{ne} @{OnlyTSC}) f = checkPortModes (subPortMode usl subUs f) (topPortMode s x) 
+  portModesCompatible (MkMC Nothing (Just x) ssc ssk @{ne} @{OnlyTSK}) f = checkPortModes (subPortMode usl subUs f) (topPortMode s x) 
   portModesCompatible (MkMC Nothing Nothing  ssc ssk @{ne} @{NoTop})   f = True   
 
   public export
@@ -794,13 +805,13 @@ namespace GenMulticonns
                 -- `index mid f` is where we add
                 -- 3 preds VS construct VS workaround (fin to lookup)
 
-  public export
-  data GenMulticonns : (l : Lang) -> (s : DesignUnitSig l) ->
-                       (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> 
-                       MultiConnectionsList l s usl subUs -> Type where
-    GenMC : -- (ft : FillTop l s usl subUs []        (totalTops' s)         filledTop) -> 
-            (fs : FillSub l s usl subUs (buildTopMCS l s usl subUs) (totalSubs' usl subUs) filledSub) -> -- (buildTopMCS l s usl subUs)
-            GenMulticonns l s usl subUs filledSub
+  -- public export
+  -- data GenMulticonns : (l : Lang) -> (s : DesignUnitSig l) ->
+  --                      (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> 
+  --                      MultiConnectionsList l s usl subUs -> Type where
+  --   GenMC : -- (ft : FillTop l s usl subUs []        (totalTops' s)         filledTop) -> 
+  --           (fs : FillSub l s usl subUs (buildTopMCS l s usl subUs) (totalSubs' usl subUs) filledSub) -> -- (buildTopMCS l s usl subUs)
+  --           GenMulticonns l s usl subUs filledSub
 
 namespace DesignUnit
 
@@ -814,7 +825,8 @@ namespace DesignUnit
                {usl : _} ->
                (subUs : FinsList usl.length) ->
                (mcs : MultiConnectionsList l s usl subUs) ->
-               {0 _ : GenMulticonns l s usl subUs mcs} ->
+               {0 fs : FillSub l s usl subUs (buildTopMCS l s usl subUs) (totalSubs' usl subUs) mcs} ->
+              --  {0 _ : GenMulticonns l s usl subUs mcs} ->
                DesignUnit {l} s usl subUs mcs
 
   public export

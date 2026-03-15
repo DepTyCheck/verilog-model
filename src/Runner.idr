@@ -213,10 +213,15 @@ content cfg generatedModule initialSeed seedAfter = case cfg.seedInFile of
         ++ generatedModule
         ++ "\n\{startComment cfg.lang} Seed after: \{showSeed seedAfter}\n"
 
+fileExtension : Cfg -> String
+fileExtension cfg with (cfg.lang)
+  fileExtension _ | SystemVerilog = ".sv"
+  fileExtension _ | VHDL          = ".vhdl"
+
 fileName : Cfg -> String -> Nat -> StdGen -> String
 fileName cfg path idx initialSeed = do
   let seedSuffix = if cfg.seedInName then "-seed_\{showSeed initialSeed}" else ""
-  "\{path}/\{show $ S idx}\{seedSuffix}.sv"
+  "\{path}/\{show $ S idx}\{seedSuffix}\{fileExtension cfg}"
 
 printModule : Cfg -> Nat -> String -> StdGen -> StdGen -> IO ()
 printModule cfg idx generatedModule initialSeed seedAfter = do
