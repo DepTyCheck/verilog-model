@@ -7,13 +7,10 @@ import public Test.Common.DataType
 
 import Test.Verilog.VerilogDesign
 import Test.Verilog.Defaults
-import Test.Verilog.Pretty
 import Test.VHDL.VHDLDesign
 import Test.VHDL.Defaults
-import Test.VHDL.Pretty
 
 import Test.DepTyCheck.Gen
-import Text.PrettyPrint.Bernardy
 
 %default total
 
@@ -30,12 +27,3 @@ gen x SystemVerilog = do
 gen x VHDL          = do
   design <- genVHDL x
   pure $ GenVHDL design
-
-public export
-data PrintMode = HDL | GraphViz
-
-export
-printDesign : {opts : _} -> PrintMode -> Fuel -> GenResult l -> Gen0 $ Doc opts
--- printDesign GraphViz x res              = ?knjm 
--- printDesign HDL      x (GenSV   design) = prettyModules x StdModulesPV design
--- printDesign HDL      x (GenVHDL design) = prettyDesign  x StdVHDLPrintable design

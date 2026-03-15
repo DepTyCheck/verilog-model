@@ -26,8 +26,8 @@ emptyLine = line ""
 ||| This type stores the names of inputs and outputs, if they exist
 public export
 data PortNames : Nat -> Type where
-  StdModule  : (ports : Nat) -> PortNames ports
-  UserModule : (ports : Vect ins String) -> PortNames $ length ports
+  StdModule  : (plen : Nat) -> PortNames plen
+  UserModule : (names : Vect plen String) -> PortNames plen
 
 public export
 record PrintableDesign portsCnt where
@@ -122,22 +122,16 @@ printIt : (n : Nat) -> (Fin n -> Gen0 $ Doc opts) -> Gen0 $ List $ Doc opts
 printIt n f = traverse f $ List.allFins n
 
 public export
-toTotalSubsInpIdx : {usl : DesignUnitSigsList l} ->
-                    {subUs : FinsList usl.length} ->
-                    (idx : Fin subUs.length) ->
-                    Fin (index usl (index subUs idx)).ports.length ->
-                    Fin (totalSubs' usl subUs)
-toTotalSubsInpIdx {subUs = (f::fs)} FZ     portNum = ?hnj -- fixDTLFin $ indexSum $ Left  $ fixDTLFin $ ?das --t portNum
-toTotalSubsInpIdx {subUs = (f::fs)} (FS i) portNum = indexSum $ Right ?dsadsa -- $ toTotalSubsInpIdx i portNum
+toTotalSubsIdx : {usl : DesignUnitSigsList l} ->
+                 {subUs : FinsList usl.length} ->
+                 (idx : Fin subUs.length) ->
+                 Fin (index usl (index subUs idx)).ports.length ->
+                 Fin (totalSubs' usl subUs)
+toTotalSubsIdx {usl} {subUs = (f::fs)} idx portNum with 0 (sym $ pslistLen (index usl f).ports (totalSubs usl fs))
+                                                      | 0 (length $ (index usl f).ports ++ totalSubs usl fs)
+  toTotalSubsIdx FZ       portNum | Refl | _ = indexSum $ Left portNum
+  toTotalSubsIdx (FS idx) portNum | Refl | _ = indexSum $ Right $ toTotalSubsIdx idx portNum
 
--- public export
--- toTotalSubsOutIdx : {usl : DesignUnitSigsList l} ->
---                     {subUs : FinsList usl.length} ->
---                     (idx : Fin subUs.length) ->
---                     Fin (index usl (index subUs idx)).outsCount ->
---                     Fin (totalSubs' usl subUs)
--- toTotalSubsOutIdx {subUs = (f::fs)} FZ     portNum = fixDTLFin $ indexSum $ Left  $ fixDTLFin $ shift (index usl f).inpsCount portNum
--- toTotalSubsOutIdx {subUs = (f::fs)} (FS i) portNum = fixDTLFin $ indexSum $ Right $ toTotalSubsOutIdx i portNum
 
 export
 isElem : Eq a => (x : a) -> (xs : List a) -> Bool
@@ -150,7 +144,7 @@ export
 isSubPortOf : Fin (totalSubs' usl subUs) -> (mcs : MultiConnectionsList l s usl subUs) -> Maybe $ Fin $ length mcs
 isSubPortOf f mcs = findIndex resolve $ toVect mcs where
   resolve : MultiConnection l s usl subUs -> Bool
-  resolve (MkMC top subs) = isElem f subs.asList
+  resolve (MkMC tsc tsk ssc ssk) = isElem f ssc.asList || isElem f ssk.asList
 
 export
 eqmf : MFin x -> Fin x -> Bool
@@ -160,20 +154,20 @@ eqmf (Just f) f' = f == f'
 ||| Returns top inputs and outputs names
 export
 resolveInpsOutsNames : {l : _} -> {usl : _} -> {s : _} -> {subUs : _} -> {mcs : _} ->
-                       DesignUnit {l} s usl subUs mcs -> Vect (length mcs) String -> (Vect (s.inpsCount) String, Vect (s.outsCount) String)
-resolveInpsOutsNames (MkDesign s subUs mcs) mcsNames = (inps, outs) where
+                       DesignUnit {l} s usl subUs mcs -> Vect (length mcs) String -> (Vect (length $ s.ports) String)
+resolveInpsOutsNames (MkDesign s subUs mcs) mcsNames = map findName $ allFins (length $ s.ports) where
   mfinToName : Maybe (Fin $ length mcs) -> String
-  mfinToName Nothing  = "(error: resolveInpsOutsNames nothing sinps: \{show s.inpsCount} souts: \{show s.outsCount})" -- impossible
+  mfinToName Nothing  = "(error: resolveInpsOutsNames nothing portsLen: \{show $ length $ s.ports})" -- impossible
   mfinToName (Just f) = index f mcsNames
 
   findName : Fin (totalTops' s) -> String
-  findName f = mfinToName $ findIndex (\(MkMC top _) => eqmf top f) $ toVect mcs
+  findName f = mfinToName $ findIndex (\(MkMC tsc tsk ssc ssk) => eqmf tsc f || eqmf tsk f) $ toVect mcs
 
-  namesByFins : (n : Nat) -> (Fin n -> Fin (totalTops' s)) -> Vect n String
-  namesByFins n f = map findName $ map f $ allFins n
+  -- namesByFins : Vect (length $ s.ports) String
+  -- namesByFins = 
 
-  inps : Vect (s.inpsCount) String
-  inps = namesByFins (s.inpsCount) topiToTotal
+  -- inps : Vect (s.inpsCount) String
+  -- inps = namesByFins (s.inpsCount) topiToTotal
 
-  outs : Vect (s.outsCount) String
-  outs = namesByFins (s.outsCount) topoToTotal
+  -- outs : Vect (s.outsCount) String
+  -- outs = namesByFins (s.outsCount) topoToTotal

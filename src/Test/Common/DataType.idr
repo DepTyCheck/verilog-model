@@ -66,6 +66,11 @@ namespace DataType
   fixDTLFin : {0 l : _} -> {0 a, b : DataTypesList l} -> Fin (a.length + b.length) -> Fin ((a ++ b).length)
   fixDTLFin = symdtlistLen Fin
 
+  public export
+  Eq (DataType l) where
+    (==) (SVT k) (SVT j) = True -- TODO
+    (==) (VHD x) (VHD y) = x == y
+
 namespace PortMode
 
   public export

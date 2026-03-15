@@ -15,6 +15,7 @@ namespace Port
 
   public export
   record Port l where
+    constructor MkPort
     type  : DataType l
     mode  : PortMode l
   
@@ -69,6 +70,10 @@ namespace DesignUnitSig
   record DesignUnitSig l where
     constructor MkDesignUnitSig
     ports : PortsList l
+  
+  public export
+  (.portsCnt) : DesignUnitSig l -> Nat
+  (.portsCnt) = .ports.length
 
   %name DesignUnitSig d
 
@@ -152,106 +157,106 @@ namespace DesignUnitSig
   isSubSource f = writePortMode $ subPortMode usl subUs f
 
 
-namespace CanConnectTypes
+-- namespace CanConnectTypes
 
-  public export
-  data SamePredefinedEnumeration : PredefinedEnumeration -> PredefinedEnumeration -> Type where
-    SCC : SamePredefinedEnumeration CHARACTER CHARACTER
-    SBB : SamePredefinedEnumeration BIT BIT
-    SBO : SamePredefinedEnumeration BOOLEAN BOOLEAN
-    SSS : SamePredefinedEnumeration SEVERITY_LEVEL SEVERITY_LEVEL
+--   public export
+--   data SamePredefinedEnumeration : PredefinedEnumeration -> PredefinedEnumeration -> Type where
+--     SCC : SamePredefinedEnumeration CHARACTER CHARACTER
+--     SBB : SamePredefinedEnumeration BIT BIT
+--     SBO : SamePredefinedEnumeration BOOLEAN BOOLEAN
+--     SSS : SamePredefinedEnumeration SEVERITY_LEVEL SEVERITY_LEVEL
 
-  public export
-  data CanConnectVHDL : DataType VHDL -> DataType VHDL -> Type where
-    CCInt : CanConnectVHDL (VHD $ Integer') (VHD $ Integer')
-    CCPhy : CanConnectVHDL (VHD $ Physical) (VHD $ Physical)
-    CCRea : CanConnectVHDL (VHD $ Real) (VHD $ Real)
-    CCEn  : SamePredefinedEnumeration e e' -> CanConnectVHDL (VHD $ Enum e) (VHD $ Enum e')
+--   public export
+--   data CanConnectVHDL : DataType VHDL -> DataType VHDL -> Type where
+--     CCInt : CanConnectVHDL (VHD $ Integer') (VHD $ Integer')
+--     CCPhy : CanConnectVHDL (VHD $ Physical) (VHD $ Physical)
+--     CCRea : CanConnectVHDL (VHD $ Real) (VHD $ Real)
+--     CCEn  : SamePredefinedEnumeration e e' -> CanConnectVHDL (VHD $ Enum e) (VHD $ Enum e')
 
-  public export
-  data CanConnectT : (l : Lang) -> DataType l -> DataType l -> Type where
-    CCSV : CanConnectT SystemVerilog t t'
-    CCVH : CanConnectVHDL t t' -> CanConnectT VHDL t t'
+--   public export
+--   data CanConnectT : (l : Lang) -> DataType l -> DataType l -> Type where
+--     CCSV : CanConnectT SystemVerilog t t'
+--     CCVH : CanConnectVHDL t t' -> CanConnectT VHDL t t'
 
 -- namespace Bus
 
---   public export
---   data PFin : (l : Lang) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> (t : DataType l) -> 
---               (f : Fin $ totalSubs' usl subUs) -> Type where
---     MkPFin : (f : Fin $ totalSubs' usl subUs) -> CanConnectT l (subPortType usl subUs f) t -> PFin l usl subUs t f
+  -- public export
+  -- data PFin : (l : Lang) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> (t : DataType l) -> 
+  --             (f : Fin $ totalSubs' usl subUs) -> Type where
+  --   MkPFin : (f : Fin $ totalSubs' usl subUs) -> CanConnectT l (subPortType usl subUs f) t -> PFin l usl subUs t f
   
---   ||| Port fins indexed by type
---   public export
---   data PFinsList : (l : Lang) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> (t : DataType l) -> 
---                    (f : FinsList $ totalSubs' usl subUs) -> Type where
---     One  : PFin l usl subUs t f -> PFinsList l usl subUs t [ f ]
---     More : PFin l usl subUs t f -> PFinsList l usl subUs t fs -> PFinsList l usl subUs t (f::fs)
+  -- ||| Port fins indexed by type
+  -- public export
+  -- data PFinsList : (l : Lang) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> (t : DataType l) -> 
+  --                  (f : FinsList $ totalSubs' usl subUs) -> Type where
+  --   One  : PFin l usl subUs t f -> PFinsList l usl subUs t [ f ]
+  --   More : PFin l usl subUs t f -> PFinsList l usl subUs t fs -> PFinsList l usl subUs t (f::fs)
 
---   public export
---   (++) : FinsList n -> FinsList n -> FinsList n
---   Nil       ++ ys = ys
---   (x :: xs) ++ ys = x :: (xs ++ ys)
+  -- public export
+  -- (++) : FinsList n -> FinsList n -> FinsList n
+  -- Nil       ++ ys = ys
+  -- (x :: xs) ++ ys = x :: (xs ++ ys)
 
---   -- public export
---   -- data BusNotEmpty : (l : Lang) -> (s : DesignUnitSig l) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> 
---   --                    (ssc : FinsList $ totalSubs' usl subUs) -> (ssk : FinsList $ totalSubs' usl subUs) -> Type where
---   --   FNE : BusNotEmpty l s usl subUs (x::xs) ssk
---   --   SNE : BusNotEmpty l s usl subUs ssc (x::xs)
+  -- public export
+  -- data BusNotEmpty : (l : Lang) -> (s : DesignUnitSig l) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> 
+  --                    (ssc : FinsList $ totalSubs' usl subUs) -> (ssk : FinsList $ totalSubs' usl subUs) -> Type where
+  --   FNE : BusNotEmpty l s usl subUs (x::xs) ssk
+  --   SNE : BusNotEmpty l s usl subUs ssc (x::xs)
 
---   ||| 6.5.6.3 Port clauses
---   |||
---   ||| if a formal signal port is associated with
---   ||| an actual that is itself a port, then the following restrictions apply depending upon the mode (see 6.5.2), if
---   ||| any, of the formal signal port:
---   ||| a) For a formal signal port of mode in the associated actual shall be a port of mode in, out, inout, or
---   ||| buffer. This restriction applies both to an actual that is associated as a name in the actual part of an
---   ||| association element and to an actual that is associated as part of an expression in the actual part of an
---   ||| association element.
---   ||| b) For a formal signal port of mode out, the associated actual shall be a port of mode out, inout, or
---   ||| buffer.
---   ||| c) For a formal signal port of mode inout, the associated actual shall be a port of mode out, inout, or
---   ||| buffer.
---   ||| d) For a formal signal port of mode buffer, the associated actual shall be a port of mode out, inout, or
---   ||| buffer.
---   ||| e) For a formal signal port of mode linkage, the associated actual may be a port of any mode.
---   |||
---   ||| IEEE 1076-2019
---   |||
---   ||| So out, inout, buffer and linkage can drive
---   public export
---   data IsBusDrivenGood : (l : Lang) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> 
---                      (ssc : FinsList $ totalSubs' usl subUs) -> (ssk : FinsList $ totalSubs' usl subUs) -> (t : DataType l) -> Type
+  -- ||| 6.5.6.3 Port clauses
+  -- |||
+  -- ||| if a formal signal port is associated with
+  -- ||| an actual that is itself a port, then the following restrictions apply depending upon the mode (see 6.5.2), if
+  -- ||| any, of the formal signal port:
+  -- ||| a) For a formal signal port of mode in the associated actual shall be a port of mode in, out, inout, or
+  -- ||| buffer. This restriction applies both to an actual that is associated as a name in the actual part of an
+  -- ||| association element and to an actual that is associated as part of an expression in the actual part of an
+  -- ||| association element.
+  -- ||| b) For a formal signal port of mode out, the associated actual shall be a port of mode out, inout, or
+  -- ||| buffer.
+  -- ||| c) For a formal signal port of mode inout, the associated actual shall be a port of mode out, inout, or
+  -- ||| buffer.
+  -- ||| d) For a formal signal port of mode buffer, the associated actual shall be a port of mode out, inout, or
+  -- ||| buffer.
+  -- ||| e) For a formal signal port of mode linkage, the associated actual may be a port of any mode.
+  -- |||
+  -- ||| IEEE 1076-2019
+  -- |||
+  -- ||| So out, inout, buffer and linkage can drive
+  -- public export
+  -- data IsBusDrivenGood : (l : Lang) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> 
+  --                    (ssc : FinsList $ totalSubs' usl subUs) -> (ssk : FinsList $ totalSubs' usl subUs) -> (t : DataType l) -> Type
 
---   public export
---   data Bus : (l : Lang) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) ->
---              (usedPorts : FinsList $ totalSubs' usl subUs) -> Type where
---     MkBus : {l : _} -> {usl : _} -> {subUs : _} ->
---             (t : DataType l) ->
---             {scfs : _} -> {skfs : _} ->
---             (ssc : PFinsList l usl subUs t scfs) -> (ssk : PFinsList l usl subUs t skfs) -> -- lists non empty and compatible with t
---             -- Check if bus is driven correct
---             -- (0 dr : IsBusDrivenGood l usl subUs scfs skfs t) =>
---             Bus l usl subUs (scfs ++ skfs)
+  -- public export
+  -- data Bus : (l : Lang) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) ->
+  --            (usedPorts : FinsList $ totalSubs' usl subUs) -> Type where
+  --   MkBus : {l : _} -> {usl : _} -> {subUs : _} ->
+  --           (t : DataType l) ->
+  --           {scfs : _} -> {skfs : _} ->
+  --           (ssc : PFinsList l usl subUs t scfs) -> (ssk : PFinsList l usl subUs t skfs) -> -- lists non empty and compatible with t
+  --           -- Check if bus is driven correct
+  --           -- (0 dr : IsBusDrivenGood l usl subUs scfs skfs t) =>
+  --           Bus l usl subUs (scfs ++ skfs)
   
---   public export
---   data BusesList : (l : Lang) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) ->
---                    (usedPorts : FinsList $ totalSubs' usl subUs) -> Type where
---     Nil  : BusesList l usl subUs []
---     (::) : Bus l usl subUs up -> BusesList l usl subUs up' -> BusesList l usl subUs (up ++ up')
+  -- public export
+  -- data BusesList : (l : Lang) -> (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) ->
+  --                  (usedPorts : FinsList $ totalSubs' usl subUs) -> Type where
+  --   Nil  : BusesList l usl subUs []
+  --   (::) : Bus l usl subUs up -> BusesList l usl subUs up' -> BusesList l usl subUs (up ++ up')
   
---   public export
---   length : BusesList l usl subUs up -> Nat
---   length []      = Z
---   length (_::usl) = S $ length usl
+  -- public export
+  -- length : BusesList l usl subUs up -> Nat
+  -- length []      = Z
+  -- length (_::usl) = S $ length usl
 
---   public export %inline
---   (.length) : BusesList l usl subUs up -> Nat
---   (.length) = length
+  -- public export %inline
+  -- (.length) : BusesList l usl subUs up -> Nat
+  -- (.length) = length
 
---   -- public export
---   -- index : (bsl : BusesList l usl subUs up) -> Fin bsl.length -> (up' : FinsList (totalSubs' usl subUs) ** Bus l usl subUs up')
---   -- index (bus@(MkBus _ _ _ {scfs} {skfs})::_)   FZ    = ((scfs ++ skfs) ** bus)
---   -- index (_                              ::bsl) (FS i) = index bsl i
+  -- public export
+  -- index : (bsl : BusesList l usl subUs up) -> Fin bsl.length -> (up' : FinsList (totalSubs' usl subUs) ** Bus l usl subUs up')
+  -- index (bus@(MkBus _ _ _ {scfs} {skfs})::_)   FZ    = ((scfs ++ skfs) ** bus)
+  -- index (_                              ::bsl) (FS i) = index bsl i
 
 -- namespace PortConnsTTS
 
@@ -278,10 +283,10 @@ namespace CanConnectTypes
 --   (.length) : TTSConnsList l s usl subUs pre aft -> Nat
 --   (.length) = length
 
---   -- public export
---   -- index : (ps : TTSConnsList l s usl subUs pre aft) -> Fin ps.length -> TopToSubConnection l s usl subUs mid aft
---   -- index (p::_ ) FZ     = p
---   -- index (_::ps) (FS i) = index ps i
+  -- public export
+  -- index : (ps : TTSConnsList l s usl subUs pre aft) -> Fin ps.length -> TopToSubConnection l s usl subUs mid aft
+  -- index (p::_ ) FZ     = p
+  -- index (_::ps) (FS i) = index ps i
 
 -- namespace PortConnsTTB
 
@@ -501,12 +506,19 @@ namespace MultiConnection
     JustSSK : MCNotEmpty tsc tsk ssc (x :: xs)
 
   public export
+  data OnlyOneTop : MFin a -> MFin a -> Type where
+    OnlyTSC : OnlyOneTop (Just x) Nothing
+    OnlyTSK : OnlyOneTop Nothing (Just x)
+    NoTop   : OnlyOneTop Nothing Nothing
+
+  public export
   data MultiConnection : (l : Lang) -> (s : DesignUnitSig l) ->
                          (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> Type where
     MkMC : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} -> 
            (tsc : MFin (totalTops' s)) -> (tsk : MFin (totalTops' s)) ->
            (ssc : FinsList $ totalSubs' usl subUs) -> (ssk : FinsList $ totalSubs' usl subUs) ->
-           (ne : MCNotEmpty tsc tsk ssc ssk) => 
+           (ne  : MCNotEmpty tsc tsk ssc ssk) => 
+           (oot : OnlyOneTop tsc tsk) => 
            MultiConnection l s usl subUs
            -- For VHDL sub source (out, inout, buffer) can be added only if no top inputs
   
@@ -532,6 +544,11 @@ namespace MultiConnection
   toVect (m :: mcs) = m :: toVect mcs
 
   public export
+  fromList : List (MultiConnection l s usl subUs) -> MultiConnectionsList l s usl subUs
+  fromList []        = []
+  fromList (x :: xs) = x :: fromList xs
+
+  public export
   typeOf : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
           MultiConnection l s usl subUs -> DataType l
   typeOf (MkMC (Just x) tsk ssc ssk  {ne = JustTSC}) = (index (totalTops s) x).type
@@ -540,34 +557,19 @@ namespace MultiConnection
   typeOf (MkMC tsc tsk ssc (x :: xs) {ne = JustSSK}) = (index (totalSubs usl subUs) x).type
 
   ||| Find type of port by fin 
-  -- public export
-  -- findTypeTop : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
-  --               Fin (totalTops' s) -> (mcs : MultiConnectionsList l s usl subUs) -> Maybe $ DataType l
-  -- findTypeTop f []        = Nothing -- impossible
-  -- findTypeTop f (   (MkMC Nothing  subs) :: xs) = findTypeTop f xs
-  -- findTypeTop f (mc@(MkMC (Just x) subs) :: xs) = case f == x of
-  --   False => findTypeTop f xs
-  --   True  => Just $ typeOf mc
+  public export
+  findTypeTop : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+                Fin (totalTops' s) -> (mcs : MultiConnectionsList l s usl subUs) -> Maybe $ DataType l
+  findTypeTop f []                                                           = Nothing
+  findTypeTop f (mc@(MkMC (Just x) Nothing ssc ssk @{ne} @{OnlyTSC}) :: mcs) = case f == x of
+    False => findTypeTop f mcs
+    True  => Just $ typeOf mc
+  findTypeTop f (mc@(MkMC Nothing (Just x) ssc ssk @{ne} @{OnlyTSK}) :: mcs) = case f == x of
+    False => findTypeTop f mcs
+    True  => Just $ typeOf mc
+  findTypeTop f (   (MkMC Nothing Nothing  ssc ssk @{ne} @{NoTop})   :: mcs) = findTypeTop f mcs
 
-  -- public export
-  -- topiToTotal : {s : _} -> Fin (s.inpsCount) -> Fin (totalTops' s)
-  -- topiToTotal {s} f = fixDTLFin $ weakenN s.outsCount f
-
-  -- public export
-  -- topoToTotal : {s : _} -> Fin (s.outsCount) -> Fin (totalTops' s)
-  -- topoToTotal {s} f = fixDTLFin $ shift s.inpsCount f
-
-  -- public export
-  -- findTypeTI : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
-  --             Fin (s.inpsCount) -> (mcs : MultiConnectionsList l s usl subUs) -> Maybe $ DataType l
-  -- findTypeTI f = findTypeTop $ topiToTotal f
-
-  -- public export
-  -- findTypeTO : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
-  --             Fin (s.outsCount) -> (mcs : MultiConnectionsList l s usl subUs) -> Maybe $ DataType l
-  -- findTypeTO f = findTypeTop $ topoToTotal f
-
-namespace CAP
+-- namespace CAP
 
   public export
   isResolved : DataType l -> Bool
@@ -575,48 +577,35 @@ namespace CAP
   isResolved (VHD StdLogic) = True
   isResolved (VHD _)        = False
 
-  -- isTopSink : {s : _} -> MFin (totalTops' s) -> Bool
-  -- isTopSink Nothing  = False
-  -- isTopSink (Just f) = finToNat f < s.inpsCount
+--   -- isTopSink : {s : _} -> MFin (totalTops' s) -> Bool
+--   -- isTopSink Nothing  = False
+--   -- isTopSink (Just f) = finToNat f < s.inpsCount
 
-  -- subsOnlySinks : (subs : FinsList $ totalSubs' usl subUs) -> Bool
-  -- subsOnlySinks []        = True
-  -- subsOnlySinks (f :: fs) = False || subsOnlySinks fs
+--   -- subsOnlySinks : (subs : FinsList $ totalSubs' usl subUs) -> Bool
+--   -- subsOnlySinks []        = True
+--   -- subsOnlySinks (f :: fs) = False || subsOnlySinks fs
+
+--   -- public export
+--   -- noSource : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection l s usl subUs -> Bool
+--   -- noSource (MkMC top subs) = isTopSink top && subsOnlySinks subs
 
   -- public export
-  -- noSource : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection l s usl subUs -> Bool
-  -- noSource (MkMC top subs) = isTopSink top && subsOnlySinks subs
+  -- data CanDrive : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+  --                 MultiConnection l s usl subUs -> Fin (totalSubs' usl subUs) -> Type where
+  --   JustSink : So (not $ isSubSource {usl} {subUs} f) => CanDrive {usl} {subUs} mc f
+  --   -- NoSourceHasTop : CanDrive (MkMC Nothing (Just x) [] ssk) f
+  --   NoSource : (ne : MCNotEmpty Nothing tsk [] ssk) => CanDrive {l} {s} {usl} {subUs} (MkMC {l} {s} {usl} {subUs} Nothing tsk  [] ssk @{ne}) f
+  --   IsMultidriven  : So (isResolved $ typeOf mc) => CanDrive mc f
 
   public export
-  data CanDrive : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
-                       MultiConnection l s usl subUs -> Fin (totalSubs' usl subUs) -> Type where
-    JustSink : So (not $ isSubSource {usl} {subUs} f) => CanDrive {usl} {subUs} mc f
-    NoSourceHasTop : CanDrive (MkMC Nothing (Just x) [] ssk) f
-    NoSourceHasSub : CanDrive (MkMC Nothing tsk  [] (x::xs)) f
-    IsMultidriven  : So (isResolved $ typeOf mc) => CanDrive mc f
-    -- no source or multidriven
+  canDrive : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+             MultiConnection l s usl subUs -> Fin (totalSubs' usl subUs) -> Bool
+  canDrive mc f with ((not $ isSubSource {usl} {subUs} f) || (isResolved $ typeOf mc)) -- f is sink or mc is multidriven
+    canDrive (MkMC Nothing tsk []  ssk) f | False = True
+    canDrive (MkMC tsc     tsk ssc ssk) f | False = False
+    canDrive mc                         f | True  = True
+  -- canDrive (MkMC tsc tsk ssc ssk {ne}) f = ?jklm_0    
 
-namespace Connection
-
-  -- public export
-  -- data SamePredefinedEnumeration : PredefinedEnumeration -> PredefinedEnumeration -> Type where
-  --   SCC : SamePredefinedEnumeration CHARACTER CHARACTER
-  --   SBB : SamePredefinedEnumeration BIT BIT
-  --   SBO : SamePredefinedEnumeration BOOLEAN BOOLEAN
-  --   SSS : SamePredefinedEnumeration SEVERITY_LEVEL SEVERITY_LEVEL
-
-  -- public export
-  -- data CanConnectVHDL : DataType VHDL -> DataType VHDL -> Type where
-  --   CCInt : CanConnectVHDL (VHD $ Integer') (VHD $ Integer')
-  --   CCPhy : CanConnectVHDL (VHD $ Physical) (VHD $ Physical)
-  --   CCRea : CanConnectVHDL (VHD $ Real) (VHD $ Real)
-  --   CCEn  : SamePredefinedEnumeration e e' -> CanConnectVHDL (VHD $ Enum e) (VHD $ Enum e')
-
-  -- public export
-  -- data CanConnect : (l : Lang) -> DataType l -> DataType l -> Type 
-  -- where
-  --   CCSV : CanConnect SystemVerilog t t'
-  --   CCVH : CanConnectVHDL t t' -> CanConnect VHDL t t'
 
 namespace GenMulticonns
 
@@ -636,6 +625,13 @@ namespace GenMulticonns
   newTop f with (isTopSource f)
     newTop f | False = MkMC Nothing (Just f) [] []
     newTop f | True  = MkMC (Just f) Nothing [] []
+  
+  public export
+  newTop' : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+           Nat -> MultiConnection l s usl subUs
+  newTop' k = case natToFin' k $ totalTops' s of
+    Nothing     => assert_total $ idris_crash "newTop': k out of bounds for totalSubs'"
+    (Just topF) => newTop topF
 
   public export
   newSub : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
@@ -643,6 +639,13 @@ namespace GenMulticonns
   newSub f with (isSubSource f)
     newSub f | False = MkMC Nothing Nothing [] [ f ]
     newSub f | True  = MkMC Nothing Nothing [ f ] []
+  
+  public export
+  newSub' : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+           Nat -> MultiConnection l s usl subUs
+  newSub' k = case natToFin' k $ totalSubs' usl subUs of
+    Nothing     => assert_total $ idris_crash "newSub': k out of bounds for totalSubs'"
+    (Just subF) => newSub subF
 
   public export
   addSub : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
@@ -650,7 +653,13 @@ namespace GenMulticonns
   addSub f mc with (isSubSource f)
     addSub f (MkMC tsc tsk ssc ssk) | False = MkMC tsc tsk ssc (f::ssk)
     addSub f (MkMC tsc tsk ssc ssk) | True  = MkMC tsc tsk (f::ssc) ssk
-  -- addSub f (MkMC top subs) = MkMC top (f :: subs)
+  
+  public export
+  addSub' : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+           Nat -> MultiConnection l s usl subUs -> MultiConnection l s usl subUs
+  addSub' k mc = case natToFin' k $ totalSubs' usl subUs of
+    Nothing     => assert_total $ idris_crash "addSub': k out of bounds for totalSubs'"
+    (Just subF) => addSub subF mc
 
   public export
   insertAt0 : (pre : MultiConnectionsList l s usl subUs) -> MultiConnection l s usl subUs -> MultiConnectionsList l s usl subUs
@@ -709,24 +718,63 @@ namespace GenMulticonns
   --   SVCPM : CheckPortModes SystemVerilog pm pm'
   --   VHCPM : CheckPortModes VHDL pm pm'
 
-  public export
-  data PortModesCompatible : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
-                             MultiConnection l s usl subUs -> Fin (totalSubs' usl subUs) -> Type where
-    TSKCompatible : So (checkPortModes (topPortMode s tf) (subPortMode usl subUs f) ) => 
-                    PortModesCompatible {s} {usl} {subUs} (MkMC Nothing (Just tf) ssc ssk) f
-    TSCCompatible : So (checkPortModes (topPortMode s tf) (subPortMode usl subUs f) ) => 
-                    PortModesCompatible {s} {usl} {subUs} (MkMC (Just tf) Nothing ssc ssk) f
-    NoTopSC       : PortModesCompatible (MkMC Nothing Nothing (x::xs) ssk) f
-    NoTopSK       : PortModesCompatible (MkMC Nothing Nothing ssc (x::xs)) f
+  -- public export
+  -- data PortModesCompatible : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+  --                            MultiConnection l s usl subUs -> Fin (totalSubs' usl subUs) -> Type where
+  --   TSKCompatible : (ne : MCNotEmpty Nothing (Just tf) ssc ssk) => So (checkPortModes (topPortMode s tf) (subPortMode usl subUs f) ) => 
+  --                   PortModesCompatible {l} {s} {usl} {subUs} (MkMC {l} {s} {usl} {subUs} Nothing (Just tf) ssc ssk @{ne}) f
+  --   TSCCompatible : (ne : MCNotEmpty (Just tf) Nothing ssc ssk) => So (checkPortModes (topPortMode s tf) (subPortMode usl subUs f) ) => 
+  --                   PortModesCompatible {l} {s} {usl} {subUs} (MkMC {l} {s} {usl} {subUs} (Just tf) Nothing ssc ssk @{ne}) f
+  --   NoTopSC       : (ne : MCNotEmpty Nothing Nothing ssc ssk) => 
+  --                   PortModesCompatible {l} {s} {usl} {subUs} (MkMC {l} {s} {usl} {subUs} Nothing Nothing ssc ssk @{ne}) f
 
   public export
-  data FillTop : (l : Lang) -> (s : DesignUnitSig l) ->
-                 (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) ->
-                 MultiConnectionsList l s usl subUs -> (topi : Nat) -> MultiConnectionsList l s usl subUs -> Type where
-    TEnd      : FillTop l s usl subUs pre 0 pre
-    TNew      : (recur : FillTop l s usl subUs pre k mid) ->
-                {jf : JustFin (natToFin' k $ totalTops' s) topF} ->
-                FillTop l s usl subUs pre (S k) $ insertAt0 mid   $ newTop topF
+  portModesCompatible : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+                        MultiConnection l s usl subUs -> Fin (totalSubs' usl subUs) -> Bool
+  portModesCompatible (MkMC (Just x) Nothing ssc ssk @{ne} @{OnlyTSC}) f = checkPortModes (topPortMode s x) (subPortMode usl subUs f)  
+  portModesCompatible (MkMC Nothing (Just x) ssc ssk @{ne} @{OnlyTSK}) f = checkPortModes (topPortMode s x) (subPortMode usl subUs f)  
+  portModesCompatible (MkMC Nothing Nothing  ssc ssk @{ne} @{NoTop})   f = True   
+
+  public export
+  buildTopMCS : (l : Lang) -> (s : DesignUnitSig l) ->
+                (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> MultiConnectionsList l s usl subUs
+  buildTopMCS _ s _ _ = fromList $ map newTop $ List.allFins $ totalTops' s
+
+  -- public export
+  -- data FillTop : (l : Lang) -> (s : DesignUnitSig l) ->
+  --                (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) ->
+  --                MultiConnectionsList l s usl subUs -> (topi : Nat) -> MultiConnectionsList l s usl subUs -> Type where
+  --   TEnd : FillTop l s usl subUs pre 0 pre
+  --   TNew : (recur : FillTop l s usl subUs pre k mid) ->
+  --         --  {jf : JustFin (natToFin' k $ totalTops' s) topF} ->
+  --          FillTop l s usl subUs pre (S k) $ newTop' k :: mid
+
+  public export
+  isGoodMC : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+             MultiConnection l s usl subUs -> Fin (totalSubs' usl subUs) -> Bool
+  isGoodMC mc subF = (typeOf mc) == (subPortType usl subUs subF)
+                  && canDrive mc subF
+                  && portModesCompatible mc subF
+
+  public export
+  filterGoodMCs : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+                  (mid : MultiConnectionsList l s usl subUs) -> List (Fin (length mid)) -> Fin (totalSubs' usl subUs) -> FinsList (length mid)
+  filterGoodMCs mid []      subF = []
+  filterGoodMCs mid (f::fs) subF = case isGoodMC (index mid f) subF of
+    False => filterGoodMCs mid fs subF
+    True  => f :: filterGoodMCs mid fs subF
+
+  public export
+  filterGoodMCs' : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+                   (mid : MultiConnectionsList l s usl subUs) -> List (Fin (length mid)) -> Nat -> FinsList (length mid)
+  filterGoodMCs' mid fins k = case natToFin' k $ totalSubs' usl subUs of
+    Nothing     => [] -- impossible
+    (Just subF) => filterGoodMCs mid fins subF
+  
+  public export
+  goodFins : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+             (mid : MultiConnectionsList l s usl subUs) -> Nat -> FinsList (length mid)
+  goodFins mid k = filterGoodMCs' mid (List.allFins $ length mid) k
   
   public export
   data FillSub : (l : Lang) -> (s : DesignUnitSig l) ->
@@ -734,15 +782,15 @@ namespace GenMulticonns
                  MultiConnectionsList l s usl subUs -> (subi : Nat) -> MultiConnectionsList l s usl subUs -> Type where
     SEnd      : FillSub l s usl subUs pre 0 pre
     SNew      : (recur : FillSub l s usl subUs pre k mid) ->
-                {jf : JustFin (natToFin' k $ totalSubs' usl subUs) subF} -> 
-                FillSub l s usl subUs pre (S k) $ insertAt0 mid   $ newSub subF
+                -- {jf : JustFin (natToFin' k $ totalSubs' usl subUs) subF} -> 
+                FillSub l s usl subUs pre (S k) $ newSub' k :: mid
     SExisting : (recur : FillSub l s usl subUs pre k mid) ->
-                (f : Fin $ length mid) -> {jf : JustFin (natToFin' k $ totalSubs' usl subUs) subF} ->
-                {0 cc : CanConnectT l (typeOf $ index mid f)  (subPortType usl subUs subF)} ->
-                {0 cap : CanDrive (index mid f) subF} ->
-                {0 pms : PortModesCompatible (index mid f) subF} ->
-                FillSub l s usl subUs pre (S k) $ replaceAt mid f $ addSub subF $ index mid f
-                -- subF is which port we add
+                (f : Fin (goodFins mid k).length) -> 
+                FillSub l s usl subUs pre (S k) 
+                  $ replaceAt mid (index (goodFins mid k) f) 
+                  $ addSub' k 
+                  $ index mid (index (goodFins mid k) f)
+                -- k (subF) is which port we add
                 -- `index mid f` is where we add
                 -- 3 preds VS construct VS workaround (fin to lookup)
 
@@ -750,8 +798,8 @@ namespace GenMulticonns
   data GenMulticonns : (l : Lang) -> (s : DesignUnitSig l) ->
                        (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> 
                        MultiConnectionsList l s usl subUs -> Type where
-    GenMC : (ft : FillTop l s usl subUs []        (totalTops' s)         filledTop) -> 
-            (fs : FillSub l s usl subUs filledTop (totalSubs' usl subUs) filledSub) ->
+    GenMC : -- (ft : FillTop l s usl subUs []        (totalTops' s)         filledTop) -> 
+            (fs : FillSub l s usl subUs (buildTopMCS l s usl subUs) (totalSubs' usl subUs) filledSub) -> -- (buildTopMCS l s usl subUs)
             GenMulticonns l s usl subUs filledSub
 
 namespace DesignUnit
@@ -765,11 +813,6 @@ namespace DesignUnit
     MkDesign : (s : DesignUnitSig l) ->
                {usl : _} ->
                (subUs : FinsList usl.length) ->
-              --  {aftBuses : FinsList $ totalSubs' usl subUs} ->
-              --  (buses : BusesList l usl subUs aftBuses) ->
-              --  {aftSubs : FinsList $ totalSubs' usl subUs} ->
-              --  (ttsConns : TTSConnsList l s usl subUs aftBuses aftSubs) ->
-              --  (ttsConns : TTBList l s usl subUs aftBuses buses) ->
                (mcs : MultiConnectionsList l s usl subUs) ->
                {0 _ : GenMulticonns l s usl subUs mcs} ->
                DesignUnit {l} s usl subUs mcs
