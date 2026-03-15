@@ -124,7 +124,7 @@ jobs:
       #   run: pack test ${{ env.PACKAGE_NAME }}
 
   generate-modules:
-    name: Generate ${{ matrix.language }} modules
+    name: Generate ${{ matrix.language }} files
     needs: build-and-test
     runs-on: ubuntu-latest
     container: ghcr.io/stefan-hoeck/idris2-pack:latest

@@ -30,7 +30,7 @@ def find_top_entity_vhdl(file_content: str) -> str:
     Returns:
         str: The name of the top entity
     """
-    matches = re.findall(r"(?<=entity )[A-z]+", file_content, re.MULTILINE)
+    matches = re.findall(r"(?<=entity )[A-z]+(?= is)", file_content, re.MULTILINE)
     if matches:
         return matches[-1]
 
