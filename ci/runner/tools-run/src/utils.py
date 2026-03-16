@@ -1,7 +1,5 @@
 from typing import List
 
-from src.logger import get_logger
-
 
 def print_pretty(content: List[str]) -> None:
     sep = "\n" + "=" * 80

@@ -16,8 +16,6 @@ import Test.VHDL.VHDLType
 import Test.DepTyCheck.Gen
 import Text.PrettyPrint.Bernardy
 
-import Debug.Trace
-
 %default total
 
 dtToVt : DataType VHDL -> VHDLType
@@ -41,57 +39,6 @@ printPort name dir t = do
   ts <- printType t
   pure $ "\{name} : \{dir} \{ts}"
 
-debugNE : MCNotEmpty a b c d -> String
-debugNE JustTSC = "JustTSC"
-debugNE JustTSK = "JustTSK"
-debugNE JustSSC = "JustSSC"
-debugNE JustSSK = "JustSSK"
-
-export
-debugMFin : MFin n -> String
-debugMFin Nothing  = "Nothing"
-debugMFin (Just x) = show $ finToNat x
-
-export
-debugFS : (subUs : FinsList n) -> String
-debugFS []        = "EndFS"
-debugFS (f :: fs) = "\{show $ finToNat f}, " ++ debugFS fs
-
-export
-debugMCS : (mcs : MultiConnectionsList l s usl subUs) -> String
-debugMCS [] = "End"
-debugMCS ((MkMC tsc tsk ssc ssk @{ne}) :: y) = "mcs@{tsc: \{debugMFin tsc}, tsk: \{debugMFin tsk}, ssc: \{debugFS ssc}, ssk: \{debugFS ssk}, ne: \{debugNE ne}}, " ++ debugMCS y
-
-export
-debugS : (s : DesignUnitSig l) -> String
-debugS s = "s(p len: \{show s.portsCnt} = \{show $ totalTops' s})"
-
-export
-debugUsl : (usl : DesignUnitSigsList l) -> String
-debugUsl []         = "EndDUS"
-debugUsl (d :: usl) = "\{debugS d}, " ++ debugUsl usl
-
--- export
--- debugGen : {l : Lang} -> {s : DesignUnitSig l} -> {usl : DesignUnitSigsList l} -> {subUs : FinsList usl.length} ->
---            {mcs : MultiConnectionsList l s usl subUs} -> (basic : DesignUnit s usl subUs mcs) -> String
--- debugGen (MkDesign s subUs mcs mc) = d mc where
---   debugFT : {topi : Nat} -> FillTop l s usl subUs [] topi filledTop -> String
---   debugFT {topi = 0} TEnd = "FillTop: end"
---   debugFT {topi = (S k)} (TNew recur {mid} {k} {jf} {topF}) = "FillTop: new top. \{debugS s} k: \{show k} natToFin: \{show $ natToFin k (totalTops' s)} \n" ++ debugFT recur
---   -- debugFT {topi} TEnd = "FillTop: end"
---   -- debugFT {topi} (TNew recur) = ?bhjnk -- "FillTop: new top " ++ show (finToNat topF) ++ "\n" ++ debugFT recur
-
---   d : (mc : GenMulticonns l s usl subUs mcs) -> String
---   d (GenMC ft fs) = debugFT ft
-
--- public export
--- topiToTotal' : {s : _} -> Fin (s.inpsCount) -> Fin (totalTops' s)
--- topiToTotal' f = fixDTLFin $ weakenN s.outsCount f
-
--- public export
--- topoToTotal' : {s : _} -> Fin (s.outsCount) -> Fin (totalTops' s)
--- topoToTotal' f = fixDTLFin $ shift s.inpsCount f
-
 libHeaderOrEmpty : {opts : _} -> Bool -> Doc opts
 libHeaderOrEmpty True = vsep [
       line "library ieee;"
@@ -99,16 +46,13 @@ libHeaderOrEmpty True = vsep [
     ]
 libHeaderOrEmpty False = empty
 
-  -- libHeader : {opts : _} -> Doc opts
-  -- libHeader = 
-
 ||| Creates the formal => actual association
 ||| formal: the name inside the sub-component
 ||| actual: the signal name in the current architecture
 assoc : {opts : _} -> String -> String -> Doc opts
 assoc formal actual = line "\{formal} => \{actual}"
 
--- MOVE TO UTILS
+-- TODO MOVE TO UTILS
 toVect : (fs : FinsList n) -> Vect (fs.length) (Fin n)
 toVect []        = []
 toVect (x :: xs) = x :: toVect xs
@@ -125,41 +69,11 @@ Show (PortMode VHDL) where
   show (VHP x) = show x
 
 
-
--- ||| Find type of port by fin 
--- public export
--- findTypeTop' : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
---               Fin (totalTops' s) -> (mcs : MultiConnectionsList l s usl subUs) -> Maybe $ DataType l
--- findTypeTop' f []                                                              = Nothing
--- findTypeTop' f (mc@(MkMC (Just x) _        _     _      {ne = JustTSC}) :: xs) = trace "\{show $ finToNat f} \{show $ finToNat x} \{show $ f == x}. uslLen: \{show $ usl.length}" $ case f == x of
---   False => findTypeTop' f xs
---   True  => Just $ typeOf mc
--- findTypeTop' f (mc@(MkMC _        (Just x) _     _      {ne = JustTSK}) :: xs) = case f == x of
---   False => findTypeTop' f xs
---   True  => Just $ typeOf mc
--- findTypeTop' f ((   MkMC _        _       (_::_) _      {ne = JustSSC}) :: xs) = findTypeTop' f xs
--- findTypeTop' f ((   MkMC _        _       _      (_::_) {ne = JustSSK}) :: xs) = findTypeTop' f xs
-
-
 parameters {opts : LayoutOpts} (entityName : String) (archName : String)
            (s : DesignUnitSig VHDL) (topNames : Vect (s.portsCnt) String)
            {usl : _} {subUs : _} (subEntNames : Vect (subUs.length) String)
            (mcs : MultiConnectionsList VHDL s usl subUs) (mcsNames : Vect (length mcs) String)
            (prevEntNames : SVect $ usl.length) (pds : PrintableDesigns VHDL usl)
-
-  -- printInpPort : Fin (s.inpsCount) -> Gen0 $ Doc opts
-  -- printInpPort f = case findTypeTI {l=VHDL} f mcs of
-  --   Nothing        => pure $ line "(error: printInpPort nothing f: \{show $ finToNat f})" -- impossible
-  --   (Just $ VHD t) => do
-  --     ps <- printPort (index f topInpNames) "in" t
-  --     pure $ line ps
-
-  -- printOutPort : Fin (s.outsCount) -> Gen0 $ Doc opts
-  -- printOutPort f = case findTypeTO {l=VHDL} f mcs of
-  --   Nothing        => pure $ line "(error: printOutPort nothing f: \{show $ finToNat f})" -- impossible
-  --   (Just $ VHD t) => do
-  --     ps <- printPort (index f topOutNames) "out" t
-  --     pure $ line ps
 
   printTopPort : Fin (totalTops' s) -> Gen0 $ Doc opts
   printTopPort f = case findTypeTop {l=VHDL} f mcs of
@@ -185,14 +99,14 @@ parameters {opts : LayoutOpts} (entityName : String) (archName : String)
     pure $ defaultIndent $ vsep [
       generalList (line "port (") (line ");") semi tops
     ]
-  
-  ||| Is mc is connection to top port? 
+
+  -- Is mc is connection to top port?
   isMCTopPort : Fin (length mcs) -> Bool
   isMCTopPort f with (index mcs f)
     isMCTopPort f | (MkMC (Just _) Nothing _ _ @{_} @{OnlyTSC}) = True
     isMCTopPort f | (MkMC Nothing (Just _) _ _ @{_} @{OnlyTSK}) = True
     isMCTopPort f | (MkMC Nothing Nothing  _ _ @{_} @{NoTop})   = False
-  
+
   portsHaveLogic : List (Fin $ length mcs) -> Bool
   portsHaveLogic fins = foldl (\b, f => if (VHD StdLogic == (typeOf $ index mcs f)) then True else b) False fins
 
@@ -230,7 +144,7 @@ parameters {opts : LayoutOpts} (entityName : String) (archName : String)
   ||| ex: signal link_sig : Bit;
   signalDeclaration : Fin (length mcs) -> Gen0 $ Doc opts
   signalDeclaration mcFin = do
-    let name = index mcFin mcsNames 
+    let name = index mcFin mcsNames
     ts <- printType $ vtypeOf $ index mcs mcFin
     pure $ line "signal \{name} : \{ts};"
 
@@ -285,10 +199,9 @@ parameters {opts : LayoutOpts} (entityName : String) (archName : String)
     , defaultIndent $ pm
     ]
 
-  ||| prints subUs
+  -- prints subUs
   subEntitiesPortsMap : Gen0 $ List $ Doc opts
   subEntitiesPortsMap = traverse concurrentSubEntDecl $ toList $ zip subEntNames $ Vect.allFins $ subUs.length
-
 
   ||| 3.3.3 Architecture statement part
   |||
@@ -330,8 +243,6 @@ parameters {opts : LayoutOpts} (entityName : String) (archName : String)
     arch <- printArchitecture
     pure $ vsep
       [
-        -- line (debugGen basic),
-        -- line "-- s: \{debugS s} | mcs : \{debugMCS mcs} | subUs : \{debugFS subUs} | usl : \{debugUsl usl}",
         ent
       , emptyLine
       , arch

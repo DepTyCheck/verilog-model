@@ -1,0 +1,2 @@
+[codespell]
+skip = ./ci/runner/tools-run/tests/data/*,.github/linters/*,./src/*

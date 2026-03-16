@@ -1,7 +1,6 @@
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator
 
 from src.assets import Assets
 from src.command_output import AnalyzisResult

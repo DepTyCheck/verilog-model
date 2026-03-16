@@ -14,6 +14,6 @@ GenOrderTuning "SExisting".dataCon where
 
 GenOrderTuning "MkDesign".dataCon where
   isConstructor = itIsConstructor
-  deriveFirst _ _ = [`{fs}, `{mcs}] -- `{ft}, `{filledTop}, 
+  deriveFirst _ _ = [`{fs}, `{mcs}]
 
 Test.Common.Design.genDesignUnitsList = deriveGen

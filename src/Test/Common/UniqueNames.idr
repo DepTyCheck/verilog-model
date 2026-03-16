@@ -87,5 +87,5 @@ genNUniqueNames : {lk : Nat} -> (keywords : SVect lk) -> {l : Nat} -> Fuel -> (n
 genNUniqueNames kw _ Z     names un = pure ([] ** un)
 genNUniqueNames kw x (S k) names un = do
   (tail ** utail) <- genNUniqueNames kw x k names un
-  (head ** uhead) <- genOneUniqueName kw x (tail ++ names) utail 
+  (head ** uhead) <- genOneUniqueName kw x (tail ++ names) utail
   pure (head :: tail ** uhead)

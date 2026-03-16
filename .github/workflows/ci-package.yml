@@ -275,7 +275,7 @@ jobs:
               sudo make install
             version: |
               verilator --version
-            # -Wno-ASSIGNW flag added due to https://github.com/verilator/verilator/issues/5875 
+            # -Wno-ASSIGNW flag added due to https://github.com/verilator/verilator/issues/5875
             run: |
               rm -rf obj_dir && \
               rm -f top.sv && \

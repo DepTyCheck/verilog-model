@@ -16,7 +16,7 @@ import Test.DepTyCheck.Gen
 public export
 data VHDLDesign : DesignUnitSigsList VHDL -> Type where
   End : VHDLDesign dus
-  New : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : _} -> 
+  New : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : _} ->
         (basic : DesignUnit {l=VHDL} s usl subUs mcs) -> (cont : VHDLDesign $ s::usl) -> VHDLDesign usl
 
 export
