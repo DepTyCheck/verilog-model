@@ -1,2 +1,2 @@
 [codespell]
-skip = ./ci/runner/tools-run/tests/data/*,.github/linters/*,./src/*
+ignore-words-list = inout,InOut,contEx,NWO,IndexIn
