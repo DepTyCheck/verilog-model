@@ -3,6 +3,8 @@ module Test.Common.Utils
 import Data.Vect
 import public Data.Fin
 
+%default total
+
 namespace FinsList
 
   public export

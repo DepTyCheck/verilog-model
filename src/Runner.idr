@@ -13,14 +13,14 @@ import Debug.Trace
 import Test.DepTyCheck.Gen
 import Test.DepTyCheck.Gen.Coverage
 
-import Test.Common.Gen
-import Test.Common.Pretty
-
 import Test.Common.UniqueFins.Derived
+import Test.Common.UniqueNames.Derived
 import Test.Verilog.Connections.Derived
 import Test.Verilog.TMPExpression.Derived
+import Test.Common.Design.Derived
 
-import Test.Verilog.Pretty
+import Test.Common.Gen
+import Test.Common.Pretty
 
 import Data.Fin.ToFin
 
@@ -32,7 +32,6 @@ import System.Random.Pure.StdGen
 import System.Directory
 
 %default total
-
 
 record Config m where
   constructor MkConfig
@@ -184,7 +183,7 @@ createDir' p = foldlM createDirHelper (Right ()) $ inits $ toList $ split (=='/'
     Left FileExists => Right ()
     e               => e
 
-showSeed: StdGen -> String
+showSeed : StdGen -> String
 showSeed gen = let (seed, gamma) = extractRaw gen in "\{show seed},\{show gamma}"
 
 forS_ : Monad f => (seed : s) -> LazyList a -> (s -> a -> f s) -> f ()
@@ -214,10 +213,15 @@ content cfg generatedModule initialSeed seedAfter = case cfg.seedInFile of
         ++ generatedModule
         ++ "\n\{startComment cfg.lang} Seed after: \{showSeed seedAfter}\n"
 
+fileExtension : Cfg -> String
+fileExtension cfg with (cfg.lang)
+  fileExtension _ | SystemVerilog = ".sv"
+  fileExtension _ | VHDL          = ".vhdl"
+
 fileName : Cfg -> String -> Nat -> StdGen -> String
 fileName cfg path idx initialSeed = do
   let seedSuffix = if cfg.seedInName then "-seed_\{showSeed initialSeed}" else ""
-  "\{path}/\{show $ S idx}\{seedSuffix}.sv"
+  "\{path}/\{show $ S idx}\{seedSuffix}\{fileExtension cfg}"
 
 printModule : Cfg -> Nat -> String -> StdGen -> StdGen -> IO ()
 printModule cfg idx generatedModule initialSeed seedAfter = do

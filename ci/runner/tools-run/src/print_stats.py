@@ -16,10 +16,11 @@ def print_issues_count(result: TestsRunResult) -> None:
 
 
 def print_failed_tests_paths(result: TestsRunResult) -> None:
+    unique_paths = list(dict.fromkeys(error.test_file_path for error in result.unexpected_errors))
     print_pretty(
         [
-            f"  Total failed tests: {len(result.unexpected_errors)}",
+            f"  Total failed tests: {len(unique_paths)}",
             "  Failed tests:",
-            *[f"  - {error.test_file_path}" for error in result.unexpected_errors],
+            *[f"  - {path}" for path in unique_paths],
         ]
     )

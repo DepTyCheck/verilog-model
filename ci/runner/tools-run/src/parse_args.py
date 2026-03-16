@@ -7,7 +7,13 @@ def parse_args():
     parser.add_argument(
         "--gen-path",
         type=str,
-        help="Path to generated modules",
+        help="Path to generated files",
+        required=True,
+    )
+    parser.add_argument(
+        "--file-pattern",
+        type=str,
+        help="Pattern to find files",
         required=True,
     )
     parser.add_argument(

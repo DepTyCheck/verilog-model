@@ -37,7 +37,7 @@ genSV x = do
   pure res where
     extend : Fuel -> {ms: _} -> Modules ms -> Gen MaybeEmpty $ VerilogDesign ms
     extend _ End = pure End
-    extend x modules@(NewCompositeModule m {ms} subMs {mcs} _ cont) = do
+    extend x (NewCompositeModule m {ms} subMs {mcs} _ cont) = do
       -- Extend the rest
       contEx <- extend x cont
 

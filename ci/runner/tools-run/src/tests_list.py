@@ -1,7 +1,6 @@
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator
 
 from src.assets import Assets
 from src.command_output import AnalyzisResult
@@ -47,7 +46,7 @@ class RunStatsCounter:
 class TestsList:
     def __init__(
         self,
-        files: Iterator[Path],
+        files: list[Path],
         ignored_errors_list: IgnoredErrorsList,
         main_error_regex: ToolErrorRegex,
         sim_error_regex: ToolErrorRegex | None,
