@@ -1,0 +1,38 @@
+stage: parsing
+lang: sv
+tool: yosys-slang
+id: input_port_of_special_tristate_type_is_not_supported
+title: Input port of tristate type is not supported
+issue_novelty: unsupported
+regex: >
+  'input' or 'inout' port of special type .+ is not supported on preserved module boundary
+examples:
+  - input_port_of_special_tristate_type_is_not_supported_ex1:
+      first_found: 16.03.2026
+      full_error: |
+        1. Executing SLANG frontend.
+        ../generated-sv/69-seed_18264957573360489524,483206697743558593.sv:4:44: error: net type 'triand' unsupported
+          (input triand logic [2:1][2:4][1:3][3:1] fnojahgcs [0:3][0:2], input bit [2:1][2:2]  ckmudlzu, input bit cwrrj);
+                                                   ^
+        ../generated-sv/69-seed_18264957573360489524,483206697743558593.sv:4:44: error: 'input' or 'inout' port of special type 'triand' is not supported on preserved module boundary
+          (input triand logic [2:1][2:4][1:3][3:1] fnojahgcs [0:3][0:2], input bit [2:1][2:2]  ckmudlzu, input bit cwrrj);
+                                                     ^
+      full_example: |
+        module ybbroyz
+          (input triand logic [2:1][2:4][1:3][3:1] fnojahgcs [0:3][0:2], input bit [2:1][2:2]  ckmudlzu, input bit cwrrj);
+
+          xor tkqmb(ur, ckmudlzu, ckmudlzu);
+          nand fpytbkrsty(j, ur, ckmudlzu);
+          nand vmisfi(byqyo, ep, ckmudlzu);
+
+        endmodule: ybbroyz
+
+        module atwe
+          ();
+
+          not axcr(dwnz, dwnz);
+          not wciijglfo(dwnz, dwnz);
+
+          // Multi-driven assigns
+          assign dwnz = 'b0;
+        endmodule: atwe
