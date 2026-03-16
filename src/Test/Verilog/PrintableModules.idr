@@ -5,7 +5,7 @@ import Data.Vect
 import public Test.Verilog.Connections
 import public Test.Verilog.UniqueNames
 
-||| For standart gates in SystemVerilog only position-based connections are allowed.
+||| For standard gates in SystemVerilog only position-based connections are allowed.
 ||| For user modules, interfaces, primitives and programs both position-based and name-based connections are allowed.
 ||| This type stores the names of inputs and outputs, if they exist
 public export
