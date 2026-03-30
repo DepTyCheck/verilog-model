@@ -19,35 +19,9 @@ namespace DataType
     VHD : VHDLType -> DataType VHDL
 
   public export
-  data DataTypesList : Lang -> Type where
-    Nil  : DataTypesList l
-    (::) : DataType l -> DataTypesList l -> DataTypesList l
-
+  DataTypesList : Lang -> Type
+  DataTypesList l = List (DataType l)
   %name DataTypesList ds
-
-  public export
-  (.asList) : DataTypesList l -> List $ DataType l
-  (.asList) []      = []
-  (.asList) (x::xs) = x :: xs.asList
-
-  public export
-  length : DataTypesList l -> Nat
-  length []      = Z
-  length (_::usl) = S $ length usl
-
-  public export %inline
-  (.length) : DataTypesList l -> Nat
-  (.length) = length
-
-  public export
-  index : (fs : DataTypesList s) -> Fin fs.length -> DataType s
-  index (f::_ ) FZ     = f
-  index (_::fs) (FS i) = index fs i
-
-  public export
-  (++) : DataTypesList l -> DataTypesList l -> DataTypesList l
-  Nil       ++ ys = ys
-  (x :: xs) ++ ys = x :: (xs ++ ys)
 
   export
   dtlistLen : {0 l : _} -> (xs : DataTypesList l) -> (ys : DataTypesList l) -> xs.length + ys.length = (xs ++ ys).length

@@ -14,3 +14,15 @@ type = "local"
 path = "."
 ipkg = "verilog-model.ipkg"
 test = "tests/tests.ipkg"
+
+[custom.all.deptycheck]
+type   = "git"
+url    = "https://github.com/uartman/deptycheck"
+commit = "fb5fb483e6c04f9979b6017307c9716817e69761"
+ipkg   = "deptycheck.ipkg"
+
+[custom.all.elab-util-extra]
+type   = "git"
+url    = "https://github.com/uartman/deptycheck"
+commit = "fb5fb483e6c04f9979b6017307c9716817e69761"
+ipkg   = "elab-util-extra/elab-util-extra.ipkg"

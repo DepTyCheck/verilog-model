@@ -178,7 +178,7 @@ concatInpsOuts : {opts : _} -> List String -> List String -> Doc opts
 concatInpsOuts inputs outputs = (tuple $ line <$> outputs ++ inputs) <+> symbol ';'
 
 printConnections : String -> (cons: SVObjList) -> Vect (cons.length) String -> List String
-printConnections keyword cons names = zipWith (\conn, name => "\{keyword} \{showSVObj conn name}") (toList cons) (toList names)
+printConnections keyword cons names = zipWith (\conn, name => "\{keyword} \{showSVObj conn name}") cons (toList names)
 
 printAssign : String -> String -> String
 printAssign l r = "assign \{l} = \{r};"
@@ -280,8 +280,8 @@ parameters {opts : LayoutOpts} (m : ModuleSig) (ms : ModuleSigsList)  (subMs : F
     printSubm' : (pre : Doc opts) -> (siNames : List String) -> (soNames : List String) -> (exM : ModuleSig) ->
                  (ctxInps : List SVObject) -> (ctxOuts : List SVObject) -> (exInps : List String) -> (exOuts : List String) -> List (Doc opts)
     printSubm' pre siNames soNames exM ctxInps ctxOuts exInps exOuts = do
-      let warningsSubOuts = printAllImplicitCasts showSVObj (toList exM.outputs) exOuts ctxOuts soNames
-      let warningsSubInps = printAllImplicitCasts showSVObj ctxInps siNames (toList exM.inputs) exInps
+      let warningsSubOuts = printAllImplicitCasts showSVObj exM.outputs exOuts ctxOuts soNames
+      let warningsSubInps = printAllImplicitCasts showSVObj ctxInps siNames exM.inputs exInps
       let warnings = if isNil warningsSubOuts ||
                         isNil warningsSubInps then warningsSubOuts ++ warningsSubInps else warningsSubOuts ++ [ "//" ] ++ warningsSubInps
       case isNil warnings of

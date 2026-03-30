@@ -179,7 +179,7 @@ namespace PortListAliases
 
   public export
   lookUp : (fl : FinsList n) -> Fin (fl.length) -> Fin n
-  lookUp = index
+  lookUp = index'
 
   public export
   listLookUp : (y : FinsList n) -> FinsList (y.length) -> FinsList n
@@ -388,7 +388,7 @@ natToFin' i n = case natToFin i n of
   (Just x) => Just x
 
 public export
-data JustFin : MFin n -> Fin n -> Type where
+data JustFin : Maybe (Fin n) -> Fin n -> Type where
   JF : JustFin (Just x) x
 
 -- i has type Nat instead of Fin, because otherwise a fuel-consuming generator is derived

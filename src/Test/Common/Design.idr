@@ -22,30 +22,10 @@ namespace Port
   %name Port p
 
   public export
-  data PortsList : Lang -> Type where
-    Nil  : PortsList l
-    (::) : Port l -> PortsList l -> PortsList l
+  PortsList : Lang -> Type
+  PortsList l = List (Port l)
 
   %name PortsList ps
-
-  public export
-  length : PortsList l -> Nat
-  length []      = Z
-  length (_::ps) = S $ length ps
-
-  public export %inline
-  (.length) : PortsList l -> Nat
-  (.length) = length
-
-  public export
-  index : (ps : PortsList l) -> Fin ps.length -> Port l
-  index (p::_ ) FZ     = p
-  index (_::ps) (FS i) = index ps i
-
-  public export
-  (++) : PortsList l -> PortsList l -> PortsList l
-  Nil       ++ ys = ys
-  (x :: xs) ++ ys = x :: (xs ++ ys)
 
   export
   pslistLen : {0 l : _} -> (xs : PortsList l) -> (ys : PortsList l) -> xs.length + ys.length = (xs ++ ys).length
@@ -78,25 +58,10 @@ namespace DesignUnitSig
   %name DesignUnitSig d
 
   public export
-  data DesignUnitSigsList : Lang -> Type where
-    Nil  : DesignUnitSigsList l
-    (::) : DesignUnitSig l -> DesignUnitSigsList l -> DesignUnitSigsList l
+  DesignUnitSigsList : Lang -> Type
+  DesignUnitSigsList l = List (DesignUnitSig l)
 
   %name DesignUnitSigsList usl
-
-  public export
-  length : DesignUnitSigsList l -> Nat
-  length []      = Z
-  length (_::usl) = S $ length usl
-
-  public export %inline
-  (.length) : DesignUnitSigsList l -> Nat
-  (.length) = length
-
-  public export
-  index : (usl : DesignUnitSigsList l) -> Fin usl.length -> DesignUnitSig l
-  index (sig::_ ) FZ    = sig
-  index (_::usl) (FS i) = index usl i
 
   public export
   totalTops : DesignUnitSig l -> PortsList l
@@ -183,20 +148,9 @@ namespace MultiConnection
            MultiConnection l s usl subUs
 
   public export
-  data MultiConnectionsList : (l : Lang) -> (s : DesignUnitSig l) ->
-                              (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> Type where
-    Nil  : MultiConnectionsList l s usl subUs
-    (::) : MultiConnection l s usl subUs -> MultiConnectionsList l s usl subUs -> MultiConnectionsList l s usl subUs
-
-  public export
-  length : MultiConnectionsList l s usl subUs -> Nat
-  length []       = Z
-  length (_::mcs) = S $ length mcs
-
-  public export
-  index : (mcs : MultiConnectionsList l s usl subUs) -> Fin (length mcs) -> MultiConnection l s usl subUs
-  index (mc::_ ) FZ     = mc
-  index (_::mcs) (FS i) = index mcs i
+  MultiConnectionsList : (l : Lang) -> (s : DesignUnitSig l) ->
+                              (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> Type
+  MultiConnectionsList l s usl subUs = List (MultiConnection l s usl subUs)
 
   public export
   toVect : (mcs : MultiConnectionsList l s usl subUs) -> Vect (length mcs) $ MultiConnection l s usl subUs
@@ -205,8 +159,7 @@ namespace MultiConnection
 
   public export
   fromList : List (MultiConnection l s usl subUs) -> MultiConnectionsList l s usl subUs
-  fromList []        = []
-  fromList (x :: xs) = x :: fromList xs
+  fromList = id
 
   public export
   typeOf : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
@@ -409,9 +362,9 @@ namespace GenMulticonns
     SExisting : (recur : FillSub l s usl subUs pre k mid) ->
                 (f : Fin (goodFins mid k).length) ->
                 FillSub l s usl subUs pre (S k)
-                  $ replaceAt mid (index (goodFins mid k) f)
+                  $ replaceAt mid (index' (goodFins mid k) f)
                   $ addSub' k
-                  $ index mid (index (goodFins mid k) f)
+                  $ index mid (index' (goodFins mid k) f)
 
 
 namespace DesignUnit

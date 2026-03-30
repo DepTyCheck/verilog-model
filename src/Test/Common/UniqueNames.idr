@@ -8,30 +8,18 @@ import Data.Fuel
 import public Test.DepTyCheck.Gen
 import System.Random.Pure.StdGen
 
+import public Syntax.IHateParens.Vect
+
 %default total
 
 
 public export
-data SVect : (len : Nat) -> Type where
-  ||| Empty vector
-  Nil  : SVect Z
-  ||| A non-empty vector of length `S len`, consisting of a head element and
-  ||| the rest of the list, of length `len`.
-  (::) : (x : String) -> (xs : SVect len) -> SVect (S len)
-
-export
-(++) : SVect a -> SVect b -> SVect (a + b)
-(++) [] xs = xs
-(++) (x :: xs) ys = x :: (xs ++ ys)
-
-(.length) : SVect l -> Nat
-(.length) [] = Z
-(.length) (x :: xs) = S xs.length
+SVect : (len : Nat) -> Type
+SVect len = Vect len String
 
 export
 toVect : SVect l -> Vect l String
-toVect [] = []
-toVect (x :: xs) = x :: toVect xs
+toVect = id
 
 data UniqNames : (l : Nat) -> SVect l -> Type
 data NameNotIn : (l : Nat) -> (names : SVect l) -> (name : String) -> Type
