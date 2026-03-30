@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from src.previous_report import PreviousReport
-from src.report_structure import ErrorInfo, LastOccurrence, RunInfo
-from src.result_report import ResultReport
-from src.tools_report_list import ToolsReportsList
+from .previous_report import PreviousReport
+from .report_structure import ErrorInfo, LastOccurrence, RunInfo
+from .result_report import ResultReport
+from .tools_report_list import ToolsReportsList
 
 
 class CombinedReport:

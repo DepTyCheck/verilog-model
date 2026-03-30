@@ -1,13 +1,16 @@
 import json
+import os
 import unittest
 
-from src.tools_report import ToolsReport
+from combined_report.tools_report import ToolsReport
+
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 
 
 class TestToolsReport(unittest.TestCase):
 
     def test_parsing(self):
-        with open("./tests/data/some-tool-run-stats.json", "r", encoding="utf-8") as f:
+        with open(os.path.join(DATA_DIR, "some-tool-run-stats.json"), "r", encoding="utf-8") as f:
             data_dict = json.load(f)
 
         p = ToolsReport(data_dict)

@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import List
 
-from src.tools_report import ToolsReport
+from .tools_report import ToolsReport
 
 
 class ToolsReportsList:
