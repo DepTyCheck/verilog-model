@@ -72,7 +72,7 @@ jobs:
         upstream-mode: ${{ fromJSON(needs.get-upstream-matrix.outputs.upstream-matrix) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
       - name: Update `pack-db`
@@ -97,7 +97,7 @@ jobs:
           echo "build_path=$PWD" >> "$GITHUB_OUTPUT"
       - name: Restore from cache
         id: cache-build
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ${{ env.BUILD_DIR }}
           key: ${{ steps.cache-key.outputs.key }}
@@ -110,7 +110,7 @@ jobs:
         run: pack build ${{ env.PACKAGE_NAME }}
       - name: Save build
         if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: ${{ env.BUILD_DIR }}
           key: ${{ steps.cache-key.outputs.key }}
@@ -134,7 +134,7 @@ jobs:
         language: [sv, vhdl]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
       - name: Update `pack-db`
@@ -142,7 +142,7 @@ jobs:
       - name: Switch to the latest collection
         run: pack switch latest
       - name: Restore from cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ${{ env.BUILD_DIR }}
           key: ${{ needs.build-and-test.outputs.latest-cache-key }}
@@ -166,7 +166,7 @@ jobs:
             --coverage "${{ env.COV_DIR }}"
       - name: Show coverage
         run: cat ${{ env.COV_DIR }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: "${{ env.GENERATION_DIR_PATTERN }}${{ matrix.language }}"
           path: "${{ env.OUT_DIR }}"
@@ -175,7 +175,7 @@ jobs:
     name: Test tools run
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - uses: actions/setup-python@v6
@@ -474,14 +474,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
       - name: Determine Gen Path
         run: |
           echo "GEN_PATH=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.tool.language }}" >> "$GITHUB_ENV"
       - name: Download Generated Files
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: "${{ env.GEN_PATH }}"
           path: "${{ env.GEN_PATH }}"
@@ -494,13 +494,13 @@ jobs:
           echo "COMMIT_HASH=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
       # - name: Restore dependency
       #   if: ${{ matrix.tool.dep_path }}
-      #   uses: actions/cache/restore@v4
+      #   uses: actions/cache/restore@v5
       #   with:
       #     path: ${{ matrix.tool.dep_path }}
       #     key: ${{ matrix.tool.dep_name }}-cache-
       - name: Restore from cache
         id: cache-build
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ${{ matrix.tool.path }}
           key: ${{ matrix.tool.name }}-cache-${{ env.COMMIT_HASH }}
@@ -547,7 +547,7 @@ jobs:
           ${{ matrix.tool.build }}
       - name: Save build
         if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: ${{ matrix.tool.path }}
           key: ${{ steps.cache-build.outputs.cache-primary-key }}
@@ -602,12 +602,12 @@ jobs:
           fi
       - name: Upload error distances artifact
         if: always() && hashFiles(env.ERROR_DISTANCES_OUT) != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: error-distances-${{ matrix.tool.name }}
           path: ${{ env.ERROR_DISTANCES_OUT }}
       - name: Upload run statistics
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
           path: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
@@ -616,7 +616,7 @@ jobs:
     name: Test combined report
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - uses: actions/setup-python@v6
@@ -628,7 +628,7 @@ jobs:
     name: Test errors stats comparison
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - uses: actions/setup-python@v6
@@ -643,14 +643,14 @@ jobs:
     if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
       - name: Download run statistics
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: run-stats
           pattern: "*-${{ env.RUN_STATS_PATTERN }}"
@@ -682,7 +682,7 @@ jobs:
           persist-credentials: false # https://github.com/orgs/community/discussions/25702#discussioncomment-3248819
 
       - name: Download run statistics
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: run-stats
 
@@ -734,12 +734,12 @@ jobs:
       IMAGE_NAME: ${{ github.repository }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
       - name: Restore from cache
         id: cache-build
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ${{ env.BUILD_DIR }}
           key: ${{ needs.build-and-test.outputs.latest-cache-key }}
@@ -790,7 +790,7 @@ jobs:
       issues: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
       - name: Read and Format Usernames
