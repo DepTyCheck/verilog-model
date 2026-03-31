@@ -24,9 +24,7 @@ class FoundWholeMatch(AnalyzisResult):
 class NotFoundWholeMatch(AnalyzisResult):
     def __init__(self, error_text: str, test_path: str):
         self.found_matches = []
-        self.unexpected_errors = [
-            UnexpectedError(tool_output_error_text=error_text, test_file_path=test_path)
-        ]
+        self.unexpected_errors = [UnexpectedError(tool_output_error_text=error_text, test_file_path=test_path)]
         self.all_errors_are_known = False
 
 

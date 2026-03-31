@@ -23,26 +23,14 @@ def format_table(deltas: list[ErrorPercentageDelta]) -> str:
     col_delta = "Delta %"
 
     id_width = max(len(col_id), max(len(d.error_id) for d in deltas))
-    hist_width = max(
-        len(col_hist), max(len(_pct_str(d.historical_pct)) for d in deltas)
-    )
+    hist_width = max(len(col_hist), max(len(_pct_str(d.historical_pct)) for d in deltas))
     curr_width = max(len(col_curr), max(len(_pct_str(d.current_pct)) for d in deltas))
     delta_width = max(len(col_delta), max(len(_delta_str(d.delta_pct)) for d in deltas))
 
     def row(error_id: str, hist: str, curr: str, delta: str) -> str:
-        return (
-            f"| {error_id:<{id_width}} "
-            f"| {hist:>{hist_width}} "
-            f"| {curr:>{curr_width}} "
-            f"| {delta:>{delta_width}} |"
-        )
+        return f"| {error_id:<{id_width}} " f"| {hist:>{hist_width}} " f"| {curr:>{curr_width}} " f"| {delta:>{delta_width}} |"
 
-    separator = (
-        f"|-{'-' * id_width}-"
-        f"|-{'-' * hist_width}-"
-        f"|-{'-' * curr_width}-"
-        f"|-{'-' * delta_width}-|"
-    )
+    separator = f"|-{'-' * id_width}-" f"|-{'-' * hist_width}-" f"|-{'-' * curr_width}-" f"|-{'-' * delta_width}-|"
 
     lines = [
         "## Error Statistics Comparison",

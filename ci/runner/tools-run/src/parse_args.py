@@ -2,9 +2,7 @@ import argparse
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Run analysis and simulation tests over generated modules."
-    )
+    parser = argparse.ArgumentParser(description="Run analysis and simulation tests over generated modules.")
 
     parser.add_argument(
         "--gen-path",

@@ -1,15 +1,14 @@
 import argparse
 
-from combined_report import PreviousReport, ToolsReportsList
+from combined_report.previous_report import PreviousReport
+from combined_report.tools_report_list import ToolsReportsList
 
 from .compare_errors import ErrorsComparison
 from .table_formatter import format_table
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Compare error statistics between historical data and current run"
-    )
+    parser = argparse.ArgumentParser(description="Compare error statistics between historical data and current run")
     parser.add_argument(
         "--previous-report",
         type=str,

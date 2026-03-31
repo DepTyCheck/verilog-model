@@ -1,4 +1,6 @@
-from combined_report import PreviousReport, ToolsReportsList, occurrence_pct, total_test_count
+from combined_report.percentages import occurrence_pct, total_test_count
+from combined_report.previous_report import PreviousReport
+from combined_report.tools_report_list import ToolsReportsList
 
 
 class ErrorPercentageDelta:
@@ -24,9 +26,7 @@ class ErrorsComparison:
         counts: dict[str, int] = {}
         for tool_report in self.tools_reports_list.reports:
             for error_report in tool_report.errors:
-                counts[error_report.error_id] = (
-                    counts.get(error_report.error_id, 0) + error_report.overall
-                )
+                counts[error_report.error_id] = counts.get(error_report.error_id, 0) + error_report.overall
         return counts
 
     def compare(self) -> list[ErrorPercentageDelta]:
@@ -37,15 +37,9 @@ class ErrorsComparison:
 
         deltas = []
         for error_id in all_ids:
-            prev_overall = (
-                self.previous_report.errors[error_id].overall
-                if error_id in self.previous_report.errors
-                else 0
-            )
+            prev_overall = self.previous_report.errors[error_id].overall if error_id in self.previous_report.errors else 0
             historical_pct = occurrence_pct(prev_overall, historical_total)
-            current_pct = occurrence_pct(
-                current_counts.get(error_id, 0), self.tests_number
-            )
+            current_pct = occurrence_pct(current_counts.get(error_id, 0), self.tests_number)
             deltas.append(
                 ErrorPercentageDelta(
                     error_id=error_id,

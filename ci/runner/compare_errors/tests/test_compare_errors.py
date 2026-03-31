@@ -1,8 +1,9 @@
 import os
 import unittest
 
-from combined_report import PreviousReport, ToolsReportsList
 from combined_report.percentages import occurrence_pct
+from combined_report.previous_report import PreviousReport
+from combined_report.tools_report_list import ToolsReportsList
 from compare_errors.compare_errors import ErrorPercentageDelta, ErrorsComparison
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
@@ -64,9 +65,7 @@ class TestErrorsComparison(unittest.TestCase):
         deltas = self.comparison.compare()
         entry = next(d for d in deltas if d.error_id == "t_dll_api_cc_ivl_nexus_s")
         # previous overall=10, historical_total=266
-        self.assertAlmostEqual(
-            entry.historical_pct, occurrence_pct(10, HISTORICAL_TOTAL)
-        )
+        self.assertAlmostEqual(entry.historical_pct, occurrence_pct(10, HISTORICAL_TOTAL))
 
     def test_current_pct_for_known_error(self):
         deltas = self.comparison.compare()
@@ -82,17 +81,11 @@ class TestErrorsComparison(unittest.TestCase):
 
     def test_stale_error_current_pct_is_zero(self):
         deltas = self.comparison.compare()
-        entry = next(
-            d for d in deltas if d.error_id == "stale_error_not_in_current_run"
-        )
+        entry = next(d for d in deltas if d.error_id == "stale_error_not_in_current_run")
         self.assertAlmostEqual(entry.current_pct, 0.0)
-        self.assertAlmostEqual(
-            entry.historical_pct, occurrence_pct(5, HISTORICAL_TOTAL)
-        )
+        self.assertAlmostEqual(entry.historical_pct, occurrence_pct(5, HISTORICAL_TOTAL))
 
     def test_compare_sorted_by_abs_delta_pct_descending(self):
         deltas = self.comparison.compare()
         for i in range(len(deltas) - 1):
-            self.assertGreaterEqual(
-                abs(deltas[i].delta_pct), abs(deltas[i + 1].delta_pct)
-            )
+            self.assertGreaterEqual(abs(deltas[i].delta_pct), abs(deltas[i + 1].delta_pct))
