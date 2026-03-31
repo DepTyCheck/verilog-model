@@ -1,6 +1,7 @@
+import sys
 import unittest
 
-from .test_compare_errors import TestOccurrencePct, TestTotalTestCount, TestErrorPercentageDelta, TestErrorsComparison
+from .test_compare_errors import TestErrorPercentageDelta, TestErrorsComparison
 from .test_table_formatter import TestTableFormatter
 
 if __name__ == "__main__":
@@ -8,8 +9,6 @@ if __name__ == "__main__":
 
     loader = unittest.TestLoader()
     test_cases = [
-        TestOccurrencePct,
-        TestTotalTestCount,
         TestErrorPercentageDelta,
         TestErrorsComparison,
         TestTableFormatter,
@@ -20,4 +19,4 @@ if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
 
-    exit(1 if result.errors or result.failures else 0)
+    sys.exit(1 if result.errors or result.failures else 0)

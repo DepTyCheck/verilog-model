@@ -625,7 +625,7 @@ jobs:
       - run: cd ci/runner && python -m combined_report.tests.test
 
   test-compare-errors:
-    name: Test compare errors script
+    name: Test errors stats comparison
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 from .test_combined_report import TestCombinedReport
@@ -24,4 +25,4 @@ if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
 
-    exit(1 if result.errors or result.failures else 0)
+    sys.exit(1 if result.errors or result.failures else 0)

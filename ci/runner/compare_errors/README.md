@@ -2,7 +2,7 @@
 
 From `ci/runner`
 
-```
+```bash
 python -m compare_errors.main \
   --previous-report compare_errors/tests/data/previous_report.json \
   --current-tools-reports-dir compare_errors/tests/data \

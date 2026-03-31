@@ -68,7 +68,9 @@ class MDSDistancesReport:
 
     def save(self, output_path: str = "error_distances.html"):
         # Compute NCD across found and known errors using a single compute function
-        nodes_text = [err.tool_output_error_text for err in self.new_errors] + [ke.pattern for ke in self.ignored_errors.errors()]
+        nodes_text = [err.tool_output_error_text for err in self.new_errors] + [
+            ke.pattern for ke in self.ignored_errors.errors()
+        ]
         distances: Dict[Tuple[int, int], float] = compute_ncd_for_errors(
             nodes_text,
             # ".github/workflows/runner/tools-run/ncd-xz.sh",
@@ -125,7 +127,9 @@ class MDSDistancesReport:
         fig.write_html(output_path)
         print_pretty([f"Interactive MDS plot saved to {output_path}"])
 
-    def _compute_mds_coordinates(self, n_total: int, distances: Dict[Tuple[int, int], float]) -> Tuple[np.ndarray | None, np.ndarray | None]:
+    def _compute_mds_coordinates(
+        self, n_total: int, distances: Dict[Tuple[int, int], float]
+    ) -> Tuple[np.ndarray | None, np.ndarray | None]:
         dist_matrix = np.zeros((n_total, n_total))
         for (i, j), dist in distances.items():
             if dist is not None:
@@ -139,7 +143,9 @@ class MDSDistancesReport:
             return None, None
         return coords[:, 0], coords[:, 1]
 
-    def _create_found_errors_trace(self, x_coords: np.ndarray, y_coords: np.ndarray, n_found: int) -> go.Scatter:
+    def _create_found_errors_trace(
+        self, x_coords: np.ndarray, y_coords: np.ndarray, n_found: int
+    ) -> go.Scatter:
         found_labels: List[str] = []
         found_hover: List[str] = []
         for idx in range(n_found):
@@ -150,7 +156,9 @@ class MDSDistancesReport:
             else:
                 label = base_name
             found_labels.append(label)
-            found_hover.append(f"Test: {label}<br>Error: {self.new_errors[idx].test_file_path}")
+            found_hover.append(
+                f"Test: {label}<br>Error: {self.new_errors[idx].test_file_path}"
+            )
 
         return go.Scatter(
             x=x_coords[:n_found],
@@ -170,7 +178,9 @@ class MDSDistancesReport:
             name="New errors",
         )
 
-    def _create_known_errors_trace(self, x_coords: np.ndarray, y_coords: np.ndarray) -> go.Scatter:
+    def _create_known_errors_trace(
+        self, x_coords: np.ndarray, y_coords: np.ndarray
+    ) -> go.Scatter:
         known_labels: List[str] = []
         known_hover: List[str] = []
         n_found = len(self.new_errors)

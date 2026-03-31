@@ -7,7 +7,9 @@ from .table_formatter import format_table
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Compare error statistics between historical data and current run")
+    parser = argparse.ArgumentParser(
+        description="Compare error statistics between historical data and current run"
+    )
     parser.add_argument(
         "--previous-report",
         type=str,

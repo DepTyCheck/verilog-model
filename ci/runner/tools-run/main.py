@@ -31,13 +31,19 @@ def main() -> None:
         files=Path(args.gen_path).glob(args.file_pattern),
         ignored_errors_list=ignored_errors,
         main_error_regex=ToolErrorRegex(raw_str_regex=args.tool_error_regex),
-        sim_error_regex=ToolErrorRegex(raw_str_regex=args.sim_error_regex) if args.sim_error_regex else None,
+        sim_error_regex=(
+            ToolErrorRegex(raw_str_regex=args.sim_error_regex)
+            if args.sim_error_regex
+            else None
+        ),
         raw_synth_cmd=args.tool_cmd,
         raw_sim_cmd=args.sim_cmd,
         assets=Assets(args.assets),
     ).run_all()
 
-    KnownErrorsReport(commit=args.commit).save(args.run_statistics_output)
+    known_errors_report = KnownErrorsReport(commit=args.commit)
+    known_errors_report.add_errors(tests_result.matches)
+    known_errors_report.save(args.run_statistics_output)
 
     print_issues_count(tests_result)
 

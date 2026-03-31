@@ -29,11 +29,23 @@ class RunStatsCounter:
         self.run_stats["handled_errors"] = 0
         self.run_stats["failed"] = 0
 
-    def resolve(self, main_success: bool, main_result: AnalyzisResult, sim_success: bool | None, sim_result: AnalyzisResult | None):
-        both_commands_success = main_success and sim_success if sim_success is not None else main_success
+    def resolve(
+        self,
+        main_success: bool,
+        main_result: AnalyzisResult,
+        sim_success: bool | None,
+        sim_result: AnalyzisResult | None,
+    ):
+        both_commands_success = (
+            main_success and sim_success if sim_success is not None else main_success
+        )
 
-        only_synth_no_unexpected_errors = (sim_result is None) and len(main_result.unexpected_errors) == 0
-        synth_and_sim_no_unexpected = (sim_result is not None) and len(main_result.unexpected_errors) + len(sim_result.unexpected_errors) == 0
+        only_synth_no_unexpected_errors = (sim_result is None) and len(
+            main_result.unexpected_errors
+        ) == 0
+        synth_and_sim_no_unexpected = (sim_result is not None) and len(
+            main_result.unexpected_errors
+        ) + len(sim_result.unexpected_errors) == 0
 
         if both_commands_success:
             self.run_stats["clean"] += 1
@@ -128,7 +140,9 @@ class TestsList:
         cmd_result = cmd.execute()
 
         if cmd_result.result_code_is_ok:
-            return True, AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True)
+            return True, AnalyzisResult(
+                found_matches=[], unexpected_errors=[], all_errors_are_known=True
+            )
         else:
             analyzis_result = cmd_result.output.analyze(
                 ignored_errors_list=self.ignored_errors_list,

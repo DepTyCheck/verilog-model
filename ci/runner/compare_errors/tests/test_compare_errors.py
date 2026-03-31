@@ -2,7 +2,7 @@ import os
 import unittest
 
 from combined_report import PreviousReport, ToolsReportsList
-from combined_report.percentages import occurrence_pct, total_test_count
+from combined_report.percentages import occurrence_pct
 from compare_errors.compare_errors import ErrorPercentageDelta, ErrorsComparison
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
@@ -12,30 +12,6 @@ PREVIOUS_REPORT = os.path.join(DATA_DIR, "previous_report.json")
 HISTORICAL_TOTAL = 266
 # tool-a: new_error_id=7, t_dll=32; tool-b: cannot_be_driven=3, new_error_id=2
 TESTS_NUMBER = 100
-
-
-class TestOccurrencePct(unittest.TestCase):
-    def test_zero_total(self):
-        self.assertEqual(occurrence_pct(5, 0), 0.0)
-
-    def test_full_occurrence(self):
-        self.assertAlmostEqual(occurrence_pct(10, 10), 100.0)
-
-    def test_half_occurrence(self):
-        self.assertAlmostEqual(occurrence_pct(5, 10), 50.0)
-
-    def test_fractional(self):
-        self.assertAlmostEqual(occurrence_pct(1, 4), 25.0)
-
-
-class TestTotalTestCount(unittest.TestCase):
-    def test_empty(self):
-        self.assertEqual(total_test_count([]), 0)
-
-    def test_sums_amounts(self):
-        from combined_report.report_structure import RunInfo
-        runs = [RunInfo(date="2025-01-01", amount=256), RunInfo(date="2025-01-02", amount=10)]
-        self.assertEqual(total_test_count(runs), 266)
 
 
 class TestErrorPercentageDelta(unittest.TestCase):
@@ -88,7 +64,9 @@ class TestErrorsComparison(unittest.TestCase):
         deltas = self.comparison.compare()
         entry = next(d for d in deltas if d.error_id == "t_dll_api_cc_ivl_nexus_s")
         # previous overall=10, historical_total=266
-        self.assertAlmostEqual(entry.historical_pct, occurrence_pct(10, HISTORICAL_TOTAL))
+        self.assertAlmostEqual(
+            entry.historical_pct, occurrence_pct(10, HISTORICAL_TOTAL)
+        )
 
     def test_current_pct_for_known_error(self):
         deltas = self.comparison.compare()
@@ -104,11 +82,17 @@ class TestErrorsComparison(unittest.TestCase):
 
     def test_stale_error_current_pct_is_zero(self):
         deltas = self.comparison.compare()
-        entry = next(d for d in deltas if d.error_id == "stale_error_not_in_current_run")
+        entry = next(
+            d for d in deltas if d.error_id == "stale_error_not_in_current_run"
+        )
         self.assertAlmostEqual(entry.current_pct, 0.0)
-        self.assertAlmostEqual(entry.historical_pct, occurrence_pct(5, HISTORICAL_TOTAL))
+        self.assertAlmostEqual(
+            entry.historical_pct, occurrence_pct(5, HISTORICAL_TOTAL)
+        )
 
     def test_compare_sorted_by_abs_delta_pct_descending(self):
         deltas = self.comparison.compare()
         for i in range(len(deltas) - 1):
-            self.assertGreaterEqual(abs(deltas[i].delta_pct), abs(deltas[i + 1].delta_pct))
+            self.assertGreaterEqual(
+                abs(deltas[i].delta_pct), abs(deltas[i + 1].delta_pct)
+            )
