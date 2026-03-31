@@ -19,9 +19,7 @@ class CombinedReport:
         self.date = datetime.now().isoformat()
 
     def combined_runs(self) -> list[RunInfo]:
-        return self.previous_report.runs + [
-            RunInfo(date=self.date, amount=self.tests_number)
-        ]
+        return self.previous_report.runs + [RunInfo(date=self.date, amount=self.tests_number)]
 
     def combined_errors(self) -> dict[str, ErrorInfo]:
         data: dict[str, ErrorInfo] = self.previous_report.errors.copy()

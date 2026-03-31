@@ -79,17 +79,13 @@ class IgnoredErrorsList:
         """
         dir_path_obj = Path(dir_path)
         if not dir_path_obj.exists():
-            get_logger().warning(
-                f"Warning: Directory '{dir_path_obj.absolute()}' does not exist. No ignored errors loaded."
-            )
+            get_logger().warning(f"Warning: Directory '{dir_path_obj.absolute()}' does not exist. No ignored errors loaded.")
             self._errors = []
             return
 
         yaml_files = list(dir_path_obj.glob("*.yaml"))
         if not yaml_files:
-            get_logger().warning(
-                f"Warning: No YAML files found in '{dir_path_obj.absolute()}'. No ignored errors loaded."
-            )
+            get_logger().warning(f"Warning: No YAML files found in '{dir_path_obj.absolute()}'. No ignored errors loaded.")
 
         errors: List[KnownError] = []
         for yaml_file in yaml_files:
@@ -102,20 +98,12 @@ class IgnoredErrorsList:
                     error_id = data.get("id")
                     pattern = data.get("regex")
                     mode_raw = data.get("matching_mode")
-                    mode = (
-                        MatchingMode.WHOLE
-                        if mode_raw == "whole"
-                        else MatchingMode.SPECIFIC
-                    )
+                    mode = MatchingMode.WHOLE if mode_raw == "whole" else MatchingMode.SPECIFIC
                     if error_id is not None and pattern is not None:
                         pattern = pattern.rstrip("\n")
-                        errors.append(
-                            KnownError(error_id=error_id, pattern=pattern, mode=mode)
-                        )
+                        errors.append(KnownError(error_id=error_id, pattern=pattern, mode=mode))
                     else:
-                        get_logger().warning(
-                            f"Warning: {yaml_file} missing 'id' or 'regex', skipping."
-                        )
+                        get_logger().warning(f"Warning: {yaml_file} missing 'id' or 'regex', skipping.")
             except Exception as e:
                 get_logger().warning(f"Warning: Failed to parse {yaml_file}: {e}")
         self._errors = errors
@@ -133,18 +121,14 @@ class IgnoredErrorsList:
         for error in known_errors_to_match:
             match = re.search(error.pattern, input_text, re.MULTILINE)
             if match:
-                get_logger().info(
-                    f"Found ignored error.\nID: {error.error_id}\nPattern: {error.pattern}\n"
-                )
+                get_logger().info(f"Found ignored error.\nID: {error.error_id}\nPattern: {error.pattern}\n")
                 return FoundMatch(error=error, matched_text=match.group(0))
 
         if mode == MatchingMode.SPECIFIC:
             for ignored_error in self._extra_regexes:
                 match = re.search(ignored_error.pattern, input_text, re.MULTILINE)
                 if match:
-                    get_logger().info(
-                        f"Found ignored error (ignored error): Pattern: {ignored_error.pattern}\n"
-                    )
+                    get_logger().info(f"Found ignored error (ignored error): Pattern: {ignored_error.pattern}\n")
                     return FoundMatch(error=ignored_error, matched_text=match.group(0))
         return None
 
