@@ -33,6 +33,13 @@ def parse_args():
         required=True,
         help="Number of test cases in the current run",
     )
+    parser.add_argument(
+        "--error-url-prefix",
+        type=str,
+        required=False,
+        default=None,
+        help="URL prefix for error links, e.g. https://org.github.io/repo/error (error ID will be appended)",
+    )
     return parser.parse_args()
 
 
@@ -52,7 +59,7 @@ def main() -> None:
     )
 
     deltas = comparison.compare()
-    table = format_table(deltas)
+    table = format_table(deltas, error_url_prefix=args.error_url_prefix)
     print(table)
 
 

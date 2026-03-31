@@ -11,7 +11,13 @@ def _delta_str(delta: float) -> str:
     return f"{delta:.2f}%"
 
 
-def format_table(deltas: list[ErrorPercentageDelta]) -> str:
+def _error_id_cell(error_id: str, error_url_prefix: str | None) -> str:
+    if error_url_prefix is None:
+        return error_id
+    return f"[{error_id}]({error_url_prefix}/{error_id})"
+
+
+def format_table(deltas: list[ErrorPercentageDelta], error_url_prefix: str | None = None) -> str:
     if not deltas:
         return "No errors found in current or historical data."
 
@@ -42,7 +48,7 @@ def format_table(deltas: list[ErrorPercentageDelta]) -> str:
     for d in deltas:
         lines.append(
             row(
-                d.error_id,
+                _error_id_cell(d.error_id, error_url_prefix),
                 _pct_str(d.historical_pct),
                 _pct_str(d.current_pct),
                 _delta_str(d.delta_pct),

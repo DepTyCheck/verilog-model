@@ -665,6 +665,7 @@ jobs:
             --current-tools-reports-dir "$GITHUB_WORKSPACE/run-stats" \
             --tools-reports-pattern "*-${{ env.RUN_STATS_PATTERN }}" \
             --tests-number ${{ env.GEN_TESTS_COUNT }} \
+            --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
             >> "$GITHUB_STEP_SUMMARY"
 
   push-run-stats:

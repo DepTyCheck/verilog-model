@@ -68,3 +68,15 @@ class TestTableFormatter(unittest.TestCase):
         table = format_table([ErrorPercentageDelta("foo", historical_pct=3.759398, current_pct=12.5)])
         self.assertIn("3.76%", table)
         self.assertIn("12.50%", table)
+
+    def test_error_id_plain_without_prefix(self):
+        table = format_table([ErrorPercentageDelta("some_error", historical_pct=1.0, current_pct=2.0)])
+        self.assertIn("some_error", table)
+        self.assertNotIn("](", table)
+
+    def test_error_id_is_markdown_link_with_prefix(self):
+        table = format_table(
+            [ErrorPercentageDelta("some_error", historical_pct=1.0, current_pct=2.0)],
+            error_url_prefix="https://org.github.io/repo/error",
+        )
+        self.assertIn("[some_error](https://org.github.io/repo/error/some_error)", table)
