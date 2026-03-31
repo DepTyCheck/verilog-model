@@ -31,9 +31,13 @@ class ExtractedErrorsByToolRegex:
             for match in matches:
                 error_text = match.group(0)
                 get_logger().info(f"Matched error: {error_text}")
-                found_match = ignored_errors.match(error_text, mode=MatchingMode.SPECIFIC)
+                found_match = ignored_errors.match(
+                    error_text, mode=MatchingMode.SPECIFIC
+                )
                 if found_match is None:
-                    get_logger().info(f"\033[91mFound unexpected error: {error_text}\033[0m\n")
+                    get_logger().info(
+                        f"\033[91mFound unexpected error: {error_text}\033[0m\n"
+                    )
                     self.unexpected_errors.append(
                         UnexpectedError(
                             tool_output_error_text=error_text,

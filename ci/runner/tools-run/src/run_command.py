@@ -71,7 +71,9 @@ class RunCommand:
         if "{top_module}" in command:
             command = command.replace("{top_module}", find_top_module_sv(file_content))
         if "{vhdl_top_entity}" in command:
-            command = command.replace("{vhdl_top_entity}", find_top_entity_vhdl(file_content))
+            command = command.replace(
+                "{vhdl_top_entity}", find_top_entity_vhdl(file_content)
+            )
         command = command.replace("{file}", file_path)
         return command
 
@@ -114,12 +116,16 @@ class RunCommand:
             )
 
         except subprocess.TimeoutExpired as timeout_error:
-            get_logger().warning(f"""Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}""")
+            get_logger().warning(
+                f"""Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}"""
+            )
 
             return ExecutionResult(
                 command_executed_successfully=True,
                 result_code_is_ok=False,
-                output=CommandOutput(out=f"Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}"),
+                output=CommandOutput(
+                    out=f"Command timed out after {COMMAND_TIMEOUT_MINUTES} minutes: {timeout_error}"
+                ),
             )
 
         except Exception as error:
