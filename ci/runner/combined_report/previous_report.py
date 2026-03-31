@@ -1,7 +1,7 @@
 import json
 from typing import Dict, List
 
-from src.report_structure import ErrorInfo, LastOccurrence, RunInfo
+from .report_structure import ErrorInfo, LastOccurrence, RunInfo
 
 
 class PreviousReport:

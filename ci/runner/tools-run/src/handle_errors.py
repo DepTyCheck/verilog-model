@@ -12,7 +12,13 @@ class ExtractedErrorsByToolRegex:
     Extract errors from the output and classify them as ignored or unexpected.
     """
 
-    def __init__(self, output: str, tool_regex: ToolErrorRegex, ignored_errors: IgnoredErrorsList, test_path: str):
+    def __init__(
+        self,
+        output: str,
+        tool_regex: ToolErrorRegex,
+        ignored_errors: IgnoredErrorsList,
+        test_path: str,
+    ):
         self.unexpected_errors: list[UnexpectedError] = []
         self.found_matches: list[ErrorMatchInTest] = []
 

@@ -29,7 +29,13 @@ class RunStatsCounter:
         self.run_stats["handled_errors"] = 0
         self.run_stats["failed"] = 0
 
-    def resolve(self, main_success: bool, main_result: AnalyzisResult, sim_success: bool | None, sim_result: AnalyzisResult | None):
+    def resolve(
+        self,
+        main_success: bool,
+        main_result: AnalyzisResult,
+        sim_success: bool | None,
+        sim_result: AnalyzisResult | None,
+    ):
         both_commands_success = main_success and sim_success if sim_success is not None else main_success
 
         only_synth_no_unexpected_errors = (sim_result is None) and len(main_result.unexpected_errors) == 0

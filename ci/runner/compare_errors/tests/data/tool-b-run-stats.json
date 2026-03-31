@@ -1,0 +1,18 @@
+{
+  "errors": [
+    {
+      "error_id": "cannot_be_driven_with_non_default_strength",
+      "overall": 3,
+      "test_paths_count": 2,
+      "tests_paths": ["generated/30-seed_abc.sv"]
+    },
+    {
+      "error_id": "new_error_id",
+      "overall": 2,
+      "test_paths_count": 1,
+      "tests_paths": ["generated/31-seed_def.sv"]
+    }
+  ],
+  "commit": "abc12345",
+  "date": "2025-11-04T13:00:00.000000"
+}

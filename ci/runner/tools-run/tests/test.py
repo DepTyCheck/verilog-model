@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 from .test_assets import TestAssets
@@ -23,4 +24,6 @@ if __name__ == "__main__":
         suite.addTests(loader.loadTestsFromTestCase(test_case))
 
     runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite)
+    result = runner.run(suite)
+
+    sys.exit(1 if result.errors or result.failures else 0)

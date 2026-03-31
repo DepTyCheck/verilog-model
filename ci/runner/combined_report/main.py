@@ -1,8 +1,8 @@
 import argparse
 
-from src.combined_report import CombinedReport
-from src.previous_report import PreviousReport
-from src.tools_report_list import ToolsReportsList
+from .combined_report import CombinedReport
+from .previous_report import PreviousReport
+from .tools_report_list import ToolsReportsList
 
 
 def parse_args():
