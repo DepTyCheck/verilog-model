@@ -2,6 +2,7 @@ module Test.Verilog.SVType
 
 import Data.Fuel
 import Data.Vect
+import public Data.List
 
 import public Test.Common.Utils
 
@@ -456,35 +457,12 @@ defaultNetType = Net Wire' (AVar Logic')
 namespace SVObjList
 
   public export
-  data SVObjList = Nil | (::) SVObject SVObjList
-
-  public export
-  length : SVObjList -> Nat
-  length []      = Z
-  length (_::ms) = S $ length ms
-
-  public export %inline
-  (.length) : SVObjList -> Nat
-  (.length) = length
-
-  public export
-  (++) : SVObjList -> SVObjList -> SVObjList
-  Nil       ++ ys = ys
-  (x :: xs) ++ ys = x :: (xs ++ ys)
-
-  public export
-  toList : SVObjList -> List SVObject
-  toList []        = []
-  toList (x :: xs) = x :: toList xs
+  SVObjList : Type
+  SVObjList = List SVObject
 
   public export
   fromList : List SVObject -> SVObjList
-  fromList [] = []
-  fromList (x :: xs) = x :: fromList xs
-
-  public export
-  reverse : SVObjList -> SVObjList
-  reverse svl = fromList $ reverse $ toList svl
+  fromList = id
 
   export
   svolistAppendLen : (xs : SVObjList) -> (ys : SVObjList) -> length xs + length ys = length (xs ++ ys)
