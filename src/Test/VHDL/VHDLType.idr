@@ -52,4 +52,3 @@ Eq VHDLType where
   (==) Real Real = True
   (==) StdLogic StdLogic = True
   (==) _ _ = False
-  

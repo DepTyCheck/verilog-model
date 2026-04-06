@@ -75,10 +75,9 @@ class TestIsPureCodeLine(unittest.TestCase):
 
 class TestCountFile(unittest.TestCase):
     def _make_file(self, content: str) -> Path:
-        f = tempfile.NamedTemporaryFile(mode="w", suffix=".idr", delete=False, encoding="utf-8")
-        f.write(content)
-        f.close()
-        return Path(f.name)
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".idr", delete=False, encoding="utf-8") as f:
+            f.write(content)
+            return Path(f.name)
 
     def test_empty_file(self):
         p = self._make_file("")
@@ -104,7 +103,7 @@ class TestCountFile(unittest.TestCase):
 
     def test_indented_comments_inside_namespace(self):
         # Simulates a namespace block where -- and ||| are indented
-        content = "namespace MyNS\n" "  -- indented line comment\n" "  ||| indented doc comment\n" "  foo : Nat\n" "  foo = 0\n"
+        content = "namespace MyNS\n  -- indented line comment\n  ||| indented doc comment\n  foo : Nat\n  foo = 0\n"
         p = self._make_file(content)
         total, pure = count_file(p)
         self.assertEqual(total, 5)
@@ -129,7 +128,7 @@ class TestCountFile(unittest.TestCase):
 
     def test_comment_not_confused_with_code_containing_double_dash(self):
         # A string literal containing "--" is still a code line (no leading --)
-        content = "label : String\n" 'label = "a--b"\n' "-- real comment\n"
+        content = 'label : String\nlabel = "a--b"\n-- real comment\n'
         p = self._make_file(content)
         total, pure = count_file(p)
         self.assertEqual(total, 3)
@@ -172,7 +171,8 @@ class TestFormatReport(unittest.TestCase):
         self.assertIn("100 printers", lines[1])
         self.assertIn("200 specification", lines[1])
         self.assertIn("300 total", lines[1])
-        self.assertEqual(lines[2], "Lines count of pure code:")
-        self.assertIn("60", lines[3])
-        self.assertIn("150", lines[3])
-        self.assertIn("210", lines[3])
+        self.assertEqual(lines[2], "")
+        self.assertEqual(lines[3], "Lines count of pure code:")
+        self.assertIn("60 printers", lines[4])
+        self.assertIn("150 specification", lines[4])
+        self.assertIn("210 total", lines[4])

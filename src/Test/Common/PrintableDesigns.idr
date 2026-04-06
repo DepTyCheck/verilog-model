@@ -104,7 +104,7 @@ forEachTopPort {s} mcs topNames f =
   printIt (totalTops' s) $ \portFin => case findTypeTop portFin mcs of
     Nothing => pure $ line "(error: top port not found in mcs)"
     Just dt => f dt (index portFin topNames) (topPortMode s portFin)
-  
+
 public export
 toTotalSubsIdx : {usl : DesignUnitSigsList l} ->
                  {subUs : FinsList usl.length} ->

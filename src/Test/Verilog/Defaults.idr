@@ -6,13 +6,13 @@ import Test.Common.PrintableDesigns
 
 %default total
 
-Std2Ports = MkDesignUnitSig 
+Std2Ports = MkDesignUnitSig
   [
     MkPort (SVT $ Var $ AVar Logic') (SVP $ Out)
   , MkPort (SVT $ Var $ AVar Logic') (SVP $ In)
   ]
 
-Std3Ports = MkDesignUnitSig 
+Std3Ports = MkDesignUnitSig
   [
     MkPort (SVT $ Var $ AVar Logic') (SVP $ Out)
   , MkPort (SVT $ Var $ AVar Logic') (SVP $ In)
@@ -21,7 +21,7 @@ Std3Ports = MkDesignUnitSig
 
 public export
 StdModules : DesignUnitSigsList SystemVerilog
-StdModules = 
+StdModules =
   [
     Std2Ports
   , Std3Ports

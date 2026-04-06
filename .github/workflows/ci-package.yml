@@ -661,7 +661,7 @@ jobs:
           python-version: "3.13"
       - name: Count lines
         run: |
-          python -m ci.runner.count_lines.main src >> "$GITHUB_STEP_SUMMARY"
+          cd ci/runner && python -m count_lines.main "$GITHUB_WORKSPACE/src" >> "$GITHUB_STEP_SUMMARY"
 
   compare-errors-stats:
     name: Compare errors stats

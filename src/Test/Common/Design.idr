@@ -334,7 +334,7 @@ namespace SystemVerilogRules
     typesCompatibleSV mc p | False | True  = False
     typesCompatibleSV mc p | True  | False = False
     typesCompatibleSV mc p | True  | True  = True
-  
+
 
   ||| 23.3.3.2 Port connection rules for variables
   ||| A variable data type is not permitted on either side of an inout port.
@@ -353,7 +353,7 @@ namespace SystemVerilogRules
   -- public export
   -- requireEqForRef : SVPortMode -> DataType SystemVerilog -> SVPortMode -> DataType SystemVerilog -> Bool
   -- requireEqForRef formal formalT actual actualT = if actual == Ref && formal == Ref then equivalentSVO (dtToSVt formalT) (dtToSVt actualT) else True
-  
+
   |||  23.3.3.2 Port connection rules for variables
   |||  If a port declaration has a variable data type, then its direction controls how it can be connected when
   |||  instantiated, as follows:
@@ -388,15 +388,15 @@ namespace SystemVerilogRules
   pmsSV : PortMode SystemVerilog -> DataType SystemVerilog -> PortMode SystemVerilog -> DataType SystemVerilog -> Bool
   pmsSV (SVP formal) formalT (SVP actual) actualT = forbidVarInout formalT actual actualT
                                                 -- && requireEqForRef formal formalT actual actualT
-  
+
   -- 23.3.3.2
   public export
-  subPmsSV : (formal : PortMode SystemVerilog) -> (formalT : DataType SystemVerilog) -> 
+  subPmsSV : (formal : PortMode SystemVerilog) -> (formalT : DataType SystemVerilog) ->
              (actual : PortMode SystemVerilog) -> (actualT : DataType SystemVerilog) -> Bool
   -- {s : DesignUnitSig SystemVerilog} -> {usl : DesignUnitSigsList SystemVerilog} -> {subUs : FinsList usl.length} ->
             --  (ssc : F $ totalSubs' usl subUs) -> (ssk : FinsList $ totalSubs' usl subUs) -> Bool
   subPmsSV = pmsSV
-  
+
 
 namespace VHDLRules
 
@@ -436,12 +436,12 @@ namespace VHDLRules
     checkDirectionVHDL formal actual | True  = case writePortModeVHDL actual of
       False => False -- write to read is prohibited
       True  => True  -- write to write is allowed
-  
+
   public export
-  subPmsVHDL : (formal : PortMode VHDL) -> (formalT : DataType VHDL) -> 
+  subPmsVHDL : (formal : PortMode VHDL) -> (formalT : DataType VHDL) ->
                (actual : PortMode VHDL) -> (actualT : DataType VHDL) -> Bool
   subPmsVHDL _ _ _ _ = True
-  
+
   public export
   pmsVHDL : PortMode VHDL -> DataType VHDL -> PortMode VHDL -> DataType VHDL -> Bool
   pmsVHDL (VHP formal) _ (VHP actual) _ = checkDirectionVHDL formal actual
@@ -532,7 +532,7 @@ namespace GenMulticonns
   typesCompatible {l = VHDL}          = typesCompatibleVHDL
 
   public export
-  checkSubPMs : {l : Lang} -> 
+  checkSubPMs : {l : Lang} ->
                (formal : PortMode l) -> (formalT : DataType l) -> (actual : PortMode l) -> (actualT : DataType l) -> Bool
   checkSubPMs {l = SystemVerilog} = subPmsSV
   checkSubPMs {l = VHDL}          = subPmsVHDL
@@ -545,19 +545,19 @@ namespace GenMulticonns
   public export
   portModesCompatible : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
                         MultiConnection l s usl subUs -> Fin (totalSubs' usl subUs) -> Bool
-  portModesCompatible mc@(MkMC (Just x) Nothing ssc ssk @{ne} @{OnlyTSC}) f = checkPortModes (subPortMode usl subUs f) 
+  portModesCompatible mc@(MkMC (Just x) Nothing ssc ssk @{ne} @{OnlyTSC}) f = checkPortModes (subPortMode usl subUs f)
                                                                                              (subPortType usl subUs f)
                                                                                              (topPortMode s x)
                                                                                              (typeOf mc)
-  portModesCompatible mc@(MkMC Nothing (Just x) ssc ssk @{ne} @{OnlyTSK}) f = checkPortModes (subPortMode usl subUs f) 
+  portModesCompatible mc@(MkMC Nothing (Just x) ssc ssk @{ne} @{OnlyTSK}) f = checkPortModes (subPortMode usl subUs f)
                                                                                              (subPortType usl subUs f)
                                                                                              (topPortMode s x)
                                                                                              (typeOf mc)
-  portModesCompatible mc@(MkMC Nothing Nothing  (x::xs) _ @{JustSSC} @{NoTop})   f = checkSubPMs (subPortMode usl subUs f) 
+  portModesCompatible mc@(MkMC Nothing Nothing  (x::xs) _ @{JustSSC} @{NoTop})   f = checkSubPMs (subPortMode usl subUs f)
                                                                                                  (subPortType usl subUs f)
                                                                                                  (subPortMode usl subUs x)
                                                                                                  (typeOf mc)
-  portModesCompatible mc@(MkMC Nothing Nothing  _ (x::xs) @{JustSSK} @{NoTop})   f = checkSubPMs (subPortMode usl subUs f) 
+  portModesCompatible mc@(MkMC Nothing Nothing  _ (x::xs) @{JustSSK} @{NoTop})   f = checkSubPMs (subPortMode usl subUs f)
                                                                                                  (subPortType usl subUs f)
                                                                                                  (subPortMode usl subUs x)
                                                                                                  (typeOf mc)

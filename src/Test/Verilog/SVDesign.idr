@@ -21,7 +21,7 @@ public export
 data SVDesign : DesignUnitSigsList SystemVerilog -> Type where
   End : SVDesign dus
   New : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : _} ->
-        (basic : DesignUnit {l=SystemVerilog} s usl subUs mcs) -> 
+        (basic : DesignUnit {l=SystemVerilog} s usl subUs mcs) ->
         (sdAssigns : FinsList $ length mcs) ->
         (sdExprs : TMPExList mcs sdAssigns) ->
         (mdAssigns : FinsList $ length mcs) ->

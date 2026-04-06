@@ -1,4 +1,4 @@
-from combined_report.test_runner import run_test_suite
+from common.test_runner import run_test_suite
 
 from .test_combined_report import TestCombinedReport
 from .test_percentages import TestOccurrencePct, TestTotalTestCount

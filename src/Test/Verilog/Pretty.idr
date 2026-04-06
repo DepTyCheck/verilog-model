@@ -367,15 +367,15 @@ getNames names (x :: xs) = index x names :: getNames names xs
 -- unpackedDecls (mc :: mcs) (name::names) = unpackedDecls mcs names
 
 parameters {opts : LayoutOpts}
-           (s : DesignUnitSig SystemVerilog) {usl : _} {subUs : _} 
+           (s : DesignUnitSig SystemVerilog) {usl : _} {subUs : _}
            (moduleName : String) (topNames : Vect (s.portsCnt) String) (subEntNames : Vect (subUs.length) String)
            (mcs : MultiConnectionsList SystemVerilog s usl subUs) (mcsNames : Vect (length mcs) String)
            (prevEntNames : SVect $ usl.length) (pds : PrintableDesigns SystemVerilog usl)
-  
+
   subModuleTypeName : Fin subUs.length -> String
   subModuleTypeName subFin = index (index subUs subFin) $ toVect prevEntNames
 
-  ||| Flat indicies
+  ||| Flat indices
   subPortFins : Fin subUs.length -> List (Fin (totalSubs' usl subUs))
   subPortFins subFin = map (toTotalSubsIdx subFin) $ List.allFins (index usl $ index subUs subFin).portsCnt
 
@@ -446,12 +446,12 @@ parameters {opts : LayoutOpts}
   unpackedSection = case unpackedDeclDocs of
     [] => empty
     ds => vsep $ line "// Unpacked net declarations" :: ds ++ [emptyLine]
-     
+
   assignSection : String -> List String -> List $ Doc opts
   assignSection comment assigns = line comment :: map line assigns
 
   context : (sdAssignments : List String) -> (mdAssignments : List String) -> Gen0 $ Doc opts
-  context sdAssignments mdAssignments = pure $ vsep 
+  context sdAssignments mdAssignments = pure $ vsep
     [
       unpackedSection
     , vsep $ map subModuleDecl (toList $ zip subEntNames $ Vect.allFins subUs.length)
@@ -503,22 +503,9 @@ prettyModules x pds @{un} (New {s} {usl} {subUs} {mcs} basic sdAssigns sdExprs m
   -- Recursive call to use at the end
   recur <- prettyModules {opts} x (generatedPrintableInfo :: pds) @{unDes} cont
   cur <- printModule s moduleName topNames subEntNamesVect mcs mcsNames (allDesignNames pds) pds sdAssignments mdAssignments
-  pure $ vsep 
+  pure $ vsep
     [
       cur
     , emptyLine
     , recur
     ]
---   pure $ vsep
---     [ enclose (flush $ line "module" <++> line name) (line "endmodule:" <++> line name) $ flush $ indent 2 $ vsep $ do
---       let outerModuleInputs = printConnections "input" m.inputs inputNames
---       let outerModuleOutputs = printConnections "output" m.outputs outputNames
---       let outerModuleIO = toList $ line <$> (outerModuleOutputs ++ outerModuleInputs)
---       [ tuple outerModuleIO <+> symbol ';' , line "" ] ++
---       ((unpackedDecls mcs mcsNames) <&> \(unp) : String => line unp <+> symbol ';') ++ [ line "" ] ++
---       printSubmodules m ms subMs pms mcs mcsNames (toList subMInstanceNames) (withIndex subMs.asList) ++
---       [ line "", line "// Single-driven assigns" ] ++ (map line sdAssignments) ++
---       [ line "", line "// Multi-driven assigns" ] ++ (map line mdAssignments)
---     , line ""
---     , recur
---     ]

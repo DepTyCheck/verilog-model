@@ -10,7 +10,7 @@ import Data.Fin
 ||| 10.3.2
 ||| Continuous assignments to singledriven types are illegal when assigned to top input ports and submodule output ports
 export
-sdFins : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : MultiConnectionsList SystemVerilog s usl subUs} -> 
+sdFins : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : MultiConnectionsList SystemVerilog s usl subUs} ->
          List (Fin $ length mcs) -> FinsList (length mcs)
 sdFins []      = []
 sdFins (x::xs) = if noSource (index mcs x) && isSD (dtToSVt $ typeOf $ index mcs x) && notInoutUwire then x :: sdFins xs else sdFins xs where
@@ -34,7 +34,7 @@ sdFins (x::xs) = if noSource (index mcs x) && isSD (dtToSVt $ typeOf $ index mcs
   notInoutUwire = notUwire && notInout
 
 export
-mdFins : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : MultiConnectionsList SystemVerilog s usl subUs} -> 
+mdFins : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : MultiConnectionsList SystemVerilog s usl subUs} ->
          List (Fin $ length mcs) -> FinsList (length mcs)
 mdFins []      = []
 mdFins (x::xs) = if isMDSV (dtToSVt $ typeOf $ index mcs x) then x :: mdFins xs else mdFins xs
