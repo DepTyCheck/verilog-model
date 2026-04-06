@@ -1,4 +1,3 @@
-# pylint: disable=duplicate-code
 from common.test_runner import run_test_suite
 
 from .test_count_lines import TestCountFile, TestCountLines, TestFormatReport, TestIsPrinterFile, TestIsPureCodeLine
