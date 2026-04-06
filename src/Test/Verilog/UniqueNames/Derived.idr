@@ -9,4 +9,4 @@ import System.Random.Pure.StdGen
 
 %logging "deptycheck.derive" 7
 
-Test.Verilog.UniqueNames.rawNewName' = deriveGen
+-- Test.Verilog.UniqueNames.rawNewName' = deriveGen

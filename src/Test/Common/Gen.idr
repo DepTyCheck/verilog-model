@@ -5,7 +5,7 @@ import Data.Fuel
 import Test.Common.Design
 import public Test.Common.DataType
 
-import Test.Verilog.VerilogDesign
+import Test.Verilog.SVDesign
 import Test.Verilog.Defaults
 import Test.VHDL.VHDLDesign
 import Test.VHDL.Defaults
@@ -16,8 +16,8 @@ import Test.DepTyCheck.Gen
 
 public export
 data GenResult : Lang -> Type where
-  GenSV   : VerilogDesign StdModules -> GenResult SystemVerilog
-  GenVHDL : VHDLDesign    StdDesigns -> GenResult VHDL
+  GenSV   : SVDesign   StdModules -> GenResult SystemVerilog
+  GenVHDL : VHDLDesign StdDesigns -> GenResult VHDL
 
 export
 gen : Fuel -> (l : Lang) -> Gen0 $ GenResult l

@@ -636,6 +636,33 @@ jobs:
           python-version: "3.13"
       - run: cd ci/runner && python -m compare_errors.tests.test
 
+  test-count-lines:
+    name: Test count lines
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: cd ci/runner && python -m count_lines.tests.test
+
+  count-lines:
+    name: Count lines of specification
+    runs-on: ubuntu-latest
+    needs: test-count-lines
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Count lines
+        run: |
+          python -m ci.runner.count_lines.main src >> "$GITHUB_STEP_SUMMARY"
+
   compare-errors-stats:
     name: Compare errors stats
     runs-on: ubuntu-latest

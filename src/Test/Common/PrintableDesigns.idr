@@ -93,6 +93,18 @@ export
 printIt : (n : Nat) -> (Fin n -> Gen0 $ Doc opts) -> Gen0 $ List $ Doc opts
 printIt n f = traverse f $ List.allFins n
 
+export
+forEachTopPort : {opts : _} ->
+                 {l : _} -> {s : DesignUnitSig l} -> {usl : DesignUnitSigsList l} -> {subUs : FinsList usl.length} ->
+                 (mcs : MultiConnectionsList l s usl subUs) ->
+                 (topNames : Vect (s.portsCnt) String) ->
+                 (DataType l -> String -> PortMode l -> Gen0 $ Doc opts) ->
+                 Gen0 $ List $ Doc opts
+forEachTopPort {s} mcs topNames f =
+  printIt (totalTops' s) $ \portFin => case findTypeTop portFin mcs of
+    Nothing => pure $ line "(error: top port not found in mcs)"
+    Just dt => f dt (index portFin topNames) (topPortMode s portFin)
+  
 public export
 toTotalSubsIdx : {usl : DesignUnitSigsList l} ->
                  {subUs : FinsList usl.length} ->
@@ -117,6 +129,12 @@ isSubPortOf : Fin (totalSubs' usl subUs) -> (mcs : MultiConnectionsList l s usl 
 isSubPortOf f mcs = findIndex resolve $ toVect mcs where
   resolve : MultiConnection l s usl subUs -> Bool
   resolve (MkMC tsc tsk ssc ssk) = isElem f ssc.asList || isElem f ssk.asList
+
+export
+findSubPortName : {mcs : MultiConnectionsList l s usl subUs} -> {mcsNames : Vect (length mcs) String} -> Fin (totalSubs' usl subUs) -> String
+findSubPortName f = case isSubPortOf f mcs of
+  Nothing   => "(error: findSubPortName \{show $ finToNat f})"
+  Just mcsF => index mcsF mcsNames
 
 export
 eqmf : MFin x -> Fin x -> Bool

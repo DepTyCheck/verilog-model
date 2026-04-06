@@ -30,18 +30,14 @@ modules = Test.Common.Utils
         , Test.Common.UniqueNames.Derived
 
         , Test.Verilog.SVType
-        , Test.Verilog.Connections
         , Test.Verilog.Assign
         , Test.Verilog.Literal
         , Test.Verilog.TMPExpression
         , Test.Verilog.Warnings
         , Test.Verilog.UniqueNames
-        , Test.Verilog.PrintableModules
         , Test.Verilog.Defaults
-        , Test.Verilog.VerilogDesign
         , Test.Verilog.UniqueNames.Derived
 
-        , Test.Verilog.Connections.Derived
         , Test.Verilog.TMPExpression.Derived
 
         , Test.Common.UniqueNames

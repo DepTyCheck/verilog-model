@@ -18,11 +18,8 @@ import Text.PrettyPrint.Bernardy
 
 %default total
 
-dtToVt : DataType VHDL -> VHDLType
-dtToVt (VHD x) = x
-
 vtypeOf : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection VHDL s usl subUs -> VHDLType
-vtypeOf mc = dtToVt $ typeOf mc
+vtypeOf mc = dtToVHt $ typeOf mc
 
 printType : (type : VHDLType) -> Gen0 String
 printType (Enum CHARACTER)      = pure $ "character"
@@ -52,18 +49,12 @@ libHeaderOrEmpty False = empty
 assoc : {opts : _} -> String -> String -> Doc opts
 assoc formal actual = line "\{formal} => \{actual}"
 
--- TODO MOVE TO UTILS
-toVect : (fs : FinsList n) -> Vect (fs.length) (Fin n)
-toVect []        = []
-toVect (x :: xs) = x :: toVect xs
-
 Show VHDLPortMode where
   show In      = "in"
   show Out     = "out"
   show InOut   = "inout"
   show Buffer  = "buffer"
   show Linkage = "linkage"
-
 
 Show (PortMode VHDL) where
   show (VHP x) = show x
@@ -74,14 +65,6 @@ parameters {opts : LayoutOpts} (entityName : String) (archName : String)
            {usl : _} {subUs : _} (subEntNames : Vect (subUs.length) String)
            (mcs : MultiConnectionsList VHDL s usl subUs) (mcsNames : Vect (length mcs) String)
            (prevEntNames : SVect $ usl.length) (pds : PrintableDesigns VHDL usl)
-
-  printTopPort : Fin (totalTops' s) -> Gen0 $ Doc opts
-  printTopPort f = case findTypeTop {l=VHDL} f mcs of
-    Nothing        => pure $ line "(error: printTopPort did not found top port type f: \{show $ finToNat f} s.length: \{show s.portsCnt})" -- impossible
-    (Just $ VHD t) => do
-      ps <- printPort (index f topNames) (show $ topPortMode s f) t
-      pure $ line ps
-
 
   ||| 6.5.6.3 Port clauses
   ||| A formal port shall have an object class that is either signal or variable.
@@ -95,10 +78,14 @@ parameters {opts : LayoutOpts} (entityName : String) (archName : String)
   printPortCaluse with (s.portsCnt)
    printPortCaluse | 0     = empty
    printPortCaluse | (S k) = do
-    tops <- printIt (s.portsCnt) printTopPort
+    tops <- forEachTopPort mcs topNames print
     pure $ defaultIndent $ vsep [
       generalList (line "port (") (line ");") semi tops
-    ]
+    ] where
+      print : DataType VHDL -> String -> PortMode VHDL -> Gen MaybeEmpty (Doc opts)
+      print (VHD t) name mode = do
+        ps <- printPort name (show mode) t
+        pure $ line ps
 
   -- Is mc is connection to top port?
   isMCTopPort : Fin (length mcs) -> Bool
@@ -162,11 +149,6 @@ parameters {opts : LayoutOpts} (entityName : String) (archName : String)
   subEntityHeader : String -> Fin (subUs.length) -> Doc opts
   subEntityHeader name subFin = let uslFin = index subUs subFin in line "\{name} : entity work.\{index uslFin $ toVect prevEntNames}"
 
-  findSubName : Fin (totalSubs' usl subUs) -> String
-  findSubName f = case isSubPortOf f mcs of
-    Nothing   => "(findSubName error \{show $ finToNat f})"
-    Just mcsF => index mcsF mcsNames
-
   connections : (subNames : List String) -> Fin (subUs.length) -> Gen0 $ List $ Doc opts
   connections subNames subFin  = case (index pds $ index subUs subFin).portNames of
     StdModule  _     => pure $ map line $ toList subNames
@@ -186,7 +168,7 @@ parameters {opts : LayoutOpts} (entityName : String) (archName : String)
     (S k) => do
       let ps  = List.allFins (index usl $ index subUs subFin).portsCnt <&> toTotalSubsIdx subFin
 
-      let subNames = map findSubName $ ps
+      let subNames = map (findSubPortName {s} {mcs} {mcsNames}) ps
       conns <- connections subNames subFin
 
       pure $ generalList (line "port map (") (line ");") comma $ conns
@@ -265,7 +247,7 @@ prettyDesign x pds @{un} (New {s} {usl} {subUs} {mcs} basic cont) = do
   (archName ** unEntConnSubArch) <- genOneName x allEntConSubNames unEntConnSub
 
   -- Resolve names
-  let (topNames) = resolveInpsOutsNames basic mcsNames
+  let topNames = resolveInpsOutsNames basic mcsNames
   let generatedPrintableInfo : ?
       generatedPrintableInfo = MkPrintableDesign entityName (UserModule topNames)
 

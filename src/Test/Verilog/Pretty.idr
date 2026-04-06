@@ -1,30 +1,48 @@
 module Test.Verilog.Pretty
 
-import Data.Either
-import Data.List
-import Data.List.Extra
-import Data.List1
-import Data.List.Lazy
-import Data.String
-import Data.List.Elem
+-- import Data.Either
+-- import Data.List
+-- import Data.List.Extra
+-- import Data.List1
+-- import Data.List.Lazy
+-- import Data.String
+-- import Data.List.Elem
 
-import Data.Fin.Split
+-- import Data.Fin.Split
+-- import Data.Fuel
+-- import Data.Vect
+-- import Data.Vect.Extra
+
+-- import Data.Fin.ToFin
+
+-- import Test.Verilog.UniqueNames.Derived
+-- import Test.Verilog.PrintableModules
+
+-- -- import Test.Verilog.SVType
+-- -- import Test.Verilog.Connections
+-- import Test.Verilog.Assign
+-- import Test.Verilog.Literal
+-- import Test.Verilog.TMPExpression
+-- import Test.Verilog.Warnings
+-- import Test.Verilog.SVDesign
+
+
 import Data.Fuel
 import Data.Vect
 import Data.Vect.Extra
+import Data.List
+import Data.Fin
+import Data.String
 
-import Data.Fin.ToFin
-
-import Test.Verilog.UniqueNames.Derived
-import Test.Verilog.PrintableModules
-
+import Test.Common.Design
+import public Test.Common.PrintableDesigns
+import public Test.Common.UniqueNames
+import Test.Verilog.SVDesign
+import Test.Verilog.Warnings
+import public Test.Verilog.UniqueNames
 import Test.Verilog.SVType
-import Test.Verilog.Connections
-import Test.Verilog.Assign
 import Test.Verilog.Literal
 import Test.Verilog.TMPExpression
-import Test.Verilog.Warnings
-import Test.Verilog.VerilogDesign
 
 import Test.DepTyCheck.Gen
 import Text.PrettyPrint.Bernardy
@@ -32,25 +50,34 @@ import Syntax.IHateParens.List
 
 %default total
 
-public export
-toTotalInputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
-                  (idx : Fin subMs.asList.length) ->
-                  Fin (index ms (index' subMs.asList idx)).inpsCount ->
-                  Fin $ totalInputs {ms} subMs
-toTotalInputsIdx {subMs=i::is} idx x with 0 (sym $ svolistAppendLen (index ms i).inputs (allInputs {ms} is))
-                                        | 0 (length ((index ms i).inputs ++ allInputs {ms} is))
-  toTotalInputsIdx FZ       x | Refl | _ = indexSum $ Left x
-  toTotalInputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalInputsIdx idx x
+-- public export
+-- toTotalInputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
+--                   (idx : Fin subMs.asList.length) ->
+--                   Fin (index ms (index' subMs.asList idx)).inpsCount ->
+--                   Fin $ totalInputs {ms} subMs
+-- toTotalInputsIdx {subMs=i::is} idx x with 0 (sym $ svolistAppendLen (index ms i).inputs (allInputs {ms} is))
+--                                         | 0 (length ((index ms i).inputs ++ allInputs {ms} is))
+--   toTotalInputsIdx FZ       x | Refl | _ = indexSum $ Left x
+--   toTotalInputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalInputsIdx idx x
 
-public export
-toTotalOutputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
-                    (idx : Fin subMs.asList.length) ->
-                    Fin (index ms $ index' subMs.asList idx).outsCount ->
-                    Fin $ totalOutputs {ms} subMs
-toTotalOutputsIdx {subMs=i::is} idx x with 0 (sym $ svolistAppendLen (index ms i).outputs (allOutputs {ms} is))
-                                         | 0 (length ((index ms i).outputs ++ allOutputs {ms} is))
-  toTotalOutputsIdx FZ       x | Refl | _ = indexSum $ Left x
-  toTotalOutputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalOutputsIdx idx x
+-- public export
+-- toTotalOutputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
+--                     (idx : Fin subMs.asList.length) ->
+--                     Fin (index ms $ index' subMs.asList idx).outsCount ->
+--                     Fin $ totalOutputs {ms} subMs
+-- toTotalOutputsIdx {subMs=i::is} idx x with 0 (sym $ svolistAppendLen (index ms i).outputs (allOutputs {ms} is))
+--                                          | 0 (length ((index ms i).outputs ++ allOutputs {ms} is))
+--   toTotalOutputsIdx FZ       x | Refl | _ = indexSum $ Left x
+--   toTotalOutputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalOutputsIdx idx x
+
+Show SVPortMode where
+  show In    = "input"
+  show Out   = "output"
+  show InOut = "inout"
+  -- show Ref   = "ref"
+
+Show (PortMode SystemVerilog) where
+  show (SVP x) = show x
 
 Show NetType where
   show Supply0' = "supply0"
@@ -157,7 +184,7 @@ showSVType : SVType -> (name : String) -> String
 showSVType rv@(RVar x)                name = "\{show x}\{pn name}"
 showSVType sv@(AVar x)                name = "\{show x}\{pn name}"
 showSVType vv@(VVar x)                name = "\{show x}\{pn name}"
-showSVType pa@(PackedArr   t {p} s e) name = "\{showPackedSVT pa} \{pn name}"
+showSVType pa@(PackedArr   t {p} s e) name = "\{showPackedSVT pa}\{pn name}"
 showSVType ua@(UnpackedArr t     s e) name = "\{showPackedSVT $ basic t} \{name} [\{show s}:\{show e}]\{unpDimensions t}" where
   basic : SVType -> SVType
   basic (UnpackedArr t _ _) = basic t
@@ -214,169 +241,284 @@ getNames : Vect l String -> FinsList l -> List String
 getNames names []        = []
 getNames names (x :: xs) = index x names :: getNames names xs
 
-isElem : Eq a => (x : a) -> (xs : List a) -> Bool
-isElem x []      = False
-isElem x (y::xs) = case x == y of
-  True => True
-  False => isElem x xs
+-- isElem : Eq a => (x : a) -> (xs : List a) -> Bool
+-- isElem x []      = False
+-- isElem x (y::xs) = case x == y of
+--   True => True
+--   False => isElem x xs
 
-iMcsByF : (mcs : MultiConnectionsList ms m subMs) ->
-          (extractField : MultiConnection ms m subMs -> List $ Fin iport) -> Fin iport -> Maybe (Fin $ length mcs)
-iMcsByF mcs func fin = findIndex resolve $ toVect mcs where
-    resolve : MultiConnection ms m subMs -> Bool
-    resolve sc = isElem fin $ func sc
+-- iMcsByF : (mcs : MultiConnectionsList ms m subMs) ->
+--           (extractField : MultiConnection ms m subMs -> List $ Fin iport) -> Fin iport -> Maybe (Fin $ length mcs)
+-- iMcsByF mcs func fin = findIndex resolve $ toVect mcs where
+--     resolve : MultiConnection ms m subMs -> Bool
+--     resolve sc = isElem fin $ func sc
 
-findMcsNameByF : (extractField : MultiConnection ms m subMs -> List $ Fin iport) ->
-                 (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Fin iport -> String
-findMcsNameByF extract mcs mcsNames fin = case iMcsByF mcs extract fin of
-  Just mcsFin => index mcsFin mcsNames
-  Nothing     => "error!!"
+-- findMcsNameByF : (extractField : MultiConnection ms m subMs -> List $ Fin iport) ->
+--                  (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Fin iport -> String
+-- findMcsNameByF extract mcs mcsNames fin = case iMcsByF mcs extract fin of
+--   Just mcsFin => index mcsFin mcsNames
+--   Nothing     => "error!!"
 
-extractSubSnks : MultiConnection ms m subMs -> List (Fin $ subSnks' ms m subMs)
-extractSubSnks (MkMC _ ssk _ _) = ssk.asList
+-- extractSubSnks : MultiConnection ms m subMs -> List (Fin $ subSnks' ms m subMs)
+-- extractSubSnks (MkMC _ ssk _ _) = ssk.asList
 
-extractSubSrcs : MultiConnection ms m subMs -> List (Fin $ subSrcs' ms m subMs)
-extractSubSrcs (MkMC _ _ _ ssc) = ssc.asList
+-- extractSubSrcs : MultiConnection ms m subMs -> List (Fin $ subSrcs' ms m subMs)
+-- extractSubSrcs (MkMC _ _ _ ssc) = ssc.asList
 
-extractTopSrcs : MultiConnection ms m subMs -> List (Fin m.inpsCount)
-extractTopSrcs (MkMC _ _ (Just i) _) = [ i ]
-extractTopSrcs _                     = []
+-- extractTopSrcs : MultiConnection ms m subMs -> List (Fin m.inpsCount)
+-- extractTopSrcs (MkMC _ _ (Just i) _) = [ i ]
+-- extractTopSrcs _                     = []
 
-extractTopSnks : MultiConnection ms m subMs -> List (Fin m.outsCount)
-extractTopSnks (MkMC (Just i) _ _ _) = [ i ]
-extractTopSnks _                     = []
+-- extractTopSnks : MultiConnection ms m subMs -> List (Fin m.outsCount)
+-- extractTopSnks (MkMC (Just i) _ _ _) = [ i ]
+-- extractTopSnks _                     = []
 
-findSIName : (mcs : MultiConnectionsList ms m subMs) -> (mcsNames : Vect (length mcs) String) -> Fin (subSnks' ms m subMs) -> String
-findSIName = findMcsNameByF extractSubSnks
+-- findSIName : (mcs : MultiConnectionsList ms m subMs) -> (mcsNames : Vect (length mcs) String) -> Fin (subSnks' ms m subMs) -> String
+-- findSIName = findMcsNameByF extractSubSnks
 
-findSOName : (mcs : MultiConnectionsList ms m subMs) -> (mcsNames : Vect (length mcs) String) -> Fin (subSrcs' ms m subMs) -> String
-findSOName = findMcsNameByF extractSubSrcs
+-- findSOName : (mcs : MultiConnectionsList ms m subMs) -> (mcsNames : Vect (length mcs) String) -> Fin (subSrcs' ms m subMs) -> String
+-- findSOName = findMcsNameByF extractSubSrcs
 
-findTIName : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Fin (m.inpsCount) -> String
-findTIName = findMcsNameByF extractTopSrcs
+-- findTIName : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Fin (m.inpsCount) -> String
+-- findTIName = findMcsNameByF extractTopSrcs
 
-findTOName : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Fin (m.outsCount) -> String
-findTOName = findMcsNameByF extractTopSnks
+-- findTOName : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Fin (m.outsCount) -> String
+-- findTOName = findMcsNameByF extractTopSnks
 
-findSubPortType : (MultiConnection ms m subMs -> List $ Fin $ subs) ->
-                  MultiConnectionsList ms m subMs -> Fin subs -> SVObject
-findSubPortType extract mcs fin = case iMcsByF mcs extract fin of
-  Just mcsFin => typeOf $ index mcs mcsFin
-  Nothing     => defaultNetType -- error. should not be possible
+-- findSubPortType : (MultiConnection ms m subMs -> List $ Fin $ subs) ->
+--                   MultiConnectionsList ms m subMs -> Fin subs -> SVObject
+-- findSubPortType extract mcs fin = case iMcsByF mcs extract fin of
+--   Just mcsFin => typeOf $ index mcs mcsFin
+--   Nothing     => defaultNetType -- error. should not be possible
 
-findSISVT : MultiConnectionsList ms m subMs -> Fin (subSnks' ms m subMs) -> SVObject
-findSISVT = findSubPortType extractSubSnks
+-- findSISVT : MultiConnectionsList ms m subMs -> Fin (subSnks' ms m subMs) -> SVObject
+-- findSISVT = findSubPortType extractSubSnks
 
-findSOSVT : MultiConnectionsList ms m subMs -> Fin (subSrcs' ms m subMs) -> SVObject
-findSOSVT = findSubPortType extractSubSrcs
-
-
-parameters {opts : LayoutOpts} (m : ModuleSig) (ms : ModuleSigsList)  (subMs : FinsList ms.length) (pms : PrintableModules ms)
-           (mcs : MultiConnectionsList ms m subMs) (mcsNames : Vect (length mcs) String)
-
-  printSubmodules : List String -> List (Fin (length (subMs.asList)), Fin (length ms)) -> List $ Doc opts
-  printSubmodules  subMInstanceNames subMsIdxs = foldl (++) [] $ map printSubm $ zip subMInstanceNames subMsIdxs where
-
-    printSubm' : (pre : Doc opts) -> (siNames : List String) -> (soNames : List String) -> (exM : ModuleSig) ->
-                 (ctxInps : List SVObject) -> (ctxOuts : List SVObject) -> (exInps : List String) -> (exOuts : List String) -> List (Doc opts)
-    printSubm' pre siNames soNames exM ctxInps ctxOuts exInps exOuts = do
-      let warningsSubOuts = printAllImplicitCasts showSVObj (toList exM.outputs) exOuts ctxOuts soNames
-      let warningsSubInps = printAllImplicitCasts showSVObj ctxInps siNames (toList exM.inputs) exInps
-      let warnings = if isNil warningsSubOuts ||
-                        isNil warningsSubInps then warningsSubOuts ++ warningsSubInps else warningsSubOuts ++ [ "//" ] ++ warningsSubInps
-      case isNil warnings of
-        True  => [ pre, line "" ]
-        False => [ pre ] ++ map line warnings ++ [ line "" ]
-
-    ||| 23.2.1 Module header definition
-    ||| The module header defines the following:
-    ||| — The name of the module
-    ||| — The port list of the module
-    ||| — The direction and size of each port
-    ||| — The type of data passed through each port
-    ||| — The parameter constants of the module
-    ||| — A package import list of the module
-    ||| — The default lifetime (static or automatic) of subroutines defined within the module
-    ||| IEEE 1800-2023
-    printSubm : (String, (Fin (length (subMs.asList)), Fin (length ms))) -> List $ Doc opts
-    printSubm (instanceName, subMsIdx, msIdx) = do
-      let pre : Doc opts = line (index msIdx $ toVect $ allModuleNames pms) <++> line instanceName
-
-      let inputs  = List.allFins (index ms $ index' subMs.asList subMsIdx).inpsCount <&> toTotalInputsIdx subMsIdx
-      let outputs = List.allFins (index ms $ index' subMs.asList subMsIdx).outsCount <&> toTotalOutputsIdx subMsIdx
-
-      let siNames = map (findSIName mcs mcsNames) inputs
-      let soNames = map (findSOName mcs mcsNames) outputs
-
-      let ctxInps = map (findSISVT mcs) inputs
-      let ctxOuts = map (findSOSVT mcs) outputs
-
-      let modulePrintable = index pms msIdx
-      case modulePrintable.insOuts of
-        StdModule  _      _      => printSubm' (pre <+> concatInpsOuts siNames soNames) siNames soNames (index ms msIdx) ctxInps ctxOuts siNames soNames
-        UserModule exInps exOuts => do
-          let inpsJoined = nameBasedConnections (toList exInps) siNames
-          let outsJoined = nameBasedConnections (toList exOuts) soNames
-
-          printSubm' (pre <+> concatInpsOuts inpsJoined outsJoined) siNames soNames (index ms msIdx) ctxInps ctxOuts (toList exInps) (toList exOuts)
+-- findSOSVT : MultiConnectionsList ms m subMs -> Fin (subSrcs' ms m subMs) -> SVObject
+-- findSOSVT = findSubPortType extractSubSrcs
 
 
-resolveInputNames : {m : _} -> (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Vect (m.inpsCount) String
-resolveInputNames mcs mcsNames = map (findTIName mcs mcsNames) $ allFins (m.inpsCount)
+-- parameters {opts : LayoutOpts} (m : ModuleSig) (ms : ModuleSigsList)  (subMs : FinsList ms.length) (pms : PrintableModules ms)
+--            (mcs : MultiConnectionsList ms m subMs) (mcsNames : Vect (length mcs) String)
 
-resolveOutputNames : {m : _} -> (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Vect (m.outsCount) String
-resolveOutputNames mcs mcsNames = map (findTOName mcs mcsNames) $ allFins (m.outsCount)
+--   printSubmodules : List String -> List (Fin (length (subMs.asList)), Fin (length ms)) -> List $ Doc opts
+--   printSubmodules  subMInstanceNames subMsIdxs = foldl (++) [] $ map printSubm $ zip subMInstanceNames subMsIdxs where
 
-||| > In the absence of an explicit declaration, an implicit net of default net type shall be assumed
-||| IEEE 1800-2023
-|||
-||| The default net type is wire. It could be changed to another net type using `default_nettype` directive.
-||| Net types aren't compatible with unpacked arrays. So connections to unpacked array ports must be declared explicitly.
-unpackedDecls : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> List String
-unpackedDecls []          _             = []
-unpackedDecls (mc@(MkMC Nothing ssk Nothing ssc) :: mcs) (name::names) = if (isUnpacked $ typeOf mc)
-  then (showSVObj (typeOf mc) name) :: unpackedDecls mcs names
-  else unpackedDecls mcs names
-unpackedDecls (mc :: mcs) (name::names) = unpackedDecls mcs names
+--     printSubm' : (pre : Doc opts) -> (siNames : List String) -> (soNames : List String) -> (exM : ModuleSig) ->
+--                  (ctxInps : List SVObject) -> (ctxOuts : List SVObject) -> (exInps : List String) -> (exOuts : List String) -> List (Doc opts)
+--     printSubm' pre siNames soNames exM ctxInps ctxOuts exInps exOuts = do
+--       let warningsSubOuts = printAllImplicitCasts showSVObj (toList exM.outputs) exOuts ctxOuts soNames
+--       let warningsSubInps = printAllImplicitCasts showSVObj ctxInps siNames (toList exM.inputs) exInps
+--       let warnings = if isNil warningsSubOuts ||
+--                         isNil warningsSubInps then warningsSubOuts ++ warningsSubInps else warningsSubOuts ++ [ "//" ] ++ warningsSubInps
+--       case isNil warnings of
+--         True  => [ pre, line "" ]
+--         False => [ pre ] ++ map line warnings ++ [ line "" ]
+
+--     ||| 23.2.1 Module header definition
+--     ||| The module header defines the following:
+--     ||| — The name of the module
+--     ||| — The port list of the module
+--     ||| — The direction and size of each port
+--     ||| — The type of data passed through each port
+--     ||| — The parameter constants of the module
+--     ||| — A package import list of the module
+--     ||| — The default lifetime (static or automatic) of subroutines defined within the module
+--     ||| IEEE 1800-2023
+--     printSubm : (String, (Fin (length (subMs.asList)), Fin (length ms))) -> List $ Doc opts
+--     printSubm (instanceName, subMsIdx, msIdx) = do
+--       let pre : Doc opts = line (index msIdx $ toVect $ allModuleNames pms) <++> line instanceName
+
+--       let inputs  = List.allFins (index ms $ index' subMs.asList subMsIdx).inpsCount <&> toTotalInputsIdx subMsIdx
+--       let outputs = List.allFins (index ms $ index' subMs.asList subMsIdx).outsCount <&> toTotalOutputsIdx subMsIdx
+
+--       let siNames = map (findSIName mcs mcsNames) inputs
+--       let soNames = map (findSOName mcs mcsNames) outputs
+
+--       let ctxInps = map (findSISVT mcs) inputs
+--       let ctxOuts = map (findSOSVT mcs) outputs
+
+--       let modulePrintable = index pms msIdx
+--       case modulePrintable.insOuts of
+--         StdModule  _      _      => printSubm' (pre <+> concatInpsOuts siNames soNames) siNames soNames (index ms msIdx) ctxInps ctxOuts siNames soNames
+--         UserModule exInps exOuts => do
+--           let inpsJoined = nameBasedConnections (toList exInps) siNames
+--           let outsJoined = nameBasedConnections (toList exOuts) soNames
+
+--           printSubm' (pre <+> concatInpsOuts inpsJoined outsJoined) siNames soNames (index ms msIdx) ctxInps ctxOuts (toList exInps) (toList exOuts)
+
+
+-- resolveInputNames : {m : _} -> (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Vect (m.inpsCount) String
+-- resolveInputNames mcs mcsNames = map (findTIName mcs mcsNames) $ allFins (m.inpsCount)
+
+-- resolveOutputNames : {m : _} -> (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> Vect (m.outsCount) String
+-- resolveOutputNames mcs mcsNames = map (findTOName mcs mcsNames) $ allFins (m.outsCount)
+
+-- ||| > In the absence of an explicit declaration, an implicit net of default net type shall be assumed
+-- ||| IEEE 1800-2023
+-- |||
+-- ||| The default net type is wire. It could be changed to another net type using `default_nettype` directive.
+-- ||| Net types aren't compatible with unpacked arrays. So connections to unpacked array ports must be declared explicitly.
+-- unpackedDecls : (mcs : MultiConnectionsList ms m subMs) -> Vect (length mcs) String -> List String
+-- unpackedDecls []          _             = []
+-- unpackedDecls (mc@(MkMC Nothing ssk Nothing ssc) :: mcs) (name::names) = if (isUnpacked $ typeOf mc)
+--   then (showSVObj (typeOf mc) name) :: unpackedDecls mcs names
+--   else unpackedDecls mcs names
+-- unpackedDecls (mc :: mcs) (name::names) = unpackedDecls mcs names
+
+parameters {opts : LayoutOpts}
+           (s : DesignUnitSig SystemVerilog) {usl : _} {subUs : _} 
+           (moduleName : String) (topNames : Vect (s.portsCnt) String) (subEntNames : Vect (subUs.length) String)
+           (mcs : MultiConnectionsList SystemVerilog s usl subUs) (mcsNames : Vect (length mcs) String)
+           (prevEntNames : SVect $ usl.length) (pds : PrintableDesigns SystemVerilog usl)
+  
+  subModuleTypeName : Fin subUs.length -> String
+  subModuleTypeName subFin = index (index subUs subFin) $ toVect prevEntNames
+
+  ||| Flat indicies
+  subPortFins : Fin subUs.length -> List (Fin (totalSubs' usl subUs))
+  subPortFins subFin = map (toTotalSubsIdx subFin) $ List.allFins (index usl $ index subUs subFin).portsCnt
+
+  subPortSigNames : Fin subUs.length -> List String
+  subPortSigNames = map (findSubPortName {s} {mcs} {mcsNames}) . subPortFins
+
+  ||| .portName(sigName)
+  namedConn : String -> String -> Doc opts
+  namedConn portName sigName = line ".\{portName}(\{sigName})"
+
+  subConnections : List String -> Fin subUs.length -> List $ Doc opts
+  subConnections sigNames subFin = case (index pds $ index subUs subFin).portNames of
+    StdModule  _     => map line sigNames
+    UserModule ports => zipWith namedConn (toList ports) sigNames
+
+  ||| Actual SVObject type of the signal connected to a sub-module port
+  findSubPortMcType : Fin (totalSubs' usl subUs) -> SVObject
+  findSubPortMcType f = case isSubPortOf f mcs of
+    Nothing   => Var (AVar Logic')
+    Just mcsF => dtToSVt $ typeOf $ index mcs mcsF
+
+  ||| Formal sub port types
+  subPortFormalTypes : Fin subUs.length -> List SVObject
+  subPortFormalTypes = map (dtToSVt . (.type) . subPort usl subUs) . subPortFins
+
+  ||| Actual sub port types
+  subPortActualTypes : Fin subUs.length -> List SVObject
+  subPortActualTypes = map findSubPortMcType . subPortFins
+
+  subPortFormalNames : Fin subUs.length -> List String
+  subPortFormalNames subFin = case (index pds $ index subUs subFin).portNames of
+    StdModule  _     => subPortSigNames subFin
+    UserModule ports => toList ports
+
+  subModuleWarningDocs : Fin subUs.length -> List $ Doc opts
+  subModuleWarningDocs subFin =
+    let sigNames    = subPortSigNames subFin
+        formalNames = subPortFormalNames subFin
+    in map line $ printAllImplicitCasts showSVObj
+         (subPortActualTypes subFin) sigNames      -- actual signal: what is connected
+         (subPortFormalTypes subFin) formalNames   -- formal port:   what the sub-module declares
+
+  ||| 23.2.1 Module header definition — IEEE 1800-2023
+  ||| <type-name> <instance-name>(<port-connections>);
+  subModuleDecl : (String, Fin subUs.length) -> Doc opts
+  subModuleDecl (instanceName, subFin) =
+    let sigNames = subPortSigNames subFin
+        conns    = subConnections sigNames subFin
+        warnings = subModuleWarningDocs subFin
+        header   = line "\{subModuleTypeName subFin} \{instanceName}" <+>
+                   generalList (line "(") (line ");") comma conns
+    in vsep $ header :: warnings ++ [emptyLine]
+
+  ||| > In the absence of an explicit declaration, an implicit net of default net type shall be assumed
+  ||| IEEE 1800-2023
+  ||| Net types aren't compatible with unpacked arrays, so connections with unpacked array type need explicit declarations.
+  unpackedDecl : (mc : MultiConnection SystemVerilog s usl subUs) -> String -> Maybe (Doc opts)
+  unpackedDecl mc@(MkMC Nothing Nothing _ _ @{_} @{NoTop}) name =
+    case isUnpacked (dtToSVt $ typeOf mc) of
+      True  => Just $ line "\{showSVObj (dtToSVt $ typeOf mc) name};"
+      False => Nothing
+  unpackedDecl _ _ = Nothing
+
+  unpackedDeclDocs : List $ Doc opts
+  unpackedDeclDocs = catMaybes $ toList $ zipWith unpackedDecl (toVect mcs) mcsNames
+
+  unpackedSection : Doc opts
+  unpackedSection = case unpackedDeclDocs of
+    [] => empty
+    ds => vsep $ line "// Unpacked net declarations" :: ds ++ [emptyLine]
+     
+  assignSection : String -> List String -> List $ Doc opts
+  assignSection comment assigns = line comment :: map line assigns
+
+  context : (sdAssignments : List String) -> (mdAssignments : List String) -> Gen0 $ Doc opts
+  context sdAssignments mdAssignments = pure $ vsep 
+    [
+      unpackedSection
+    , vsep $ map subModuleDecl (toList $ zip subEntNames $ Vect.allFins subUs.length)
+    , emptyLine
+    , vsep $ assignSection "// Single-driven assigns" sdAssignments
+    , emptyLine
+    , vsep $ assignSection "// Multi-driven assigns"  mdAssignments
+    ]
+
+
+  topPorts : Gen0 $ List $ Doc opts
+  topPorts = forEachTopPort mcs topNames print where
+    print : DataType SystemVerilog -> String -> PortMode SystemVerilog -> Gen MaybeEmpty (Doc opts)
+    print (SVT obj) name mode = pure $ line "\{show mode} \{showSVObj obj name}"
+
+  printModule : (sdAssignments : List String) -> (mdAssignments : List String) -> Gen0 $ Doc opts
+  printModule sdAssignments mdAssignments = do
+    tp <- topPorts
+    ctx <- context sdAssignments mdAssignments
+    pure $ vsep
+      [
+        line "module \{moduleName} " <+> generalList (line "(") (line ");") comma tp
+      , defaultIndent ctx
+      , line "endmodule: \{moduleName}"
+      ]
 
 export
-prettyModules : {opts : _} -> {ms : _} -> Fuel ->
-                (pms : PrintableModules ms) -> UniqNames ms.length (allModuleNames pms) => VerilogDesign ms -> Gen0 $ Doc opts
-prettyModules x _         End = pure $ empty
-prettyModules x pms @{un} (NewCompositeModule m subMs mcs sdAssigns sdExprs mdAssigns mdExprs cont) = do
-  -- Generate submodule name
-  (name ** isnew) <- rawNewName x @{namesGen'} (allModuleNames pms) un
-
-  -- Generate connections names
-  (mcsNames ** namesWihMcs ** unm) <- genNUniqueNamesVect x (length mcs) (allModuleNames pms) un
-
-  -- Generate submodule instance names
-  (subMInstanceNames ** namesWithSubMs ** uniosub) <- genNUniqueNamesVect x subMs.length namesWihMcs unm
+prettyModules : {opts : _} -> {dus : _} -> Fuel ->
+               (pds : PrintableDesigns SystemVerilog dus) -> UniqNames dus.length (allDesignNames pds) => SVDesign dus -> Gen0 $ Doc opts
+prettyModules _ _         End                                                                          = pure empty
+prettyModules x pds @{un} (New {s} {usl} {subUs} {mcs} basic sdAssigns sdExprs mdAssigns mdExprs cont) = do
+  (moduleName ** connNames ** subEntNames ** unDes ** unEntConnSub) <- genPDNames VerilogKeywords x pds {un} basic
+  let allEntConSubNames : ?
+      allEntConSubNames = subEntNames ++ connNames ++ moduleName :: allDesignNames pds
+  let mcsNames : ?
+      mcsNames = toVect connNames
+  let subEntNamesVect : ?
+      subEntNamesVect = toVect subEntNames
 
   -- Resolve assigns
   let sdAssignments = printAssigns $ zip (getNames mcsNames sdAssigns) $ printTMPExprs mcsNames sdExprs
   let mdAssignments = printAssigns $ zip (getNames mcsNames mdAssigns) $ printTMPExprs mcsNames mdExprs
 
-  -- Helper lists
-  let inputNames  = resolveInputNames mcs mcsNames
-  let outputNames = resolveOutputNames mcs mcsNames
-
-  -- Save generated names
+  -- Resolve names
+  let topNames = resolveInpsOutsNames basic mcsNames
   let generatedPrintableInfo : ?
-      generatedPrintableInfo = MkPrintableModule name (UserModule inputNames outputNames)
+      generatedPrintableInfo = MkPrintableDesign moduleName (UserModule topNames)
 
   -- Recursive call to use at the end
-  recur <- prettyModules x (generatedPrintableInfo :: pms) cont
-  pure $ vsep
-    [ enclose (flush $ line "module" <++> line name) (line "endmodule:" <++> line name) $ flush $ indent 2 $ vsep $ do
-      let outerModuleInputs = printConnections "input" m.inputs inputNames
-      let outerModuleOutputs = printConnections "output" m.outputs outputNames
-      let outerModuleIO = toList $ line <$> (outerModuleOutputs ++ outerModuleInputs)
-      [ tuple outerModuleIO <+> symbol ';' , line "" ] ++
-      ((unpackedDecls mcs mcsNames) <&> \(unp) : String => line unp <+> symbol ';') ++ [ line "" ] ++
-      printSubmodules m ms subMs pms mcs mcsNames (toList subMInstanceNames) (withIndex subMs.asList) ++
-      [ line "", line "// Single-driven assigns" ] ++ (map line sdAssignments) ++
-      [ line "", line "// Multi-driven assigns" ] ++ (map line mdAssignments)
-    , line ""
+  recur <- prettyModules {opts} x (generatedPrintableInfo :: pds) @{unDes} cont
+  cur <- printModule s moduleName topNames subEntNamesVect mcs mcsNames (allDesignNames pds) pds sdAssignments mdAssignments
+  pure $ vsep 
+    [
+      cur
+    , emptyLine
     , recur
     ]
+--   pure $ vsep
+--     [ enclose (flush $ line "module" <++> line name) (line "endmodule:" <++> line name) $ flush $ indent 2 $ vsep $ do
+--       let outerModuleInputs = printConnections "input" m.inputs inputNames
+--       let outerModuleOutputs = printConnections "output" m.outputs outputNames
+--       let outerModuleIO = toList $ line <$> (outerModuleOutputs ++ outerModuleInputs)
+--       [ tuple outerModuleIO <+> symbol ';' , line "" ] ++
+--       ((unpackedDecls mcs mcsNames) <&> \(unp) : String => line unp <+> symbol ';') ++ [ line "" ] ++
+--       printSubmodules m ms subMs pms mcs mcsNames (toList subMInstanceNames) (withIndex subMs.asList) ++
+--       [ line "", line "// Single-driven assigns" ] ++ (map line sdAssignments) ++
+--       [ line "", line "// Multi-driven assigns" ] ++ (map line mdAssignments)
+--     , line ""
+--     , recur
+--     ]

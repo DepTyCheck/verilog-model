@@ -33,13 +33,27 @@ namespace FinsList
   data FinNotIn : FinsList srcs -> Fin srcs -> Type where
     FNIEmpty : FinNotIn [] f
     FNICons  : {x, f : Fin srcs} -> (0 _ : So $ x /= f) -> (fni: FinNotIn xs f) -> FinNotIn (x :: xs) f
+  
+  public export
+  toVect : (fs : FinsList n) -> Vect (fs.length) (Fin n)
+  toVect []        = []
+  toVect (x :: xs) = x :: toVect xs
+
+  public export
+  lookUp : (fl : FinsList n) -> Fin (fl.length) -> Fin n
+  lookUp = index
+
+  public export
+  listLookUp : (y : FinsList n) -> FinsList (y.length) -> FinsList n
+  listLookUp xs []        = []
+  listLookUp xs (y :: ys) = lookUp xs y :: listLookUp xs ys
 
   -- public export
   -- data FinInFL : FinsList l -> Fin l -> Type where
   --   Here  : (n, n' : Fin l) => (0 _ : So $ n == n') => FinInFL (n::ns) n'
   --   There : (n, n' : Fin l) => (0 _ : So $ n /= n') => FinInFL ns n' -> FinInFL (n::ns) n'
 
-namespace MFinsList
+namespace MFin
 
   public export
   data MFin : Nat -> Type where

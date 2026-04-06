@@ -19,10 +19,7 @@ VHDLKeywords = [
   "label", "procedure", "units", "component", "library", "process", "until", "configuration", "linkage", "property", "use", "constant", "context",
   "literal", "protected", "loop", "private", "variable", "cover", "pure", "view", "map", "vpkg", "default", "mod", "range", "vmode", "disconnect",
   "downto", "record", "vprop", "register", "vunit", "reject", "else", "release", "wait", "elsif", "rem", "when", "end", "report", "while", "entity",
-  "exit", "restrict", "with", "return", "rol", "xnor", "ror", "xor",
-  -- 15.10 Reserved words, NOTE 3. PSL keywords
-  "assert", "default", "sequence", "vpkassume", "fairness", "strong", "vprcover", "property", "vmode", "vunrestrict"
-  -- Some PSL keywords repeat default words
+  "exit", "restrict", "with", "return", "rol", "xnor", "ror", "xor"
 ]
 
 export

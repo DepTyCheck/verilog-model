@@ -1,25 +1,43 @@
 module Test.Verilog.Defaults
 
-import public Test.Verilog.Connections
-import public Test.Verilog.PrintableModules
+import Test.Common.DataType
+import Test.Common.Design
+import Test.Common.PrintableDesigns
 
-public export
-StdModules : ModuleSigsList
-StdModules =
-  [ MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
-  , MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
-  , MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
-  , MkModuleSig [Var $ AVar Logic', Var $ AVar Logic'] [Var $ AVar Logic']
-  , MkModuleSig [Var $ AVar Logic']                    [Var $ AVar Logic']
+%default total
+
+Std2Ports = MkDesignUnitSig 
+  [
+    MkPort (SVT $ Var $ AVar Logic') (SVP $ Out)
+  , MkPort (SVT $ Var $ AVar Logic') (SVP $ In)
+  ]
+
+Std3Ports = MkDesignUnitSig 
+  [
+    MkPort (SVT $ Var $ AVar Logic') (SVP $ Out)
+  , MkPort (SVT $ Var $ AVar Logic') (SVP $ In)
+  , MkPort (SVT $ Var $ AVar Logic') (SVP $ In)
   ]
 
 public export
-StdModulesPV : PrintableModules StdModules
-StdModulesPV =
+StdModules : DesignUnitSigsList SystemVerilog
+StdModules = 
   [
-    MkPrintableModule "and"  (StdModule 2 1)
-  , MkPrintableModule "or"   (StdModule 2 1)
-  , MkPrintableModule "nand" (StdModule 2 1)
-  , MkPrintableModule "xor"  (StdModule 2 1)
-  , MkPrintableModule "not"  (StdModule 1 1)
+    Std2Ports
+  , Std3Ports
+  , Std3Ports
+  , Std3Ports
+  , Std3Ports
+  , Std3Ports
+  ]
+
+public export
+StdSVPrintable : PrintableDesigns SystemVerilog StdModules
+StdSVPrintable = [
+    MkPrintableDesign "not" (StdModule 2)
+  , MkPrintableDesign "and" (StdModule 3)
+  , MkPrintableDesign "or" (StdModule 3)
+  , MkPrintableDesign "nand" (StdModule 3)
+  , MkPrintableDesign "xor" (StdModule 3)
+  , MkPrintableDesign "xnor" (StdModule 3)
   ]
