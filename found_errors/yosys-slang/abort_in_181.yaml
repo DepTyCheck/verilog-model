@@ -2,7 +2,7 @@ stage: parsing
 lang: sv
 tool: yosys-slang
 id: abort_in_181
-title: Abort in slang_frontend.cc
+title: Abort in slang_frontend.cc due to real
 issue_novelty: already_known
 issue_links:
   - local_id: real_is_unsupported_for_conversion_to_bits

@@ -1,0 +1,32 @@
+issue_novelty: unsupported
+lang: sv
+stage: synthesis
+tool: iverilog
+id: inout_ports_with_unpacked_dimensions_are_not_supported
+title: Inout ports with unpacked are not supported
+regex: >
+  Inout ports with unpacked dimensions are not supported
+examples:
+  - inout_ports_with_unpacked_dimensions_are_not_supported_ex1:
+      first_found: 06.04.2026
+      full_error: |
+        sorry: Inout ports with unpacked dimensions are not supported.
+      full_example: |
+        module bqaf ();
+          xor g(orxb, hayumwsvb, kftve);
+          xnor xo(sou, orxb, fysfonrdw);  
+          xnor h(kftve, sou, orxb);
+
+          // Multi-driven assigns
+          assign orxb = 'bz11x;
+          assign sou = kftve;
+          assign kftve = orxb;
+          assign hayumwsvb = sou;
+          assign fysfonrdw = 'bzz101;
+        endmodule: bqaf
+
+        module wixixunc (inout wand logic [4:3][4:0][2:4][3:4] qnbcryu [1:2], inout wire logic rntqc);
+          and mqywlxbcz(liw, auwkdbrf, liw);
+          xnor ui(f, fgm, liw);
+          xnor tjw(is, ukiamsdq, yppwq);
+        endmodule: wixixunc
