@@ -102,11 +102,11 @@ The CI pipeline runs on every pull request and nightly, testing generated design
 
 ### Artifacts
 
-- **Generated files** — useful for debugging the workflow, saving into the overall dataset, 
-and manually shrinking designs that triggered unknown errors.
+- **Generated files** — useful for debugging the workflow, saving into the overall dataset,
+  and manually shrinking designs that triggered unknown errors.
 - **Per-tool statistics** — for every supported tool the CI reports how many errors were found and whether each one is a known (ignored) issue or an unknown one. The job fails if any unknown error is encountered.
 - **MDS diagrams** — when unknown errors are found, an interactive HTML diagram is uploaded
-showing how close the unknown error messages are to each other and to the known errors (distance computed via NCD).
+  showing how close the unknown error messages are to each other and to the known errors (distance computed via NCD).
 
 ### On merge
 
@@ -114,5 +114,5 @@ showing how close the unknown error messages are to each other and to the known 
 
 ### Nightly run
 
-- Statistics is pushed to the `gh-pages` branch which holds the project's website.
+- Statistics is pushed to the `gh-pages` branch which holds the project's site.
 - If a nightly run finds a previously unseen issue, the CI automatically opens a GitHub issue and tags the maintainers.
