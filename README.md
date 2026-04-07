@@ -104,7 +104,8 @@ The CI pipeline runs on every pull request and nightly, testing generated design
 
 - **Generated files** — useful for debugging the workflow, saving into the overall dataset,
   and manually shrinking designs that triggered unknown errors.
-- **Per-tool statistics** — for every supported tool the CI reports how many errors were found and whether each one is a known (ignored) issue or an unknown one. The job fails if any unknown error is encountered.
+- **Per-tool statistics** — for every supported tool the CI reports how many errors were found
+  and whether each one is a known (ignored) issue or an unknown one. The job fails if any unknown error is encountered.
 - **MDS diagrams** — when unknown errors are found, an interactive HTML diagram is uploaded
   showing how close the unknown error messages are to each other and to the known errors (distance computed via NCD).
 
