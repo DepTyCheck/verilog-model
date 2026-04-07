@@ -150,7 +150,7 @@ class MDSDistancesReport:
             else:
                 label = base_name
             found_labels.append(label)
-            found_hover.append(f"Test: {label}<br>Error: {self.new_errors[idx].test_file_path}")
+            found_hover.append(f"Test: {label}<br>Error: {self.new_errors[idx].tool_output_error_text}")
 
         return go.Scatter(
             x=x_coords[:n_found],

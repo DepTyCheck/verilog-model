@@ -6,6 +6,7 @@ from src.assets import Assets
 from src.command_output import AnalyzisResult
 from src.error_match_in_test import ErrorMatchInTest
 from src.ignored_errors_list import IgnoredErrorsList
+from src.logger import get_logger
 from src.run_command import RunCommand
 from src.tool_error_regex import ToolErrorRegex
 from src.unexpected_error import UnexpectedError
@@ -110,6 +111,10 @@ class TestsList:
                     sim_success=sim_success,
                     sim_result=sim_result,
                 )
+
+                sim_unexpected = sim_result.unexpected_errors if sim_result is not None else []
+                if synth_result.unexpected_errors or sim_unexpected:
+                    get_logger().info(f"{file_path_str} content:\n{file_content}")
 
         return TestsRunResult(
             run_stats=run_stats_counter.run_stats,

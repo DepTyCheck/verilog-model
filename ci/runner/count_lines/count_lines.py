@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 from pathlib import Path
 
+_PRINTER_PATTERNS = ["runner", "pretty", "print", "warnings", "uniquenames"]
+
 
 def _is_printer_file(path: Path) -> bool:
-    name = path.name.lower()
     stem = path.stem.lower()
-    return stem == "runner" or "pretty" in name or "print" in name
+    return any(p in stem for p in _PRINTER_PATTERNS)
 
 
 def _is_pure_code_line(line: str) -> bool:
@@ -73,10 +74,10 @@ def count_lines(root: Path) -> LineCounts:
 
 def format_report(counts: LineCounts) -> str:
     lines = [
-        "Lines count with comments, docs etc",
+        "Total lines (including comments and documentation):",
         f"{counts.printers.total} printers + {counts.specification.total} specification = {counts.total_total} total",
         "",
-        "Lines count of pure code:",
+        "Source lines of code:",
         f"{counts.printers.pure} printers + {counts.specification.pure} specification = {counts.total_pure} total",
     ]
     return "\n".join(lines)

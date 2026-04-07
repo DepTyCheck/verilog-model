@@ -36,7 +36,6 @@ modules = Test.Common.Utils
         , Test.Verilog.Warnings
         , Test.Verilog.UniqueNames
         , Test.Verilog.Defaults
-        , Test.Verilog.UniqueNames.Derived
 
         , Test.Verilog.TMPExpression.Derived
 

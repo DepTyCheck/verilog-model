@@ -90,3 +90,29 @@ Here is a basic usage example. Generate 10 tests in the tests folder with a fixe
 ```console
 verilog-model --to ./tests -n 10 --seed 12345,6789
 ```
+
+## CI
+
+The CI pipeline runs on every pull request and nightly, testing generated designs against open source HDL analyzers.
+
+### Step summaries
+
+- **Line count** — shows specification and printers line counts.
+- **Error rate comparison** — compares error percentage between master and PR versions.
+
+### Artifacts
+
+- **Generated files** — useful for debugging the workflow, saving into the overall dataset, 
+and manually shrinking designs that triggered unknown errors.
+- **Per-tool statistics** — for every supported tool the CI reports how many errors were found and whether each one is a known (ignored) issue or an unknown one. The job fails if any unknown error is encountered.
+- **MDS diagrams** — when unknown errors are found, an interactive HTML diagram is uploaded
+showing how close the unknown error messages are to each other and to the known errors (distance computed via NCD).
+
+### On merge
+
+- After a PR is merged, a new Docker container with the latest model is built and pushed to the package registry.
+
+### Nightly run
+
+- Statistics is pushed to the `gh-pages` branch which holds the project's website.
+- If a nightly run finds a previously unseen issue, the CI automatically opens a GitHub issue and tags the maintainers.
