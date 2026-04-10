@@ -14,7 +14,7 @@ examples:
       full_example: |
         module bqaf ();
           xor g(orxb, hayumwsvb, kftve);
-          xnor xo(sou, orxb, fysfonrdw);  
+          xnor xo(sou, orxb, fysfonrdw);
           xnor h(kftve, sou, orxb);
 
           // Multi-driven assigns

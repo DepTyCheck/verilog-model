@@ -1,0 +1,29 @@
+stage: parsing
+lang: sv
+tool: yosys-slang
+id: abort_tristate
+title: Abort due to tristate
+regex: >
+  slang_frontend\.cc:2627
+examples:
+  - abort_tristate_ex1:
+      first_found: 07.04.2026
+      minified_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2627
+      minified_example: |
+        module a();
+          tri0 logic b;
+        endmodule: a
+      full_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2627
+      full_example: |
+        module wqsy
+          ( output tri1 logic [0:0] bjztr [1:3][4:0][4:3][3:4]
+          , input supply0 logic kfwudamn [3:4][4:1][2:0][0:4]
+          , input logic [2:2] rbkvferiqg [0:3]
+          );
+
+          xor ozc(yqqmr, s, s);
+          not uy(eaxc, yqqmr);
+
+        endmodule: wqsy
