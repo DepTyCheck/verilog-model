@@ -8,42 +8,33 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from common.command_config import CommandConfig
 from common.error_file_parser import parse_error_files
 from common.run_command import ExecutionResult
 from common.tool_error_regex import ToolErrorRegex
-from known_errors_check.src.error_checker import ErrorResult, ExampleResult, ExampleStatus, ExampleToolResult, ToolConfig, check_all
+from known_errors_check.src.error_checker import ErrorResult, ExampleResult, ToolConfig, check_all
 from known_errors_check.src.result_reporter import build_report, format_markdown_table, print_summary, save_report
 
 DATA_DIR = str(Path(__file__).parent / "data")
 
 
-def _make_example_result(name: str, tool: str, status: ExampleStatus) -> ExampleResult:
-    er = ExampleResult(example_name=name, example_type="minified")
-    er.results_by_tool[tool] = ExampleToolResult(tool_name=tool, status=status)
-    return er
+def _make_example_result(name: str, reproduced: bool) -> ExampleResult:
+    return ExampleResult(example_name=name, example_type="minified", reproduced=reproduced)
 
 
 class TestBuildReport(unittest.TestCase):
 
-    def test_known_error_maps_to_true(self):
+    def test_reproduced_maps_to_true(self):
         er = ErrorResult(error_id="some_error", originating_tool="iverilog")
-        er.examples.append(_make_example_result("ex1", "iverilog", ExampleStatus.KNOWN_ERROR))
+        er.examples.append(_make_example_result("ex1", reproduced=True))
 
         report = build_report([er])
 
         self.assertEqual(report, {"some_error": {"ex1-minified": True}})
 
-    def test_clean_maps_to_false(self):
+    def test_not_reproduced_maps_to_false(self):
         er = ErrorResult(error_id="some_error", originating_tool="iverilog")
-        er.examples.append(_make_example_result("ex1", "iverilog", ExampleStatus.CLEAN))
-
-        report = build_report([er])
-
-        self.assertEqual(report, {"some_error": {"ex1-minified": False}})
-
-    def test_new_error_maps_to_false(self):
-        er = ErrorResult(error_id="some_error", originating_tool="iverilog")
-        er.examples.append(_make_example_result("ex1", "iverilog", ExampleStatus.NEW_ERROR))
+        er.examples.append(_make_example_result("ex1", reproduced=False))
 
         report = build_report([er])
 
@@ -51,8 +42,8 @@ class TestBuildReport(unittest.TestCase):
 
     def test_multiple_examples(self):
         er = ErrorResult(error_id="e1", originating_tool="iverilog")
-        er.examples.append(_make_example_result("ex1", "iverilog", ExampleStatus.KNOWN_ERROR))
-        er.examples.append(_make_example_result("ex2", "iverilog", ExampleStatus.CLEAN))
+        er.examples.append(_make_example_result("ex1", reproduced=True))
+        er.examples.append(_make_example_result("ex2", reproduced=False))
 
         report = build_report([er])
 
@@ -60,10 +51,10 @@ class TestBuildReport(unittest.TestCase):
 
     def test_multiple_errors(self):
         er1 = ErrorResult(error_id="e1", originating_tool="iverilog")
-        er1.examples.append(_make_example_result("ex1", "iverilog", ExampleStatus.KNOWN_ERROR))
+        er1.examples.append(_make_example_result("ex1", reproduced=True))
 
         er2 = ErrorResult(error_id="e2", originating_tool="slang")
-        er2.examples.append(_make_example_result("ex1", "slang", ExampleStatus.CLEAN))
+        er2.examples.append(_make_example_result("ex1", reproduced=False))
 
         report = build_report([er1, er2])
 
@@ -172,8 +163,7 @@ class TestReportForTwoExamplesWithFull(unittest.TestCase):
 
         tool = ToolConfig(
             name="fake_tool",
-            cmd="fake_tool {file}",
-            error_regex=ToolErrorRegex("known error pattern here"),
+            commands=[CommandConfig(run="fake_tool {file}", error_regex=ToolErrorRegex("known error pattern here"))],
         )
 
         with tempfile.TemporaryDirectory() as tmp:

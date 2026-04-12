@@ -2,91 +2,65 @@
 Core regression-checking logic.
 
 For each known error file, every example (minified and full) is run through
-the configured tool.  Results are classified as:
+the configured tool using the same command execution and output analysis code
+as tools_run.  Two independent results are tracked per example:
 
-  CLEAN       – tool passed with no errors (bug may be fixed)
-  KNOWN_ERROR – tool failed and output matches the known error regex
-  NEW_ERROR   – tool failed with a different / unexpected error
-  TIMEOUT     – tool exceeded the execution time limit
-  EXEC_ERROR  – tool could not be launched (command build or subprocess failure)
+  unknown_errors  – output contained errors that matched no known pattern.
+                    Any occurrence across ALL tool error files causes CI failure.
 
-check_all scans ALL tool subdirectories under known_errors_dir (cross-tool
-regression).  NEW_ERROR from any tool on any example causes CI failure.
-For errors originally attributed to the checked tool, KNOWN_ERROR/CLEAN
-results are also collected as regression_confirmations for a separate report.
+  reproduced      – (own-tool errors only) the specific error_id pattern was
+                    found in the output.  Reported in the summary but does NOT
+                    affect CI pass/fail.
 
 Data flow:
-  found_errors/{originating_tool}/*.yaml  (all subdirs scanned)
+  found_errors/{tool}/*.yaml  (all subdirs scanned)
         │
         ▼ _load_all_error_files()
    ErrorFile(id, tool, regex, mode, examples)
         │
-        ▼ for each error_file × for each example:
-   make_command() → run_command() → classify()
+        ▼ IgnoredErrorsList.from_error_files(all_files)
+   all_known_errors   (cross-tool, used for unknown-error detection)
         │
-        ▼
-   ExampleToolResult(status, output_excerpt)
+        ▼ for each error_file × for each example:
+   make_command() → run_command() → CommandOutput.analyze()
+        │
+        ├─ unexpected_errors  → new_error_incidents   (CI fail)
+        └─ found_matches      → reproduced check      (own-tool only, info only)
 """
 
-import re
 import tempfile
 from dataclasses import dataclass, field
-from enum import Enum
 from pathlib import Path
 
-from common.error_file_parser import ErrorFile, Example, parse_error_files
-from common.error_types import MatchingMode
+from common.command_config import CommandConfig
+from common.command_output import AnalyzisResult, CommandOutput
+from common.error_file_parser import ErrorFile, parse_error_files
+from common.error_types import IgnoredError, KnownError, UnexpectedError
 from common.logger import get_logger
 from common.make_command import make_command
 from common.run_command import run_command
-from common.tool_error_regex import ToolErrorRegex
-
-
-class ExampleStatus(str, Enum):
-    CLEAN = "clean"
-    KNOWN_ERROR = "known_error"
-    NEW_ERROR = "new_error"
-    TIMEOUT = "timeout"
-    EXEC_ERROR = "exec_error"
+from tools_run.src.ignored_errors_list import IgnoredErrorsList
 
 
 @dataclass
 class ToolConfig:
     name: str
-    cmd: str
-    error_regex: ToolErrorRegex | None
+    commands: list[CommandConfig]
     language: str = "sv"
-
-
-@dataclass
-class ExampleToolResult:
-    tool_name: str
-    status: ExampleStatus
-    output_excerpt: str = ""
-
-    def to_dict(self) -> dict:
-        d: dict = {"status": self.status.value}
-        if self.output_excerpt:
-            d["output_excerpt"] = self.output_excerpt
-        return d
 
 
 @dataclass
 class ExampleResult:
     example_name: str
     example_type: str  # "minified" | "full"
-    results_by_tool: dict[str, ExampleToolResult] = field(default_factory=dict)
+    reproduced: bool
 
     def to_dict(self) -> dict:
         return {
             "name": self.example_name,
             "type": self.example_type,
-            "results_by_tool": {tool: r.to_dict() for tool, r in self.results_by_tool.items()},
+            "reproduced": self.reproduced,
         }
-
-    def new_errors(self) -> list[tuple[str, str]]:
-        """Return list of (tool_name, output_excerpt) for all NEW_ERROR results."""
-        return [(tool, r.output_excerpt) for tool, r in self.results_by_tool.items() if r.status == ExampleStatus.NEW_ERROR]
 
 
 @dataclass
@@ -103,91 +77,6 @@ class ErrorResult:
         }
 
 
-def _classify(
-    output: str,
-    result_code_ok: bool,
-    timed_out: bool,
-    error_file: ErrorFile,
-    tool_regex: ToolErrorRegex | None,
-) -> tuple[ExampleStatus, str]:
-    """
-    Classify a single tool run against one known error.
-
-    Returns (status, output_excerpt).
-
-    Decision tree:
-      timed_out                              → TIMEOUT
-      result_code_ok AND no extracted errors → CLEAN
-      SPECIFIC mode (tool_regex present): extract errors with tool_regex
-        all match error_file.regex           → KNOWN_ERROR
-        any don't match                      → NEW_ERROR  (report non-matching)
-      WHOLE mode (or no specific matches, or tool_regex is None):
-        whole output matches error_file.regex → KNOWN_ERROR
-        otherwise and result_code_ok          → CLEAN
-        otherwise                             → NEW_ERROR
-    """
-    if timed_out:
-        return ExampleStatus.TIMEOUT, output[:200]
-
-    if tool_regex is not None and error_file.mode == MatchingMode.SPECIFIC:
-        extracted = [m.group(0) for m in re.finditer(tool_regex.regex, output, re.MULTILINE)]
-        if extracted:
-            non_matching = [e for e in extracted if not re.search(error_file.regex, e, re.MULTILINE)]
-            if non_matching:
-                return ExampleStatus.NEW_ERROR, "\n".join(non_matching[:3])
-            return ExampleStatus.KNOWN_ERROR, extracted[0]
-
-    # Whole-output match (also fallback when SPECIFIC found nothing)
-    whole_match = re.search(error_file.regex, output, re.MULTILINE)
-    if whole_match:
-        return ExampleStatus.KNOWN_ERROR, whole_match.group(0)
-
-    if result_code_ok:
-        return ExampleStatus.CLEAN, ""
-
-    # Non-zero exit but nothing matched at all
-    excerpt = "\n".join(output.splitlines()[:5])
-    return ExampleStatus.NEW_ERROR, excerpt
-
-
-def _run_example_with_tool(
-    example: Example,
-    error_file: ErrorFile,
-    tool: ToolConfig,
-) -> ExampleToolResult:
-    """Write example content to a temp file, run the tool, and classify the result."""
-    suffix = ".vhdl" if tool.language == "vhdl" else ".sv"
-    tmp_path = None
-    try:
-        with tempfile.NamedTemporaryFile(mode="w", suffix=suffix, delete=False) as tmp:
-            tmp.write(example.content)
-            tmp_path = tmp.name
-
-        try:
-            cmd = make_command(tool.cmd, tmp_path, example.content)
-        except Exception as e:
-            get_logger().warning(f"make_command failed for {error_file.error_id}/{example.name}: {e}")
-            return ExampleToolResult(tool_name=tool.name, status=ExampleStatus.EXEC_ERROR, output_excerpt=str(e))
-
-        result = run_command(cmd)
-
-        if not result.command_executed_successfully:
-            return ExampleToolResult(tool_name=tool.name, status=ExampleStatus.EXEC_ERROR, output_excerpt=result.output[:200])
-
-        status, excerpt = _classify(
-            output=result.output,
-            result_code_ok=result.result_code_is_ok,
-            timed_out=result.timed_out,
-            error_file=error_file,
-            tool_regex=tool.error_regex,
-        )
-        return ExampleToolResult(tool_name=tool.name, status=status, output_excerpt=excerpt)
-
-    finally:
-        if tmp_path:
-            Path(tmp_path).unlink(missing_ok=True)
-
-
 def _load_all_error_files(known_errors_dir: str) -> list[ErrorFile]:
     """Load all error files from every tool subdirectory under known_errors_dir."""
     base_dir = Path(known_errors_dir)
@@ -201,6 +90,73 @@ def _load_all_error_files(known_errors_dir: str) -> list[ErrorFile]:
     return all_files
 
 
+def _run_example(
+    example,
+    commands: list[CommandConfig],
+    all_known_errors: IgnoredErrorsList,
+    language: str,
+) -> AnalyzisResult:
+    """
+    Write example content to a temp file, run all commands (stopping on first
+    failure), and return the analysis of the failing command's output.
+    """
+    suffix = ".vhdl" if language == "vhdl" else ".sv"
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=suffix, delete=False) as tmp:
+            tmp.write(example.content)
+            tmp_path = tmp.name
+
+        for cmd_config in commands:
+            try:
+                cmd = make_command(cmd_config.run, tmp_path, example.content)
+            except Exception as e:
+                get_logger().warning(f"make_command failed for {example.name}: {e}")
+                return AnalyzisResult(
+                    found_matches=[],
+                    unexpected_errors=[UnexpectedError(tool_output_error_text=str(e), test_file_path=tmp_path)],
+                    all_errors_are_known=False,
+                )
+
+            result = run_command(cmd)
+
+            if not result.command_executed_successfully:
+                excerpt = result.output[:200]
+                return AnalyzisResult(
+                    found_matches=[],
+                    unexpected_errors=[UnexpectedError(tool_output_error_text=excerpt, test_file_path=tmp_path)],
+                    all_errors_are_known=False,
+                )
+
+            if result.result_code_is_ok:
+                continue  # This command passed; try the next one
+
+            if result.timed_out:
+                # Timeout is not classified as an unknown error
+                return AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True)
+
+            if cmd_config.error_regex is None:
+                excerpt = "\n".join(result.output.splitlines()[:3])
+                return AnalyzisResult(
+                    found_matches=[],
+                    unexpected_errors=[UnexpectedError(tool_output_error_text=excerpt, test_file_path=tmp_path)],
+                    all_errors_are_known=False,
+                )
+
+            return CommandOutput(result.output).analyze(
+                ignored_errors_list=all_known_errors,
+                tool_error_regex=cmd_config.error_regex,
+                file_path=tmp_path,
+            )
+
+        # All commands passed
+        return AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True)
+
+    finally:
+        if tmp_path:
+            Path(tmp_path).unlink(missing_ok=True)
+
+
 def check_all(
     known_errors_dir: str,
     tool: ToolConfig,
@@ -211,53 +167,63 @@ def check_all(
     Returns:
         (error_results, new_error_incidents, regression_confirmations)
 
-    new_error_incidents: flat list of NEW_ERROR findings — any occurrence causes CI failure.
-    regression_confirmations: flat list of results for errors originally attributed to
-        this tool, used to report whether own known errors still reproduce.
+    error_results:            per-error reproducibility data for own-tool errors only.
+    new_error_incidents:      flat list of unknown-error findings — any occurrence causes CI failure.
+    regression_confirmations: flat list of reproduced/not-reproduced results for own-tool errors.
     """
+    error_files = _load_all_error_files(known_errors_dir)
+    all_known_errors = IgnoredErrorsList.from_error_files(error_files)
+    get_logger().info(f"Checking {len(error_files)} known errors across all tools with '{tool.name}'")
+
     new_error_incidents: list[dict] = []
     regression_confirmations: list[dict] = []
     error_results: list[ErrorResult] = []
-
-    error_files = _load_all_error_files(known_errors_dir)
-    get_logger().info(f"Checking {len(error_files)} known errors across all tools with '{tool.name}'")
 
     for error_file in error_files:
         if not error_file.examples:
             get_logger().warning(f"No examples in {error_file.error_id}, skipping")
             continue
 
-        error_result = ErrorResult(
-            error_id=error_file.error_id,
-            originating_tool=error_file.tool,
-        )
+        is_own_error = error_file.tool == tool.name
+        error_result = ErrorResult(error_id=error_file.error_id, originating_tool=error_file.tool)
 
         for example in error_file.examples:
-            example_result = ExampleResult(
-                example_name=example.name,
-                example_type=example.type,
-            )
+            analysis = _run_example(example, tool.commands, all_known_errors, tool.language)
 
-            result = _run_example_with_tool(example, error_file, tool)
-            example_result.results_by_tool[tool.name] = result
+            # Unknown errors cause CI failure regardless of which tool owns the error file
+            for unexpected in analysis.unexpected_errors:
+                new_error_incidents.append(
+                    {
+                        "error_id": error_file.error_id,
+                        "originating_tool": error_file.tool,
+                        "example_name": example.name,
+                        "example_type": example.type,
+                        "output_excerpt": unexpected.tool_output_error_text,
+                    }
+                )
 
-            incident = {
-                "error_id": error_file.error_id,
-                "originating_tool": error_file.tool,
-                "checked_with_tool": tool.name,
-                "example_name": example.name,
-                "example_type": example.type,
-                "output_excerpt": result.output_excerpt,
-            }
+            # Reproducibility is only tracked for the current tool's own errors
+            if is_own_error:
+                reproduced = any(
+                    isinstance(m.match.error, KnownError) and m.match.error.error_id == error_file.error_id for m in analysis.found_matches
+                )
+                regression_confirmations.append(
+                    {
+                        "error_id": error_file.error_id,
+                        "example_name": example.name,
+                        "example_type": example.type,
+                        "reproduced": reproduced,
+                    }
+                )
+                error_result.examples.append(
+                    ExampleResult(
+                        example_name=example.name,
+                        example_type=example.type,
+                        reproduced=reproduced,
+                    )
+                )
 
-            if result.status == ExampleStatus.NEW_ERROR:
-                new_error_incidents.append(incident)
-
-            if error_file.tool == tool.name:
-                regression_confirmations.append({**incident, "status": result.status.value})
-
-            error_result.examples.append(example_result)
-
-        error_results.append(error_result)
+        if is_own_error:
+            error_results.append(error_result)
 
     return error_results, new_error_incidents, regression_confirmations

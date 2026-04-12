@@ -251,78 +251,20 @@ jobs:
         with:
           name: "${{ env.GEN_PATH }}"
           path: "${{ env.GEN_PATH }}"
-      - name: Update apt
-        run: sudo apt update -qq
-      - name: Clone tool
-        run: |
-          git clone ${{ matrix.tool.repo }} ${{ matrix.tool.path }}
-          cd ${{ matrix.tool.path }}
-          echo "COMMIT_HASH=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-      # - name: Restore dependency
-      #   if: ${{ matrix.tool.dep_path }}
-      #   uses: actions/cache/restore@v5
-      #   with:
-      #     path: ${{ matrix.tool.dep_path }}
-      #     key: ${{ matrix.tool.dep_name }}-cache-
-      - name: Restore from cache
-        id: cache-build
-        uses: actions/cache/restore@v5
+      - name: Setup tool
+        uses: ./.github/actions/setup-tool
         with:
-          path: ${{ matrix.tool.path }}
-          key: ${{ matrix.tool.name }}-cache-${{ env.COMMIT_HASH }}
-      - name: Add bazel repo (if needed)
-        if: ${{ contains(matrix.tool.deps, 'bazel') }}
-        run: |
-          sudo apt -qq -y install apt-transport-https curl gnupg
-          curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
-          chmod a+r bazel.gpg
-          sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
-          sudo echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
-          sudo apt update -qq
-      - name: Install tool-specific dependencies
-        if: ${{ matrix.tool.deps }}
-        run: |
-          sudo apt -qq -y install ${{ matrix.tool.deps }}
-      - name: Setup Rust (if needed)
-        if: ${{ matrix.tool.rust_ver }}
-        run: |
-          sudo apt -y install curl
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
-          sh setup.sh -y
-          source "$HOME/.cargo/env"
-          rustup install ${{ matrix.tool.rust_ver }}
-          rustup default ${{ matrix.tool.rust_ver }}
-      - name: Update haskell (if needed)
-        if: ${{ contains(matrix.tool.deps, 'haskell') && steps.cache-build.outputs.cache-hit != 'true' }}
-        run: |
-          stack upgrade
-      - uses: robinraju/release-downloader@v1
-        if: ${{ matrix.tool.third_party_release_repo }}
-        with:
-          repository: ${{ matrix.tool.third_party_release_repo }}
-          latest: true
-          extract: true
-          fileName: ${{ matrix.tool.third_party_release_name_wildcard }}
-      - name: Pre-Build tool
-        run: |
-          ${{ matrix.tool.pre_build }}
-      - name: Build tool
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: |
-          cd ${{ matrix.tool.path }}
-          ${{ matrix.tool.build }}
-      - name: Save build
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v5
-        with:
-          path: ${{ matrix.tool.path }}
-          key: ${{ steps.cache-build.outputs.cache-primary-key }}
-      - name: Install tool
-        run: |
-          cd ${{ matrix.tool.path }}
-          ${{ matrix.tool.install }}
-      - name: Print version
-        run: ${{ matrix.tool.version }}
+          tool-name: ${{ matrix.tool.name }}
+          tool-repo: ${{ matrix.tool.repo }}
+          tool-path: ${{ matrix.tool.path }}
+          tool-build: ${{ matrix.tool.build }}
+          tool-install: ${{ matrix.tool.install }}
+          tool-deps: ${{ matrix.tool.deps }}
+          tool-version: ${{ matrix.tool.version }}
+          tool-rust-ver: ${{ matrix.tool.rust_ver }}
+          tool-pre-build: ${{ matrix.tool.pre_build }}
+          tool-third-party-release-repo: ${{ matrix.tool.third_party_release_repo }}
+          tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard }}
       - name: Install runner deps
         run: sudo apt install -y bc python3 python3-pip python3-venv
       - name: Setup python venv
@@ -388,31 +330,16 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Update apt
-        run: sudo apt update -qq
-      - name: Clone tool
-        run: |
-          git clone ${{ matrix.tool.repo }} ${{ matrix.tool.path }}
-          cd ${{ matrix.tool.path }}
-          echo "COMMIT_HASH=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-      - name: Restore from cache
-        id: cache-build
-        uses: actions/cache/restore@v5
+      - name: Setup tool
+        uses: ./.github/actions/setup-tool
         with:
-          path: ${{ matrix.tool.path }}
-          key: ${{ matrix.tool.name }}-cache-${{ env.COMMIT_HASH }}
-      - name: Install tool-specific dependencies
-        if: ${{ matrix.tool.deps }}
-        run: sudo apt -qq -y install ${{ matrix.tool.deps }}
-      - name: Build tool
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: |
-          cd ${{ matrix.tool.path }}
-          ${{ matrix.tool.build }}
-      - name: Install tool
-        run: |
-          cd ${{ matrix.tool.path }}
-          ${{ matrix.tool.install }}
+          tool-name: ${{ matrix.tool.name }}
+          tool-repo: ${{ matrix.tool.repo }}
+          tool-path: ${{ matrix.tool.path }}
+          tool-build: ${{ matrix.tool.build }}
+          tool-install: ${{ matrix.tool.install }}
+          tool-deps: ${{ matrix.tool.deps }}
+          tool-version: ${{ matrix.tool.version }}
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"

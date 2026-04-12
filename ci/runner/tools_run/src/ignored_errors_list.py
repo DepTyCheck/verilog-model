@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-from common.error_file_parser import parse_error_files
+from common.error_file_parser import ErrorFile, parse_error_files
 from common.error_types import FoundMatch, IgnoredError, KnownError, MatchingMode
 from common.logger import get_logger
 
@@ -24,6 +24,15 @@ class IgnoredErrorsList:
             for regex in regex_list:
                 regex = regex.rstrip("\n")
                 self._extra_regexes.append(IgnoredError(pattern=regex))
+
+    @classmethod
+    def from_error_files(cls, error_files: List[ErrorFile], extra_regexes=None) -> "IgnoredErrorsList":
+        """Build an IgnoredErrorsList directly from a pre-loaded list of ErrorFile objects."""
+        instance = cls.__new__(cls)
+        instance._tool = None
+        instance._errors = [KnownError(error_id=ef.error_id, pattern=ef.regex, mode=ef.mode) for ef in error_files]
+        instance._extra_regexes = [IgnoredError(pattern=r.rstrip("\n")) for r in (extra_regexes or [])]
+        return instance
 
     @staticmethod
     def _load_errors(dir_path: str, tool: str) -> List[KnownError]:

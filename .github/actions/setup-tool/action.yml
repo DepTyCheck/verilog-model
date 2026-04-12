@@ -1,0 +1,129 @@
+name: Setup tool
+description: Clone, build (with caching), and install a tool from source.
+
+inputs:
+  tool-name:
+    required: true
+  tool-repo:
+    required: true
+  tool-path:
+    required: true
+  tool-build:
+    required: true
+  tool-install:
+    required: true
+  tool-deps:
+    required: false
+    default: ''
+  tool-version:
+    required: false
+    default: ''
+  tool-rust-ver:
+    required: false
+    default: ''
+  tool-pre-build:
+    required: false
+    default: ''
+  tool-third-party-release-repo:
+    required: false
+    default: ''
+  tool-third-party-release-name-wildcard:
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      with:
+        persist-credentials: false
+
+    - name: Update apt
+      shell: bash
+      run: sudo apt update -qq
+
+    - name: Clone tool
+      shell: bash
+      run: |
+        git clone ${{ inputs.tool-repo }} ${{ inputs.tool-path }}
+        cd ${{ inputs.tool-path }}
+        echo "COMMIT_HASH=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+    - name: Restore from cache
+      id: cache-build
+      uses: actions/cache/restore@v5
+      with:
+        path: ${{ inputs.tool-path }}
+        key: ${{ inputs.tool-name }}-cache-${{ env.COMMIT_HASH }}
+
+    - name: Add bazel repo (if needed)
+      if: contains(inputs.tool-deps, 'bazel')
+      shell: bash
+      run: |
+        sudo apt -qq -y install apt-transport-https curl gnupg
+        curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+        chmod a+r bazel.gpg
+        sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
+        sudo echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+        sudo apt update -qq
+
+    - name: Install tool-specific dependencies
+      if: inputs.tool-deps != ''
+      shell: bash
+      run: sudo apt -qq -y install ${{ inputs.tool-deps }}
+
+    - name: Setup Rust (if needed)
+      if: inputs.tool-rust-ver != ''
+      shell: bash
+      run: |
+        sudo apt -y install curl
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
+        sh setup.sh -y
+        source "$HOME/.cargo/env"
+        rustup install ${{ inputs.tool-rust-ver }}
+        rustup default ${{ inputs.tool-rust-ver }}
+
+    - name: Update haskell (if needed)
+      if: contains(inputs.tool-deps, 'haskell') && steps.cache-build.outputs.cache-hit != 'true'
+      shell: bash
+      run: stack upgrade
+
+    - name: Download third-party release (if needed)
+      if: inputs.tool-third-party-release-repo != ''
+      uses: robinraju/release-downloader@v1
+      with:
+        repository: ${{ inputs.tool-third-party-release-repo }}
+        latest: true
+        extract: true
+        fileName: ${{ inputs.tool-third-party-release-name-wildcard }}
+
+    - name: Pre-Build tool
+      if: inputs.tool-pre-build != ''
+      shell: bash
+      run: ${{ inputs.tool-pre-build }}
+
+    - name: Build tool
+      if: steps.cache-build.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        cd ${{ inputs.tool-path }}
+        ${{ inputs.tool-build }}
+
+    - name: Save build
+      if: steps.cache-build.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v5
+      with:
+        path: ${{ inputs.tool-path }}
+        key: ${{ steps.cache-build.outputs.cache-primary-key }}
+
+    - name: Install tool
+      shell: bash
+      run: |
+        cd ${{ inputs.tool-path }}
+        ${{ inputs.tool-install }}
+
+    - name: Print version
+      if: inputs.tool-version != ''
+      shell: bash
+      run: ${{ inputs.tool-version }}

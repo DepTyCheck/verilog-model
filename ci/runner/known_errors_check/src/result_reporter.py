@@ -14,7 +14,7 @@ import json
 import sys
 
 from common.markdown_table import build_markdown_table
-from known_errors_check.src.error_checker import ErrorResult, ExampleStatus
+from known_errors_check.src.error_checker import ErrorResult
 
 
 def build_report(error_results: list[ErrorResult]) -> dict:
@@ -22,8 +22,7 @@ def build_report(error_results: list[ErrorResult]) -> dict:
     for er in error_results:
         examples: dict[str, bool] = {}
         for example in er.examples:
-            found = any(r.status == ExampleStatus.KNOWN_ERROR for r in example.results_by_tool.values())
-            examples[f"{example.example_name}-{example.example_type}"] = found
+            examples[f"{example.example_name}-{example.example_type}"] = example.reproduced
         report[er.error_id] = examples
     return report
 
@@ -40,15 +39,15 @@ def format_markdown_table(
     """
     Build a Markdown table from a known-errors report.
 
-    Each row represents one (error_id, example_name) pair.
+    Each row represents one (error_id, example_name-type) pair.
     Error IDs are rendered as links when error_url_prefix is provided.
     """
     rows = []
     for error_id in sorted(report):
         id_cell = f"[{error_id}]({error_url_prefix}/{error_id})" if error_url_prefix else error_id
-        for example_name in sorted(report[error_id]):
-            reproduced = report[error_id][example_name]
-            rows.append([id_cell, example_name, "✅" if reproduced else "❌"])
+        for example_key in sorted(report[error_id]):
+            reproduced = report[error_id][example_key]
+            rows.append([id_cell, example_key, "✅" if reproduced else "❌"])
 
     if not rows:
         return "No known errors checked."
@@ -73,35 +72,24 @@ def print_summary(
     # --- Own-errors regression section ---
     if regression_confirmations:
         lines.append("Regression check for own known errors:")
-        status_icons = {
-            ExampleStatus.KNOWN_ERROR.value: "· still reproduces",
-            ExampleStatus.CLEAN.value: "✓ CLEAN (bug may be fixed!)",
-            ExampleStatus.NEW_ERROR.value: "✗ NEW ERROR",
-            ExampleStatus.TIMEOUT.value: "⏱ TIMEOUT",
-            ExampleStatus.EXEC_ERROR.value: "! EXEC ERROR",
-        }
         for reg in regression_confirmations:
-            icon = status_icons.get(reg["status"], reg["status"])
-            lines.append(f"  [{reg['originating_tool']}] {reg['error_id']} / " f"{reg['example_name']} ({reg['example_type']}): {icon}")
+            mark = "· still reproduces" if reg["reproduced"] else "✓ NOT reproducing (bug may be fixed!)"
+            lines.append(f"  {reg['error_id']} / {reg['example_name']} ({reg['example_type']}): {mark}")
     else:
         lines.append("No own known errors to check regression for.")
 
-    # --- Cross-tool new errors section ---
+    # --- Unknown errors section ---
+    lines.append(sep)
     if new_error_incidents:
-        lines.append(sep)
-        lines.append(f"NEW ERRORS FOUND ({len(new_error_incidents)} total) — CI will fail:")
+        lines.append(f"UNKNOWN ERRORS FOUND ({len(new_error_incidents)} total) — CI will fail:")
         for inc in new_error_incidents:
             lines.append(
-                f"  error_id={inc['error_id']} "
-                f"originating={inc['originating_tool']} "
-                f"example={inc['example_name']} ({inc['example_type']}) "
-                f"checked_with={inc['checked_with_tool']}"
+                f"  error_id={inc['error_id']} " f"originating={inc['originating_tool']} " f"example={inc['example_name']} ({inc['example_type']})"
             )
             if inc.get("output_excerpt"):
                 lines.append(f"    output: {inc['output_excerpt'][:200]}")
     else:
-        lines.append(sep)
-        lines.append("No new errors found across all known error examples.")
+        lines.append("No unknown errors found across all known error examples.")
 
     lines.append(sep)
     print("\n".join(lines), file=sys.stderr)

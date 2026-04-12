@@ -19,6 +19,7 @@ import json
 import logging
 import sys
 
+from common.command_config import CommandConfig
 from common.logger import configure_logger
 from common.tool_error_regex import ToolErrorRegex
 from known_errors_check.src.error_checker import ToolConfig, check_all
@@ -27,15 +28,17 @@ from known_errors_check.src.result_reporter import build_report, format_markdown
 
 
 def _tool_from_commands_json(tool_name: str, commands_json: str, language: str) -> ToolConfig:
-    commands = json.loads(commands_json)
-    first = commands[0]
-    regex_str = first.get("error_regex")
-    return ToolConfig(
-        name=tool_name,
-        cmd=first["run"],
-        error_regex=ToolErrorRegex(regex_str) if regex_str else None,
-        language=language,
-    )
+    raw = json.loads(commands_json)
+    commands = []
+    for entry in raw:
+        regex_str = entry.get("error_regex")
+        commands.append(
+            CommandConfig(
+                run=entry["run"],
+                error_regex=ToolErrorRegex(regex_str) if regex_str else None,
+            )
+        )
+    return ToolConfig(name=tool_name, commands=commands, language=language)
 
 
 def main() -> None:

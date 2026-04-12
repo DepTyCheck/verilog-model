@@ -2,20 +2,14 @@ import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from common.command_config import CommandConfig
 from common.command_output import AnalyzisResult, CommandOutput
 from common.error_types import ErrorMatchInTest, UnexpectedError
 from common.logger import get_logger
 from common.make_command import make_command
 from common.run_command import run_command
-from common.tool_error_regex import ToolErrorRegex
 from tools_run.src.assets import Assets
 from tools_run.src.ignored_errors_list import IgnoredErrorsList
-
-
-@dataclass
-class CommandConfig:
-    run: str
-    error_regex: ToolErrorRegex | None = None
 
 
 @dataclass
