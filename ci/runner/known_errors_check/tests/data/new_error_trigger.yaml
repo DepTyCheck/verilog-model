@@ -1,0 +1,17 @@
+stage: synthesis
+tool: fake_tool
+id: new_error_trigger
+title: Error file whose example now triggers a DIFFERENT error
+regex: >-
+  original error pattern
+matching_mode: specific
+issue_novelty: new
+issue_link: https://example.com/3
+maintainers_response: medium
+examples:
+  - new_error_example_1:
+      first_found: 10.04.2025
+      minified_example: |
+        module trigger(output o);
+          assign o = 1'b1;
+        endmodule

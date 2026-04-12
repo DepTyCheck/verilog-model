@@ -1,3 +1,5 @@
+from common.markdown_table import build_markdown_table
+
 from .compare_errors import ErrorPercentageDelta
 
 
@@ -17,42 +19,44 @@ def _error_id_cell(error_id: str, error_url_prefix: str | None) -> str:
     return f"[{error_id}]({error_url_prefix}/{error_id})"
 
 
-def format_table(deltas: list[ErrorPercentageDelta], error_url_prefix: str | None = None) -> str:
+def format_table(
+    deltas: list[ErrorPercentageDelta],
+    error_url_prefix: str | None = None,
+    known_errors: dict[str, bool] | None = None,
+) -> str:
+    """
+    Format a Markdown comparison table.
+
+    known_errors: optional dict mapping error_id -> reproduced (True/False).
+    When provided, a "Reproduced" column is appended showing ✅ or ❌.
+    """
     if not deltas:
         return "No errors found in current or historical data."
 
     deltas = sorted(deltas, key=lambda d: abs(d.delta_pct), reverse=True)
 
-    col_id = "Error ID"
-    col_hist = "Historical %"
-    col_curr = "Current %"
-    col_delta = "Delta %"
+    headers = ["Error ID", "Historical %", "Current %", "Delta %"]
+    alignments = ["left", "right", "right", "right"]
 
-    id_width = max(len(col_id), max(len(d.error_id) for d in deltas))
-    hist_width = max(len(col_hist), max(len(_pct_str(d.historical_pct)) for d in deltas))
-    curr_width = max(len(col_curr), max(len(_pct_str(d.current_pct)) for d in deltas))
-    delta_width = max(len(col_delta), max(len(_delta_str(d.delta_pct)) for d in deltas))
+    if known_errors is not None:
+        headers.append("Reproduced")
+        alignments.append("left")
 
-    def row(error_id: str, hist: str, curr: str, delta: str) -> str:
-        return f"| {error_id:<{id_width}} " f"| {hist:>{hist_width}} " f"| {curr:>{curr_width}} " f"| {delta:>{delta_width}} |"
-
-    separator = f"|-{'-' * id_width}-" f"|-{'-' * hist_width}-" f"|-{'-' * curr_width}-" f"|-{'-' * delta_width}-|"
-
-    lines = [
-        "## Error Statistics Comparison",
-        "",
-        row(col_id, col_hist, col_curr, col_delta),
-        separator,
-    ]
-
+    rows = []
     for d in deltas:
-        lines.append(
-            row(
-                _error_id_cell(d.error_id, error_url_prefix),
-                _pct_str(d.historical_pct),
-                _pct_str(d.current_pct),
-                _delta_str(d.delta_pct),
-            )
-        )
+        row = [
+            _error_id_cell(d.error_id, error_url_prefix),
+            _pct_str(d.historical_pct),
+            _pct_str(d.current_pct),
+            _delta_str(d.delta_pct),
+        ]
+        if known_errors is not None:
+            row.append("✅" if known_errors.get(d.error_id, False) else "❌")
+        rows.append(row)
 
-    return "\n".join(lines)
+    return build_markdown_table(
+        headers=headers,
+        rows=rows,
+        alignments=alignments,
+        title="Error Statistics Comparison",
+    )

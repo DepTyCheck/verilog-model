@@ -1,0 +1,235 @@
+tools:
+  - name: iverilog
+    language: sv
+    file_pattern: "*.sv"
+    repo: https://github.com/steveicarus/iverilog.git
+    deps: autoconf autotools-dev bison flex libfl-dev gperf make gcc g++ cmake python3
+    path: iverilog
+    build: |
+      sh autoconf.sh
+      ./configure
+      sudo make -j$(nproc)
+    install: |
+      sudo make install
+    version: |
+      iverilog -V
+    commands:
+      - run: iverilog -g2012 -o a.out {file}
+        error_regex: '(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)'
+      - run: vvp a.out
+        error_regex: '(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)'
+    extra_ignored_regexes: >-
+      "Unable to elaborate r-value: .*"
+      "Code generation had .* error\(s\)\."
+
+  - name: slang
+    language: sv
+    file_pattern: "*.sv"
+    repo: https://github.com/MikePopoloski/slang.git
+    deps: cmake
+    path: slang
+    build: |
+      sudo cmake -B build
+      sudo cmake --build build -j$(nproc)
+    install: |
+      sudo cmake --install build --strip
+    version: |
+      slang --version
+    commands:
+      - run: slang -Weverything {file}
+        error_regex: 'error: [\S ]+$'
+
+  - name: verilator
+    language: sv
+    file_pattern: "*.sv"
+    repo: https://github.com/verilator/verilator.git
+    deps: autoconf autotools-dev bison flex help2man libfl-dev libelf-dev cmake
+    path: verilator
+    build: |
+      autoconf
+      ./configure
+      make -j$(nproc)
+    install: |
+      sudo make install
+    version: |
+      verilator --version
+    commands:
+      - run: |
+          rm -rf obj_dir && \
+          rm -f top.sv && \
+          cp {file} top.sv && \
+          verilator \
+            --cc \
+            --exe ci/conf/verilator/testbench.cpp \
+            --timing \
+            -Wno-fatal \
+            -Wno-ASSIGNIN \
+            --no-std \
+            +1800-2023ext+sv \
+            top.sv
+        error_regex: '%Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$'
+      - run: make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop
+        error_regex: '%Error[-A-z]*:[\S ]+'
+    assets: ci/conf/verilator/testbench.cpp
+
+  - name: surelog
+    language: sv
+    file_pattern: "*.sv"
+    repo: https://github.com/chipsalliance/Surelog.git
+    deps: >-
+      cmake gcc build-essential git pkg-config tclsh swig uuid-dev
+      libgoogle-perftools-dev python3 python3-orderedmultidict
+      python3-psutil python3-dev default-jre lcov zlib1g-dev
+    path: surelog
+    build: |
+      git submodule update --init --recursive
+      make -j$(nproc)
+    install: |
+      sudo apt install -y libgoogle-perftools-dev
+      sudo pip3 install orderedmultidict
+      sudo make install
+    version: |
+      surelog --version
+    commands:
+      - run: surelog -parse -nopython -sv {file}
+
+  - name: zachjs-sv2v
+    language: sv
+    file_pattern: "*.sv"
+    repo: https://github.com/zachjs/sv2v.git
+    deps: haskell-stack
+    path: zachjs-sv2v
+    build: |
+      make -j$(nproc)
+    install: |
+      echo $PWD
+      sudo stack install --allow-different-user --local-bin-path /usr/local/bin
+    version: |
+      sv2v --version
+    commands:
+      - run: sv2v -v {file}
+        error_regex: "sv2v:(?!CallStack$).+"
+    extra_ignored_regexes: >-
+      "sv2v:Language\.SystemVerilog\.AST\.Type"
+
+  - name: tree-sitter-systemverilog
+    language: sv
+    file_pattern: "*.sv"
+    repo: https://github.com/gmlarumbe/tree-sitter-systemverilog.git
+    deps: gcc python3
+    path: tssv
+    pre_build: |
+      gunzip tree-sitter-linux-x64.gz
+      sudo mv tree-sitter-linux-x64 /usr/local/bin/tree-sitter-linux-x64
+      sudo chmod +x /usr/local/bin/tree-sitter-linux-x64
+    build: |
+      cd ..
+      sudo apt -qq -y install curl
+      touch "$HOME/.bash_profile"
+      # From https://nodejs.org/en/download
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+      . "$HOME/.nvm/nvm.sh"
+      nvm install 22
+      cd tssv
+      sudo tree-sitter-linux-x64 generate --abi 14
+      sudo tree-sitter-linux-x64 build -o sv.so
+    python_runner_deps: tree-sitter==0.21.3
+    version: |
+      sudo tree-sitter-linux-x64 -V
+    commands:
+      - run: python3 ci/conf/tree-sitter-sv/run_ts.py tssv/sv.so {file}
+    third_party_release_repo: tree-sitter/tree-sitter
+    third_party_release_name_wildcard: tree-sitter-linux-x64.gz
+    assets: >-
+      ci/conf/tree-sitter-sv/run_ts.py
+      tssv/sv.so
+
+  - name: synlig
+    language: sv
+    file_pattern: "*.sv"
+    repo: https://github.com/chipsalliance/synlig.git
+    deps: >-
+      gcc-11 g++-11 build-essential cmake tclsh ant default-jre swig google-perftools
+      libgoogle-perftools-dev python3 python3-dev python3-pip uuid uuid-dev tcl-dev flex
+      libfl-dev git pkg-config libreadline-dev bison libffi-dev wget python3-orderedmultidict
+    path: synlig
+    build: |
+      git submodule sync
+      git submodule update --init --recursive third_party/{surelog,yosys}
+      make -j$(nproc)
+    install: |
+      sudo make install -j$(nproc)
+    version: |
+      synlig --version
+      synlig -h
+    commands:
+      - run: synlig -f systemverilog -o output.blif -S {file}
+        error_regex: "ERROR: .*$"
+
+  - name: sv_parser
+    language: sv
+    file_pattern: "*.sv"
+    repo: https://github.com/dalance/sv-parser.git
+    deps: cargo
+    rust_ver: "1.94"
+    path: sv_parser
+    build: |
+      cargo build --release --example parse_sv
+    install: |
+      sudo install -m 755 target/release/examples/parse_sv /usr/local/bin/
+    version: |
+      parse_sv -h
+    commands:
+      - run: parse_sv {file}
+
+  - name: yosys-slang
+    language: sv
+    file_pattern: "*.sv"
+    repo: https://github.com/povik/yosys-slang.git
+    deps: >-
+      cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh
+      uuid-dev build-essential lld libreadline-dev gawk libffi-dev git graphviz xdot pkg-config
+      python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
+    path: yosys-slang
+    build: |
+      git clone https://github.com/YosysHQ/yosys.git
+      cd yosys
+      git submodule update --init --recursive
+      make -j$(nproc)
+      sudo make install
+      cd ..
+      git submodule update --init --recursive
+      make -j$(nproc)
+    install: |
+      cd yosys
+      sudo make install
+      cd ..
+      sudo make install
+      cd ..
+      bash ci/runner/tools_run/rename_tests.sh
+    version: yosys --version
+    commands:
+      - run: yosys -m slang -p 'read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
+        error_regex: "(ERROR|error): .*"
+    extra_ignored_regexes: >-
+      "Compilation failed"
+      "too many errors emitted, stopping now"
+
+  - name: ghdl
+    language: vhdl
+    file_pattern: "*.vhdl"
+    repo: https://github.com/ghdl/ghdl.git
+    deps: llvm gnat clang libc++-dev libc++abi-dev
+    path: ghdl
+    build: |
+      mkdir build
+      cd build
+      ../configure --with-llvm-config --prefix=/usr/local
+      make
+    install: |
+      cd build
+      sudo make install
+    version: ghdl -v
+    commands:
+      - run: ghdl -a --std=19 {file} && ghdl -e --std=19 {vhdl_top_entity}
+      - run: ghdl -r --std=19 {vhdl_top_entity}

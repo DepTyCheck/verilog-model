@@ -1,0 +1,10 @@
+id: syntax_error
+tool: iverilog
+title: "Syntax error: missing expression after assignment"
+regex: "(syntax error|error): .*"
+examples:
+  - broken_assign:
+      minified_example: |
+        module broken(output o);
+          assign o = ;
+        endmodule

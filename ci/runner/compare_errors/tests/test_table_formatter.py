@@ -80,3 +80,35 @@ class TestTableFormatter(unittest.TestCase):
             error_url_prefix="https://org.github.io/repo/error",
         )
         self.assertIn("[some_error](https://org.github.io/repo/error/some_error)", table)
+
+    def test_known_errors_column_present_when_provided(self):
+        table = format_table(
+            [ErrorPercentageDelta("foo", historical_pct=1.0, current_pct=2.0)],
+            known_errors={"foo": True},
+        )
+        self.assertIn("Reproduced", table)
+
+    def test_known_errors_column_absent_when_not_provided(self):
+        table = format_table([ErrorPercentageDelta("foo", historical_pct=1.0, current_pct=2.0)])
+        self.assertNotIn("Reproduced", table)
+
+    def test_known_error_true_shows_checkmark(self):
+        table = format_table(
+            [ErrorPercentageDelta("foo", historical_pct=1.0, current_pct=2.0)],
+            known_errors={"foo": True},
+        )
+        self.assertIn("✅", table)
+
+    def test_known_error_false_shows_cross(self):
+        table = format_table(
+            [ErrorPercentageDelta("foo", historical_pct=1.0, current_pct=2.0)],
+            known_errors={"foo": False},
+        )
+        self.assertIn("❌", table)
+
+    def test_known_error_missing_id_shows_cross(self):
+        table = format_table(
+            [ErrorPercentageDelta("foo", historical_pct=1.0, current_pct=2.0)],
+            known_errors={},
+        )
+        self.assertIn("❌", table)
