@@ -1,15 +1,14 @@
 <script lang="ts">
-	import { Card, Heading, A, Tooltip, Badge, Button } from 'flowbite-svelte';
+	import { Card, Heading, A, Button } from 'flowbite-svelte';
 	import TableColSortHead from '$lib/components/bugs-table/TableColSortHead.svelte';
 	import TableColHead from '$lib/components/bugs-table/TableColHead.svelte';
 	import TableColFilterHead from '$lib/components/bugs-table/TableColFilterHead.svelte';
 	import TableData from '$lib/components/bugs-table/TableData.svelte';
 	import BottomScrollbar from '$lib/components/bugs-table/BottomScrollbar.svelte';
-	import { ArrowRightOutline } from 'flowbite-svelte-icons';
-	import { type CheckBoxChoice, type SortableColumn, type SortDirection } from '$lib/core';
+	import { type CheckBoxChoice, type SortableColumn, type SortDirection, type FoundError } from '$lib/core';
 	import { githubUrl, depTyCheckGithubUrl } from '$lib/consts';
 	import { allFoundErrors } from '$lib/generated/errors-data';
-	import { formatDateDMY, getFirstFound, displayIssueNovelty } from '$lib/index';
+	import { formatDateDMY, getFirstFound } from '$lib/index';
 	import {
 		createToolChoices,
 		createStageChoices,
@@ -24,17 +23,14 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import {
-		fixLink,
-		getMaintainersResponseDisplay,
-		getMaintainersResponseTooltip,
-		getNoveltyTooltip,
-		getIssueTypeDisplay
-	} from '$lib/index';
+	import { fixLink, getMaintainersResponseDisplay } from '$lib/index';
 	import { errorsStats } from '$lib/parsed-error-stats';
 	import ErrorStatsCell from '$lib/components/bugs-table/ErrorStatsCell.svelte';
 	import IssueLinksCell from '$lib/components/bugs-table/IssueLinksCell.svelte';
 	import { errorPercentages } from '$lib/components/bugs-table/error-stats-utils';
+	import IssueTypeBadges from '$lib/components/IssueTypeBadges.svelte';
+	import NoveltyBadge from '$lib/components/NoveltyBadge.svelte';
+	import MaintainersResponseBadge from '$lib/components/MaintainersResponseBadge.svelte';
 
 	let scrollContainer: HTMLDivElement;
 
@@ -68,18 +64,6 @@
 
 	let sortColumn: SortableColumn = 'title';
 	let sortDest: SortDirection = 'asc';
-
-	function parseGitHubUrl(
-		url: string
-	): { owner: string; repo: string; issueNumber: string } | null {
-		const match = url.match(/github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)/);
-		if (!match) return null;
-		return {
-			owner: match[1],
-			repo: match[2],
-			issueNumber: match[3]
-		};
-	}
 
 	function updateQueryParams() {
 		if (!browser) return;
@@ -134,12 +118,6 @@
 		if (browser) updateQueryParams();
 	}
 
-	function getIssueNumberFromLink(link: string | null | undefined): string | null {
-		if (!link) return null;
-		const parsed = parseGitHubUrl(link);
-		return parsed && parsed.issueNumber ? String(parsed.issueNumber) : null;
-	}
-
 	$: if (browser && filteredErrors) updateQueryParams();
 </script>
 
@@ -152,7 +130,7 @@
 			<p class="text-base font-normal text-gray-500 dark:text-gray-300">
 				This is a list of bugs and issues found by
 				<A href={githubUrl} class="underline">verilog-model</A> using
-				<A href={depTyCheckGithubUrl} class="underline">DepTyCheck</A> for various SystemVerilog tools.
+				<A href={depTyCheckGithubUrl} class="underline">DepTyCheck</A> for various HDL analysis tools.
 				<br />
 				There are examples that reproduce these bugs.
 			</p>
@@ -162,6 +140,7 @@
 		</div>
 	</div>
 	<div class="relative mt-6">
+		<p class="mb-2 text-sm dark:text-white">{sortedErrors.length} issues</p>
 		<div bind:this={scrollContainer} style="overflow-x: auto; max-width: 100%;">
 			<table class="w-full min-w-max divide-y divide-gray-200 text-sm dark:divide-gray-600">
 				<thead class="bg-gray-50 dark:bg-gray-700">
@@ -231,33 +210,18 @@
 							<TableData>{item.tool}</TableData>
 							<TableData>{formatDateDMY(getFirstFound(item))}</TableData>
 							<TableData>
-								{#if item.issue_type}
-									<div class="flex flex-wrap gap-x-2 gap-y-1">
-										{#each item.issue_type as itype}
-											{@const display = getIssueTypeDisplay(itype)}
-											<Badge color={display.color} rounded>{display.text}</Badge>
-										{/each}
-									</div>
-								{/if}
+								<IssueTypeBadges types={item.issue_type} />
 							</TableData>
 							<TableData>{item.stage}</TableData>
 							<TableData>
-								{#if displayIssueNovelty(item.issue_novelty).text}
-									{@const noveltyDisplay = displayIssueNovelty(item.issue_novelty)}
-									<Badge color={noveltyDisplay.color} large>{noveltyDisplay.text}</Badge>
-									<Tooltip type="auto">{getNoveltyTooltip(item.issue_novelty)}</Tooltip>
-								{/if}
+								<NoveltyBadge novelty={item.issue_novelty} />
 							</TableData>
 							<TableData>
 								<IssueLinksCell issueLinks={item.issue_links} />
 							</TableData>
 							<TableData>
 								{#if item.maintainers_response}
-									{@const resp = getMaintainersResponseDisplay(item.maintainers_response)}
-									<Badge color={resp.color} large rounded>{resp.text}</Badge>
-									<Tooltip type="auto"
-										>{getMaintainersResponseTooltip(item.maintainers_response)}</Tooltip
-									>
+									<MaintainersResponseBadge response={item.maintainers_response} />
 								{/if}
 							</TableData>
 							<TableData widthClass="w-48">
