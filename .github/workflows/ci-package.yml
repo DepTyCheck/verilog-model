@@ -317,8 +317,8 @@ jobs:
           name: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
           path: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
 
-  check-known-errors:
-    name: Check ${{ matrix.tool.name }} known errors
+  regression-test:
+    name: Regression test ${{ matrix.tool.name }}
     runs-on: ubuntu-latest
     needs: [test-python-units, get-tool-matrix, run-tools]
     if: always()
@@ -344,25 +344,26 @@ jobs:
         with:
           python-version: "3.13"
       - name: Install Python dependencies
-        run: pip install -r ci/runner/known_errors_check/requirements.txt
+        run: pip install -r ci/runner/regression_test/requirements.txt
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
-      - name: Run known errors check
+      - name: Run regression test
         run: |
-          cd ci/runner && python -m known_errors_check.main \
+          cd ci/runner && python -m regression_test.main \
             --known-errors-dir "$GITHUB_WORKSPACE/${{ env.GH_PAGES_PATH }}/found_errors" \
-            --output "$GITHUB_WORKSPACE/known-errors-check-report-${{ matrix.tool.name }}.json" \
+            --output "$GITHUB_WORKSPACE/regression-test-report-${{ matrix.tool.name }}.json" \
             --tool-name "${{ matrix.tool.name }}" \
             --commands-json '${{ toJSON(matrix.tool.commands) }}' \
             --language "${{ matrix.tool.language }}" \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
+            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }} \
             >> "$GITHUB_STEP_SUMMARY"
       - name: Upload report
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: known-errors-check-report-${{ matrix.tool.name }}
-          path: known-errors-check-report-${{ matrix.tool.name }}.json
+          name: regression-test-report-${{ matrix.tool.name }}
+          path: regression-test-report-${{ matrix.tool.name }}.json
 
   count-lines:
     name: Count lines of specification
@@ -382,7 +383,7 @@ jobs:
   compare-errors-stats:
     name: Compare errors stats
     runs-on: ubuntu-latest
-    needs: [test-python-units, run-tools, check-known-errors]
+    needs: [test-python-units, run-tools, regression-test]
     if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Checkout
@@ -398,11 +399,11 @@ jobs:
           path: run-stats
           pattern: "*-${{ env.RUN_STATS_PATTERN }}"
           merge-multiple: true
-      - name: Download known errors check reports
+      - name: Download regression test reports
         uses: actions/download-artifact@v8
         with:
           path: known-errors-reports
-          pattern: "known-errors-check-report-*"
+          pattern: "regression-test-report-*"
           merge-multiple: true
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
@@ -535,7 +536,7 @@ jobs:
     name: Create an issue on failure
     if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
-    needs: [get-upstream-matrix, build-and-test, run-tools]
+    needs: [get-upstream-matrix, build-and-test, run-tools, regression-test]
     permissions:
       contents: read
       issues: write

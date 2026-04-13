@@ -1,5 +1,5 @@
 """
-Unit tests for known_errors_check/src/error_checker.py.
+Unit tests for regression_test/src/error_checker.py.
 
 All tests are pure-Python: no real tool execution happens.
 run_command / make_command are patched so we can control tool output precisely.
@@ -16,7 +16,7 @@ from common.error_file_parser import Example
 from common.error_types import KnownError, MatchingMode
 from common.run_command import ExecutionResult
 from common.tool_error_regex import ToolErrorRegex
-from known_errors_check.src.error_checker import ToolConfig, _load_all_error_files, _run_example, check_all
+from regression_test.src.error_checker import ToolConfig, _load_all_error_files, _run_example, check_all
 from tools_run.src.ignored_errors_list import IgnoredErrorsList
 
 
@@ -52,8 +52,8 @@ class TestRunExample(unittest.TestCase):
     def _make_example(self, content: str = "module m(); endmodule") -> Example:
         return Example(name="ex1", type="minified", content=content)
 
-    @patch("known_errors_check.src.error_checker.run_command")
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.run_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_all_commands_pass_returns_clean(self, mock_make, mock_run):
         mock_make.return_value = "fake file.sv"
         mock_run.return_value = _fake_result("", ok=True)
@@ -66,8 +66,8 @@ class TestRunExample(unittest.TestCase):
         self.assertEqual(result.found_matches, [])
         self.assertTrue(result.all_errors_are_known)
 
-    @patch("known_errors_check.src.error_checker.run_command")
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.run_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_known_error_in_output_returns_found_match(self, mock_make, mock_run):
         mock_make.return_value = "fake file.sv"
         mock_run.return_value = _fake_result("known error found here", ok=False)
@@ -79,8 +79,8 @@ class TestRunExample(unittest.TestCase):
         self.assertEqual(result.unexpected_errors, [])
         self.assertEqual(len(result.found_matches), 1)
 
-    @patch("known_errors_check.src.error_checker.run_command")
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.run_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_unknown_error_in_output_returns_unexpected(self, mock_make, mock_run):
         mock_make.return_value = "fake file.sv"
         mock_run.return_value = _fake_result("some unexpected failure", ok=False)
@@ -92,8 +92,8 @@ class TestRunExample(unittest.TestCase):
         self.assertEqual(len(result.unexpected_errors), 1)
         self.assertFalse(result.all_errors_are_known)
 
-    @patch("known_errors_check.src.error_checker.run_command")
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.run_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_timeout_returns_no_unexpected_errors(self, mock_make, mock_run):
         mock_make.return_value = "fake file.sv"
         mock_run.return_value = _fake_result("timed out", ok=False, timed_out=True)
@@ -104,7 +104,7 @@ class TestRunExample(unittest.TestCase):
 
         self.assertEqual(result.unexpected_errors, [])
 
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_make_command_raises_returns_unexpected(self, mock_make):
         mock_make.side_effect = Exception("No top module found")
 
@@ -115,8 +115,8 @@ class TestRunExample(unittest.TestCase):
         self.assertEqual(len(result.unexpected_errors), 1)
         self.assertIn("No top module found", result.unexpected_errors[0].tool_output_error_text)
 
-    @patch("known_errors_check.src.error_checker.run_command")
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.run_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_stops_on_first_failing_command(self, mock_make, mock_run):
         """With two commands, only the first (failing) one should be run."""
         mock_make.return_value = "fake file.sv"
@@ -206,8 +206,8 @@ class TestCheckAll(unittest.TestCase):
         cmd = CommandConfig(run="fake {file}", error_regex=ToolErrorRegex(regex) if regex else None)
         return ToolConfig(name=name, commands=[cmd])
 
-    @patch("known_errors_check.src.error_checker.run_command")
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.run_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_unknown_error_from_other_tool_is_flagged(self, mock_make, mock_run):
         """tool-a running against tool-b's example produces an unknown error → CI fails."""
         mock_make.return_value = "fake file.sv"
@@ -222,8 +222,8 @@ class TestCheckAll(unittest.TestCase):
         self.assertEqual(new_errors[0]["originating_tool"], "tool-b")
         self.assertEqual(regressions, [])
 
-    @patch("known_errors_check.src.error_checker.run_command")
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.run_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_own_error_reproduces(self, mock_make, mock_run):
         """tool-a's own error still in output → reproduced=True."""
         mock_make.return_value = "fake file.sv"
@@ -238,8 +238,8 @@ class TestCheckAll(unittest.TestCase):
         self.assertEqual(len(regressions), 1)
         self.assertTrue(regressions[0]["reproduced"])
 
-    @patch("known_errors_check.src.error_checker.run_command")
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.run_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_own_error_not_reproducing(self, mock_make, mock_run):
         """tool-a's own error no longer in output → reproduced=False, CI still passes."""
         mock_make.return_value = "fake file.sv"
@@ -254,8 +254,8 @@ class TestCheckAll(unittest.TestCase):
         self.assertEqual(len(regressions), 1)
         self.assertFalse(regressions[0]["reproduced"])
 
-    @patch("known_errors_check.src.error_checker.run_command")
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.run_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_cross_tool_scan_covers_all_subdirs(self, mock_make, mock_run):
         """tool-a is run against both tool-a and tool-b errors; only tool-a in regressions."""
         mock_make.return_value = "fake file.sv"
@@ -278,8 +278,8 @@ class TestCheckAll(unittest.TestCase):
             error_results, new_errors, regressions = check_all(tmp, tool)
         self.assertEqual((error_results, new_errors, regressions), ([], [], []))
 
-    @patch("known_errors_check.src.error_checker.run_command")
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.run_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_two_examples_with_minified_and_full_all_reproduce(self, mock_make, mock_run):
         """Two examples each with minified+full, all reproducing → 4 regression marks."""
         mock_make.return_value = "fake file.sv"

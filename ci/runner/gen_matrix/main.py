@@ -3,7 +3,7 @@
 
 Two outputs are emitted:
   matrix        — all tools (consumed by run-tools)
-  check-matrix  — only tools with a check_cmd field (consumed by check-known-errors)
+  check-matrix  — only tools with a check_cmd field (consumed by regression-test)
 """
 
 import json

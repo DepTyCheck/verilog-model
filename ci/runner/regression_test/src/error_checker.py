@@ -160,6 +160,7 @@ def _run_example(
 def check_all(
     known_errors_dir: str,
     tool: ToolConfig,
+    extra_ignored_regexes: list[str] | None = None,
 ) -> tuple[list[ErrorResult], list[dict], list[dict]]:
     """
     Run regression checks for a single tool against ALL known errors (all tools).
@@ -172,7 +173,7 @@ def check_all(
     regression_confirmations: flat list of reproduced/not-reproduced results for own-tool errors.
     """
     error_files = _load_all_error_files(known_errors_dir)
-    all_known_errors = IgnoredErrorsList.from_error_files(error_files)
+    all_known_errors = IgnoredErrorsList.from_error_files(error_files, extra_regexes=extra_ignored_regexes)
     get_logger().info(f"Checking {len(error_files)} known errors across all tools with '{tool.name}'")
 
     new_error_incidents: list[dict] = []

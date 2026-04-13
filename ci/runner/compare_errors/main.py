@@ -48,7 +48,7 @@ def parse_args():
         required=False,
         default=None,
         help=(
-            "Directory containing known-errors-check JSON reports "
+            "Directory containing regression-test JSON reports "
             "(schema: {error_id: {example_name: bool}}). "
             "When provided, a 'Reproduced' column is added to the table."
         ),

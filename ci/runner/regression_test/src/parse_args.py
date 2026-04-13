@@ -54,4 +54,12 @@ def parse_args():
         help="URL prefix for error links in the Markdown summary table (error ID will be appended)",
     )
 
+    parser.add_argument(
+        "--extra-ignored-regexes",
+        type=str,
+        nargs="*",
+        default=[],
+        help="Additional regexes to ignore beyond the known error YAML files (can be specified multiple times)",
+    )
+
     return parser.parse_args()

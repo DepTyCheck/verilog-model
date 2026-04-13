@@ -43,18 +43,27 @@ class CommandOutput:
             file_path,
         )
 
+        if extracted_errors.some_matches_found() and extracted_errors.all_errors_are_known():
+            return AnalyzisResult(
+                found_matches=extracted_errors.found_matches,
+                unexpected_errors=[],
+                all_errors_are_known=True,
+            )
+
+        # No matches found, or some errors were not matched by specific patterns —
+        # try WHOLE mode before reporting as unknown.
+        whole_output_match = WholeOutputMatch(self.out, ignored_errors_list)
+        if whole_output_match.found_match is not None:
+            return FoundWholeMatch(found_match=whole_output_match.found_match, test_path=file_path)
+
         if extracted_errors.some_matches_found():
             return AnalyzisResult(
                 found_matches=extracted_errors.found_matches,
                 unexpected_errors=extracted_errors.unexpected_errors,
-                all_errors_are_known=extracted_errors.all_errors_are_known(),
+                all_errors_are_known=False,
             )
         else:
-            whole_output_match = WholeOutputMatch(self.out, ignored_errors_list)
-            if whole_output_match.found_match is not None:
-                return FoundWholeMatch(found_match=whole_output_match.found_match, test_path=file_path)
-            else:
-                return NotFoundWholeMatch(
-                    error_text="\n".join(self.out.splitlines()[:3]),
-                    test_path=file_path,
-                )
+            return NotFoundWholeMatch(
+                error_text="\n".join(self.out.splitlines()[:3]),
+                test_path=file_path,
+            )

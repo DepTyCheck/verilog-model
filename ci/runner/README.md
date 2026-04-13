@@ -21,5 +21,5 @@ python local_integration_test.py
   From `ci/runner`:
 
 ```bash
-pip install -r known_errors_check/requirements.txt && python -m known_errors_check.integration_tests.test_iverilog
+pip install -r regression_test/requirements.txt && python -m regression_test.integration_tests.test_iverilog
 ```

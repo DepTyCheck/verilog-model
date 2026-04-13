@@ -1,6 +1,6 @@
 """
 JSON report builder, Markdown table formatter, and console summary printer
-for known_errors_check.
+for regression_test.
 
 Report schema:
 {
@@ -14,7 +14,7 @@ import json
 import sys
 
 from common.markdown_table import build_markdown_table
-from known_errors_check.src.error_checker import ErrorResult
+from regression_test.src.error_checker import ErrorResult
 
 
 def build_report(error_results: list[ErrorResult]) -> dict:

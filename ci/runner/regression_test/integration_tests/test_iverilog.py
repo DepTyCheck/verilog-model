@@ -5,7 +5,7 @@ Requirements:
   - iverilog must be installed and available on PATH
 
 Run from ci/runner/:
-  python -m known_errors_check.integration_tests.test_iverilog
+  python -m regression_test.integration_tests.test_iverilog
 
 Prints a JSON report:
   { "<error_id>": { "<example_name>": true/false } }
@@ -17,7 +17,7 @@ from pathlib import Path
 
 from common.error_file_parser import parse_error_files
 from common.tool_error_regex import ToolErrorRegex
-from known_errors_check.src.error_checker import ExampleStatus, ToolConfig, _run_example_with_tool
+from regression_test.src.error_checker import ExampleStatus, ToolConfig, _run_example_with_tool
 
 DATA_DIR = Path(__file__).parent / "data"
 

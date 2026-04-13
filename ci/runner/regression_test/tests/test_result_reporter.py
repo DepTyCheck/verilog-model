@@ -1,4 +1,4 @@
-"""Unit tests for known_errors_check/src/result_reporter.py."""
+"""Unit tests for regression_test/src/result_reporter.py."""
 
 import json
 import os
@@ -12,8 +12,8 @@ from common.command_config import CommandConfig
 from common.error_file_parser import parse_error_files
 from common.run_command import ExecutionResult
 from common.tool_error_regex import ToolErrorRegex
-from known_errors_check.src.error_checker import ErrorResult, ExampleResult, ToolConfig, check_all
-from known_errors_check.src.result_reporter import build_report, format_markdown_table, print_summary, save_report
+from regression_test.src.error_checker import ErrorResult, ExampleResult, ToolConfig, check_all
+from regression_test.src.result_reporter import build_report, format_markdown_table, print_summary, save_report
 
 DATA_DIR = str(Path(__file__).parent / "data")
 
@@ -151,8 +151,8 @@ class TestReportForTwoExamplesWithFull(unittest.TestCase):
             output=output,
         )
 
-    @patch("known_errors_check.src.error_checker.run_command")
-    @patch("known_errors_check.src.error_checker.make_command")
+    @patch("regression_test.src.error_checker.run_command")
+    @patch("regression_test.src.error_checker.make_command")
     def test_report_with_all_four_examples_reproducing(self, mock_make, mock_run):
         mock_make.return_value = "fake_tool file.sv"
         mock_run.return_value = self._fake_result("known error pattern here")
