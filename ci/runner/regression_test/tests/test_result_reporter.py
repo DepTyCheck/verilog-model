@@ -13,6 +13,8 @@ from common.error_file_parser import parse_error_files
 from common.run_command import ExecutionResult
 from common.tool_error_regex import ToolErrorRegex
 from regression_test.src.error_checker import ErrorResult, ExampleResult, ToolConfig, check_all
+
+_LANG_EXTENSIONS = {"sv": ".sv", "vhdl": ".vhdl"}
 from regression_test.src.result_reporter import build_report, format_markdown_table, print_summary, save_report
 
 DATA_DIR = str(Path(__file__).parent / "data")
@@ -173,7 +175,7 @@ class TestReportForTwoExamplesWithFull(unittest.TestCase):
 
             shutil.copy(src, tool_dir)
 
-            error_results, new_errors, regressions = check_all(tmp, tool)
+            error_results, new_errors, regressions = check_all(tmp, tool, _LANG_EXTENSIONS)
 
         self.assertEqual(new_errors, [])
         self.assertEqual(len(regressions), 4)

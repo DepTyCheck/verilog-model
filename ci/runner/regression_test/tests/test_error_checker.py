@@ -19,6 +19,8 @@ from common.tool_error_regex import ToolErrorRegex
 from regression_test.src.error_checker import ToolConfig, _load_all_error_files, _run_example, check_all
 from tools_run.src.ignored_errors_list import IgnoredErrorsList
 
+_LANG_EXTENSIONS = {"sv": ".sv", "vhdl": ".vhdl"}
+
 
 def _make_tool(name: str = "fake_tool", regex: str | None = "known error") -> ToolConfig:
     cmd = CommandConfig(run="fake {file}", error_regex=ToolErrorRegex(regex) if regex else None)
@@ -60,7 +62,7 @@ class TestRunExample(unittest.TestCase):
 
         tool = _make_tool()
         ignored = _make_ignored_errors(["known error"])
-        result = _run_example(self._make_example(), tool.commands, ignored, "sv")
+        result = _run_example(self._make_example(), tool.commands, ignored, "sv", _LANG_EXTENSIONS)
 
         self.assertEqual(result.unexpected_errors, [])
         self.assertEqual(result.found_matches, [])
@@ -74,7 +76,7 @@ class TestRunExample(unittest.TestCase):
 
         tool = _make_tool(regex="known error")
         ignored = _make_ignored_errors(["known error"])
-        result = _run_example(self._make_example(), tool.commands, ignored, "sv")
+        result = _run_example(self._make_example(), tool.commands, ignored, "sv", _LANG_EXTENSIONS)
 
         self.assertEqual(result.unexpected_errors, [])
         self.assertEqual(len(result.found_matches), 1)
@@ -87,7 +89,7 @@ class TestRunExample(unittest.TestCase):
 
         tool = _make_tool(regex="some unexpected failure")
         ignored = _make_ignored_errors([])  # nothing is known
-        result = _run_example(self._make_example(), tool.commands, ignored, "sv")
+        result = _run_example(self._make_example(), tool.commands, ignored, "sv", _LANG_EXTENSIONS)
 
         self.assertEqual(len(result.unexpected_errors), 1)
         self.assertFalse(result.all_errors_are_known)
@@ -100,7 +102,7 @@ class TestRunExample(unittest.TestCase):
 
         tool = _make_tool()
         ignored = _make_ignored_errors([])
-        result = _run_example(self._make_example(), tool.commands, ignored, "sv")
+        result = _run_example(self._make_example(), tool.commands, ignored, "sv", _LANG_EXTENSIONS)
 
         self.assertEqual(result.unexpected_errors, [])
 
@@ -110,7 +112,7 @@ class TestRunExample(unittest.TestCase):
 
         tool = _make_tool()
         ignored = _make_ignored_errors([])
-        result = _run_example(self._make_example(), tool.commands, ignored, "sv")
+        result = _run_example(self._make_example(), tool.commands, ignored, "sv", _LANG_EXTENSIONS)
 
         self.assertEqual(len(result.unexpected_errors), 1)
         self.assertIn("No top module found", result.unexpected_errors[0].tool_output_error_text)
@@ -127,7 +129,7 @@ class TestRunExample(unittest.TestCase):
         tool = ToolConfig(name="fake_tool", commands=[cmd1, cmd2])
         ignored = _make_ignored_errors(["known error"])
 
-        _run_example(self._make_example(), tool.commands, ignored, "sv")
+        _run_example(self._make_example(), tool.commands, ignored, "sv", _LANG_EXTENSIONS)
 
         self.assertEqual(mock_run.call_count, 1)
 
@@ -216,7 +218,7 @@ class TestCheckAll(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             _write_known_errors_dir(tmp, {"tool-b/error_b.yaml": _TOOL_B_YAML})
             tool = self._make_tool("tool-a", regex="totally unexpected failure")
-            _, new_errors, regressions = check_all(tmp, tool)
+            _, new_errors, regressions = check_all(tmp, tool, _LANG_EXTENSIONS)
 
         self.assertEqual(len(new_errors), 1)
         self.assertEqual(new_errors[0]["originating_tool"], "tool-b")
@@ -232,7 +234,7 @@ class TestCheckAll(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             _write_known_errors_dir(tmp, {"tool-a/error_a.yaml": _TOOL_A_YAML})
             tool = self._make_tool("tool-a", regex="known error from a")
-            _, new_errors, regressions = check_all(tmp, tool)
+            _, new_errors, regressions = check_all(tmp, tool, _LANG_EXTENSIONS)
 
         self.assertEqual(new_errors, [])
         self.assertEqual(len(regressions), 1)
@@ -248,7 +250,7 @@ class TestCheckAll(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             _write_known_errors_dir(tmp, {"tool-a/error_a.yaml": _TOOL_A_YAML})
             tool = self._make_tool("tool-a")
-            _, new_errors, regressions = check_all(tmp, tool)
+            _, new_errors, regressions = check_all(tmp, tool, _LANG_EXTENSIONS)
 
         self.assertEqual(new_errors, [])
         self.assertEqual(len(regressions), 1)
@@ -264,7 +266,7 @@ class TestCheckAll(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             _write_known_errors_dir(tmp, {"tool-a/error_a.yaml": _TOOL_A_YAML, "tool-b/error_b.yaml": _TOOL_B_YAML})
             tool = self._make_tool("tool-a")
-            error_results, new_errors, regressions = check_all(tmp, tool)
+            error_results, new_errors, regressions = check_all(tmp, tool, _LANG_EXTENSIONS)
 
         self.assertEqual(new_errors, [])
         self.assertEqual(len(regressions), 1)
@@ -275,7 +277,7 @@ class TestCheckAll(unittest.TestCase):
     def test_empty_dir_returns_empty(self):
         with tempfile.TemporaryDirectory() as tmp:
             tool = self._make_tool("tool-a")
-            error_results, new_errors, regressions = check_all(tmp, tool)
+            error_results, new_errors, regressions = check_all(tmp, tool, _LANG_EXTENSIONS)
         self.assertEqual((error_results, new_errors, regressions), ([], [], []))
 
     @patch("regression_test.src.error_checker.run_command")
@@ -288,7 +290,7 @@ class TestCheckAll(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             _write_known_errors_dir(tmp, {"tool-a/two_examples.yaml": _TWO_EXAMPLES_WITH_FULL_YAML})
             tool = self._make_tool("tool-a", regex="known error from a")
-            _, new_errors, regressions = check_all(tmp, tool)
+            _, new_errors, regressions = check_all(tmp, tool, _LANG_EXTENSIONS)
 
         self.assertEqual(new_errors, [])
         self.assertEqual(len(regressions), 4)

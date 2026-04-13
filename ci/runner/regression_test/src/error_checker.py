@@ -33,12 +33,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from common.command_config import CommandConfig
-from common.command_output import AnalyzisResult, CommandOutput
+from common.command_output import AnalyzisResult
 from common.error_file_parser import ErrorFile, parse_error_files
-from common.error_types import IgnoredError, KnownError, UnexpectedError
+from common.error_types import KnownError, UnexpectedError
+from common.language_config import get_file_extension
 from common.logger import get_logger
 from common.make_command import make_command
 from common.run_command import run_command
+from common.run_tool_command import analyze_result
 from tools_run.src.ignored_errors_list import IgnoredErrorsList
 
 
@@ -95,12 +97,13 @@ def _run_example(
     commands: list[CommandConfig],
     all_known_errors: IgnoredErrorsList,
     language: str,
+    language_extensions: dict[str, str],
 ) -> AnalyzisResult:
     """
     Write example content to a temp file, run all commands (stopping on first
     failure), and return the analysis of the failing command's output.
     """
-    suffix = ".vhdl" if language == "vhdl" else ".sv"
+    suffix = get_file_extension(language, language_extensions)
     tmp_path = None
     try:
         with tempfile.NamedTemporaryFile(mode="w", suffix=suffix, delete=False) as tmp:
@@ -118,36 +121,15 @@ def _run_example(
                     all_errors_are_known=False,
                 )
 
-            result = run_command(cmd)
+            cmd_result = run_command(cmd)
 
-            if not result.command_executed_successfully:
-                excerpt = result.output[:200]
-                return AnalyzisResult(
-                    found_matches=[],
-                    unexpected_errors=[UnexpectedError(tool_output_error_text=excerpt, test_file_path=tmp_path)],
-                    all_errors_are_known=False,
-                )
-
-            if result.result_code_is_ok:
-                continue  # This command passed; try the next one
-
-            if result.timed_out:
+            if cmd_result.timed_out:
                 # Timeout is not classified as an unknown error
                 return AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True)
 
-            if cmd_config.error_regex is None:
-                excerpt = "\n".join(result.output.splitlines()[:3])
-                return AnalyzisResult(
-                    found_matches=[],
-                    unexpected_errors=[UnexpectedError(tool_output_error_text=excerpt, test_file_path=tmp_path)],
-                    all_errors_are_known=False,
-                )
-
-            return CommandOutput(result.output).analyze(
-                ignored_errors_list=all_known_errors,
-                tool_error_regex=cmd_config.error_regex,
-                file_path=tmp_path,
-            )
+            success, result = analyze_result(cmd_result, cmd_config, all_known_errors, tmp_path)
+            if not success:
+                return result
 
         # All commands passed
         return AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True)
@@ -160,6 +142,7 @@ def _run_example(
 def check_all(
     known_errors_dir: str,
     tool: ToolConfig,
+    language_extensions: dict[str, str],
     extra_ignored_regexes: list[str] | None = None,
 ) -> tuple[list[ErrorResult], list[dict], list[dict]]:
     """
@@ -189,7 +172,7 @@ def check_all(
         error_result = ErrorResult(error_id=error_file.error_id, originating_tool=error_file.tool)
 
         for example in error_file.examples:
-            analysis = _run_example(example, tool.commands, all_known_errors, tool.language)
+            analysis = _run_example(example, tool.commands, all_known_errors, tool.language, language_extensions)
 
             # Unknown errors cause CI failure regardless of which tool owns the error file
             for unexpected in analysis.unexpected_errors:

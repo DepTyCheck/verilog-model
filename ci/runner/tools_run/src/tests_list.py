@@ -3,11 +3,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from common.command_config import CommandConfig
-from common.command_output import AnalyzisResult, CommandOutput
+from common.command_output import AnalyzisResult
 from common.error_types import ErrorMatchInTest, UnexpectedError
 from common.logger import get_logger
 from common.make_command import make_command
 from common.run_command import run_command
+from common.run_tool_command import analyze_result
 from tools_run.src.assets import Assets
 from tools_run.src.ignored_errors_list import IgnoredErrorsList
 
@@ -110,21 +111,4 @@ class TestsList:
     ) -> tuple[bool, AnalyzisResult]:
         cmd = make_command(cmd_config.run, file_path_str, file_content)
         cmd_result = run_command(cmd, cwd=cwd)
-
-        if cmd_result.result_code_is_ok:
-            return True, AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True)
-
-        if cmd_config.error_regex is None:
-            excerpt = "\n".join(cmd_result.output.splitlines()[:3])
-            return False, AnalyzisResult(
-                found_matches=[],
-                unexpected_errors=[UnexpectedError(tool_output_error_text=excerpt, test_file_path=file_path_str)],
-                all_errors_are_known=False,
-            )
-
-        analyzis_result = CommandOutput(cmd_result.output).analyze(
-            ignored_errors_list=self.ignored_errors_list,
-            tool_error_regex=cmd_config.error_regex,
-            file_path=file_path_str,
-        )
-        return False, analyzis_result
+        return analyze_result(cmd_result, cmd_config, self.ignored_errors_list, file_path_str)

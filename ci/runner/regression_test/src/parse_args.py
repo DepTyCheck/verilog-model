@@ -35,8 +35,14 @@ def parse_args():
         "--language",
         type=str,
         default="sv",
-        choices=["sv", "vhdl"],
-        help="Source language of the tool; determines temp file suffix (default: sv)",
+        help="Source language of the tool (default: sv)",
+    )
+
+    parser.add_argument(
+        "--language-config",
+        type=str,
+        required=True,
+        help="Path to a YAML file mapping language names to file extensions (e.g. sv: .sv).",
     )
 
     parser.add_argument(

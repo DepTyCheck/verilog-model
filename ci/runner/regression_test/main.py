@@ -8,7 +8,8 @@ Usage (from ci/runner/):
     --output regression-test-report.json \
     --tool-name iverilog \
     --commands-json '[{"run": "iverilog -g2012 -o /dev/null {file}", "error_regex": "(syntax error|error): .*"}]' \
-    --language sv
+    --language sv \
+    --language-config ../../conf/languages.yaml
 
 Exit codes:
   0 — all checks passed (CLEAN or KNOWN_ERROR only)
@@ -20,6 +21,7 @@ import logging
 import sys
 
 from common.command_config import CommandConfig
+from common.language_config import load_language_config
 from common.logger import configure_logger
 from common.tool_error_regex import ToolErrorRegex
 from regression_test.src.error_checker import ToolConfig, check_all
@@ -47,10 +49,12 @@ def main() -> None:
     args = parse_args()
 
     tool = _tool_from_commands_json(args.tool_name, args.commands_json, args.language)
+    language_extensions = load_language_config(args.language_config)
 
     error_results, new_error_incidents, regression_confirmations = check_all(
         known_errors_dir=args.known_errors_dir,
         tool=tool,
+        language_extensions=language_extensions,
         extra_ignored_regexes=args.extra_ignored_regexes,
     )
 
