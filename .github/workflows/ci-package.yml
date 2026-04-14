@@ -375,6 +375,7 @@ jobs:
             --language-config "$GITHUB_WORKSPACE/ci/conf/languages.yaml" \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
             --unknown-errors-output "$GITHUB_WORKSPACE/${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
+            --assets ${{ matrix.tool.assets }} \
             --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }} \
             >> "$GITHUB_STEP_SUMMARY"
       - name: Upload report

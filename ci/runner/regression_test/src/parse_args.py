@@ -76,4 +76,12 @@ def parse_args():
         help="Path to write unknown_errors.json for mds_report (optional)",
     )
 
+    parser.add_argument(
+        "--assets",
+        type=str,
+        nargs="*",
+        default=[],
+        help="Paths to asset files/directories to copy into each temp run directory",
+    )
+
     return parser.parse_args()

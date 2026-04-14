@@ -153,3 +153,26 @@ class TestIterRegressionInputs(unittest.TestCase):
         )
         inputs = list(iter_regression_inputs([ef], ".sv"))
         self.assertEqual(inputs[0].logical_name, "e1/ex1")
+
+    def test_assets_propagated_to_each_input(self):
+        from unittest.mock import MagicMock
+
+        from common.error_file_parser import ErrorFile, Example
+        from common.error_types import MatchingMode
+        from regression_test.src.error_checker import iter_regression_inputs
+
+        ef = ErrorFile(
+            error_id="e1",
+            tool="t",
+            regex="p",
+            mode=MatchingMode.SPECIFIC,
+            title="",
+            examples=[
+                Example(name="ex1", type="minified", content="a"),
+                Example(name="ex2", type="full", content="b"),
+            ],
+        )
+        assets = MagicMock()
+        inputs = list(iter_regression_inputs([ef], ".sv", assets=assets))
+        for inp in inputs:
+            self.assertIs(inp.assets, assets)

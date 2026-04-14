@@ -119,27 +119,15 @@ tools:
     deps: gcc python3
     path: tssv
     pre_build: |
-      gunzip tree-sitter-linux-x64.gz
-      sudo mv tree-sitter-linux-x64 /usr/local/bin/tree-sitter-linux-x64
-      sudo chmod +x /usr/local/bin/tree-sitter-linux-x64
+      sudo npm install -g tree-sitter-cli@0.21
     build: |
-      cd ..
-      sudo apt -qq -y install curl
-      touch "$HOME/.bash_profile"
-      # From https://nodejs.org/en/download
-      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
-      . "$HOME/.nvm/nvm.sh"
-      nvm install 22
-      cd tssv
-      sudo tree-sitter-linux-x64 generate --abi 14
-      sudo tree-sitter-linux-x64 build -o sv.so
+      tree-sitter generate --abi 14
+      tree-sitter build -o sv.so
     python_runner_deps: tree-sitter==0.21.3
     version: |
-      sudo tree-sitter-linux-x64 -V
+      tree-sitter -V
     commands:
       - run: python3 ci/conf/tree-sitter-sv/run_ts.py tssv/sv.so {file}
-    third_party_release_repo: tree-sitter/tree-sitter
-    third_party_release_name_wildcard: tree-sitter-linux-x64.gz
     assets: >-
       ci/conf/tree-sitter-sv/run_ts.py
       tssv/sv.so

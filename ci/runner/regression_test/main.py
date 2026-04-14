@@ -20,6 +20,7 @@ import json
 import logging
 import sys
 
+from common.assets import Assets
 from common.command_config import CommandConfig
 from common.language_config import get_file_extension, load_language_config
 from common.logger import configure_logger
@@ -53,13 +54,14 @@ def main() -> None:
     commands = _parse_commands(args.commands_json)
     language_extensions = load_language_config(args.language_config)
     file_suffix = get_file_extension(args.language, language_extensions)
+    assets = Assets(args.assets) if args.assets else None
 
     error_files = load_all_error_files(args.known_errors_dir)
     all_known_errors = IgnoredErrorsList.from_error_files(error_files, extra_regexes=args.extra_ignored_regexes)
 
     collector = ResultCollector()
     run_all(
-        iter_regression_inputs(error_files, file_suffix),
+        iter_regression_inputs(error_files, file_suffix, assets=assets),
         commands,
         all_known_errors,
         collector,

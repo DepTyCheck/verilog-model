@@ -22,6 +22,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
 
+from common.assets import Assets
 from common.command_config import CommandConfig
 from common.command_output import AnalyzisResult
 from common.error_file_parser import ErrorFile, parse_error_files
@@ -86,6 +87,7 @@ def load_all_error_files(known_errors_dir: str) -> list[ErrorFile]:
 def iter_regression_inputs(
     error_files: list[ErrorFile],
     file_suffix: str,
+    assets: Assets | None = None,
 ) -> Iterable[FileInput]:
     """Yield a FileInput for every (error_file, example) pair."""
     for error_file in error_files:
@@ -94,6 +96,7 @@ def iter_regression_inputs(
                 content=example.content,
                 file_suffix=file_suffix,
                 context=(error_file, example),
+                assets=assets,
                 logical_name=f"{error_file.error_id}/{example.name}",
             )
 

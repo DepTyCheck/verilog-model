@@ -11,7 +11,7 @@ def find_top_module_sv(file_content: str) -> str:
 
 def find_top_entity_vhdl(file_content: str) -> str:
     """Find the top (last) entity name in the given VHDL design."""
-    matches = re.findall(r"(?<=entity )[A-z]+(?= is)", file_content, re.MULTILINE)
+    matches = re.findall(r"(?<=entity )[A-z]+(?= is)", file_content, re.MULTILINE | re.IGNORECASE)
     if matches:
         return matches[-1]
     raise Exception("No top entity found")
