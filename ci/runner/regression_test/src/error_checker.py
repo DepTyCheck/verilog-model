@@ -88,9 +88,16 @@ def iter_regression_inputs(
     error_files: list[ErrorFile],
     file_suffix: str,
     assets: Assets | None = None,
+    language: str | None = None,
 ) -> Iterable[FileInput]:
-    """Yield a FileInput for every (error_file, example) pair."""
+    """Yield a FileInput for every (error_file, example) pair.
+
+    If language is given, only examples whose error file has a matching language
+    are yielded.  This prevents e.g. GHDL (vhdl) from receiving SV examples.
+    """
     for error_file in error_files:
+        if language is not None and error_file.language != language:
+            continue
         for example in error_file.examples:
             yield FileInput(
                 content=example.content,

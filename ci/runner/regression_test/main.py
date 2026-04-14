@@ -61,7 +61,7 @@ def main() -> None:
 
     collector = ResultCollector()
     run_all(
-        iter_regression_inputs(error_files, file_suffix, assets=assets),
+        iter_regression_inputs(error_files, file_suffix, assets=assets, language=args.language),
         commands,
         all_known_errors,
         collector,

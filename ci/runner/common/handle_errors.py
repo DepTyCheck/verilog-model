@@ -33,6 +33,8 @@ class ExtractedErrorsByToolRegex:
         matches = list(re.finditer(tool_regex.regex, output, re.MULTILINE))
         if not matches:
             get_logger().warning("Warning: No errors matched.\n")
+            print(f"[DEBUG] error_regex: {tool_regex.regex!r}", flush=True)
+            print(f"[DEBUG] tool output:\n{output}", flush=True)
         else:
             for match in matches:
                 error_text = match.group(0)

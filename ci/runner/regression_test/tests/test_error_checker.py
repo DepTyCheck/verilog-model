@@ -8,9 +8,10 @@ import os
 import tempfile
 import textwrap
 import unittest
+from unittest.mock import MagicMock
 
-from common.error_file_parser import Example
-from common.error_types import KnownError, MatchingMode
+from common.error_file_parser import ErrorFile, Example
+from common.error_types import MatchingMode
 from regression_test.src.error_checker import iter_regression_inputs, load_all_error_files
 
 # ---------------------------------------------------------------------------
@@ -58,6 +59,18 @@ def _write_known_errors_dir(tmp: str, files: dict[str, str]) -> str:
     return tmp
 
 
+def _make_ef(language: str = "sv") -> ErrorFile:
+    return ErrorFile(
+        error_id="e1",
+        tool="t",
+        regex="p",
+        mode=MatchingMode.SPECIFIC,
+        title="",
+        language=language,
+        examples=[Example(name="ex1", type="minified", content="c")],
+    )
+
+
 class TestLoadAllErrorFiles(unittest.TestCase):
 
     def test_loads_from_all_subdirs(self):
@@ -84,16 +97,13 @@ class TestLoadAllErrorFiles(unittest.TestCase):
 class TestIterRegressionInputs(unittest.TestCase):
 
     def test_yields_one_input_per_example(self):
-        from common.error_file_parser import ErrorFile, Example
-        from common.error_types import MatchingMode
-        from regression_test.src.error_checker import iter_regression_inputs
-
         ef = ErrorFile(
             error_id="e1",
             tool="t",
             regex="pat",
             mode=MatchingMode.SPECIFIC,
             title="",
+            language="sv",
             examples=[
                 Example(name="ex1", type="minified", content="module m; endmodule"),
                 Example(name="ex2", type="full", content="module n; endmodule"),
@@ -103,10 +113,6 @@ class TestIterRegressionInputs(unittest.TestCase):
         self.assertEqual(len(inputs), 2)
 
     def test_context_is_error_file_and_example_tuple(self):
-        from common.error_file_parser import ErrorFile, Example
-        from common.error_types import MatchingMode
-        from regression_test.src.error_checker import iter_regression_inputs
-
         example = Example(name="ex1", type="minified", content="abc")
         ef = ErrorFile(
             error_id="e1",
@@ -114,6 +120,7 @@ class TestIterRegressionInputs(unittest.TestCase):
             regex="p",
             mode=MatchingMode.SPECIFIC,
             title="",
+            language="sv",
             examples=[example],
         )
         inputs = list(iter_regression_inputs([ef], ".sv"))
@@ -122,16 +129,13 @@ class TestIterRegressionInputs(unittest.TestCase):
         self.assertIs(ctx_ex, example)
 
     def test_content_and_suffix_set_correctly(self):
-        from common.error_file_parser import ErrorFile, Example
-        from common.error_types import MatchingMode
-        from regression_test.src.error_checker import iter_regression_inputs
-
         ef = ErrorFile(
             error_id="e1",
             tool="t",
             regex="p",
             mode=MatchingMode.SPECIFIC,
             title="",
+            language="vhdl",
             examples=[Example(name="ex1", type="minified", content="my content")],
         )
         inputs = list(iter_regression_inputs([ef], ".vhdl"))
@@ -139,34 +143,26 @@ class TestIterRegressionInputs(unittest.TestCase):
         self.assertEqual(inputs[0].file_suffix, ".vhdl")
 
     def test_logical_name_is_error_id_slash_example_name(self):
-        from common.error_file_parser import ErrorFile, Example
-        from common.error_types import MatchingMode
-        from regression_test.src.error_checker import iter_regression_inputs
-
         ef = ErrorFile(
             error_id="e1",
             tool="t",
             regex="p",
             mode=MatchingMode.SPECIFIC,
             title="",
+            language="sv",
             examples=[Example(name="ex1", type="minified", content="c")],
         )
         inputs = list(iter_regression_inputs([ef], ".sv"))
         self.assertEqual(inputs[0].logical_name, "e1/ex1")
 
     def test_assets_propagated_to_each_input(self):
-        from unittest.mock import MagicMock
-
-        from common.error_file_parser import ErrorFile, Example
-        from common.error_types import MatchingMode
-        from regression_test.src.error_checker import iter_regression_inputs
-
         ef = ErrorFile(
             error_id="e1",
             tool="t",
             regex="p",
             mode=MatchingMode.SPECIFIC,
             title="",
+            language="sv",
             examples=[
                 Example(name="ex1", type="minified", content="a"),
                 Example(name="ex2", type="full", content="b"),
@@ -176,3 +172,15 @@ class TestIterRegressionInputs(unittest.TestCase):
         inputs = list(iter_regression_inputs([ef], ".sv", assets=assets))
         for inp in inputs:
             self.assertIs(inp.assets, assets)
+
+    def test_language_filter_matches(self):
+        inputs = list(iter_regression_inputs([_make_ef("vhdl")], ".vhdl", language="vhdl"))
+        self.assertEqual(len(inputs), 1)
+
+    def test_language_filter_excludes_wrong_language(self):
+        inputs = list(iter_regression_inputs([_make_ef("sv")], ".vhdl", language="vhdl"))
+        self.assertEqual(len(inputs), 0)
+
+    def test_no_language_filter_yields_all(self):
+        inputs = list(iter_regression_inputs([_make_ef("sv"), _make_ef("vhdl")], ".sv"))
+        self.assertEqual(len(inputs), 2)

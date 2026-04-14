@@ -21,6 +21,7 @@ class ErrorFile:
     regex: str
     mode: MatchingMode
     title: str
+    language: str  # source language of examples ("sv", "vhdl", …); read from "lang" YAML key
     examples: List[Example] = field(default_factory=list)
 
 
@@ -92,6 +93,7 @@ def parse_error_files(dir_path: str, tool: str | None = None) -> List[ErrorFile]
                     regex=regex.rstrip("\n"),
                     mode=mode,
                     title=data.get("title", ""),
+                    language=data.get("lang", "sv"),
                     examples=_parse_examples(data.get("examples")),
                 )
             )

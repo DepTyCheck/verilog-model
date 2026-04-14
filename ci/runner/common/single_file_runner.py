@@ -44,6 +44,7 @@ def run_file(
                 cmd = make_command(cmd_config.run, tmp_path, content)
             except Exception as exc:
                 get_logger().warning(f"make_command failed: {exc}")
+                print(f"[DEBUG] make_command failed ({exc}) for file {report_path!r}, content:\n{content[:300]}", flush=True)
                 return AnalyzisResult(
                     found_matches=[],
                     unexpected_errors=[

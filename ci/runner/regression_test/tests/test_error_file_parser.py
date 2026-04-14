@@ -1,5 +1,8 @@
 """Unit tests for common/error_file_parser.py — exercises the examples field parsing."""
 
+import os
+import tempfile
+import textwrap
 import unittest
 from pathlib import Path
 
@@ -78,3 +81,24 @@ class TestErrorFileParser(unittest.TestCase):
         contents = [ex.content for ex in target.examples]
         # All four example contents are distinct
         self.assertEqual(len(set(contents)), 4)
+
+    def test_lang_field_read_from_yaml(self):
+        """Files with an explicit 'lang' field are stored in ErrorFile.language."""
+        yaml_content = textwrap.dedent("""\
+            id: vhdl_error
+            tool: ghdl
+            lang: vhdl
+            regex: 'error: .*'
+            examples: []
+        """)
+        with tempfile.TemporaryDirectory() as tmp:
+            with open(os.path.join(tmp, "err.yaml"), "w") as f:
+                f.write(yaml_content)
+            files = parse_error_files(tmp)
+        self.assertEqual(files[0].language, "vhdl")
+
+    def test_lang_defaults_to_sv_when_absent(self):
+        """Files without 'lang' default to 'sv' (all existing SV tool error files)."""
+        files = parse_error_files(DATA_DIR, tool="fake_tool")
+        for f in files:
+            self.assertEqual(f.language, "sv")

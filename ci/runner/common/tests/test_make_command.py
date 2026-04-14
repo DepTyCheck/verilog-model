@@ -23,6 +23,9 @@ class TestFindTopEntityVhdl(unittest.TestCase):
     def test_underscore_in_name(self):
         self.assertEqual(find_top_entity_vhdl("entity my_top_entity is\nend;"), "my_top_entity")
 
+    def test_digit_in_name(self):
+        self.assertEqual(find_top_entity_vhdl("entity tb_1 is\nend tb_1;"), "tb_1")
+
     def test_no_entity_raises(self):
         with self.assertRaises(Exception):
             find_top_entity_vhdl("-- no entity here\n")
@@ -32,6 +35,9 @@ class TestFindTopModuleSv(unittest.TestCase):
 
     def test_simple(self):
         self.assertEqual(find_top_module_sv("module foo; endmodule"), "foo")
+
+    def test_digit_in_name(self):
+        self.assertEqual(find_top_module_sv("module tb_1; endmodule"), "tb_1")
 
     def test_returns_last_module(self):
         content = "module first; endmodule\nmodule last; endmodule"

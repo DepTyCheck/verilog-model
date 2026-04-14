@@ -357,6 +357,7 @@ jobs:
           tool-install: ${{ matrix.tool.install }}
           tool-deps: ${{ matrix.tool.deps }}
           tool-version: ${{ matrix.tool.version }}
+          tool-pre-build: ${{ matrix.tool.pre_build }}
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
