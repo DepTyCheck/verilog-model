@@ -5,16 +5,17 @@ import logging
 import sys
 from pathlib import Path
 
+from common.command_config import CommandConfig
 from common.logger import configure_logger
 from common.tool_error_regex import ToolErrorRegex
+from common.tool_matrix_runner import ResultCollector, run_all
+from common.unknown_error_reporter import collect_unknown_errors, print_unknown_errors, save_unknown_errors_json
 from tools_run.src.assets import Assets
 from tools_run.src.ignored_errors_list import IgnoredErrorsList
+from tools_run.src.input_iter import iter_test_files
 from tools_run.src.known_errors_report import KnownErrorsReport
-from tools_run.src.mds_distances_report import MDSDistancesReport
 from tools_run.src.parse_args import parse_args
-from tools_run.src.print_stats import print_failed_tests_paths, print_issues_count, print_unexpected_errors
-from tools_run.src.tests_list import CommandConfig, TestsList
-from tools_run.src.utils import print_pretty
+from tools_run.src.print_stats import count_run_stats, print_issues_count
 
 
 def _parse_commands(commands_json: str) -> list[CommandConfig]:
@@ -33,44 +34,42 @@ def _parse_commands(commands_json: str) -> list[CommandConfig]:
 
 def main() -> None:
     configure_logger(level=logging.DEBUG)
-
     args = parse_args()
 
-    ignored_errors = IgnoredErrorsList(
+    known_errors = IgnoredErrorsList(
         args.ignored_errors_dir,
         args.tool_name,
         regex_list=args.extra_ignored_regexes,
     )
-
     commands = _parse_commands(args.commands_json)
+    assets = Assets(args.assets)
 
-    tests_result = TestsList(
-        files=Path(args.gen_path).glob(args.file_pattern),
-        ignored_errors_list=ignored_errors,
-        commands=commands,
-        assets=Assets(args.assets),
-    ).run_all()
+    # Determine file suffix from the file pattern (e.g. "*.sv" → ".sv")
+    file_suffix = Path(args.file_pattern).suffix or ".sv"
 
-    known_errors_report = KnownErrorsReport(commit=args.commit)
-    known_errors_report.add_errors(tests_result.matches)
-    known_errors_report.save(args.run_statistics_output)
+    files = list(Path(args.gen_path).glob(args.file_pattern))
+    inputs = iter_test_files(files, file_suffix, assets)
 
-    print_issues_count(tests_result)
+    collector = ResultCollector()
+    run_all(inputs, commands, known_errors, collector)
 
-    if tests_result.has_unexpected_errors():
-        print_unexpected_errors(tests_result)
-        print_failed_tests_paths(tests_result)
+    # ── shared phase ────────────────────────────────────────────────────────
+    results = collector.results()
+    unknown_entries = collect_unknown_errors(results)
+    print_unknown_errors(unknown_entries)
+    if unknown_entries and args.unknown_errors_output:
+        save_unknown_errors_json(unknown_entries, args.unknown_errors_output)
 
-        MDSDistancesReport(
-            new_errors=tests_result.unexpected_errors,
-            ignored_errors=ignored_errors,
-            tool_name=args.tool_name,
-            job_link=args.job_link,
-        ).save(args.error_distances_output)
+    # ── tools_run-specific phase ─────────────────────────────────────────────
+    matches = [m for _, r in results for m in r.found_matches]
+    report = KnownErrorsReport(commit=args.commit)
+    report.add_errors(matches)
+    report.save(args.run_statistics_output)
 
-        sys.exit(1)
-    else:
-        print_pretty(["  All tests passed successfully."])
+    stats = count_run_stats(results)
+    print_issues_count(stats)
+
+    sys.exit(1 if unknown_entries else 0)
 
 
 if __name__ == "__main__":

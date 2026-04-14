@@ -1,9 +1,22 @@
-from tools_run.src.tests_list import TestsRunResult
+from common.command_output import AnalyzisResult
+from common.tool_matrix_runner import FileInput
 from tools_run.src.utils import print_pretty
 
 
-def print_issues_count(result: TestsRunResult) -> None:
-    stats = result.run_stats
+def count_run_stats(results: list[tuple[FileInput, AnalyzisResult]]) -> dict:
+    """Classify each result as clean / handled_errors / failed."""
+    clean = handled = failed = 0
+    for _, result in results:
+        if result.unexpected_errors:
+            failed += 1
+        elif result.found_matches:
+            handled += 1
+        else:
+            clean += 1
+    return {"clean": clean, "handled_errors": handled, "failed": failed}
+
+
+def print_issues_count(stats: dict) -> None:
     print_pretty(
         [
             "Test Statistics:",
@@ -13,25 +26,3 @@ def print_issues_count(result: TestsRunResult) -> None:
             f"Total tests:   {sum(stats.values())}",
         ]
     )
-
-
-def print_failed_tests_paths(result: TestsRunResult) -> None:
-    unique_paths = list(dict.fromkeys(error.test_file_path for error in result.unexpected_errors))
-    print_pretty(
-        [
-            f"  Total failed tests: {len(unique_paths)}",
-            "  Failed tests:",
-            *[f"  - {path}" for path in unique_paths],
-        ]
-    )
-
-
-def print_unexpected_errors(result: TestsRunResult) -> None:
-    """Print the raw error text for every unexpected error to stdout."""
-    if not result.unexpected_errors:
-        return
-    lines = ["Unexpected error messages:"]
-    for i, error in enumerate(result.unexpected_errors, 1):
-        lines.append(f"  [{i}] {error.test_file_path}")
-        lines.append(f"      {error.tool_output_error_text}")
-    print_pretty(lines)

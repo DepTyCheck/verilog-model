@@ -68,4 +68,12 @@ def parse_args():
         help="Additional regexes to ignore beyond the known error YAML files (can be specified multiple times)",
     )
 
+    parser.add_argument(
+        "--unknown-errors-output",
+        type=str,
+        required=False,
+        default=None,
+        help="Path to write unknown_errors.json for mds_report (optional)",
+    )
+
     return parser.parse_args()

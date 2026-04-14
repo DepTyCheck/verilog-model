@@ -1,36 +1,26 @@
 """
-Core regression-checking logic.
-
-For each known error file, every example (minified and full) is run through
-the configured tool using the same command execution and output analysis code
-as tools_run.  Two independent results are tracked per example:
-
-  unknown_errors  – output contained errors that matched no known pattern.
-                    Any occurrence across ALL tool error files causes CI failure.
-
-  reproduced      – (own-tool errors only) the specific error_id pattern was
-                    found in the output.  Reported in the summary but does NOT
-                    affect CI pass/fail.
+Core types and input preparation for regression_test.
 
 Data flow:
   found_errors/{tool}/*.yaml  (all subdirs scanned)
         │
-        ▼ _load_all_error_files()
+        ▼ load_all_error_files()
    ErrorFile(id, tool, regex, mode, examples)
         │
-        ▼ IgnoredErrorsList.from_error_files(all_files)
-   all_known_errors   (cross-tool, used for unknown-error detection)
+        ▼ iter_regression_inputs()
+   FileInput(content, suffix, context=(ErrorFile, Example))
         │
-        ▼ for each error_file × for each example:
-   make_command() → run_command() → CommandOutput.analyze()
+        ▼ run_all() in common/tool_matrix_runner.py (shared with tools_run)
+   ResultCollector → list[tuple[FileInput, AnalyzisResult]]
         │
-        ├─ unexpected_errors  → new_error_incidents   (CI fail)
-        └─ found_matches      → reproduced check      (own-tool only, info only)
+        ▼ build_reproducibility_report() in result_reporter.py
+   per-error reproducibility report
 """
 
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Iterable
 
 from common.command_config import CommandConfig
 from common.command_output import AnalyzisResult
@@ -41,6 +31,7 @@ from common.logger import get_logger
 from common.make_command import make_command
 from common.run_command import run_command
 from common.run_tool_command import analyze_result
+from common.tool_matrix_runner import FileInput
 from tools_run.src.ignored_errors_list import IgnoredErrorsList
 
 
@@ -79,7 +70,7 @@ class ErrorResult:
         }
 
 
-def _load_all_error_files(known_errors_dir: str) -> list[ErrorFile]:
+def load_all_error_files(known_errors_dir: str) -> list[ErrorFile]:
     """Load all error files from every tool subdirectory under known_errors_dir."""
     base_dir = Path(known_errors_dir)
     if not base_dir.exists():
@@ -90,6 +81,21 @@ def _load_all_error_files(known_errors_dir: str) -> list[ErrorFile]:
         if subdir.is_dir():
             all_files.extend(parse_error_files(str(subdir)))
     return all_files
+
+
+def iter_regression_inputs(
+    error_files: list[ErrorFile],
+    file_suffix: str,
+) -> Iterable[FileInput]:
+    """Yield a FileInput for every (error_file, example) pair."""
+    for error_file in error_files:
+        for example in error_file.examples:
+            yield FileInput(
+                content=example.content,
+                file_suffix=file_suffix,
+                context=(error_file, example),
+                logical_name=f"{error_file.error_id}/{example.name}",
+            )
 
 
 def _run_example(
@@ -155,7 +161,7 @@ def check_all(
     new_error_incidents:      flat list of unknown-error findings — any occurrence causes CI failure.
     regression_confirmations: flat list of reproduced/not-reproduced results for own-tool errors.
     """
-    error_files = _load_all_error_files(known_errors_dir)
+    error_files = load_all_error_files(known_errors_dir)
     all_known_errors = IgnoredErrorsList.from_error_files(error_files, extra_regexes=extra_ignored_regexes)
     get_logger().info(f"Checking {len(error_files)} known errors across all tools with '{tool.name}'")
 

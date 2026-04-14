@@ -295,7 +295,7 @@ jobs:
             --tool-name "${{ matrix.tool.name }}" \
             --commands-json '${{ toJSON(matrix.tool.commands) }}' \
             --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
-            --error-distances-output "$ERROR_DISTANCES_OUT" \
+            --unknown-errors-output "unknown_errors.json" \
             --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
             --commit "${{ env.COMMIT_HASH }}" \
             --assets ${{ matrix.tool.assets }} \
@@ -305,17 +305,32 @@ jobs:
           if [ $EXIT_CODE -ne 0 ]; then
                 exit 1
           fi
-      - name: Upload error distances artifact
-        if: always() && hashFiles(env.ERROR_DISTANCES_OUT) != ''
-        uses: actions/upload-artifact@v6
-        with:
-          name: error-distances-${{ matrix.tool.name }}
-          path: ${{ env.ERROR_DISTANCES_OUT }}
       - name: Upload run statistics
         uses: actions/upload-artifact@v6
         with:
           name: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
           path: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
+      - name: Install mds_report dependencies
+        if: failure()
+        run: |
+          source .venv/bin/activate
+          pip install -r ci/runner/mds_report/requirements.txt
+      - name: Generate MDS diagram
+        if: failure() && hashFiles('unknown_errors.json') != ''
+        run: |
+          source .venv/bin/activate
+          cd ci/runner && python3 -m mds_report.main \
+            --unknown-errors-input "$GITHUB_WORKSPACE/unknown_errors.json" \
+            --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
+            --tool-name "${{ matrix.tool.name }}" \
+            --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
+            --output "${{ env.ERROR_DISTANCES_OUT }}"
+      - name: Upload error distances artifact
+        if: failure() && hashFiles(env.ERROR_DISTANCES_OUT) != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: error-distances-${{ matrix.tool.name }}
+          path: ${{ env.ERROR_DISTANCES_OUT }}
 
   regression-test:
     name: Regression test ${{ matrix.tool.name }}
@@ -357,6 +372,7 @@ jobs:
             --language "${{ matrix.tool.language }}" \
             --language-config "$GITHUB_WORKSPACE/ci/conf/languages.yaml" \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
+            --unknown-errors-output "$GITHUB_WORKSPACE/regression-unknown-errors-${{ matrix.tool.name }}.json" \
             --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }} \
             >> "$GITHUB_STEP_SUMMARY"
       - name: Upload report
@@ -365,6 +381,24 @@ jobs:
         with:
           name: regression-test-report-${{ matrix.tool.name }}
           path: regression-test-report-${{ matrix.tool.name }}.json
+      - name: Install mds_report dependencies
+        if: failure()
+        run: pip install -r ci/runner/mds_report/requirements.txt
+      - name: Generate MDS diagram
+        if: failure() && hashFiles(format('regression-unknown-errors-{0}.json', matrix.tool.name)) != ''
+        run: |
+          cd ci/runner && python -m mds_report.main \
+            --unknown-errors-input "$GITHUB_WORKSPACE/regression-unknown-errors-${{ matrix.tool.name }}.json" \
+            --ignored-errors-dir "$GITHUB_WORKSPACE/${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
+            --tool-name "${{ matrix.tool.name }}" \
+            --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
+            --output "regression-error-distances-${{ matrix.tool.name }}.html"
+      - name: Upload regression MDS artifact
+        if: failure() && hashFiles(format('regression-error-distances-{0}.html', matrix.tool.name)) != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: regression-error-distances-${{ matrix.tool.name }}
+          path: regression-error-distances-${{ matrix.tool.name }}.html
 
   count-lines:
     name: Count lines of specification

@@ -1,6 +1,1 @@
-plotly
-pandas
-scikit-learn
-numpy
-textdistance
 pyyaml

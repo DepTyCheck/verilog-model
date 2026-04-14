@@ -2,73 +2,14 @@
 
 import json
 import os
-import shutil
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from common.command_config import CommandConfig
-from common.error_file_parser import parse_error_files
-from common.run_command import ExecutionResult
-from common.tool_error_regex import ToolErrorRegex
-from regression_test.src.error_checker import ErrorResult, ExampleResult, ToolConfig, check_all
-
-_LANG_EXTENSIONS = {"sv": ".sv", "vhdl": ".vhdl"}
-from regression_test.src.result_reporter import build_report, format_markdown_table, print_summary, save_report
+from regression_test.src.result_reporter import format_markdown_table, save_report
 
 DATA_DIR = str(Path(__file__).parent / "data")
-
-
-def _make_example_result(name: str, reproduced: bool) -> ExampleResult:
-    return ExampleResult(example_name=name, example_type="minified", reproduced=reproduced)
-
-
-class TestBuildReport(unittest.TestCase):
-
-    def test_reproduced_maps_to_true(self):
-        er = ErrorResult(error_id="some_error", originating_tool="iverilog")
-        er.examples.append(_make_example_result("ex1", reproduced=True))
-
-        report = build_report([er])
-
-        self.assertEqual(report, {"some_error": {"ex1-minified": True}})
-
-    def test_not_reproduced_maps_to_false(self):
-        er = ErrorResult(error_id="some_error", originating_tool="iverilog")
-        er.examples.append(_make_example_result("ex1", reproduced=False))
-
-        report = build_report([er])
-
-        self.assertEqual(report, {"some_error": {"ex1-minified": False}})
-
-    def test_multiple_examples(self):
-        er = ErrorResult(error_id="e1", originating_tool="iverilog")
-        er.examples.append(_make_example_result("ex1", reproduced=True))
-        er.examples.append(_make_example_result("ex2", reproduced=False))
-
-        report = build_report([er])
-
-        self.assertEqual(report, {"e1": {"ex1-minified": True, "ex2-minified": False}})
-
-    def test_multiple_errors(self):
-        er1 = ErrorResult(error_id="e1", originating_tool="iverilog")
-        er1.examples.append(_make_example_result("ex1", reproduced=True))
-
-        er2 = ErrorResult(error_id="e2", originating_tool="slang")
-        er2.examples.append(_make_example_result("ex1", reproduced=False))
-
-        report = build_report([er1, er2])
-
-        self.assertEqual(report, {"e1": {"ex1-minified": True}, "e2": {"ex1-minified": False}})
-
-    def test_empty_returns_empty_dict(self):
-        self.assertEqual(build_report([]), {})
-
-    def test_error_with_no_examples(self):
-        er = ErrorResult(error_id="e1", originating_tool="iverilog")
-        report = build_report([er])
-        self.assertEqual(report, {"e1": {}})
 
 
 class TestFormatMarkdownTable(unittest.TestCase):
@@ -138,55 +79,113 @@ class TestSaveReport(unittest.TestCase):
 
 class TestReportForTwoExamplesWithFull(unittest.TestCase):
     """
-    End-to-end report test using the real two_examples_with_full.yaml data file.
+    Regression report test using the real two_examples_with_full.yaml data file.
 
-    Loads the file, mocks tool execution so all four examples reproduce the known
-    error, then prints the JSON report, regression summary, and Markdown table to
-    stdout so the output is visible when running pytest -s.
+    Loads the file, mocks run_file so all four examples reproduce the known error,
+    then calls run_all() + build_reproducibility_report() and asserts outcomes.
     """
 
-    def _fake_result(self, output: str, ok: bool = False) -> ExecutionResult:
-        return ExecutionResult(
-            command_executed_successfully=True,
-            result_code_is_ok=ok,
-            timed_out=False,
-            output=output,
-        )
+    @patch("common.tool_matrix_runner.run_file")
+    def test_report_with_all_four_examples_reproducing(self, mock_run_file):
+        from common.command_config import CommandConfig
+        from common.command_output import AnalyzisResult
+        from common.error_file_parser import parse_error_files
+        from common.error_types import ErrorMatchInTest, FoundMatch, KnownError, MatchingMode
+        from common.tool_error_regex import ToolErrorRegex
+        from common.tool_matrix_runner import ResultCollector, run_all
+        from regression_test.src.error_checker import iter_regression_inputs, load_all_error_files
+        from regression_test.src.result_reporter import build_reproducibility_report
+        from tools_run.src.ignored_errors_list import IgnoredErrorsList
 
-    @patch("regression_test.src.error_checker.run_command")
-    @patch("regression_test.src.error_checker.make_command")
-    def test_report_with_all_four_examples_reproducing(self, mock_make, mock_run):
-        mock_make.return_value = "fake_tool file.sv"
-        mock_run.return_value = self._fake_result("known error pattern here")
-
-        error_files = parse_error_files(DATA_DIR, tool="fake_tool")
-        target = next(f for f in error_files if f.error_id == "two_examples_with_full")
+        all_error_files = parse_error_files(DATA_DIR, tool="fake_tool")
+        target = next(f for f in all_error_files if f.error_id == "two_examples_with_full")
         self.assertEqual(len(target.examples), 4, "expected 4 Example objects from the data file")
 
-        tool = ToolConfig(
-            name="fake_tool",
-            commands=[CommandConfig(run="fake_tool {file}", error_regex=ToolErrorRegex("known error pattern here"))],
+        error_regex = "known error pattern here"
+        known = KnownError(error_id="two_examples_with_full", pattern=error_regex, mode=MatchingMode.SPECIFIC)
+
+        def make_reproduced_result(content, commands, known_errors, file_suffix, assets=None, logical_name=None):
+            match = FoundMatch(error=known, matched_text=error_regex)
+            return AnalyzisResult(
+                found_matches=[ErrorMatchInTest(match=match, test_path=logical_name or "f.sv")],
+                unexpected_errors=[],
+                all_errors_are_known=True,
+            )
+
+        mock_run_file.side_effect = make_reproduced_result
+
+        commands = [CommandConfig(run="fake_tool {file}", error_regex=ToolErrorRegex(error_regex))]
+        known_errors = IgnoredErrorsList.from_error_files([target])
+
+        collector = ResultCollector()
+        run_all(iter_regression_inputs([target], ".sv"), commands, known_errors, collector)
+
+        results = collector.results()
+        self.assertEqual(len(results), 4, "expected 4 (FileInput, AnalyzisResult) pairs")
+
+        report = build_reproducibility_report(results, "fake_tool")
+
+        self.assertIn("two_examples_with_full", report)
+        for key, reproduced in report["two_examples_with_full"].items():
+            self.assertTrue(reproduced, f"Expected {key} to be reproduced")
+
+
+# ---------------------------------------------------------------------------
+# New: build_reproducibility_report
+# ---------------------------------------------------------------------------
+
+
+class TestBuildReproducibilityReport(unittest.TestCase):
+
+    def _make_results(self, error_id, tool, example_name, reproduced: bool):
+        """Build a (FileInput, AnalyzisResult) pair simulating a run outcome."""
+        from common.command_output import AnalyzisResult
+        from common.error_file_parser import ErrorFile, Example
+        from common.error_types import ErrorMatchInTest, FoundMatch, KnownError, MatchingMode
+        from common.tool_matrix_runner import FileInput
+
+        ef = ErrorFile(
+            error_id=error_id,
+            tool=tool,
+            regex="pat",
+            mode=MatchingMode.SPECIFIC,
+            title="",
+            examples=[Example(name=example_name, type="minified", content="c")],
         )
+        example = ef.examples[0]
+        fi = FileInput(content="c", file_suffix=".sv", context=(ef, example))
 
-        with tempfile.TemporaryDirectory() as tmp:
-            tool_dir = os.path.join(tmp, "fake_tool")
-            os.makedirs(tool_dir)
-            src = Path(DATA_DIR) / "two_examples_with_full.yaml"
+        if reproduced:
+            known = KnownError(error_id=error_id, pattern="pat", mode=MatchingMode.SPECIFIC)
+            match = FoundMatch(error=known, matched_text="pat")
+            result = AnalyzisResult(
+                found_matches=[ErrorMatchInTest(match=match, test_path="f.sv")],
+                unexpected_errors=[],
+                all_errors_are_known=True,
+            )
+        else:
+            result = AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True)
 
-            shutil.copy(src, tool_dir)
+        return fi, result
 
-            error_results, new_errors, regressions = check_all(tmp, tool, _LANG_EXTENSIONS)
+    def test_reproduced_true(self):
+        from regression_test.src.result_reporter import build_reproducibility_report
 
-        self.assertEqual(new_errors, [])
-        self.assertEqual(len(regressions), 4)
+        fi, result = self._make_results("err1", "tool-a", "ex1", reproduced=True)
+        report = build_reproducibility_report([(fi, result)], "tool-a")
+        self.assertTrue(report["err1"]["ex1-minified"])
 
-        report = build_report(error_results)
+    def test_not_reproduced_false(self):
+        from regression_test.src.result_reporter import build_reproducibility_report
 
-        # print("\n=== JSON report ===")
-        # print(json.dumps(report, indent=2))
+        fi, result = self._make_results("err1", "tool-a", "ex1", reproduced=False)
+        report = build_reproducibility_report([(fi, result)], "tool-a")
+        self.assertFalse(report["err1"]["ex1-minified"])
 
-        # print("\n=== Markdown table ===")
-        # print(format_markdown_table(report))
+    def test_other_tool_errors_excluded_from_report(self):
+        from regression_test.src.result_reporter import build_reproducibility_report
 
-        # print("\n=== Console summary ===")
-        # print_summary(error_results, new_errors, regressions)
+        fi, result = self._make_results("err_b", "tool-b", "ex1", reproduced=False)
+        report = build_reproducibility_report([(fi, result)], "tool-a")
+        # tool-b error not owned by tool-a → not in report
+        self.assertNotIn("err_b", report)

@@ -1,5 +1,5 @@
 """
-JSON report builder, Markdown table formatter, and console summary printer
+JSON report builder, Markdown table formatter, and reproducibility report builder
 for regression_test.
 
 Report schema:
@@ -11,20 +11,11 @@ Report schema:
 """
 
 import json
-import sys
 
+from common.command_output import AnalyzisResult
+from common.error_types import KnownError
 from common.markdown_table import build_markdown_table
-from regression_test.src.error_checker import ErrorResult
-
-
-def build_report(error_results: list[ErrorResult]) -> dict:
-    report: dict[str, dict[str, bool]] = {}
-    for er in error_results:
-        examples: dict[str, bool] = {}
-        for example in er.examples:
-            examples[f"{example.example_name}-{example.example_type}"] = example.reproduced
-        report[er.error_id] = examples
-    return report
+from common.tool_matrix_runner import FileInput
 
 
 def save_report(report: dict, output_path: str) -> None:
@@ -59,37 +50,28 @@ def format_markdown_table(
     )
 
 
-def print_summary(
-    error_results: list[ErrorResult],
-    new_error_incidents: list[dict],
-    regression_confirmations: list[dict],
-) -> None:
-    """Print a human-readable summary to stderr."""
-    sep = "\n" + "=" * 80
+def build_reproducibility_report(
+    results: list[tuple[FileInput, AnalyzisResult]],
+    tool_name: str,
+) -> dict[str, dict[str, bool]]:
+    """
+    Build the per-error-id reproducibility dict from collector results.
 
-    lines = [sep, "Known Errors Regression Check", sep]
+    Only processes results whose context is (ErrorFile, Example) and whose
+    error_file.tool matches tool_name.
 
-    # --- Own-errors regression section ---
-    if regression_confirmations:
-        lines.append("Regression check for own known errors:")
-        for reg in regression_confirmations:
-            mark = "· still reproduces" if reg["reproduced"] else "✓ NOT reproducing (bug may be fixed!)"
-            lines.append(f"  {reg['error_id']} / {reg['example_name']} ({reg['example_type']}): {mark}")
-    else:
-        lines.append("No own known errors to check regression for.")
+    Returns: { error_id: { "example_name-type": bool } }
+    """
+    report: dict[str, dict[str, bool]] = {}
+    for file_input, result in results:
+        if not isinstance(file_input.context, tuple):
+            continue
+        error_file, example = file_input.context
+        if error_file.tool != tool_name:
+            continue
 
-    # --- Unknown errors section ---
-    lines.append(sep)
-    if new_error_incidents:
-        lines.append(f"UNKNOWN ERRORS FOUND ({len(new_error_incidents)} total) — CI will fail:")
-        for inc in new_error_incidents:
-            lines.append(
-                f"  error_id={inc['error_id']} " f"originating={inc['originating_tool']} " f"example={inc['example_name']} ({inc['example_type']})"
-            )
-            if inc.get("output_excerpt"):
-                lines.append(f"    output: {inc['output_excerpt'][:200]}")
-    else:
-        lines.append("No unknown errors found across all known error examples.")
+        reproduced = any(isinstance(m.match.error, KnownError) and m.match.error.error_id == error_file.error_id for m in result.found_matches)
+        key = f"{example.name}-{example.type}"
+        report.setdefault(error_file.error_id, {})[key] = reproduced
 
-    lines.append(sep)
-    print("\n".join(lines), file=sys.stderr)
+    return report
