@@ -2,15 +2,15 @@ import tempfile
 import uuid
 from pathlib import Path
 
+from common.assets import Assets
 from common.command_config import CommandConfig
 from common.command_output import AnalyzisResult
 from common.error_types import UnexpectedError
+from common.ignored_errors_list import IgnoredErrorsList
 from common.logger import get_logger
 from common.make_command import make_command
 from common.run_command import run_command
 from common.run_tool_command import analyze_result
-from tools_run.src.assets import Assets
-from tools_run.src.ignored_errors_list import IgnoredErrorsList
 
 
 def run_file(

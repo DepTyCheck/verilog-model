@@ -35,6 +35,8 @@ env:
   GH_PAGES_PATH: verilog-gh-pages
   RUN_STATS_PATTERN: "run-stats.json"
   COMBINED_RUN_STATS_FILE: "combined-run-stats.json"
+  UNKNOWN_ERRORS_OUT: "unknown_errors.json"
+  REGRESSION_UNKNOWN_ERRORS_PATTERN: "regression-unknown-errors"
 
 jobs:
   get-upstream-matrix:
@@ -295,7 +297,7 @@ jobs:
             --tool-name "${{ matrix.tool.name }}" \
             --commands-json '${{ toJSON(matrix.tool.commands) }}' \
             --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
-            --unknown-errors-output "unknown_errors.json" \
+            --unknown-errors-output "${{ env.UNKNOWN_ERRORS_OUT }}" \
             --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
             --commit "${{ env.COMMIT_HASH }}" \
             --assets ${{ matrix.tool.assets }} \
@@ -316,11 +318,11 @@ jobs:
           source .venv/bin/activate
           pip install -r ci/runner/mds_report/requirements.txt
       - name: Generate MDS diagram
-        if: failure() && hashFiles('unknown_errors.json') != ''
+        if: failure() && hashFiles(env.UNKNOWN_ERRORS_OUT) != ''
         run: |
           source .venv/bin/activate
           cd ci/runner && python3 -m mds_report.main \
-            --unknown-errors-input "$GITHUB_WORKSPACE/unknown_errors.json" \
+            --unknown-errors-input "$GITHUB_WORKSPACE/${{ env.UNKNOWN_ERRORS_OUT }}" \
             --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
             --tool-name "${{ matrix.tool.name }}" \
             --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
@@ -372,7 +374,7 @@ jobs:
             --language "${{ matrix.tool.language }}" \
             --language-config "$GITHUB_WORKSPACE/ci/conf/languages.yaml" \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
-            --unknown-errors-output "$GITHUB_WORKSPACE/regression-unknown-errors-${{ matrix.tool.name }}.json" \
+            --unknown-errors-output "$GITHUB_WORKSPACE/${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
             --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }} \
             >> "$GITHUB_STEP_SUMMARY"
       - name: Upload report
@@ -385,10 +387,10 @@ jobs:
         if: failure()
         run: pip install -r ci/runner/mds_report/requirements.txt
       - name: Generate MDS diagram
-        if: failure() && hashFiles(format('regression-unknown-errors-{0}.json', matrix.tool.name)) != ''
+        if: failure() && hashFiles(format('{0}-{1}.json', env.REGRESSION_UNKNOWN_ERRORS_PATTERN, matrix.tool.name)) != ''
         run: |
           cd ci/runner && python -m mds_report.main \
-            --unknown-errors-input "$GITHUB_WORKSPACE/regression-unknown-errors-${{ matrix.tool.name }}.json" \
+            --unknown-errors-input "$GITHUB_WORKSPACE/${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
             --ignored-errors-dir "$GITHUB_WORKSPACE/${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
             --tool-name "${{ matrix.tool.name }}" \
             --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \

@@ -3,11 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Iterable, Protocol
 
+from common.assets import Assets
 from common.command_config import CommandConfig
 from common.command_output import AnalyzisResult
+from common.ignored_errors_list import IgnoredErrorsList
 from common.single_file_runner import run_file
-from tools_run.src.assets import Assets
-from tools_run.src.ignored_errors_list import IgnoredErrorsList
 
 
 @dataclass
