@@ -1,5 +1,10 @@
 {
-  "ignore": ["**/thirdparty/**", "**/.github/**", "**/ci/runner/tools-run/tests/**", "**/tests/**/*.json"],
+  "ignore": [
+    "**/thirdparty/**",
+    "**/.github/**",
+    "**/ci/runner/tools-run/tests/**",
+    "**/tests/**/*.json"
+  ],
   "noSymlinks": "true",
   "exitCode": 10
 }
