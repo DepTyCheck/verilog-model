@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 from common.command_config import CommandConfig
-from common.logger import configure_logger
+from common.logger import configure_logger, get_logger
 from common.tool_error_regex import ToolErrorRegex
 from common.tool_matrix_runner import ResultCollector, run_all
 from common.unknown_error_reporter import collect_unknown_errors, print_unknown_errors, save_unknown_errors_json
@@ -47,7 +47,21 @@ def main() -> None:
     # Determine file suffix from the file pattern (e.g. "*.sv" → ".sv")
     file_suffix = Path(args.file_pattern).suffix or ".sv"
 
-    files = list(Path(args.gen_path).glob(args.file_pattern))
+    gen_path = Path(args.gen_path)
+    logger = get_logger()
+    logger.debug(f"gen_path resolved: {gen_path.resolve()}")
+    logger.debug(f"gen_path exists: {gen_path.exists()}")
+    if gen_path.exists():
+        contents = list(gen_path.iterdir())
+        logger.debug(f"gen_path contents ({len(contents)} items): {[p.name for p in contents[:20]]}")
+    else:
+        logger.warning(f"gen_path does not exist: {gen_path.resolve()}")
+
+    files = list(gen_path.glob(args.file_pattern))
+    logger.debug(f"Files matched by {args.file_pattern!r}: {len(files)}")
+    if not files:
+        logger.warning(f"No files found matching {args.file_pattern!r} in {gen_path.resolve()}")
+
     inputs = iter_test_files(files, file_suffix, assets)
 
     collector = ResultCollector()

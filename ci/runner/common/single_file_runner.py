@@ -29,6 +29,10 @@ def run_file(
                   of the actual temp path — preserves meaningful paths for callers
                   that already know the original file location.
     """
+    log = get_logger()
+    log.debug(f"Processing: {logical_name or '(unnamed)'}")
+    log.debug(f"File content:\n{content}")
+
     with tempfile.TemporaryDirectory(dir=Path.cwd()) as tmp_dir:
         if assets is not None:
             assets.copy_to_tmp_dir(tmp_dir)
@@ -43,8 +47,7 @@ def run_file(
             try:
                 cmd = make_command(cmd_config.run, tmp_path, content)
             except Exception as exc:
-                get_logger().warning(f"make_command failed: {exc}")
-                print(f"[DEBUG] make_command failed ({exc}) for file {report_path!r}, content:\n{content[:300]}", flush=True)
+                get_logger().warning(f"make_command failed for {report_path!r}: {exc}")
                 return AnalyzisResult(
                     found_matches=[],
                     unexpected_errors=[

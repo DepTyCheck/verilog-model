@@ -32,16 +32,15 @@ class ExtractedErrorsByToolRegex:
 
         matches = list(re.finditer(tool_regex.regex, output, re.MULTILINE))
         if not matches:
-            get_logger().warning("Warning: No errors matched.\n")
-            print(f"[DEBUG] error_regex: {tool_regex.regex!r}", flush=True)
-            print(f"[DEBUG] tool output:\n{output}", flush=True)
+            get_logger().warning(f"No errors matched by tool regex: {tool_regex.regex!r}")
+            get_logger().debug(f"Tool output:\n{output}")
         else:
             for match in matches:
                 error_text = match.group(0)
-                get_logger().info(f"Matched error: {error_text}")
+                get_logger().debug(f"Extracted error: {error_text!r}")
                 found_match = ignored_errors.match(error_text, mode=MatchingMode.SPECIFIC)
                 if found_match is None:
-                    get_logger().info(f"\033[91mFound unexpected error: {error_text}\033[0m\n")
+                    get_logger().warning(f"Unmatched error (not in known errors): {error_text!r}")
                     self.unexpected_errors.append(
                         UnexpectedError(
                             tool_output_error_text=error_text,
@@ -49,6 +48,9 @@ class ExtractedErrorsByToolRegex:
                         )
                     )
                 else:
+                    error_id = getattr(found_match.error, "error_id", None)
+                    label = f"[{error_id}]" if error_id else "(extra regex)"
+                    get_logger().debug(f"Matched known error {label}: {error_text!r}")
                     self.found_matches.append(ErrorMatchInTest(match=found_match, test_path=test_path))
 
     def some_matches_found(self):
@@ -62,7 +64,7 @@ class WholeOutputMatch:
     """Check if the whole output matches any known error pattern (WHOLE mode)."""
 
     def __init__(self, output: str, ignored_errors: ErrorMatcherProtocol):
-        get_logger().info("Matching whole output")
+        get_logger().debug("Trying whole-output match")
         self.found_match = ignored_errors.match(output, mode=MatchingMode.WHOLE)
         if self.found_match is None:
-            get_logger().info("\033[91mCouldn't match whole output\033[0m\n")
+            get_logger().warning("Whole-output match also failed — error is unknown")

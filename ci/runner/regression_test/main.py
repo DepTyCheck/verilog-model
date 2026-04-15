@@ -48,7 +48,7 @@ def _parse_commands(commands_json: str) -> list[CommandConfig]:
 
 
 def main() -> None:
-    configure_logger(name="regression_test", level=logging.INFO)
+    configure_logger(name="regression_test", level=logging.DEBUG)
     args = parse_args()
 
     commands = _parse_commands(args.commands_json)
