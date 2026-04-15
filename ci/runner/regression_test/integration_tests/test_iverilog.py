@@ -15,8 +15,8 @@ where true = known error reproduced, false = not found.
 import json
 from pathlib import Path
 
-from common.error_file_parser import parse_error_files
 from common.command_config import parse_commands
+from common.error_file_parser import parse_error_files
 from common.ignored_errors_list import IgnoredErrorsList
 from common.tool_matrix_runner import ResultCollector, run_all
 from regression_test.src.error_checker import iter_regression_inputs
@@ -24,10 +24,12 @@ from regression_test.src.result_reporter import build_reproducibility_report
 
 DATA_DIR = Path(__file__).parent / "data"
 
-_IVERILOG_COMMANDS_JSON = json.dumps([
-    {"run": "iverilog -g2012 -o a.out {file}", "error_regex": r"(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)"},
-    {"run": "vvp a.out", "error_regex": r"(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)"},
-])
+_IVERILOG_COMMANDS_JSON = json.dumps(
+    [
+        {"run": "iverilog -g2012 -o a.out {file}", "error_regex": r"(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)"},
+        {"run": "vvp a.out", "error_regex": r"(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)"},
+    ]
+)
 
 
 def main() -> None:

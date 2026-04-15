@@ -10,12 +10,7 @@ from contextlib import redirect_stdout
 from common.command_output import AnalyzisResult
 from common.error_types import UnexpectedError
 from common.tool_matrix_runner import FileInput
-from common.unknown_error_reporter import (
-    UnknownErrorEntry,
-    collect_unknown_errors,
-    print_unknown_errors,
-    save_unknown_errors_json,
-)
+from common.unknown_error_reporter import UnknownErrorEntry, collect_unknown_errors, print_unknown_errors, save_unknown_errors_json
 
 
 def _fi(name: str = "f.sv") -> FileInput:

@@ -7,8 +7,8 @@ from common.command_config import CommandConfig
 from common.error_types import KnownError, MatchingMode
 from common.ignored_errors_list import IgnoredErrorsList
 from common.run_command import ExecutionResult
-from common.tool_error_regex import ToolErrorRegex
 from common.single_file_runner import run_file
+from common.tool_error_regex import ToolErrorRegex
 
 
 def _ok_exec(output: str = "") -> ExecutionResult:

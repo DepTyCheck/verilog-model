@@ -168,10 +168,7 @@ def _process_example(error_file, example, tool, all_known_errors, language_exten
         }
         for unexpected in analysis.unexpected_errors
     ]
-    reproduced = any(
-        isinstance(m.match.error, KnownError) and m.match.error.error_id == error_file.error_id
-        for m in analysis.found_matches
-    )
+    reproduced = any(isinstance(m.match.error, KnownError) and m.match.error.error_id == error_file.error_id for m in analysis.found_matches)
     example_result = ExampleResult(example_name=example.name, example_type=example.type, reproduced=reproduced)
     return incidents, example_result
 

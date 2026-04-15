@@ -6,7 +6,6 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import numpy as np
-
 from common.error_types import MatchingMode
 from common.ignored_errors_list import IgnoredErrorsList
 from common.unknown_error_reporter import UnknownErrorEntry

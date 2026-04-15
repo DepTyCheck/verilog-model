@@ -29,6 +29,7 @@ class IgnoredErrorsList:
     def from_patterns(cls, patterns: List[str], mode: "MatchingMode" = None) -> "IgnoredErrorsList":
         """Build an IgnoredErrorsList directly from regex pattern strings (for tests)."""
         from common.error_types import MatchingMode as _Mode
+
         mode = mode if mode is not None else _Mode.SPECIFIC
         instance = cls.__new__(cls)
         instance._tool = None
