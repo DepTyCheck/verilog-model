@@ -1,5 +1,7 @@
 import argparse
 
+from common.argparse_helpers import add_error_url_prefix_arg
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -52,13 +54,7 @@ def parse_args():
         help="Path to write the JSON report",
     )
 
-    parser.add_argument(
-        "--error-url-prefix",
-        type=str,
-        required=False,
-        default=None,
-        help="URL prefix for error links in the Markdown summary table (error ID will be appended)",
-    )
+    add_error_url_prefix_arg(parser, "URL prefix for error links in the Markdown summary table (error ID will be appended)")
 
     parser.add_argument(
         "--extra-ignored-regexes",

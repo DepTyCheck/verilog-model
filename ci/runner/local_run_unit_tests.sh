@@ -10,25 +10,25 @@ PASS=0
 FAIL=0
 
 for dir in */; do
-    dir="${dir%/}"
-    [[ -f "$dir/tests/test.py" ]] || continue
+  dir="${dir%/}"
+  [[ -f "$dir/tests/test.py" ]] || continue
 
-    echo "──────────────────────────────────────────"
-    echo "  Suite: $dir"
-    echo "──────────────────────────────────────────"
+  echo "──────────────────────────────────────────"
+  echo "  Suite: $dir"
+  echo "──────────────────────────────────────────"
 
-    if [[ -f "$dir/requirements.txt" ]]; then
-        echo "  Installing $dir/requirements.txt …"
-        pip install -q -r "$dir/requirements.txt"
-    fi
+  if [[ -f "$dir/requirements.txt" ]]; then
+    echo "  Installing $dir/requirements.txt …"
+    pip install -q -r "$dir/requirements.txt"
+  fi
 
-    if python -m "$dir.tests.test"; then
-        PASS=$((PASS + 1))
-    else
-        echo "  FAILED: $dir" >&2
-        FAIL=$((FAIL + 1))
-    fi
-    echo ""
+  if python -m "$dir.tests.test"; then
+    PASS=$((PASS + 1))
+  else
+    echo "  FAILED: $dir" >&2
+    FAIL=$((FAIL + 1))
+  fi
+  echo ""
 done
 
 echo "══════════════════════════════════════════"

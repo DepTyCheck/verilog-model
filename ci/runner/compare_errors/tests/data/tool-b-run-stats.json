@@ -4,13 +4,17 @@
       "error_id": "cannot_be_driven_with_non_default_strength",
       "overall": 3,
       "test_paths_count": 2,
-      "tests_paths": ["generated/30-seed_abc.sv"]
+      "tests_paths": [
+        "generated/30-seed_abc.sv"
+      ]
     },
     {
       "error_id": "new_error_id",
       "overall": 2,
       "test_paths_count": 1,
-      "tests_paths": ["generated/31-seed_def.sv"]
+      "tests_paths": [
+        "generated/31-seed_def.sv"
+      ]
     }
   ],
   "commit": "abc12345",

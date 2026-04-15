@@ -101,8 +101,8 @@ class TestRunAll(unittest.TestCase):
     def test_run_all_stateless_no_return(self, mock_run_file):
         mock_run_file.return_value = _clean()
         collector = ResultCollector()
-        result = run_all([], [], MagicMock(), collector)
-        self.assertIsNone(result)
+        run_all([], [], MagicMock(), collector)
+        self.assertEqual(collector.results(), [])
 
 
 if __name__ == "__main__":

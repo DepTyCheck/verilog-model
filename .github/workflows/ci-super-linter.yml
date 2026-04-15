@@ -50,3 +50,5 @@ jobs:
           VALIDATE_PYTHON_MYPY: false
           # We don't need this
           VALIDATE_PYTHON_RUFF_FORMAT: false
+          # We use biome for them
+          VALIDATE_JSON_PRETTIER: false

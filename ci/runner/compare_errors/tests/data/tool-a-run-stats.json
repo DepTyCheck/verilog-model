@@ -4,13 +4,18 @@
       "error_id": "t_dll_api_cc_ivl_nexus_s",
       "overall": 32,
       "test_paths_count": 26,
-      "tests_paths": ["generated/10-seed_abc.sv", "generated/11-seed_def.sv"]
+      "tests_paths": [
+        "generated/10-seed_abc.sv",
+        "generated/11-seed_def.sv"
+      ]
     },
     {
       "error_id": "new_error_id",
       "overall": 7,
       "test_paths_count": 5,
-      "tests_paths": ["generated/20-seed_xyz.sv"]
+      "tests_paths": [
+        "generated/20-seed_xyz.sv"
+      ]
     }
   ],
   "commit": "54c4f9f4",

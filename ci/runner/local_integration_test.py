@@ -180,7 +180,7 @@ def step_get_tool_matrix() -> dict | None:
     """
     _sep("Step 1 · get-tool-matrix  (gen_matrix.main)")
 
-    rc, _, stderr = _run([sys.executable, "-m", "gen_matrix.main"])
+    rc, stdout, stderr = _run([sys.executable, "-m", "gen_matrix.main"])
     if rc != 0:
         _err(f"gen_matrix.main exited {rc}")
         if stderr:
@@ -225,7 +225,7 @@ def step_get_test_matrix() -> list[dict] | None:
     """
     _sep("Step 2 · get-test-matrix  (gen_test_matrix.py)")
 
-    rc, _, stderr = _run([sys.executable, "gen_test_matrix.py"])
+    rc, stdout, stderr = _run([sys.executable, "gen_test_matrix.py"])
     if rc != 0:
         _err(f"gen_test_matrix.py exited {rc}")
         if stderr:
@@ -308,7 +308,7 @@ def step_count_lines() -> None:
         results.record(True)
         return
 
-    rc, _, stderr = _run([sys.executable, "-m", "count_lines.main", str(SRC_DIR)])
+    rc, stdout, stderr = _run([sys.executable, "-m", "count_lines.main", str(SRC_DIR)])
     if rc != 0:
         _err(f"count_lines.main exited {rc}")
         if stderr:

@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from common.command_config import CommandConfig
-from common.error_types import KnownError, MatchingMode
+from common.error_types import MatchingMode
 from common.ignored_errors_list import IgnoredErrorsList
 from common.run_command import ExecutionResult
 from common.single_file_runner import run_file

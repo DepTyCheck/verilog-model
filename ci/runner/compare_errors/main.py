@@ -4,6 +4,7 @@ from pathlib import Path
 
 from combined_report.previous_report import PreviousReport
 from combined_report.tools_report_list import ToolsReportsList
+from common.argparse_helpers import add_error_url_prefix_arg
 
 from .compare_errors import ErrorsComparison
 from .table_formatter import format_table
@@ -35,13 +36,7 @@ def parse_args():
         required=True,
         help="Number of test cases in the current run",
     )
-    parser.add_argument(
-        "--error-url-prefix",
-        type=str,
-        required=False,
-        default=None,
-        help="URL prefix for error links, e.g. https://org.github.io/repo/error (error ID will be appended)",
-    )
+    add_error_url_prefix_arg(parser, "URL prefix for error links, e.g. https://org.github.io/repo/error (error ID will be appended)")
     parser.add_argument(
         "--known-errors-reports-dir",
         type=str,

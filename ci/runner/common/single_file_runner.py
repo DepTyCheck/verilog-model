@@ -36,8 +36,7 @@ def run_file(
         if assets is not None:
             assets.copy_to_tmp_dir(tmp_dir)
 
-        file_name = f"{uuid.uuid4().hex}{file_suffix}"
-        tmp_path = str(Path(tmp_dir) / file_name)
+        tmp_path = str(Path(tmp_dir) / f"{uuid.uuid4().hex}{file_suffix}")
         Path(tmp_path).write_text(content, encoding="utf-8")
 
         report_path = logical_name if logical_name is not None else tmp_path
