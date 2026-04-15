@@ -101,7 +101,7 @@ def _err(msg: str) -> None:
 
 
 def _run(cmd: list[str]) -> tuple[int, str, str]:
-    r = subprocess.run(cmd, capture_output=True, text=True, cwd=RUNNER_DIR)
+    r = subprocess.run(cmd, capture_output=True, text=True, cwd=RUNNER_DIR, check=False)
     return r.returncode, r.stdout, r.stderr
 
 
@@ -180,7 +180,7 @@ def step_get_tool_matrix() -> dict | None:
     """
     _sep("Step 1 · get-tool-matrix  (gen_matrix.main)")
 
-    rc, stdout, stderr = _run([sys.executable, "-m", "gen_matrix.main"])
+    rc, _, stderr = _run([sys.executable, "-m", "gen_matrix.main"])
     if rc != 0:
         _err(f"gen_matrix.main exited {rc}")
         if stderr:
@@ -225,7 +225,7 @@ def step_get_test_matrix() -> list[dict] | None:
     """
     _sep("Step 2 · get-test-matrix  (gen_test_matrix.py)")
 
-    rc, stdout, stderr = _run([sys.executable, "gen_test_matrix.py"])
+    rc, _, stderr = _run([sys.executable, "gen_test_matrix.py"])
     if rc != 0:
         _err(f"gen_test_matrix.py exited {rc}")
         if stderr:
@@ -308,7 +308,7 @@ def step_count_lines() -> None:
         results.record(True)
         return
 
-    rc, stdout, stderr = _run([sys.executable, "-m", "count_lines.main", str(SRC_DIR)])
+    rc, _, stderr = _run([sys.executable, "-m", "count_lines.main", str(SRC_DIR)])
     if rc != 0:
         _err(f"count_lines.main exited {rc}")
         if stderr:
@@ -336,7 +336,7 @@ def step_tools_run_artifact() -> None:
 
     with tempfile.TemporaryDirectory() as tmp:
         # Write a fixture .sv file (found by tools_run via --gen-path + --file-pattern)
-        with open(os.path.join(tmp, "fixture.sv"), "w") as f:
+        with open(os.path.join(tmp, "fixture.sv"), "w", encoding="utf-8") as f:
             f.write(_MINIMAL_SV)
 
         # Write a fake ignored-errors dir (empty — nothing to ignore)
@@ -345,7 +345,7 @@ def step_tools_run_artifact() -> None:
 
         stats_out = os.path.join(tmp, "run-stats.json")
 
-        rc, stdout, stderr = _run(
+        rc, _, stderr = _run(
             [
                 sys.executable,
                 "-m",
@@ -381,7 +381,7 @@ def step_tools_run_artifact() -> None:
             results.record(False)
             return
 
-        with open(stats_out) as fh:
+        with open(stats_out, encoding="utf-8") as fh:
             data = json.load(fh)
 
         errors_list = data.get("errors")
@@ -410,17 +410,17 @@ def step_regression_test_artifact() -> None:
         # Write fixture known-errors directory
         tool_dir = os.path.join(tmp, "fake_tool")
         os.makedirs(tool_dir)
-        with open(os.path.join(tool_dir, "test_error.yaml"), "w") as f:
+        with open(os.path.join(tool_dir, "test_error.yaml"), "w", encoding="utf-8") as f:
             f.write(_MINIMAL_YAML)
 
         # Write languages config
         lang_cfg = os.path.join(tmp, "languages.yaml")
-        with open(lang_cfg, "w") as f:
+        with open(lang_cfg, "w", encoding="utf-8") as f:
             f.write(_MINIMAL_LANGUAGES_YAML)
 
         report_out = os.path.join(tmp, "report.json")
 
-        rc, stdout, stderr = _run(
+        rc, _, _stderr = _run(
             [
                 sys.executable,
                 "-m",
@@ -450,7 +450,7 @@ def step_regression_test_artifact() -> None:
             results.record(False)
             return
 
-        with open(report_out) as fh:
+        with open(report_out, encoding="utf-8") as fh:
             data = json.load(fh)
 
         if not isinstance(data, dict):
@@ -473,7 +473,7 @@ def step_mds_report_artifact() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         # Write minimal unknown_errors.json
         errors_json = os.path.join(tmp, "unknown_errors.json")
-        with open(errors_json, "w") as f:
+        with open(errors_json, "w", encoding="utf-8") as f:
             json.dump(
                 [
                     {"file_path": "a.sv", "error_text": "error one"},
@@ -488,7 +488,7 @@ def step_mds_report_artifact() -> None:
 
         html_out = os.path.join(tmp, "out.html")
 
-        rc, stdout, stderr = _run(
+        rc, _, _ = _run(
             [
                 sys.executable,
                 "-m",

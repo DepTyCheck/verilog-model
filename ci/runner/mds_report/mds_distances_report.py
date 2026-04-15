@@ -87,7 +87,7 @@ class MDSDistancesReport:
 
     def _found_trace(self, x, y, n_found: int) -> go.Scatter:
         labels, hover = [], []
-        for i, e in enumerate(self.new_errors):
+        for e in self.new_errors:
             base = os.path.basename(e.file_path)
             m = re.match(r"(\d+)-", base)
             label = m.group(1) if m else base

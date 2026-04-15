@@ -26,6 +26,17 @@ class IgnoredErrorsList:
                 self._extra_regexes.append(IgnoredError(pattern=regex))
 
     @classmethod
+    def from_patterns(cls, patterns: List[str], mode: "MatchingMode" = None) -> "IgnoredErrorsList":
+        """Build an IgnoredErrorsList directly from regex pattern strings (for tests)."""
+        from common.error_types import MatchingMode as _Mode
+        mode = mode if mode is not None else _Mode.SPECIFIC
+        instance = cls.__new__(cls)
+        instance._tool = None
+        instance._errors = [KnownError(error_id=f"e{i}", pattern=p, mode=mode) for i, p in enumerate(patterns)]
+        instance._extra_regexes = []
+        return instance
+
+    @classmethod
     def from_error_files(cls, error_files: List[ErrorFile], extra_regexes=None) -> "IgnoredErrorsList":
         """Build an IgnoredErrorsList directly from a pre-loaded list of ErrorFile objects."""
         instance = cls.__new__(cls)

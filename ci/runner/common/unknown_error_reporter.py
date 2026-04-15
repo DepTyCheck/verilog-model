@@ -38,6 +38,18 @@ def print_unknown_errors(entries: list[UnknownErrorEntry]) -> None:
     print("\n".join(lines))
 
 
+def handle_unknown_errors(
+    results: list,
+    unknown_errors_output: str | None,
+) -> list[UnknownErrorEntry]:
+    """Collect, print, and optionally save unknown errors. Returns the entries."""
+    entries = collect_unknown_errors(results)
+    print_unknown_errors(entries)
+    if entries and unknown_errors_output:
+        save_unknown_errors_json(entries, unknown_errors_output)
+    return entries
+
+
 def save_unknown_errors_json(entries: list[UnknownErrorEntry], path: str) -> None:
     """Write entries to a JSON file consumable by mds_report/main.py."""
     with open(path, "w", encoding="utf-8") as fh:

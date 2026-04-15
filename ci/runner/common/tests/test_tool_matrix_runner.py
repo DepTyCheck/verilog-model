@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 from common.command_config import CommandConfig
 from common.command_output import AnalyzisResult
 from common.error_types import UnexpectedError
+from common.tool_matrix_runner import FileInput, ResultCollector, run_all
 
 
 def _clean() -> AnalyzisResult:
@@ -23,8 +24,6 @@ def _fail(path: str = "f.sv") -> AnalyzisResult:
 class TestFileInput(unittest.TestCase):
 
     def test_fields_stored(self):
-        from common.tool_matrix_runner import FileInput
-
         fi = FileInput(content="abc", file_suffix=".sv", context="ctx")
         self.assertEqual(fi.content, "abc")
         self.assertEqual(fi.file_suffix, ".sv")
@@ -33,8 +32,6 @@ class TestFileInput(unittest.TestCase):
         self.assertIsNone(fi.logical_name)
 
     def test_optional_assets_and_name(self):
-        from common.tool_matrix_runner import FileInput
-
         assets = MagicMock()
         fi = FileInput(content="x", file_suffix=".sv", context=None, assets=assets, logical_name="/orig/path.sv")
         self.assertIs(fi.assets, assets)
@@ -44,15 +41,11 @@ class TestFileInput(unittest.TestCase):
 class TestResultCollector(unittest.TestCase):
 
     def test_starts_empty(self):
-        from common.tool_matrix_runner import ResultCollector
-
         rc = ResultCollector()
         self.assertEqual(rc.results(), [])
         self.assertFalse(rc.has_unknown_errors())
 
     def test_accumulates_pairs(self):
-        from common.tool_matrix_runner import FileInput, ResultCollector
-
         rc = ResultCollector()
         fi = FileInput(content="a", file_suffix=".sv", context=None)
         result = _clean()
@@ -62,16 +55,12 @@ class TestResultCollector(unittest.TestCase):
         self.assertIs(rc.results()[0][1], result)
 
     def test_has_unknown_errors_false_when_all_clean(self):
-        from common.tool_matrix_runner import FileInput, ResultCollector
-
         rc = ResultCollector()
         fi = FileInput(content="a", file_suffix=".sv", context=None)
         rc.handle(fi, _clean())
         self.assertFalse(rc.has_unknown_errors())
 
     def test_has_unknown_errors_true_when_any_fail(self):
-        from common.tool_matrix_runner import FileInput, ResultCollector
-
         rc = ResultCollector()
         rc.handle(FileInput(content="a", file_suffix=".sv", context=None), _clean())
         rc.handle(FileInput(content="b", file_suffix=".sv", context=None), _fail())
@@ -82,8 +71,6 @@ class TestRunAll(unittest.TestCase):
 
     @patch("common.tool_matrix_runner.run_file")
     def test_run_all_calls_run_file_for_each_input(self, mock_run_file):
-        from common.tool_matrix_runner import FileInput, ResultCollector, run_all
-
         mock_run_file.return_value = _clean()
 
         inputs = [
@@ -101,8 +88,6 @@ class TestRunAll(unittest.TestCase):
 
     @patch("common.tool_matrix_runner.run_file")
     def test_run_all_passes_logical_name(self, mock_run_file):
-        from common.tool_matrix_runner import FileInput, ResultCollector, run_all
-
         mock_run_file.return_value = _clean()
 
         fi = FileInput(content="x", file_suffix=".sv", context=None, logical_name="/orig.sv")
@@ -114,8 +99,6 @@ class TestRunAll(unittest.TestCase):
 
     @patch("common.tool_matrix_runner.run_file")
     def test_run_all_stateless_no_return(self, mock_run_file):
-        from common.tool_matrix_runner import FileInput, ResultCollector, run_all
-
         mock_run_file.return_value = _clean()
         collector = ResultCollector()
         result = run_all([], [], MagicMock(), collector)
@@ -123,6 +106,4 @@ class TestRunAll(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    import unittest
-
     unittest.main()

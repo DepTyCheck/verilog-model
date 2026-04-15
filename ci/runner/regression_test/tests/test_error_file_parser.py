@@ -92,7 +92,7 @@ class TestErrorFileParser(unittest.TestCase):
             examples: []
         """)
         with tempfile.TemporaryDirectory() as tmp:
-            with open(os.path.join(tmp, "err.yaml"), "w") as f:
+            with open(os.path.join(tmp, "err.yaml"), "w", encoding="utf-8") as f:
                 f.write(yaml_content)
             files = parse_error_files(tmp)
         self.assertEqual(files[0].language, "vhdl")

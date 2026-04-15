@@ -29,9 +29,8 @@ def run_file(
                   of the actual temp path — preserves meaningful paths for callers
                   that already know the original file location.
     """
-    log = get_logger()
-    log.debug(f"Processing: {logical_name or '(unnamed)'}")
-    log.debug(f"File content:\n{content}")
+    get_logger().debug(f"Processing: {logical_name or '(unnamed)'}")
+    get_logger().debug(f"File content:\n{content}")
 
     with tempfile.TemporaryDirectory(dir=Path.cwd()) as tmp_dir:
         if assets is not None:

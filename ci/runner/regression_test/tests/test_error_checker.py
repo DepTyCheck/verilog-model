@@ -54,7 +54,7 @@ def _write_known_errors_dir(tmp: str, files: dict[str, str]) -> str:
     for rel_path, content in files.items():
         full_path = os.path.join(tmp, rel_path)
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
-        with open(full_path, "w") as f:
+        with open(full_path, "w", encoding="utf-8") as f:
             f.write(content)
     return tmp
 

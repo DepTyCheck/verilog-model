@@ -14,22 +14,22 @@ inputs:
     required: true
   tool-deps:
     required: false
-    default: ''
+    default: ""
   tool-version:
     required: false
-    default: ''
+    default: ""
   tool-rust-ver:
     required: false
-    default: ''
+    default: ""
   tool-pre-build:
     required: false
-    default: ''
+    default: ""
   tool-third-party-release-repo:
     required: false
-    default: ''
+    default: ""
   tool-third-party-release-name-wildcard:
     required: false
-    default: ''
+    default: ""
 
 runs:
   using: composite

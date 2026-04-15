@@ -4,7 +4,7 @@ import yaml
 
 
 def load_tools(tools_yaml_path: str) -> list[dict]:
-    with open(tools_yaml_path) as f:
+    with open(tools_yaml_path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return data.get("tools", [])
 

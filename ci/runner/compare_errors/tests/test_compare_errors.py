@@ -95,7 +95,7 @@ class TestErrorsComparison(unittest.TestCase):
 
 
 def _write_report(tmp: str, filename: str, content: dict) -> None:
-    with open(os.path.join(tmp, filename), "w") as f:
+    with open(os.path.join(tmp, filename), "w", encoding="utf-8") as f:
         json.dump(content, f)
 
 

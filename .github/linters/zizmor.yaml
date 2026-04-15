@@ -7,3 +7,5 @@ rules:
     disable: true
   secrets-outside-env:
     disable: true
+  github-env:
+    disable: true

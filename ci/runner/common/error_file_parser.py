@@ -30,7 +30,7 @@ def _parse_examples(raw_examples) -> List[Example]:
     Parse the examples block from a YAML error file.
 
     Each item in raw_examples is a dict like:
-      { "example_name": { "minified_example": "...", "full_example": "..." } }
+        { "example_name": { "minified_example": "...", "full_example": "..." } }
     """
     examples: List[Example] = []
     if not raw_examples:

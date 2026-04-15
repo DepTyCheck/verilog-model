@@ -8,7 +8,7 @@ Run from ci/runner/:
   python -m regression_test.integration_tests.test_iverilog
 
 Prints a JSON report:
-  { "<error_id>": { "<example_name>": true/false } }
+  { "<error_id>": { "<example_name>-<type>": true/false } }
 where true = known error reproduced, false = not found.
 """
 
@@ -16,16 +16,18 @@ import json
 from pathlib import Path
 
 from common.error_file_parser import parse_error_files
-from common.tool_error_regex import ToolErrorRegex
-from regression_test.src.error_checker import ExampleStatus, ToolConfig, _run_example_with_tool
+from common.command_config import parse_commands
+from common.ignored_errors_list import IgnoredErrorsList
+from common.tool_matrix_runner import ResultCollector, run_all
+from regression_test.src.error_checker import iter_regression_inputs
+from regression_test.src.result_reporter import build_reproducibility_report
 
 DATA_DIR = Path(__file__).parent / "data"
 
-IVERILOG_TOOL = ToolConfig(
-    name="iverilog",
-    cmd="iverilog -g2012 -o /dev/null {file}",
-    error_regex=ToolErrorRegex(r"(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)"),
-)
+_IVERILOG_COMMANDS_JSON = json.dumps([
+    {"run": "iverilog -g2012 -o a.out {file}", "error_regex": r"(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)"},
+    {"run": "vvp a.out", "error_regex": r"(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)"},
+])
 
 
 def main() -> None:
@@ -34,14 +36,18 @@ def main() -> None:
         print(f"No iverilog YAML files found in {DATA_DIR}")
         return
 
-    report: dict[str, dict[str, bool]] = {}
-    for ef in error_files:
-        examples: dict[str, bool] = {}
-        for example in ef.examples:
-            result = _run_example_with_tool(example, ef, IVERILOG_TOOL)
-            examples[example.name] = result.status == ExampleStatus.KNOWN_ERROR
-        report[ef.error_id] = examples
+    commands = parse_commands(_IVERILOG_COMMANDS_JSON)
+    all_known_errors = IgnoredErrorsList.from_error_files(error_files)
 
+    collector = ResultCollector()
+    run_all(
+        iter_regression_inputs(error_files, ".sv", language="sv"),
+        commands,
+        all_known_errors,
+        collector,
+    )
+
+    report = build_reproducibility_report(collector.results(), "iverilog")
     print(json.dumps(report, indent=2))
 
 

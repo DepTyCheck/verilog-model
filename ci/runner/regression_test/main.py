@@ -16,36 +16,20 @@ Exit codes:
   1 — at least one unknown error was found
 """
 
-import json
 import logging
 import sys
 from pathlib import Path
 
 from common.assets import Assets
-from common.command_config import CommandConfig
+from common.command_config import parse_commands
 from common.language_config import get_file_extension, load_language_config
 from common.logger import configure_logger, get_logger
-from common.tool_error_regex import ToolErrorRegex
 from common.tool_matrix_runner import ResultCollector, run_all
-from common.unknown_error_reporter import collect_unknown_errors, print_unknown_errors, save_unknown_errors_json
+from common.unknown_error_reporter import handle_unknown_errors
 from regression_test.src.error_checker import iter_regression_inputs, load_all_error_files
 from regression_test.src.parse_args import parse_args
 from regression_test.src.result_reporter import build_reproducibility_report, format_markdown_table, save_report
 from tools_run.src.ignored_errors_list import IgnoredErrorsList
-
-
-def _parse_commands(commands_json: str) -> list[CommandConfig]:
-    raw = json.loads(commands_json)
-    result = []
-    for entry in raw:
-        regex_str = entry.get("error_regex")
-        result.append(
-            CommandConfig(
-                run=entry["run"],
-                error_regex=ToolErrorRegex(regex_str) if regex_str else None,
-            )
-        )
-    return result
 
 
 def main() -> None:
@@ -53,7 +37,7 @@ def main() -> None:
     configure_logger(name="regression_test", level=logging.DEBUG)
     args = parse_args()
 
-    commands = _parse_commands(args.commands_json)
+    commands = parse_commands(args.commands_json)
     language_extensions = load_language_config(args.language_config)
     file_suffix = get_file_extension(args.language, language_extensions)
     assets = Assets(args.assets) if args.assets else None
@@ -86,10 +70,7 @@ def main() -> None:
     results = collector.results()
 
     # ── shared phase ────────────────────────────────────────────────────────
-    unknown_entries = collect_unknown_errors(results)
-    print_unknown_errors(unknown_entries)
-    if unknown_entries and args.unknown_errors_output:
-        save_unknown_errors_json(unknown_entries, args.unknown_errors_output)
+    unknown_entries = handle_unknown_errors(results, args.unknown_errors_output)
 
     # ── regression_test-specific phase ───────────────────────────────────────
     report = build_reproducibility_report(results, args.tool_name)

@@ -1,35 +1,19 @@
 #!/usr/bin/env python3
 
-import json
 import logging
 import sys
 from pathlib import Path
 
-from common.command_config import CommandConfig
+from common.command_config import parse_commands
 from common.logger import configure_logger, get_logger
-from common.tool_error_regex import ToolErrorRegex
 from common.tool_matrix_runner import ResultCollector, run_all
-from common.unknown_error_reporter import collect_unknown_errors, print_unknown_errors, save_unknown_errors_json
+from common.unknown_error_reporter import handle_unknown_errors
 from tools_run.src.assets import Assets
 from tools_run.src.ignored_errors_list import IgnoredErrorsList
 from tools_run.src.input_iter import iter_test_files
 from tools_run.src.known_errors_report import KnownErrorsReport
 from tools_run.src.parse_args import parse_args
 from tools_run.src.print_stats import count_run_stats, print_issues_count
-
-
-def _parse_commands(commands_json: str) -> list[CommandConfig]:
-    raw = json.loads(commands_json)
-    result = []
-    for entry in raw:
-        regex_str = entry.get("error_regex")
-        result.append(
-            CommandConfig(
-                run=entry["run"],
-                error_regex=ToolErrorRegex(raw_str_regex=regex_str) if regex_str else None,
-            )
-        )
-    return result
 
 
 def main() -> None:
@@ -41,7 +25,7 @@ def main() -> None:
         args.tool_name,
         regex_list=args.extra_ignored_regexes,
     )
-    commands = _parse_commands(args.commands_json)
+    commands = parse_commands(args.commands_json)
     assets = Assets(args.assets)
 
     # Determine file suffix from the file pattern (e.g. "*.sv" → ".sv")
@@ -52,8 +36,7 @@ def main() -> None:
     logger.debug(f"gen_path resolved: {gen_path.resolve()}")
     logger.debug(f"gen_path exists: {gen_path.exists()}")
     if gen_path.exists():
-        contents = list(gen_path.iterdir())
-        logger.debug(f"gen_path contents ({len(contents)} items): {[p.name for p in contents[:20]]}")
+        logger.debug(f"gen_path contents: {[p.name for p in list(gen_path.iterdir())[:20]]}")
     else:
         logger.warning(f"gen_path does not exist: {gen_path.resolve()}")
 
@@ -69,10 +52,7 @@ def main() -> None:
 
     # ── shared phase ────────────────────────────────────────────────────────
     results = collector.results()
-    unknown_entries = collect_unknown_errors(results)
-    print_unknown_errors(unknown_entries)
-    if unknown_entries and args.unknown_errors_output:
-        save_unknown_errors_json(unknown_entries, args.unknown_errors_output)
+    unknown_entries = handle_unknown_errors(results, args.unknown_errors_output)
 
     # ── tools_run-specific phase ─────────────────────────────────────────────
     matches = [m for _, r in results for m in r.found_matches]

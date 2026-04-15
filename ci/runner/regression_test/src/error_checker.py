@@ -155,6 +155,27 @@ def _run_example(
             Path(tmp_path).unlink(missing_ok=True)
 
 
+def _process_example(error_file, example, tool, all_known_errors, language_extensions) -> tuple[list[dict], "ExampleResult | None"]:
+    """Run one example and return (new_incidents, example_result_if_own_error)."""
+    analysis = _run_example(example, tool.commands, all_known_errors, tool.language, language_extensions)
+    incidents = [
+        {
+            "error_id": error_file.error_id,
+            "originating_tool": error_file.tool,
+            "example_name": example.name,
+            "example_type": example.type,
+            "output_excerpt": unexpected.tool_output_error_text,
+        }
+        for unexpected in analysis.unexpected_errors
+    ]
+    reproduced = any(
+        isinstance(m.match.error, KnownError) and m.match.error.error_id == error_file.error_id
+        for m in analysis.found_matches
+    )
+    example_result = ExampleResult(example_name=example.name, example_type=example.type, reproduced=reproduced)
+    return incidents, example_result
+
+
 def check_all(
     known_errors_dir: str,
     tool: ToolConfig,
@@ -188,40 +209,19 @@ def check_all(
         error_result = ErrorResult(error_id=error_file.error_id, originating_tool=error_file.tool)
 
         for example in error_file.examples:
-            analysis = _run_example(example, tool.commands, all_known_errors, tool.language, language_extensions)
+            incidents, example_result = _process_example(error_file, example, tool, all_known_errors, language_extensions)
+            new_error_incidents.extend(incidents)
 
-            # Unknown errors cause CI failure regardless of which tool owns the error file
-            for unexpected in analysis.unexpected_errors:
-                new_error_incidents.append(
-                    {
-                        "error_id": error_file.error_id,
-                        "originating_tool": error_file.tool,
-                        "example_name": example.name,
-                        "example_type": example.type,
-                        "output_excerpt": unexpected.tool_output_error_text,
-                    }
-                )
-
-            # Reproducibility is only tracked for the current tool's own errors
             if is_own_error:
-                reproduced = any(
-                    isinstance(m.match.error, KnownError) and m.match.error.error_id == error_file.error_id for m in analysis.found_matches
-                )
                 regression_confirmations.append(
                     {
                         "error_id": error_file.error_id,
                         "example_name": example.name,
                         "example_type": example.type,
-                        "reproduced": reproduced,
+                        "reproduced": example_result.reproduced,
                     }
                 )
-                error_result.examples.append(
-                    ExampleResult(
-                        example_name=example.name,
-                        example_type=example.type,
-                        reproduced=reproduced,
-                    )
-                )
+                error_result.examples.append(example_result)
 
         if is_own_error:
             error_results.append(error_result)
