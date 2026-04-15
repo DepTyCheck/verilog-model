@@ -248,11 +248,6 @@ jobs:
       - name: Determine Gen Path
         run: |
           echo "GEN_PATH=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.tool.language }}" >> "$GITHUB_ENV"
-      - name: Download Generated Files
-        uses: actions/download-artifact@v8
-        with:
-          name: "${{ env.GEN_PATH }}"
-          path: "${{ env.GEN_PATH }}"
       - name: Setup tool
         uses: ./.github/actions/setup-tool
         with:
@@ -280,6 +275,11 @@ jobs:
           fi
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
+      - name: Download Generated Files
+        uses: actions/download-artifact@v8
+        with:
+          name: "${{ env.GEN_PATH }}"
+          path: "${{ env.GEN_PATH }}"
       - name: Run
         run: |
           set +e
