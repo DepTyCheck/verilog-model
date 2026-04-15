@@ -190,7 +190,7 @@ jobs:
         run: pip install -r ci/runner/gen_matrix/requirements.txt
       - name: Generate matrix
         id: gen
-        run: cd ci/runner && python -m gen_matrix.main
+        run: PYTHONPATH=ci/runner python -m gen_matrix.main
 
   get-test-matrix:
     name: Discover test suites
@@ -206,7 +206,7 @@ jobs:
           python-version: "3.13"
       - name: Discover suites
         id: discover
-        run: cd ci/runner && python gen_test_matrix.py
+        run: python ci/runner/gen_test_matrix.py
 
   test-python-units:
     name: Test ${{ matrix.suite.name }}
@@ -290,7 +290,7 @@ jobs:
           git rev-parse HEAD
           cd -
 
-          cd ci/runner && python3 -m tools_run.main \
+          PYTHONPATH=ci/runner python3 -m tools_run.main \
             --gen-path "${{ env.GEN_PATH }}" \
             --file-pattern "${{ matrix.tool.file_pattern }}" \
             --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
@@ -321,8 +321,8 @@ jobs:
         if: failure() && hashFiles(env.UNKNOWN_ERRORS_OUT) != ''
         run: |
           source .venv/bin/activate
-          cd ci/runner && python3 -m mds_report.main \
-            --unknown-errors-input "$GITHUB_WORKSPACE/${{ env.UNKNOWN_ERRORS_OUT }}" \
+          PYTHONPATH=ci/runner python3 -m mds_report.main \
+            --unknown-errors-input "${{ env.UNKNOWN_ERRORS_OUT }}" \
             --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
             --tool-name "${{ matrix.tool.name }}" \
             --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
@@ -367,18 +367,17 @@ jobs:
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
       - name: Run regression test
         run: |
-          cd ci/runner && python -m regression_test.main \
-            --known-errors-dir "$GITHUB_WORKSPACE/${{ env.GH_PAGES_PATH }}/found_errors" \
-            --output "$GITHUB_WORKSPACE/regression-test-report-${{ matrix.tool.name }}.json" \
+          PYTHONPATH=ci/runner python -m regression_test.main \
+            --known-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors" \
+            --output "regression-test-report-${{ matrix.tool.name }}.json" \
             --tool-name "${{ matrix.tool.name }}" \
             --commands-json '${{ toJSON(matrix.tool.commands) }}' \
             --language "${{ matrix.tool.language }}" \
-            --language-config "$GITHUB_WORKSPACE/ci/conf/languages.yaml" \
+            --language-config "ci/conf/languages.yaml" \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
-            --unknown-errors-output "$GITHUB_WORKSPACE/${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
+            --unknown-errors-output "${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
             --assets ${{ matrix.tool.assets }} \
-            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }} \
-            >> "$GITHUB_STEP_SUMMARY"
+            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
       - name: Upload report
         if: always()
         uses: actions/upload-artifact@v6
@@ -391,9 +390,9 @@ jobs:
       - name: Generate MDS diagram
         if: failure() && hashFiles(format('{0}-{1}.json', env.REGRESSION_UNKNOWN_ERRORS_PATTERN, matrix.tool.name)) != ''
         run: |
-          cd ci/runner && python -m mds_report.main \
-            --unknown-errors-input "$GITHUB_WORKSPACE/${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
-            --ignored-errors-dir "$GITHUB_WORKSPACE/${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
+          PYTHONPATH=ci/runner python -m mds_report.main \
+            --unknown-errors-input "${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
+            --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
             --tool-name "${{ matrix.tool.name }}" \
             --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
             --output "regression-error-distances-${{ matrix.tool.name }}.html"
@@ -417,7 +416,7 @@ jobs:
           python-version: "3.13"
       - name: Count lines
         run: |
-          cd ci/runner && python -m count_lines.main "$GITHUB_WORKSPACE/src" >> "$GITHUB_STEP_SUMMARY"
+          PYTHONPATH=ci/runner python -m count_lines.main "src" >> "$GITHUB_STEP_SUMMARY"
 
   compare-errors-stats:
     name: Compare errors stats
@@ -448,14 +447,13 @@ jobs:
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
       - name: Compare errors
         run: |
-          cd ci/runner
-          python -m compare_errors.main \
-            --previous-report "$GITHUB_WORKSPACE/${{ env.GH_PAGES_PATH }}/src/lib/data/errors-stats.json" \
-            --current-tools-reports-dir "$GITHUB_WORKSPACE/run-stats" \
+          PYTHONPATH=ci/runner python -m compare_errors.main \
+            --previous-report "${{ env.GH_PAGES_PATH }}/src/lib/data/errors-stats.json" \
+            --current-tools-reports-dir "run-stats" \
             --tools-reports-pattern "*-${{ env.RUN_STATS_PATTERN }}" \
             --tests-number ${{ env.GEN_TESTS_COUNT }} \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
-            --known-errors-reports-dir "$GITHUB_WORKSPACE/known-errors-reports" \
+            --known-errors-reports-dir "known-errors-reports" \
             >> "$GITHUB_STEP_SUMMARY"
 
   push-run-stats:
@@ -488,12 +486,11 @@ jobs:
 
       - name: Combine statistics
         run: |
-          cd ci/runner
-          python -m combined_report.main \
-            --previous-report "$GITHUB_WORKSPACE/${{ env.REPORT_PATH }}" \
-            --current-tools-reports-dir "$GITHUB_WORKSPACE/run-stats" \
+          PYTHONPATH=ci/runner python -m combined_report.main \
+            --previous-report "${{ env.REPORT_PATH }}" \
+            --current-tools-reports-dir "run-stats" \
             --tools-reports-pattern "*-run-stats.json" \
-            --result-report "$GITHUB_WORKSPACE/${{ env.REPORT_PATH }}" \
+            --result-report "${{ env.REPORT_PATH }}" \
             --tests-number ${{ env.GEN_TESTS_COUNT }}
 
       - name: Bot Details
