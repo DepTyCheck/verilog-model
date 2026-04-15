@@ -19,11 +19,12 @@ Exit codes:
 import json
 import logging
 import sys
+from pathlib import Path
 
 from common.assets import Assets
 from common.command_config import CommandConfig
 from common.language_config import get_file_extension, load_language_config
-from common.logger import configure_logger
+from common.logger import configure_logger, get_logger
 from common.tool_error_regex import ToolErrorRegex
 from common.tool_matrix_runner import ResultCollector, run_all
 from common.unknown_error_reporter import collect_unknown_errors, print_unknown_errors, save_unknown_errors_json
@@ -48,6 +49,7 @@ def _parse_commands(commands_json: str) -> list[CommandConfig]:
 
 
 def main() -> None:
+    configure_logger(level=logging.DEBUG)
     configure_logger(name="regression_test", level=logging.DEBUG)
     args = parse_args()
 
@@ -56,7 +58,21 @@ def main() -> None:
     file_suffix = get_file_extension(args.language, language_extensions)
     assets = Assets(args.assets) if args.assets else None
 
+    logger = get_logger("regression_test")
+    known_errors_path = Path(args.known_errors_dir)
+    logger.debug(f"known_errors_dir resolved: {known_errors_path.resolve()}")
+    logger.debug(f"known_errors_dir exists: {known_errors_path.exists()}")
+    if known_errors_path.exists():
+        subdirs = [p.name for p in sorted(known_errors_path.iterdir()) if p.is_dir()]
+        logger.debug(f"known_errors_dir subdirs ({len(subdirs)}): {subdirs}")
+    else:
+        logger.warning(f"known_errors_dir does not exist: {known_errors_path.resolve()}")
+
     error_files = load_all_error_files(args.known_errors_dir)
+    logger.debug(f"Loaded {len(error_files)} error files total")
+    if not error_files:
+        logger.warning("No error files loaded — nothing to test")
+
     all_known_errors = IgnoredErrorsList.from_error_files(error_files, extra_regexes=args.extra_ignored_regexes)
 
     collector = ResultCollector()

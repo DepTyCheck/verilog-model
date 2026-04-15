@@ -363,6 +363,9 @@ jobs:
           python-version: "3.13"
       - name: Install Python dependencies
         run: pip install -r ci/runner/regression_test/requirements.txt
+      - name: Install tool-specific Python dependencies
+        if: ${{ matrix.tool.python_runner_deps != '' }}
+        run: pip install ${{ matrix.tool.python_runner_deps }}
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
       - name: Run regression test
