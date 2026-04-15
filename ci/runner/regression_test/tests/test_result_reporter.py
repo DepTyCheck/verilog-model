@@ -102,7 +102,8 @@ class TestReportForTwoExamplesWithFull(unittest.TestCase):
         error_regex = "known error pattern here"
         known = KnownError(error_id="two_examples_with_full", pattern=error_regex, mode=MatchingMode.SPECIFIC)
 
-        def make_reproduced_result(_content, _commands, _known_errors, _file_suffix, assets=None, logical_name=None):  # pylint: disable=unused-argument
+        def make_reproduced_result(**kwargs):
+            logical_name = kwargs.get("logical_name")
             match = FoundMatch(error=known, matched_text=error_regex)
             return AnalyzisResult(
                 found_matches=[ErrorMatchInTest(match=match, test_path=logical_name or "f.sv")],
