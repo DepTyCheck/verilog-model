@@ -6,4 +6,5 @@ main : IO ()
 main = goldenRunner
   [ "Documentation" `atDir` "docs"
   , "Printer" `atDir` "printer"
+  , "Model" `atDir` "model"
   ]

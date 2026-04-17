@@ -229,9 +229,15 @@ namespace MultiConnection
   rawTypeOf (MkMC tsc tsk ssc (x :: xs) {ne = JustSSK}) = (index (totalSubs usl subUs) x).type
 
   public export
+  isTop : MultiConnection l s usl subUs -> Bool
+  isTop (MkMC (Just x) Nothing ssc ssk @{ne} @{OnlyTSC}) = True
+  isTop (MkMC Nothing (Just x) ssc ssk @{ne} @{OnlyTSK}) = True
+  isTop (MkMC Nothing Nothing  ssc ssk @{ne} @{NoTop})   = False
+
+  public export
   typeOf : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
            MultiConnection l s usl subUs -> DataType l
-  typeOf {l = SystemVerilog} mc = case isUnpacked (dtToSVt $ rawTypeOf mc) of
+  typeOf {l = SystemVerilog} mc = if isTop mc then rawTypeOf mc else case isUnpacked (dtToSVt $ rawTypeOf mc) of
     True  => rawTypeOf mc
     False => SVT defaultNetType
   typeOf {l = VHDL}          mc = rawTypeOf mc
