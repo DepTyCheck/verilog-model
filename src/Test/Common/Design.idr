@@ -121,6 +121,10 @@ namespace DesignUnitSig
   subPort usl subUs = index $ totalSubs usl subUs
 
   public export
+  topPortType : (s : DesignUnitSig l) -> Fin (totalTops' s) -> DataType l
+  topPortType s f = (index (totalTops s) f).type
+
+  public export
   subPortType : (usl : DesignUnitSigsList l) -> (subUs : FinsList usl.length) -> Fin (totalSubs' usl subUs) -> DataType l
   subPortType usl subUs f = (subPort usl subUs f).type
 
@@ -347,8 +351,10 @@ namespace SystemVerilogRules
   |||
   ||| IEEE 1800-2023
   public export
-  forbidVarInout : DataType SystemVerilog -> SVPortMode -> DataType SystemVerilog -> Bool
-  forbidVarInout formalT actual actualT = actual /= InOut || (actual == InOut && (isVar $ dtToSVt actualT) && (isVar $ dtToSVt formalT))
+  forbidVarInout : SVPortMode -> DataType SystemVerilog -> SVPortMode -> DataType SystemVerilog -> Bool
+  forbidVarInout formal formalT actual actualT =
+    (formal /= InOut && actual /= InOut)
+    || (not (isVar $ dtToSVt formalT) && not (isVar $ dtToSVt actualT))
 
   -- ||| 23.3.3.2 Port connection rules for variables
   -- |||  — A ref port shall be connected to an equivalent variable data type. References to the port variable
@@ -392,7 +398,7 @@ namespace SystemVerilogRules
   ||| IEEE 1800-2023
   public export
   pmsSV : PortMode SystemVerilog -> DataType SystemVerilog -> PortMode SystemVerilog -> DataType SystemVerilog -> Bool
-  pmsSV (SVP formal) formalT (SVP actual) actualT = forbidVarInout formalT actual actualT
+  pmsSV (SVP formal) formalT (SVP actual) actualT = forbidVarInout formal formalT actual actualT
                                                 -- && requireEqForRef formal formalT actual actualT
 
   -- 23.3.3.2

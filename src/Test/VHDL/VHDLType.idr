@@ -9,6 +9,13 @@ data PredefinedEnumeration = CHARACTER | BIT | BOOLEAN | SEVERITY_LEVEL
 -- There are also some other predefined enum types:
 -- | RANGE_DIRECTION | FILE_OPEN_KIND | FILE_OPEN_STATUS | FILE_OPEN_STATE | FILE_ORIGIN_KIND
 
+public export
+Eq PredefinedEnumeration where
+  (==) CHARACTER CHARACTER = True
+  (==) BIT BIT = True
+  (==) BOOLEAN BOOLEAN = True
+  (==) SEVERITY_LEVEL SEVERITY_LEVEL = True
+  (==) _ _ = False
 
 ||| Currently only signal and variable types are implemented, and only these types can be declared as ports.
 public export
@@ -34,21 +41,23 @@ data VHDLType : Type where
   -- resolved SIGNED and UNSIGNED from IEEE.NUMERIC_STD
 
 public export
-data VHDLPortMode = In | Out | InOut | Buffer | Linkage;
-
-public export
-Eq PredefinedEnumeration where
-  (==) CHARACTER CHARACTER = True
-  (==) BIT BIT = True
-  (==) BOOLEAN BOOLEAN = True
-  (==) SEVERITY_LEVEL SEVERITY_LEVEL = True
-  (==) _ _ = False
-
-public export
 Eq VHDLType where
   (==) (Enum x) (Enum x') = x == x'
   (==) Integer' Integer' = True
   (==) Physical Physical = True
   (==) Real Real = True
   (==) StdLogic StdLogic = True
+  (==) _ _ = False
+
+
+public export
+data VHDLPortMode = In | Out | InOut | Buffer | Linkage;
+
+public export
+Eq VHDLPortMode where
+  (==) In In = True
+  (==) Out Out = True
+  (==) InOut InOut = True
+  (==) Buffer Buffer = True
+  (==) Linkage Linkage = True
   (==) _ _ = False

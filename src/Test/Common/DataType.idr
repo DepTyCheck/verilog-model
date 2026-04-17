@@ -87,6 +87,11 @@ namespace PortMode
     VHP : VHDLPortMode -> PortMode VHDL
 
   public export
+  Eq (PortMode l) where
+    (==) (SVP x) (SVP y) = x == y
+    (==) (VHP x) (VHP y) = x == y
+
+  public export
   data AllowedPort : DataType l -> PortMode l -> Type where
     SVPortOk  : AllowedSVPort obj pm -> AllowedPort (SVT obj) (SVP pm)
     VHDPortOk : AllowedPort (VHD t) (VHP m)
