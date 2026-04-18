@@ -227,10 +227,10 @@ namespace MultiConnection
   public export
   rawTypeOf : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
               MultiConnection l s usl subUs -> DataType l
-  rawTypeOf (MkMC (Just x) tsk ssc ssk  {ne = JustTSC}) = (index (totalTops s) x).type
-  rawTypeOf (MkMC tsc (Just x) ssc ssk  {ne = JustTSK}) = (index (totalTops s) x).type
-  rawTypeOf (MkMC tsc tsk (x :: xs) ssk {ne = JustSSC}) = (index (totalSubs usl subUs) x).type
-  rawTypeOf (MkMC tsc tsk ssc (x :: xs) {ne = JustSSK}) = (index (totalSubs usl subUs) x).type
+  rawTypeOf (MkMC (Just x) Nothing _ _        @{_}       @{OnlyTSC}) = (index (totalTops s) x).type
+  rawTypeOf (MkMC Nothing (Just x) _ _        @{_}       @{OnlyTSK}) = (index (totalTops s) x).type
+  rawTypeOf (MkMC Nothing Nothing (x :: xs) _ @{JustSSC} @{NoTop})   = (index (totalSubs usl subUs) x).type
+  rawTypeOf (MkMC Nothing Nothing _ (x :: xs) @{JustSSK} @{NoTop})   = (index (totalSubs usl subUs) x).type
 
   public export
   isTop : MultiConnection l s usl subUs -> Bool

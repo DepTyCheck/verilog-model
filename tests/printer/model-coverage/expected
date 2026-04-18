@@ -1,36 +1,51 @@
 -------------------------- # 1 --------------------------
 
-module e (output logic [3:2][4:2][4:2] zwdkfwwkmt, output logic ixrjqlgcnu, input logic ytuvmquoa);
+module pjkyj (output logic [3:2][4:2][4:2] mhlffmqvw, output reg [4:0][3:4][4:3] rufwibsfuz, input realtime whovhmm);
   
-  xnor uier(bcwxwt, mfglbu, ixrjqlgcnu);
+  xnor q(ndrahvny, puhms, rufwibsfuz);
+  // warning: implicit conversion of port connection truncates from 20 to 1 bits
+  //   reg [4:0][3:4][4:3] rufwibsfuz -> logic rufwibsfuz
   
-  xnor oevecxjy(ixrjqlgcnu, mfglbu, ixrjqlgcnu);
+  xnor bwqzfcwcd(rufwibsfuz, puhms, rufwibsfuz);
+  // warning: implicit conversion of port connection truncates from 20 to 1 bits
+  //   reg [4:0][3:4][4:3] rufwibsfuz -> logic rufwibsfuz
+  //
+  // warning: implicit conversion of port connection truncates from 20 to 1 bits
+  //   reg [4:0][3:4][4:3] rufwibsfuz -> logic rufwibsfuz
   
-  xnor nvssn(gs, ytuvmquoa, ytuvmquoa);
+  xnor aslrhypci(mfntzsy, whovhmm, whovhmm);
+  // warning: implicit conversion of port connection truncates from 64 to 1 bits
+  // warning: implicit conversion changes signedness from signed to unsigned
+  //   realtime whovhmm -> logic whovhmm
+  //
+  // warning: implicit conversion of port connection truncates from 64 to 1 bits
+  // warning: implicit conversion changes signedness from signed to unsigned
+  //   realtime whovhmm -> logic whovhmm
+  
+  
+  // Single-driven assigns
+  assign mhlffmqvw = '{'{'{'bz,'b1,'b0},'{'b1zz,'bzzx,'bzx},'{'bx,'bx,'bz1x1}},'{'{'b1100,'b1zz,'b1zz},'{'bxxxx,'bx,'b01},'{'b0zz0,'bx01z,'bz}}};
+  
+  // Multi-driven assigns
+endmodule: pjkyj
+
+module hjvwz (input logic [1:3][1:4][1:4][0:4] x, input tri1 logic hqkoc);
+  
+  and kr(hqkoc, gtad, vkrmkwd);
   
   
   // Single-driven assigns
   
   // Multi-driven assigns
-  assign bcwxwt = 'b00xzx;
-endmodule: e
-
-module lstii (input logic [1:3][1:4][1:4][0:4] qhbsbofux, input logic javnvkdjpl);
-  
-  and wv(javnvkdjpl, r, z);
-  
-  
-  // Single-driven assigns
-  
-  // Multi-driven assigns
-  assign r = 'bzx;
-  assign z = 'b101;
-endmodule: lstii
+  assign hqkoc = 'bz0;
+  assign vkrmkwd = vkrmkwd;
+  assign gtad = gtad;
+endmodule: hjvwz
 
 
-Data.Fin.[1mFin[0m [38;5;10mcovered fully[0m (53 times)
-  - FS: [38;5;10mcovered[0m (39 times)
-  - FZ: [38;5;10mcovered[0m (14 times)
+Data.Fin.[1mFin[0m [38;5;10mcovered fully[0m (57 times)
+  - FS: [38;5;10mcovered[0m (40 times)
+  - FZ: [38;5;10mcovered[0m (17 times)
 
 Prelude.Types.[1mNat[0m [38;5;10mcovered fully[0m (73 times)
   - S: [38;5;10mcovered[0m (53 times)
