@@ -4,6 +4,7 @@ build/
 .build/
 **/tests/**/failures
 **/tests/**/output
+.pack-lock
 generated
 
 .DS_Store

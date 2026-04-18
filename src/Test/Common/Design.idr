@@ -396,18 +396,31 @@ namespace SystemVerilogRules
   |||  unconnected, but cannot be connected to a variable.
   |||
   ||| IEEE 1800-2023
-  public export
-  pmsSV : PortMode SystemVerilog -> DataType SystemVerilog -> PortMode SystemVerilog -> DataType SystemVerilog -> Bool
-  pmsSV (SVP formal) formalT (SVP actual) actualT = forbidVarInout formal formalT actual actualT
-                                                -- && requireEqForRef formal formalT actual actualT
-
-  -- 23.3.3.2
+  ||| Sub-to-sub port-mode rules (no top-port context involved).
   public export
   subPmsSV : (formal : PortMode SystemVerilog) -> (formalT : DataType SystemVerilog) ->
              (actual : PortMode SystemVerilog) -> (actualT : DataType SystemVerilog) -> Bool
-  -- {s : DesignUnitSig SystemVerilog} -> {usl : DesignUnitSigsList SystemVerilog} -> {subUs : FinsList usl.length} ->
-            --  (ssc : F $ totalSubs' usl subUs) -> (ssk : FinsList $ totalSubs' usl subUs) -> Bool
-  subPmsSV = pmsSV
+  subPmsSV (SVP formal) formalT (SVP actual) actualT = forbidVarInout formal formalT actual actualT
+                                                   -- && requireEqForRef formal formalT actual actualT
+
+  ||| 23.3.3.2 Port connection rules for variables
+  |||
+  ||| Assignments to variables declared as input ports shall be illegal.
+  |||
+  ||| IEEE 1800-2023
+  public export
+  isTopInputVar : (s : DesignUnitSig SystemVerilog) -> Fin (totalTops' s) -> Bool
+  isTopInputVar s x = topPortMode s x == SVP In && isVar (dtToSVt $ topPortType s x)
+
+  public export
+  pmsSV : {s : _} -> {usl : _} -> {subUs : _} ->
+          (mc : MultiConnection SystemVerilog s usl subUs) -> (f : Fin (totalSubs' usl subUs)) ->
+          PortMode SystemVerilog -> DataType SystemVerilog ->
+          PortMode SystemVerilog -> DataType SystemVerilog -> Bool
+  pmsSV (MkMC (Just x) Nothing _ _ @{ne} @{OnlyTSC}) f formal formalT actual actualT =
+       subPmsSV formal formalT actual actualT
+    && not (isTopInputVar s x && isSubSource {usl} {subUs} f)
+  pmsSV _ _ formal formalT actual actualT = subPmsSV formal formalT actual actualT
 
 
 namespace VHDLRules
@@ -550,18 +563,22 @@ namespace GenMulticonns
   checkSubPMs {l = VHDL}          = subPmsVHDL
 
   public export
-  checkPortModes : {l : _} -> PortMode l -> DataType l -> PortMode l -> DataType l -> Bool
-  checkPortModes {l = SystemVerilog} = pmsSV
-  checkPortModes {l = VHDL}          = pmsVHDL
+  checkPortModes : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
+                   (mc : MultiConnection l s usl subUs) -> (f : Fin (totalSubs' usl subUs)) ->
+                   PortMode l -> DataType l -> PortMode l -> DataType l -> Bool
+  checkPortModes {l = SystemVerilog} mc f = pmsSV mc f
+  checkPortModes {l = VHDL}          _ _  = pmsVHDL
 
   public export
   portModesCompatible : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
                         MultiConnection l s usl subUs -> Fin (totalSubs' usl subUs) -> Bool
-  portModesCompatible mc@(MkMC (Just x) Nothing ssc ssk @{ne} @{OnlyTSC}) f = checkPortModes (subPortMode usl subUs f)
+  portModesCompatible mc@(MkMC (Just x) Nothing ssc ssk @{ne} @{OnlyTSC}) f = checkPortModes mc f
+                                                                                             (subPortMode usl subUs f)
                                                                                              (subPortType usl subUs f)
                                                                                              (topPortMode s x)
                                                                                              (typeOf mc)
-  portModesCompatible mc@(MkMC Nothing (Just x) ssc ssk @{ne} @{OnlyTSK}) f = checkPortModes (subPortMode usl subUs f)
+  portModesCompatible mc@(MkMC Nothing (Just x) ssc ssk @{ne} @{OnlyTSK}) f = checkPortModes mc f
+                                                                                             (subPortMode usl subUs f)
                                                                                              (subPortType usl subUs f)
                                                                                              (topPortMode s x)
                                                                                              (typeOf mc)

@@ -13,9 +13,9 @@ public export
 sdFins : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : MultiConnectionsList SystemVerilog s usl subUs} ->
          List (Fin $ length mcs) -> FinsList (length mcs)
 sdFins []      = []
-sdFins (x::xs) = if noSource (index mcs x) && isSD (dtToSVt $ typeOf $ index mcs x) && notInoutUwire && notTopInputVar 
-  then x :: sdFins xs 
-  else sdFins xs 
+sdFins (x::xs) = if noSource (index mcs x) && isSD (dtToSVt $ typeOf $ index mcs x) && notInoutUwire && notTopInputVar
+  then x :: sdFins xs
+  else sdFins xs
   where
   notUwire : Bool
   notUwire = case dtToSVt $ typeOf $ index mcs x of
@@ -36,12 +36,9 @@ sdFins (x::xs) = if noSource (index mcs x) && isSD (dtToSVt $ typeOf $ index mcs
   notInoutUwire : Bool
   notInoutUwire = notUwire && notInout
 
-  ||| 23.3.3.2 Port connection rules for variables
-  ||| Assignments to variables declared as input ports shall be illegal.
-  ||| IEEE 1800-2023
   notTopInputVar : Bool
   notTopInputVar = case (index mcs x) of
-    (MkMC (Just f) Nothing ssc ssk @{ne} @{OnlyTSC}) => not $ (topPortMode s f == SVP In) && (isVar $ dtToSVt $ topPortType s f)
+    (MkMC (Just f) Nothing ssc ssk @{ne} @{OnlyTSC}) => not $ isTopInputVar s f
     (MkMC Nothing (Just f) ssc ssk @{ne} @{OnlyTSK}) => True
     (MkMC Nothing Nothing  ssc ssk @{ne} @{NoTop})   => True
 
