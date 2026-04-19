@@ -201,3 +201,55 @@ examples:
           assign repws = 'b1;
           assign atyz = '{'{'{'b0,'b1,'b1,'b0},'{'b0,'b0,'bx,'bx},'{'b0,'b1,'b0,'b0}},'{'{'bz,'bx,'bz,'b0},'{'b1,'bx,'b0,'bz},'{'b0,'bx,'b1,'b1}},'{'{'b0,'bx,'b1,'bz},'{'bz,'b1,'bz,'b1},'{'bx,'b0,'b1,'b1}},'{'{'bx,'bx,'b0,'bz},'{'b1,'b1,'bx,'b0},'{'b0,'b0,'bz,'bz}},'{'{'bz,'bx,'b1,'b0},'{'b1,'bx,'bx,'bz},'{'b1,'bx,'b1,'bz}}};
         endmodule: wfqxnehnsx
+  - net_type_not_supported_ex7:
+      first_found: 16.04.2026
+      full_error: |
+        error: net type 'triand' unsupported
+      full_example: |
+        module nrsgmfrn ();
+
+          nand gvonoj(waxjwuqu, waxjwuqu, waxjwuqu);
+          not ycukwueeu(rxbcwe, waxjwuqu);
+          or ggkpsrccm(nfosnd, bnwiav, x);
+          and xgyj(waxjwuqu, ekknrwzqe, ekknrwzqe);
+
+          // Multi-driven assigns
+          assign ekknrwzqe = ekknrwzqe;
+          assign rxbcwe = 'bz10;
+          assign x = rxbcwe;
+          assign bnwiav = 'bx;
+          assign waxjwuqu = rxbcwe;
+        endmodule: nrsgmfrn
+
+        module tnrifena (input wire logic jhsyxp, input wand logic [3:0] bum [3:1][1:0][1:2], inout wor logic [3:4][0:0][2:0][1:4] syvjgaork [0:0]);
+
+          nrsgmfrn vntkdlt();
+          xnor vb(lwmyxc, jhsyxp, rk);
+          or jitqr(rk, jhsyxp, tsgsps);
+          xor nnh(ze, ze, ze);
+
+          // Multi-driven assigns
+          assign rk = 'b001x;
+        endmodule: tnrifena
+
+        module fyi ();
+
+          xnor xlf(th, fv, tmvasmeq);
+
+          // Multi-driven assigns
+          assign th = 'b10;
+          assign tmvasmeq = th;
+          assign fv = 'bx00x;
+        endmodule: fyi
+
+        module nwvzgjgos (input wire logic w, output wire logic lftmfvic, output triand logic [2:0][2:2][1:0][3:4] esv [3:2][3:1][4:0]);
+
+          nrsgmfrn tkrxisglxq();
+          xnor krxoi(w, lftmfvic, w);
+          xor efwpp(kqcz, lftmfvic, kqcz);
+          fyi ry();
+
+          // Multi-driven assigns
+          assign w = 'bz101;
+          assign esv = esv;
+        endmodule: nwvzgjgos
