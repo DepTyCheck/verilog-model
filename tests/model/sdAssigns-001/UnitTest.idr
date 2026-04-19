@@ -26,6 +26,5 @@ mcs = [mc]
 ||| 23.3.3.2 Port connection rules for variables
 ||| Assignments to variables declared as input ports shall be illegal.
 ||| IEEE 1800-2023
-sdAssignForbiddenToTopInput
-  : sdFins {s = UnitTest.sig} {usl = UnitTest.usl} {subUs = UnitTest.subUs} {mcs = UnitTest.mcs} [FZ] = []
+sdAssignForbiddenToTopInput : sdFins {s = UnitTest.sig} {usl = UnitTest.usl} {subUs = UnitTest.subUs} {mcs = UnitTest.mcs} [FZ] = []
 sdAssignForbiddenToTopInput = Refl

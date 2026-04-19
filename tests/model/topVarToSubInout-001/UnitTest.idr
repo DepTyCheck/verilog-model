@@ -77,16 +77,5 @@ portModesCompatibleBadStateRejects = Refl
 isGoodMCBadStateRejects : isGoodMC UnitTest.badMC FZ = False
 isGoodMCBadStateRejects = Refl
 
--- The predicate should ALSO reject the MC when the `MCNotEmpty` witness
--- is `JustSSC`, because the structural wiring is identical — only the
--- proof term differs.
---
--- Currently this fails: `rawTypeOf` dispatches on `ne`, so under
--- `JustSSC` it returns the sub port's type (Net Tri1 logic) instead of
--- the top port's (Var logic). `forbidVarInout` then sees Net-vs-Net and
--- returns True, and `portModesCompatible` wrongly allows the connection.
--- This is the predicate bug that lets the generator emit the illegal
--- `.xibrlho(ynhlzhtg)` wiring.
-portModesCompatibleBadStateRejectsUnderJustSSC
-  : portModesCompatible UnitTest.badMC_JustSSC FZ = False
+portModesCompatibleBadStateRejectsUnderJustSSC : portModesCompatible UnitTest.badMC_JustSSC FZ = False
 portModesCompatibleBadStateRejectsUnderJustSSC = Refl
