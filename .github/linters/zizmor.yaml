@@ -5,3 +5,7 @@ rules:
     disable: true
   unpinned-uses:
     disable: true
+  secrets-outside-env:
+    disable: true
+  github-env:
+    disable: true

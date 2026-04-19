@@ -2,11 +2,6 @@
 name: Lint
 
 on:
-  push:
-    branches:
-      - "**"
-    tags:
-      - "**"
   pull_request:
     branches:
       - main
@@ -24,13 +19,10 @@ concurrency:
 jobs:
   build:
     name: Lint Code Base
-    # Disable PR from the same repo
-    if: github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Full git history is needed to get a proper
           # list of changed files within `super-linter`
@@ -50,3 +42,5 @@ jobs:
           VALIDATE_PYTHON_MYPY: false
           # We don't need this
           VALIDATE_PYTHON_RUFF_FORMAT: false
+          # We use biome for them
+          VALIDATE_JSON_PRETTIER: false

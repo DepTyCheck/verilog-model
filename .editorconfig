@@ -50,7 +50,6 @@ max_line_length = off
 
 [*.py]
 indent_style = space
-indent_size = 4
 
-[/ci/runner/tools-run/tests/data/**/*]
+[**/tests/data/**/*]
 max_line_length = unset

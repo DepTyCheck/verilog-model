@@ -4,6 +4,7 @@ build/
 .build/
 **/tests/**/failures
 **/tests/**/output
+.pack-lock
 generated
 
 .DS_Store
@@ -13,3 +14,4 @@ __pycache__
 
 a.out
 error_distances.html
+settings**.json

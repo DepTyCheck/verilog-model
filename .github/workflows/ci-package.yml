@@ -35,6 +35,8 @@ env:
   GH_PAGES_PATH: verilog-gh-pages
   RUN_STATS_PATTERN: "run-stats.json"
   COMBINED_RUN_STATS_FILE: "combined-run-stats.json"
+  UNKNOWN_ERRORS_OUT: "unknown_errors.json"
+  REGRESSION_UNKNOWN_ERRORS_PATTERN: "regression-unknown-errors"
 
 jobs:
   get-upstream-matrix:
@@ -171,9 +173,12 @@ jobs:
           name: "${{ env.GENERATION_DIR_PATTERN }}${{ matrix.language }}"
           path: "${{ env.OUT_DIR }}"
 
-  test-tools-run:
-    name: Test tools run
+  get-tool-matrix:
+    name: Build tool matrix
     runs-on: ubuntu-latest
+    outputs:
+      matrix: "${{ steps.gen.outputs.matrix }}"
+      check-matrix: "${{ steps.gen.outputs.check-matrix }}"
     steps:
       - uses: actions/checkout@v6
         with:
@@ -181,296 +186,59 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - run: |
-          cd ci/runner/tools-run
-          pip install -r requirements.txt
-          python3 -m tests.test
+      - name: Install requirements
+        run: pip install -r ci/runner/gen_matrix/requirements.txt
+      - name: Generate matrix
+        id: gen
+        run: PYTHONPATH=ci/runner python -m gen_matrix.main
+
+  get-test-matrix:
+    name: Discover test suites
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: "${{ steps.discover.outputs.matrix }}"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Discover suites
+        id: discover
+        run: python ci/runner/gen_test_matrix.py
+
+  test-python-units:
+    name: Test ${{ matrix.suite.name }}
+    runs-on: ubuntu-latest
+    needs: get-test-matrix
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.get-test-matrix.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install requirements
+        if: ${{ matrix.suite.requirements }}
+        run: |
+          cd ci/runner
+          pip install -r ${{ matrix.suite.requirements }}
+      - name: Run tests
+        working-directory: ci/runner
+        run: python -m ${{ matrix.suite.name }}.tests.test
 
   run-tools:
     name: ${{ matrix.tool.name }}
-    needs: [test-tools-run, generate-modules]
+    needs: [test-python-units, generate-modules, get-tool-matrix]
     timeout-minutes: 90
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        tool:
-          # MATRIX FORMAT:
-          # - name: Just display name
-          #   language: language of the tool
-          #   file_pattern: pattern to match files
-          #   repo: link to the git repo
-          #   deps: packages to install with apt
-          #   path: folder with files to build
-          #   pre_build: commands to run before the build
-          #   build: build commands (runs only if cache miss)
-          #   install: install commands
-          #   version: command to print the version
-          #   python_runner_deps: python libs required for runner
-          #   run: command to run the tool. Note that path to the .sv file will be concatenated to the end of the command.
-          #   top_flag: flag to pass to the tool to specify the top module (if necessary)
-          #   error_regex: regex to match the error (has to be in double quotes!!)
-          #   sim_cmd: command to run the simulator (optional)
-          #   sim_error_regex: regex to match the simulator error (optional)
-          #   rust_ver: rust version to install (optional)
-          #   third_party_release_repo: link to the repo to download the release from. Format: {owner}/{repo}
-          #   third_party_release_name_wildcard: wildcard to match the release name
-          #   dep_path: path of cached dependency
-          #   dep_name: name of cached dependency
-          #
-          #   P.S. ignored errors file should be named as <path>-ignored-errors.txt
-
-          - name: iverilog
-            language: sv
-            file_pattern: "*.sv"
-            repo: https://github.com/steveicarus/iverilog.git
-            deps: autoconf autotools-dev bison flex libfl-dev gperf make gcc g++ cmake python3
-            path: iverilog
-            build: |
-              sh autoconf.sh
-              ./configure
-              sudo make -j$(nproc)
-            install: |
-              sudo make install
-            version: |
-              iverilog -V
-            run: iverilog -g2012 -o a.out {file}
-            error_regex: >
-              (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
-            sim_cmd: vvp a.out
-            sim_error_regex: >
-              (syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)
-            extra_ignored_regexes: >-
-              "Unable to elaborate r-value: .*"
-              "Code generation had .* error\(s\)\."
-
-          - name: slang
-            language: sv
-            file_pattern: "*.sv"
-            repo: https://github.com/MikePopoloski/slang.git
-            deps: cmake
-            path: slang
-            build: |
-              sudo cmake -B build
-              sudo cmake --build build -j$(nproc)
-            install: |
-              sudo cmake --install build --strip
-            version: |
-              slang --version
-            run: slang -Weverything {file}
-            error_regex: >
-              error: [\S ]+$
-
-          - name: verilator
-            language: sv
-            file_pattern: "*.sv"
-            repo: https://github.com/verilator/verilator.git
-            deps: autoconf autotools-dev bison flex help2man libfl-dev libelf-dev cmake
-            path: verilator
-            build: |
-              autoconf
-              ./configure
-              make -j$(nproc)
-            install: |
-              sudo make install
-            version: |
-              verilator --version
-            # -Wno-ASSIGNW flag added due to https://github.com/verilator/verilator/issues/5875
-            run: |
-              rm -rf obj_dir && \
-              rm -f top.sv && \
-              cp {file} top.sv && \
-              verilator \
-                --cc \
-                --exe ci/conf/verilator/testbench.cpp \
-                --timing \
-                -Wno-fatal \
-                -Wno-ASSIGNIN \
-                --no-std \
-                +1800-2023ext+sv \
-                top.sv
-            assets: "ci/conf/verilator/testbench.cpp"
-            error_regex: >
-              %Error(|\-[A-Z]+):( | Internal Error: )[A-z0-9-_\/]+.sv:\d+:\d+:[\S ]*$
-            sim_cmd: make -C obj_dir -f Vtop.mk Vtop && ./obj_dir/Vtop
-            sim_error_regex: >
-              %Error[-A-z]*:[\S ]+
-
-          - name: surelog
-            language: sv
-            file_pattern: "*.sv"
-            repo: https://github.com/chipsalliance/Surelog.git
-            deps: >
-              cmake gcc build-essential git pkg-config tclsh swig uuid-dev
-              libgoogle-perftools-dev python3 python3-orderedmultidict
-              python3-psutil python3-dev default-jre lcov zlib1g-dev
-            path: surelog
-            build: |
-              git submodule update --init --recursive
-              make -j$(nproc)
-            install: |
-              sudo apt install -y libgoogle-perftools-dev
-              sudo pip3 install orderedmultidict
-              sudo make install
-            version: |
-              surelog --version
-            run: surelog -parse -nopython -sv {file}
-
-          - name: zachjs-sv2v
-            language: sv
-            file_pattern: "*.sv"
-            repo: https://github.com/zachjs/sv2v.git
-            deps: haskell-stack
-            path: zachjs-sv2v
-            build: |
-              make -j$(nproc)
-            install: |
-              echo $PWD
-              sudo stack install --allow-different-user --local-bin-path /usr/local/bin
-            version: |
-              sv2v --version
-            run: sv2v -v {file}
-            error_regex: >
-              sv2v:(?!CallStack$).+
-            extra_ignored_regexes: >-
-              "sv2v:Language\.SystemVerilog\.AST\.Type"
-
-          - name: tree-sitter-systemverilog
-            language: sv
-            file_pattern: "*.sv"
-            repo: https://github.com/gmlarumbe/tree-sitter-systemverilog.git
-            deps: gcc python3
-            path: tssv
-            pre_build: |
-              gunzip tree-sitter-linux-x64.gz
-              sudo mv tree-sitter-linux-x64 /usr/local/bin/tree-sitter-linux-x64
-              sudo chmod +x /usr/local/bin/tree-sitter-linux-x64
-            build: |
-              cd ..
-              sudo apt -qq -y install curl
-              touch "$HOME/.bash_profile"
-              # From https://nodejs.org/en/download
-              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
-              . "$HOME/.nvm/nvm.sh"
-              nvm install 22
-              cd tssv
-              sudo tree-sitter-linux-x64 generate --abi 14
-              sudo tree-sitter-linux-x64 build -o sv.so
-            python_runner_deps: tree-sitter==0.21.3
-            version: |
-              sudo tree-sitter-linux-x64 -V
-            run: python3 ci/conf/tree-sitter-sv/run_ts.py tssv/sv.so {file}
-            third_party_release_repo: tree-sitter/tree-sitter
-            third_party_release_name_wildcard: tree-sitter-linux-x64.gz
-            assets: >-
-              ci/conf/tree-sitter-sv/run_ts.py
-              tssv/sv.so
-
-          - name: synlig
-            language: sv
-            file_pattern: "*.sv"
-            repo: https://github.com/chipsalliance/synlig.git
-            deps: >
-              gcc-11 g++-11 build-essential cmake tclsh ant default-jre swig google-perftools
-              libgoogle-perftools-dev python3 python3-dev python3-pip uuid uuid-dev tcl-dev flex
-              libfl-dev git pkg-config libreadline-dev bison libffi-dev wget python3-orderedmultidict
-            path: synlig
-            build: |
-              git submodule sync
-              git submodule update --init --recursive third_party/{surelog,yosys}
-              make -j$(nproc)
-            install: |
-              sudo make install -j$(nproc)
-            version: |
-              synlig --version
-              synlig -h
-            run: synlig -f systemverilog -o output.blif -S {file}
-            error_regex: >
-              ERROR: .*$
-
-          - name: sv_parser
-            language: sv
-            file_pattern: "*.sv"
-            repo: https://github.com/dalance/sv-parser.git
-            deps: cargo
-            rust_ver: "1.94"
-            path: sv_parser
-            build: |
-              cargo build --release --example parse_sv
-            install: |
-              sudo install -m 755 target/release/examples/parse_sv /usr/local/bin/
-            version: |
-              parse_sv -h
-            run: parse_sv {file}
-
-          # - name: yosys
-          #   repo: https://github.com/YosysHQ/yosys.git
-          #   deps: >
-          #     build-essential clang lld bison flex libreadline-dev gawk tcl-dev libffi-dev git
-          #     graphviz xdot pkg-config python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
-          #   path: yosys
-          #   build: |
-          #     git submodule update --init --recursive
-          #     make -j$(nproc)
-          #   install: |
-          #     sudo make install
-          #     cd ..
-          #     bash ci/runner/tools-run/rename_tests.sh
-          #   version: yosys --version
-          #   run: yosys -p 'read -sv2012 {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
-          #   error_regex: >
-          #     ERROR:[A-z0-9, \"'\[\]=()]+
-
-          - name: yosys-slang
-            language: sv
-            file_pattern: "*.sv"
-            repo: https://github.com/povik/yosys-slang.git
-            deps: >
-              cmake clang tcl-dev bison default-jre flex libfl-dev libreadline-dev pkg-config tclsh
-              uuid-dev build-essential lld libreadline-dev gawk libffi-dev git graphviz xdot pkg-config
-              python3 libboost-system-dev libboost-python-dev libboost-filesystem-dev zlib1g-dev
-            path: yosys-slang
-            build: |
-              git clone https://github.com/YosysHQ/yosys.git
-              cd yosys
-              git submodule update --init --recursive
-              make -j$(nproc)
-              sudo make install
-              cd ..
-              git submodule update --init --recursive
-              make -j$(nproc)
-            install: |
-              cd yosys
-              sudo make install
-              cd ..
-              sudo make install
-              cd ..
-              bash ci/runner/tools-run/rename_tests.sh
-            version: yosys --version
-            run: yosys -m slang -p 'read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean'
-            error_regex: >
-              (ERROR|error): .*
-            extra_ignored_regexes: >-
-              "Compilation failed"
-              "too many errors emitted, stopping now"
-
-          - name: ghdl
-            language: vhdl
-            file_pattern: "*.vhdl"
-            repo: https://github.com/ghdl/ghdl.git
-            deps: llvm gnat clang libc++-dev libc++abi-dev
-            path: ghdl
-            build: |
-              mkdir build
-              cd build
-              ../configure --with-llvm-config --prefix=/usr/local
-              make
-            install: |
-              cd build
-              sudo make install
-            version: ghdl -v
-            run: ghdl -a --std=19 {file} && ghdl -e --std=19 {vhdl_top_entity}
-            sim_cmd: ghdl -r --std=19 {vhdl_top_entity}
+      matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.matrix) }}
 
     steps:
       - name: Checkout
@@ -480,83 +248,20 @@ jobs:
       - name: Determine Gen Path
         run: |
           echo "GEN_PATH=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.tool.language }}" >> "$GITHUB_ENV"
-      - name: Download Generated Files
-        uses: actions/download-artifact@v8
+      - name: Setup tool
+        uses: ./.github/actions/setup-tool
         with:
-          name: "${{ env.GEN_PATH }}"
-          path: "${{ env.GEN_PATH }}"
-      - name: Update apt
-        run: sudo apt update -qq
-      - name: Clone tool
-        run: |
-          git clone ${{ matrix.tool.repo }} ${{ matrix.tool.path }}
-          cd ${{ matrix.tool.path }}
-          echo "COMMIT_HASH=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-      # - name: Restore dependency
-      #   if: ${{ matrix.tool.dep_path }}
-      #   uses: actions/cache/restore@v5
-      #   with:
-      #     path: ${{ matrix.tool.dep_path }}
-      #     key: ${{ matrix.tool.dep_name }}-cache-
-      - name: Restore from cache
-        id: cache-build
-        uses: actions/cache/restore@v5
-        with:
-          path: ${{ matrix.tool.path }}
-          key: ${{ matrix.tool.name }}-cache-${{ env.COMMIT_HASH }}
-      - name: Add bazel repo (if needed)
-        if: ${{ contains(matrix.tool.deps, 'bazel') }}
-        run: |
-          sudo apt -qq -y install apt-transport-https curl gnupg
-          curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
-          chmod a+r bazel.gpg
-          sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
-          sudo echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
-          sudo apt update -qq
-      - name: Install tool-specific dependencies
-        if: ${{ matrix.tool.deps }}
-        run: |
-          sudo apt -qq -y install ${{ matrix.tool.deps }}
-      - name: Setup Rust (if needed)
-        if: ${{ matrix.tool.rust_ver }}
-        run: |
-          sudo apt -y install curl
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
-          sh setup.sh -y
-          source "$HOME/.cargo/env"
-          rustup install ${{ matrix.tool.rust_ver }}
-          rustup default ${{ matrix.tool.rust_ver }}
-      - name: Update haskell (if needed)
-        if: ${{ contains(matrix.tool.deps, 'haskell') && steps.cache-build.outputs.cache-hit != 'true' }}
-        run: |
-          stack upgrade
-      - uses: robinraju/release-downloader@v1
-        if: ${{ matrix.tool.third_party_release_repo }}
-        with:
-          repository: ${{ matrix.tool.third_party_release_repo }}
-          latest: true
-          extract: true
-          fileName: ${{ matrix.tool.third_party_release_name_wildcard }}
-      - name: Pre-Build tool
-        run: |
-          ${{ matrix.tool.pre_build }}
-      - name: Build tool
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: |
-          cd ${{ matrix.tool.path }}
-          ${{ matrix.tool.build }}
-      - name: Save build
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v5
-        with:
-          path: ${{ matrix.tool.path }}
-          key: ${{ steps.cache-build.outputs.cache-primary-key }}
-      - name: Install tool
-        run: |
-          cd ${{ matrix.tool.path }}
-          ${{ matrix.tool.install }}
-      - name: Print version
-        run: ${{ matrix.tool.version }}
+          tool-name: ${{ matrix.tool.name }}
+          tool-repo: ${{ matrix.tool.repo }}
+          tool-path: ${{ matrix.tool.path }}
+          tool-build: ${{ matrix.tool.build }}
+          tool-install: ${{ matrix.tool.install }}
+          tool-deps: ${{ matrix.tool.deps }}
+          tool-version: ${{ matrix.tool.version }}
+          tool-rust-ver: ${{ matrix.tool.rust_ver }}
+          tool-pre-build: ${{ matrix.tool.pre_build }}
+          tool-third-party-release-repo: ${{ matrix.tool.third_party_release_repo }}
+          tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard }}
       - name: Install runner deps
         run: sudo apt install -y bc python3 python3-pip python3-venv
       - name: Setup python venv
@@ -564,12 +269,17 @@ jobs:
           python3 -m venv .venv
           source .venv/bin/activate
           python3 -m pip install --upgrade pip
-          pip install -r ci/runner/tools-run/requirements.txt
+          pip install -r ci/runner/tools_run/requirements.txt
           if [ -n "${{ matrix.tool.python_runner_deps }}" ]; then
             pip install ${{ matrix.tool.python_runner_deps }}
           fi
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
+      - name: Download Generated Files
+        uses: actions/download-artifact@v8
+        with:
+          name: "${{ env.GEN_PATH }}"
+          path: "${{ env.GEN_PATH }}"
       - name: Run
         run: |
           set +e
@@ -580,17 +290,14 @@ jobs:
           git rev-parse HEAD
           cd -
 
-          python3 ci/runner/tools-run/main.py \
+          PYTHONPATH=ci/runner python3 -m tools_run.main \
             --gen-path "${{ env.GEN_PATH }}" \
             --file-pattern "${{ matrix.tool.file_pattern }}" \
             --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
             --tool-name "${{ matrix.tool.name }}" \
-            --tool-cmd "${{ matrix.tool.run }}" \
-            --tool-error-regex "${{ matrix.tool.error_regex }}" \
-            --sim-cmd "${{ matrix.tool.sim_cmd }}" \
-            --sim-error-regex "${{ matrix.tool.sim_error_regex }}" \
+            --commands-json '${{ toJSON(matrix.tool.commands) }}' \
             --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
-            --error-distances-output "$ERROR_DISTANCES_OUT" \
+            --unknown-errors-output "${{ env.UNKNOWN_ERRORS_OUT }}" \
             --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
             --commit "${{ env.COMMIT_HASH }}" \
             --assets ${{ matrix.tool.assets }} \
@@ -600,21 +307,109 @@ jobs:
           if [ $EXIT_CODE -ne 0 ]; then
                 exit 1
           fi
-      - name: Upload error distances artifact
-        if: always() && hashFiles(env.ERROR_DISTANCES_OUT) != ''
-        uses: actions/upload-artifact@v6
-        with:
-          name: error-distances-${{ matrix.tool.name }}
-          path: ${{ env.ERROR_DISTANCES_OUT }}
       - name: Upload run statistics
         uses: actions/upload-artifact@v6
         with:
           name: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
           path: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
+      - name: Install mds_report dependencies
+        if: failure()
+        run: |
+          source .venv/bin/activate
+          pip install -r ci/runner/mds_report/requirements.txt
+      - name: Generate MDS diagram
+        if: failure() && hashFiles(env.UNKNOWN_ERRORS_OUT) != ''
+        run: |
+          source .venv/bin/activate
+          PYTHONPATH=ci/runner python3 -m mds_report.main \
+            --unknown-errors-input "${{ env.UNKNOWN_ERRORS_OUT }}" \
+            --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
+            --tool-name "${{ matrix.tool.name }}" \
+            --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
+            --output "${{ env.ERROR_DISTANCES_OUT }}"
+      - name: Upload error distances artifact
+        if: failure() && hashFiles(env.ERROR_DISTANCES_OUT) != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: error-distances-${{ matrix.tool.name }}
+          path: ${{ env.ERROR_DISTANCES_OUT }}
 
-  test-combined-report:
-    name: Test combined report
+  regression-test:
+    name: Regression test ${{ matrix.tool.name }}
     runs-on: ubuntu-latest
+    needs: [test-python-units, get-tool-matrix, run-tools]
+    if: always()
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.check-matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Setup tool
+        uses: ./.github/actions/setup-tool
+        with:
+          tool-name: ${{ matrix.tool.name }}
+          tool-repo: ${{ matrix.tool.repo }}
+          tool-path: ${{ matrix.tool.path }}
+          tool-build: ${{ matrix.tool.build }}
+          tool-install: ${{ matrix.tool.install }}
+          tool-deps: ${{ matrix.tool.deps }}
+          tool-version: ${{ matrix.tool.version }}
+          tool-pre-build: ${{ matrix.tool.pre_build }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install Python dependencies
+        run: pip install -r ci/runner/regression_test/requirements.txt
+      - name: Install tool-specific Python dependencies
+        if: ${{ matrix.tool.python_runner_deps != '' }}
+        run: pip install ${{ matrix.tool.python_runner_deps }}
+      - name: Clone gh-pages
+        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
+      - name: Run regression test
+        run: |
+          PYTHONPATH=ci/runner python -m regression_test.main \
+            --known-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors" \
+            --output "regression-test-report-${{ matrix.tool.name }}.json" \
+            --tool-name "${{ matrix.tool.name }}" \
+            --commands-json '${{ toJSON(matrix.tool.commands) }}' \
+            --language "${{ matrix.tool.language }}" \
+            --language-config "ci/conf/languages.yaml" \
+            --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
+            --unknown-errors-output "${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
+            --assets ${{ matrix.tool.assets }} \
+            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: regression-test-report-${{ matrix.tool.name }}
+          path: regression-test-report-${{ matrix.tool.name }}.json
+      - name: Install mds_report dependencies
+        if: failure()
+        run: pip install -r ci/runner/mds_report/requirements.txt
+      - name: Generate MDS diagram
+        if: failure() && hashFiles(format('{0}-{1}.json', env.REGRESSION_UNKNOWN_ERRORS_PATTERN, matrix.tool.name)) != ''
+        run: |
+          PYTHONPATH=ci/runner python -m mds_report.main \
+            --unknown-errors-input "${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
+            --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
+            --tool-name "${{ matrix.tool.name }}" \
+            --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
+            --output "regression-error-distances-${{ matrix.tool.name }}.html"
+      - name: Upload regression MDS artifact
+        if: failure() && hashFiles(format('regression-error-distances-{0}.html', matrix.tool.name)) != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: regression-error-distances-${{ matrix.tool.name }}
+          path: regression-error-distances-${{ matrix.tool.name }}.html
+
+  count-lines:
+    name: Count lines of specification
+    runs-on: ubuntu-latest
+    needs: test-python-units
     steps:
       - uses: actions/checkout@v6
         with:
@@ -622,24 +417,14 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - run: cd ci/runner && python -m combined_report.tests.test
-
-  test-compare-errors:
-    name: Test errors stats comparison
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
-      - run: cd ci/runner && python -m compare_errors.tests.test
+      - name: Count lines
+        run: |
+          PYTHONPATH=ci/runner python -m count_lines.main "src" >> "$GITHUB_STEP_SUMMARY"
 
   compare-errors-stats:
     name: Compare errors stats
     runs-on: ubuntu-latest
-    needs: [test-compare-errors, run-tools]
+    needs: [test-python-units, run-tools, regression-test]
     if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Checkout
@@ -655,23 +440,29 @@ jobs:
           path: run-stats
           pattern: "*-${{ env.RUN_STATS_PATTERN }}"
           merge-multiple: true
+      - name: Download regression test reports
+        uses: actions/download-artifact@v8
+        with:
+          path: known-errors-reports
+          pattern: "regression-test-report-*"
+          merge-multiple: true
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
       - name: Compare errors
         run: |
-          cd ci/runner
-          python -m compare_errors.main \
-            --previous-report "$GITHUB_WORKSPACE/${{ env.GH_PAGES_PATH }}/src/lib/data/errors-stats.json" \
-            --current-tools-reports-dir "$GITHUB_WORKSPACE/run-stats" \
+          PYTHONPATH=ci/runner python -m compare_errors.main \
+            --previous-report "${{ env.GH_PAGES_PATH }}/src/lib/data/errors-stats.json" \
+            --current-tools-reports-dir "run-stats" \
             --tools-reports-pattern "*-${{ env.RUN_STATS_PATTERN }}" \
             --tests-number ${{ env.GEN_TESTS_COUNT }} \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
+            --known-errors-reports-dir "known-errors-reports" \
             >> "$GITHUB_STEP_SUMMARY"
 
   push-run-stats:
     name: Push run stats
     runs-on: ubuntu-latest
-    needs: [test-combined-report, run-tools]
+    needs: [test-python-units, run-tools]
     if: ${{ github.ref == 'refs/heads/master' }}
     permissions:
       contents: write
@@ -698,12 +489,11 @@ jobs:
 
       - name: Combine statistics
         run: |
-          cd ci/runner
-          python -m combined_report.main \
-            --previous-report "$GITHUB_WORKSPACE/${{ env.REPORT_PATH }}" \
-            --current-tools-reports-dir "$GITHUB_WORKSPACE/run-stats" \
+          PYTHONPATH=ci/runner python -m combined_report.main \
+            --previous-report "${{ env.REPORT_PATH }}" \
+            --current-tools-reports-dir "run-stats" \
             --tools-reports-pattern "*-run-stats.json" \
-            --result-report "$GITHUB_WORKSPACE/${{ env.REPORT_PATH }}" \
+            --result-report "${{ env.REPORT_PATH }}" \
             --tests-number ${{ env.GEN_TESTS_COUNT }}
 
       - name: Bot Details
@@ -785,7 +575,7 @@ jobs:
     name: Create an issue on failure
     if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
-    needs: [get-upstream-matrix, build-and-test, run-tools]
+    needs: [get-upstream-matrix, build-and-test, run-tools, regression-test]
     permissions:
       contents: read
       issues: write

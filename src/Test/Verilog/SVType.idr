@@ -519,3 +519,36 @@ public export
 isUnpacked : SVObject -> Bool
 isUnpacked (Net _ t) = isUnpacked' t
 isUnpacked (Var   t) = isUnpacked' t
+
+public export
+isVar : SVObject -> Bool
+isVar (Net _ _) = False
+isVar (Var _)   = True
+
+public export
+data SVPortMode = In | Out | InOut --| Ref
+
+public export
+Eq SVPortMode where
+  (==) In    In    = True
+  (==) Out   Out   = True
+  (==) InOut InOut = True
+  -- (==) Ref   Ref   = True
+  (==) _     _     = False
+
+public export
+data AllowedSVPort : SVObject -> SVPortMode -> Type where
+  InAny    : AllowedSVPort obj In
+  OutAny   : AllowedSVPort obj Out
+  InOutNet :
+    -- 23.3.3.2 Port connection rules for variables
+    -- A variable data type is not permitted on either side of an inout port.
+    -- IEEE 1800-2023
+    -- So t has to be net
+    --
+    -- 6.6.2 Unresolved nets
+    -- It shall be an error to connect a uwire net to a bidirectional terminal of a bidirectional pass switch.
+    -- IEEE 1800-2023
+    -- So t can not be uwire
+    ResolvedNet t =>
+    AllowedSVPort t InOut

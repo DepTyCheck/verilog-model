@@ -15,7 +15,7 @@ namespace DataType
 
   public export
   data DataType : Lang -> Type where
-    SVT : Nat   -> DataType SystemVerilog
+    SVT : SVObject -> DataType SystemVerilog
     VHD : VHDLType -> DataType VHDL
 
   public export
@@ -68,12 +68,30 @@ namespace DataType
 
   public export
   Eq (DataType l) where
-    (==) (SVT k) (SVT j) = True -- TODO
+    (==) (SVT x) (SVT y) = False --TODO x == y
     (==) (VHD x) (VHD y) = x == y
+
+  public export
+  dtToVHt : DataType VHDL -> VHDLType
+  dtToVHt (VHD x) = x
+
+  public export
+  dtToSVt : DataType SystemVerilog -> SVObject
+  dtToSVt (SVT x) = x
 
 namespace PortMode
 
   public export
   data PortMode : Lang -> Type where
-    SVP : PortMode SystemVerilog
+    SVP : SVPortMode -> PortMode SystemVerilog
     VHP : VHDLPortMode -> PortMode VHDL
+
+  public export
+  Eq (PortMode l) where
+    (==) (SVP x) (SVP y) = x == y
+    (==) (VHP x) (VHP y) = x == y
+
+  public export
+  data AllowedPort : DataType l -> PortMode l -> Type where
+    SVPortOk  : AllowedSVPort obj pm -> AllowedPort (SVT obj) (SVP pm)
+    VHDPortOk : AllowedPort (VHD t) (VHP m)

@@ -1,7 +1,10 @@
 import argparse
+import json
+from pathlib import Path
 
 from combined_report.previous_report import PreviousReport
 from combined_report.tools_report_list import ToolsReportsList
+from common.argparse_helpers import add_error_url_prefix_arg
 
 from .compare_errors import ErrorsComparison
 from .table_formatter import format_table
@@ -33,14 +36,37 @@ def parse_args():
         required=True,
         help="Number of test cases in the current run",
     )
+    add_error_url_prefix_arg(parser, "URL prefix for error links, e.g. https://org.github.io/repo/error (error ID will be appended)")
     parser.add_argument(
-        "--error-url-prefix",
+        "--known-errors-reports-dir",
         type=str,
         required=False,
         default=None,
-        help="URL prefix for error links, e.g. https://org.github.io/repo/error (error ID will be appended)",
+        help=(
+            "Directory containing regression-test JSON reports "
+            "(schema: {error_id: {example_name: bool}}). "
+            "When provided, a 'Reproduced' column is added to the table."
+        ),
     )
     return parser.parse_args()
+
+
+def _load_known_errors(reports_dir: str) -> dict[str, bool]:
+    """
+    Scan reports_dir for *.json files and merge them into a flat
+    {error_id: reproduced} dict.  An error is reproduced if any example
+    in any report file evaluates to True.
+    """
+    result: dict[str, bool] = {}
+    for path in Path(reports_dir).glob("*.json"):
+        try:
+            with open(path, encoding="utf-8") as f:
+                report: dict[str, dict[str, bool]] = json.load(f)
+            for error_id, examples in report.items():
+                result[error_id] = result.get(error_id, False) or any(examples.values())
+        except Exception:
+            pass
+    return result
 
 
 def main() -> None:
@@ -58,8 +84,10 @@ def main() -> None:
         tests_number=args.tests_number,
     )
 
+    known_errors = _load_known_errors(args.known_errors_reports_dir) if args.known_errors_reports_dir else None
+
     deltas = comparison.compare()
-    table = format_table(deltas, error_url_prefix=args.error_url_prefix)
+    table = format_table(deltas, error_url_prefix=args.error_url_prefix, known_errors=known_errors)
     print(table)
 
 

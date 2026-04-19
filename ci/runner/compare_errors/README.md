@@ -8,5 +8,6 @@ python -m compare_errors.main \
   --current-tools-reports-dir compare_errors/tests/data \
   --tools-reports-pattern "*-run-stats.json" \
   --tests-number 256 \
-  --error-url-prefix "https://deptycheck.github.io/verilog-model/error"
+  --error-url-prefix "https://deptycheck.github.io/verilog-model/error" \
+  --known-errors-reports-dir compare_errors/tests/data
 ```

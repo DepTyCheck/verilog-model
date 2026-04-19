@@ -1,0 +1,11 @@
+{
+  "t_dll_api_cc_ivl_nexus_s": {
+    "example_1": true
+  },
+  "cannot_be_driven_with_non_default_strength": {
+    "basic_case": false
+  },
+  "new_error_id": {
+    "minified": true
+  }
+}

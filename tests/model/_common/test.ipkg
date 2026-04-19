@@ -1,0 +1,5 @@
+package a_test
+
+modules = UnitTest
+
+depends = verilog-model

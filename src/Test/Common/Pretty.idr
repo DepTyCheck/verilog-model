@@ -15,5 +15,5 @@ import Text.PrettyPrint.Bernardy
 
 export
 printDesign : {opts : _} -> Fuel -> GenResult l -> Gen0 $ Doc opts
-printDesign x (GenSV   design) = prettyModules x StdModulesPV design
+printDesign x (GenSV   design) = prettyModules x StdSVPrintable design
 printDesign x (GenVHDL design) = prettyDesign  x StdVHDLPrintable design

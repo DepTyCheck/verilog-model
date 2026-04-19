@@ -1,10 +1,13 @@
+import json
 import os
+import tempfile
 import unittest
 
 from combined_report.percentages import occurrence_pct
 from combined_report.previous_report import PreviousReport
 from combined_report.tools_report_list import ToolsReportsList
 from compare_errors.compare_errors import ErrorPercentageDelta, ErrorsComparison
+from compare_errors.main import _load_known_errors
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 PREVIOUS_REPORT = os.path.join(DATA_DIR, "previous_report.json")
@@ -89,3 +92,60 @@ class TestErrorsComparison(unittest.TestCase):
         deltas = self.comparison.compare()
         for i in range(len(deltas) - 1):
             self.assertGreaterEqual(abs(deltas[i].delta_pct), abs(deltas[i + 1].delta_pct))
+
+
+def _write_report(tmp: str, filename: str, content: dict) -> None:
+    with open(os.path.join(tmp, filename), "w", encoding="utf-8") as f:
+        json.dump(content, f)
+
+
+class TestLoadKnownErrors(unittest.TestCase):
+
+    def test_at_least_one_true_means_reproduced(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _write_report(
+                tmp,
+                "tool_a.json",
+                {
+                    "err_x": {"example_1-minified": False, "example_1-full": True, "example_2-minified": False},
+                },
+            )
+            result = _load_known_errors(tmp)
+        self.assertTrue(result["err_x"])
+
+    def test_all_false_means_not_reproduced(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _write_report(
+                tmp,
+                "tool_a.json",
+                {
+                    "err_x": {"example_1-minified": False, "example_1-full": False, "example_2-minified": False, "example_2-full": False},
+                },
+            )
+            result = _load_known_errors(tmp)
+        self.assertFalse(result["err_x"])
+
+    def test_multiple_files_reproduced_in_any_one_means_true(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _write_report(tmp, "tool_a.json", {"err_x": {"example_1-minified": False}})
+            _write_report(tmp, "tool_b.json", {"err_x": {"example_1-minified": True}})
+            result = _load_known_errors(tmp)
+        self.assertTrue(result["err_x"])
+
+    def test_multiple_files_all_false_means_not_reproduced(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _write_report(tmp, "tool_a.json", {"err_x": {"example_1-minified": False}})
+            _write_report(tmp, "tool_b.json", {"err_x": {"example_1-full": False}})
+            result = _load_known_errors(tmp)
+        self.assertFalse(result["err_x"])
+
+    def test_error_absent_from_all_reports_is_not_in_result(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _write_report(tmp, "tool_a.json", {"err_a": {"example_1-minified": True}})
+            result = _load_known_errors(tmp)
+        self.assertNotIn("err_b", result)
+
+    def test_empty_dir_returns_empty_dict(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result = _load_known_errors(tmp)
+        self.assertEqual(result, {})
