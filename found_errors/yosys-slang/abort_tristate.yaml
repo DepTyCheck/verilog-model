@@ -4,7 +4,7 @@ tool: yosys-slang
 id: abort_tristate
 title: Abort due to tristate
 regex: >
-  slang_frontend\.cc:2627
+  slang_frontend\.cc:(2627|2629)
 examples:
   - abort_tristate_ex1:
       first_found: 07.04.2026
@@ -27,3 +27,37 @@ examples:
           not uy(eaxc, yqqmr);
 
         endmodule: wqsy
+
+  - abort_tristate_ex2:
+      first_found: 23.04.2026
+      minified_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2629.
+      minified_example: |
+        module p (output tri0 logic worel);
+        endmodule: p
+      full_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2629
+      full_example: |
+        module p (output tri0 logic worel [3:1][2:2][2:4][3:4]);
+
+          not gayrbsoe(uutasc, agdueqz);
+          xnor bbksamgz(uutasc, uutasc, uutasc);
+          xnor eiavuq(uutasc, yjhdklqt, yjhdklqt);
+          or bnfykmpnt(yszvl, oquqrtkbq, uzovrilu);
+
+          // Multi-driven assigns
+          assign yszvl = yjhdklqt;
+          assign oquqrtkbq = 'b11x;
+        endmodule: p
+
+        module avjbg ( input triand logic [1:0][2:3][1:4] wox [3:4][3:0][1:0][1:3]
+                    , input triand logic [3:0][3:3][2:4][3:4] j [0:4]
+                    , inout trior logic [1:0] hdelnr [0:0][4:3][4:1][3:3]
+                    , inout wand logic [0:4][3:4] gg [2:4][2:2][3:2]
+                    );
+
+          nand fabbahwbn(ywigojoe, isvsyica, ywigojoe);
+
+          // Multi-driven assigns
+          assign j = j;
+        endmodule: avjbg
