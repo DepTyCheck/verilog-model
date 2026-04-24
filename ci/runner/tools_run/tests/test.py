@@ -2,6 +2,7 @@ from common.test_runner import run_test_suite
 from tools_run.tests.test_assets import TestAssets
 from tools_run.tests.test_cwd import TestRunCommandCwd
 from tools_run.tests.test_parsing_ignored_errors_list import TestIgnoredErrorsList
+from tools_run.tests.test_per_file_report import TestGetOutcome, TestPerFileReport
 from tools_run.tests.test_print_stats import TestCountRunStats
 from tools_run.tests.test_root_entity_regex import TestRootEntityRegex
 from tools_run.tests.test_tests_list import TestCommandConfig
@@ -17,5 +18,7 @@ if __name__ == "__main__":
             TestAssets,
             TestCountRunStats,
             TestCommandConfig,
+            TestGetOutcome,
+            TestPerFileReport,
         ]
     )

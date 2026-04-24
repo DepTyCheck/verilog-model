@@ -262,6 +262,8 @@ jobs:
           tool-pre-build: ${{ matrix.tool.pre_build }}
           tool-third-party-release-repo: ${{ matrix.tool.third_party_release_repo }}
           tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard }}
+      - name: Capture tool version
+        run: echo "TOOL_VERSION=$(${{ matrix.tool.version }} 2>&1 | head -1 || true)" >> "$GITHUB_ENV"
       - name: Install runner deps
         run: sudo apt install -y bc python3 python3-pip python3-venv
       - name: Setup python venv
@@ -301,7 +303,10 @@ jobs:
             --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
             --commit "${{ env.COMMIT_HASH }}" \
             --assets ${{ matrix.tool.assets }} \
-            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
+            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }} \
+            --tool-version "$TOOL_VERSION" \
+            --model-commit "${{ github.sha }}" \
+            --per-file-output "${{ matrix.tool.name }}-per-file.json"
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then
@@ -312,6 +317,12 @@ jobs:
         with:
           name: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
           path: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
+      - name: Upload per-file results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: "${{ matrix.tool.name }}-per-file.json"
+          path: "${{ matrix.tool.name }}-per-file.json"
       - name: Install mds_report dependencies
         if: failure()
         run: |
@@ -509,6 +520,76 @@ jobs:
           git commit -m "[ bot ] Update runs statistics"
           git remote set-url origin "https://x-access-token:${{ secrets.PAT_PUSH }}@github.com/${{ github.repository }}"
           git push origin gh-pages
+
+  save-dataset:
+    name: Save dataset
+    runs-on: ubuntu-latest
+    needs: [run-tools]
+    # if: ${{ github.ref == 'refs/heads/master' }}
+    permissions:
+      contents: write
+    env:
+      DATASET_BRANCH: dataset
+      DATASET_PATH: dataset-branch
+      PER_FILE_DIR: per-file-results
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.PAT_PUSH }}
+          persist-credentials: false
+
+      - name: Set run date
+        run: echo "RUN_DATE=$(date -u +%Y_%m_%d)" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install dataset_builder requirements
+        run: pip install -r ci/runner/dataset_builder/requirements.txt
+
+      - name: Download generated files
+        uses: actions/download-artifact@v8
+        with:
+          pattern: "${{ env.GENERATION_DIR_PATTERN }}*"
+
+      - name: Download per-file results
+        uses: actions/download-artifact@v8
+        with:
+          pattern: "*-per-file.json"
+          path: "${{ env.PER_FILE_DIR }}"
+          merge-multiple: true
+
+      - name: Clone dataset branch
+        run: |
+          git clone https://github.com/${{ github.repository }}.git \
+            --branch ${{ env.DATASET_BRANCH }} \
+            --single-branch \
+            ${{ env.DATASET_PATH }}
+
+      - name: Run dataset_builder
+        run: |
+          PYTHONPATH=ci/runner python -m dataset_builder.main \
+            --generated-dirs ${{ env.GENERATION_DIR_PATTERN }}*/ \
+            --per-file-results-dir "${{ env.PER_FILE_DIR }}" \
+            --dataset-path "${{ env.DATASET_PATH }}" \
+            --run-date "${{ env.RUN_DATE }}"
+
+      - name: Bot Details
+        id: bot-details
+        uses: raven-actions/bot-details@v1
+
+      - name: Commit & push dataset
+        run: |
+          cd ${{ env.DATASET_PATH }}
+          git config --global user.name "${{ steps.bot-details.outputs.name }}"
+          git config --global user.email "${{ steps.bot-details.outputs.email }}"
+          git add files/ issues.csv
+          git diff --cached --quiet && echo "No changes to commit." && exit 0
+          git commit -m "[ bot ] Add dataset ${{ env.RUN_DATE }}"
+          git remote set-url origin "https://x-access-token:${{ secrets.PAT_PUSH }}@github.com/${{ github.repository }}"
+          git push origin ${{ env.DATASET_BRANCH }}
 
   publish-container:
     name: Build and publish Docker image

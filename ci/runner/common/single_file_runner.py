@@ -60,7 +60,7 @@ def run_file(
             cmd_result = run_command(cmd, cwd=tmp_dir)
 
             if cmd_result.timed_out:
-                return AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True)
+                return AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True, timed_out=True)
 
             success, result = analyze_result(cmd_result, cmd_config, known_errors, report_path)
             if not success:

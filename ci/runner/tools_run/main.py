@@ -2,6 +2,7 @@
 
 import logging
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 from common.command_config import parse_commands
@@ -13,6 +14,7 @@ from tools_run.src.ignored_errors_list import IgnoredErrorsList
 from tools_run.src.input_iter import iter_test_files
 from tools_run.src.known_errors_report import KnownErrorsReport
 from tools_run.src.parse_args import parse_args
+from tools_run.src.per_file_report import PerFileReport
 from tools_run.src.print_stats import count_run_stats, print_issues_count
 
 
@@ -28,7 +30,6 @@ def main() -> None:
     commands = parse_commands(args.commands_json)
     assets = Assets(args.assets)
 
-    # Determine file suffix from the file pattern (e.g. "*.sv" → ".sv")
     file_suffix = Path(args.file_pattern).suffix or ".sv"
 
     gen_path = Path(args.gen_path)
@@ -59,6 +60,21 @@ def main() -> None:
     report = KnownErrorsReport(commit=args.commit)
     report.add_errors(matches)
     report.save(args.run_statistics_output)
+
+    if args.per_file_output:
+        run_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        per_file = PerFileReport(
+            tool_name=args.tool_name,
+            tool_version=args.tool_version,
+            tool_commit=args.commit,
+            model_commit=args.model_commit,
+            run_date=run_date,
+        )
+        for file_input, result in results:
+            filename = Path(file_input.context).name
+            per_file.add_result(filename, result)
+        per_file.save(args.per_file_output)
+        logger.info(f"Per-file report saved to {args.per_file_output}")
 
     stats = count_run_stats(results)
     print_issues_count(stats)

@@ -14,4 +14,7 @@ def parse_args():
     parser.add_argument("--run-statistics-output", type=str, required=True, help="Path to save run statistics JSON")
     parser.add_argument("--commit", type=str, required=True)
     parser.add_argument("--assets", type=str, nargs="*", default=[])
+    parser.add_argument("--tool-version", type=str, default="", help="Tool version string")
+    parser.add_argument("--model-commit", type=str, default="", help="verilog-model repo commit SHA")
+    parser.add_argument("--per-file-output", type=str, default=None, help="Path to save per-file results JSON")
     return parser.parse_args()
