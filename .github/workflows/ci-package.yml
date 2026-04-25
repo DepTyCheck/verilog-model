@@ -248,6 +248,19 @@ jobs:
       - name: Determine Gen Path
         run: |
           echo "GEN_PATH=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.tool.language }}" >> "$GITHUB_ENV"
+      - name: Install runner deps
+        run: |
+          sudo apt update -qq
+          sudo apt install -y bc python3 python3-pip python3-venv
+      - name: Setup python venv
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          python3 -m pip install --upgrade pip
+          pip install -r ci/runner/tools_run/requirements.txt
+          if [ -n "${{ matrix.tool.python_runner_deps }}" ]; then
+            pip install ${{ matrix.tool.python_runner_deps }}
+          fi
       - name: Setup tool
         uses: ./.github/actions/setup-tool
         with:
@@ -264,17 +277,6 @@ jobs:
           tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard }}
       - name: Capture tool version
         run: echo "TOOL_VERSION=$(${{ matrix.tool.version }} 2>&1 | head -1 || true)" >> "$GITHUB_ENV"
-      - name: Install runner deps
-        run: sudo apt install -y bc python3 python3-pip python3-venv
-      - name: Setup python venv
-        run: |
-          python3 -m venv .venv
-          source .venv/bin/activate
-          python3 -m pip install --upgrade pip
-          pip install -r ci/runner/tools_run/requirements.txt
-          if [ -n "${{ matrix.tool.python_runner_deps }}" ]; then
-            pip install ${{ matrix.tool.python_runner_deps }}
-          fi
       - name: Clone gh-pages
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
       - name: Download Generated Files
