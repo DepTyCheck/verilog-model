@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Read ci/conf/tools.yaml and emit GHA matrix JSON to $GITHUB_OUTPUT.
-
-Two outputs are emitted:
-  matrix        — all tools (consumed by run-tools)
-  check-matrix  — only tools with a check_cmd field (consumed by regression-test)
-"""
+"""Read ci/conf/tools.yaml and emit GHA matrix JSON to $GITHUB_OUTPUT."""
 
 import json
 import os
@@ -18,20 +13,14 @@ def main() -> None:
     tools_yaml = Path(__file__).parents[2] / "conf" / "tools.yaml"
 
     tools = load_tools(str(tools_yaml))
-    matrix = build_matrix(tools)
-    check_matrix = build_matrix(tools)
-
-    matrix_json = json.dumps(matrix)
-    check_matrix_json = json.dumps(check_matrix)
+    matrix_json = json.dumps(build_matrix(tools))
 
     github_output = os.environ.get("GITHUB_OUTPUT")
     if github_output:
         with open(github_output, "a", encoding="utf-8") as f:
             f.write(f"matrix={matrix_json}\n")
-            f.write(f"check-matrix={check_matrix_json}\n")
     else:
         print(f"matrix={matrix_json}")
-        print(f"check-matrix={check_matrix_json}")
 
 
 if __name__ == "__main__":

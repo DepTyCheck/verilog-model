@@ -178,7 +178,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: "${{ steps.gen.outputs.matrix }}"
-      check-matrix: "${{ steps.gen.outputs.check-matrix }}"
     steps:
       - uses: actions/checkout@v6
         with:
@@ -232,192 +231,70 @@ jobs:
         run: python -m ${{ matrix.suite.name }}.tests.test
 
   run-tools:
-    name: Generated test ${{ matrix.tool.name }}
+    name: ${{ matrix.tool.name }}
     needs: [test-python-units, generate-modules, get-tool-matrix]
-    timeout-minutes: 90
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.matrix) }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - name: Determine Gen Path
-        run: |
-          echo "GEN_PATH=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.tool.language }}" >> "$GITHUB_ENV"
-      - name: Install runner deps
-        run: |
-          sudo apt update -qq
-          sudo apt install -y bc python3 python3-pip python3-venv
-      - name: Setup python venv
-        run: |
-          python3 -m venv .venv
-          source .venv/bin/activate
-          python3 -m pip install --upgrade pip
-          pip install -r ci/runner/tools_run/requirements.txt
-          if [ -n "${{ matrix.tool.python_runner_deps }}" ]; then
-            pip install ${{ matrix.tool.python_runner_deps }}
-          fi
-      - name: Setup tool
-        uses: ./.github/actions/setup-tool
-        with:
-          tool-name: ${{ matrix.tool.name }}
-          tool-repo: ${{ matrix.tool.repo }}
-          tool-path: ${{ matrix.tool.path }}
-          tool-build: ${{ matrix.tool.build }}
-          tool-install: ${{ matrix.tool.install }}
-          tool-deps: ${{ matrix.tool.deps }}
-          tool-version: ${{ matrix.tool.version }}
-          tool-rust-ver: ${{ matrix.tool.rust_ver }}
-          tool-pre-build: ${{ matrix.tool.pre_build }}
-          tool-third-party-release-repo: ${{ matrix.tool.third_party_release_repo }}
-          tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard }}
-      - name: Capture tool version
-        run: echo "TOOL_VERSION=$(${{ matrix.tool.version }} 2>&1 | head -1 || true)" >> "$GITHUB_ENV"
-      - name: Clone gh-pages
-        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
-      - name: Download Generated Files
-        uses: actions/download-artifact@v8
-        with:
-          name: "${{ env.GEN_PATH }}"
-          path: "${{ env.GEN_PATH }}"
-      - name: Run
-        run: |
-          set +e
-          source .venv/bin/activate
-
-          cd "${{ env.GH_PAGES_PATH }}"
-          echo "Latest commit hash of ${{ env.GH_PAGES_PATH }}:"
-          git rev-parse HEAD
-          cd -
-
-          PYTHONPATH=ci/runner python3 -m tools_run.main \
-            --gen-path "${{ env.GEN_PATH }}" \
-            --file-pattern "${{ matrix.tool.file_pattern }}" \
-            --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
-            --tool-name "${{ matrix.tool.name }}" \
-            --commands-json '${{ toJSON(matrix.tool.commands) }}' \
-            --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
-            --unknown-errors-output "${{ env.UNKNOWN_ERRORS_OUT }}" \
-            --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
-            --commit "${{ env.COMMIT_HASH }}" \
-            --assets ${{ matrix.tool.assets }} \
-            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }} \
-            --tool-version "$TOOL_VERSION" \
-            --model-commit "${{ github.sha }}" \
-            --per-file-output "${{ matrix.tool.name }}-per-file.json"
-
-          EXIT_CODE=$?
-          if [ $EXIT_CODE -ne 0 ]; then
-                exit 1
-          fi
-      - name: Upload run statistics
-        uses: actions/upload-artifact@v6
-        with:
-          name: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
-          path: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
-      - name: Upload per-file results
-        if: always()
-        uses: actions/upload-artifact@v6
-        with:
-          name: "${{ matrix.tool.name }}-per-file.json"
-          path: "${{ matrix.tool.name }}-per-file.json"
-      - name: Install mds_report dependencies
-        if: failure()
-        run: |
-          source .venv/bin/activate
-          pip install -r ci/runner/mds_report/requirements.txt
-      - name: Generate MDS diagram
-        if: failure() && hashFiles(env.UNKNOWN_ERRORS_OUT) != ''
-        run: |
-          source .venv/bin/activate
-          PYTHONPATH=ci/runner python3 -m mds_report.main \
-            --unknown-errors-input "${{ env.UNKNOWN_ERRORS_OUT }}" \
-            --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
-            --tool-name "${{ matrix.tool.name }}" \
-            --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
-            --output "${{ env.ERROR_DISTANCES_OUT }}"
-      - name: Upload error distances artifact
-        if: failure() && hashFiles(env.ERROR_DISTANCES_OUT) != ''
-        uses: actions/upload-artifact@v6
-        with:
-          name: error-distances-${{ matrix.tool.name }}
-          path: ${{ env.ERROR_DISTANCES_OUT }}
+    uses: ./.github/workflows/run-tool.yml
+    secrets: inherit
+    with:
+      tool_json: ${{ toJSON(matrix.tool) }}
+      python_module: tools_run.main
+      requirements_file: ci/runner/tools_run/requirements.txt
+      download_1_name: generated-${{ matrix.tool.language }}
+      download_1_path: generated-${{ matrix.tool.language }}
+      args: |
+        --gen-path "$GEN_PATH"
+        --file-pattern "${{ matrix.tool.file_pattern }}"
+        --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}"
+        --tool-name "${{ matrix.tool.name }}"
+        --commands-json '${{ toJSON(matrix.tool.commands) }}'
+        --ignored-errors-dir "$GH_PAGES_PATH/found_errors/${{ matrix.tool.path }}"
+        --unknown-errors-output unknown_errors.json
+        --run-statistics-output "${{ matrix.tool.name }}-run-stats.json"
+        --commit "$COMMIT_HASH"
+        --assets ${{ matrix.tool.assets }}
+        --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
+        --tool-version "$TOOL_VERSION"
+        --model-commit "${{ github.sha }}"
+        --per-file-output "${{ matrix.tool.name }}-per-file.json"
+      unknown_errors_path: unknown_errors.json
+      artifact_1_name: ${{ matrix.tool.name }}-run-stats.json
+      artifact_1_path: ${{ matrix.tool.name }}-run-stats.json
+      artifact_2_name: ${{ matrix.tool.name }}-per-file.json
+      artifact_2_path: ${{ matrix.tool.name }}-per-file.json
+      artifact_2_always: true
 
   regression-test:
     name: Regression test ${{ matrix.tool.name }}
-    runs-on: ubuntu-latest
     needs: [test-python-units, get-tool-matrix, run-tools]
     if: ${{ !cancelled() }}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.check-matrix) }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - name: Setup tool
-        uses: ./.github/actions/setup-tool
-        with:
-          tool-name: ${{ matrix.tool.name }}
-          tool-repo: ${{ matrix.tool.repo }}
-          tool-path: ${{ matrix.tool.path }}
-          tool-build: ${{ matrix.tool.build }}
-          tool-install: ${{ matrix.tool.install }}
-          tool-deps: ${{ matrix.tool.deps }}
-          tool-version: ${{ matrix.tool.version }}
-          tool-pre-build: ${{ matrix.tool.pre_build }}
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
-      - name: Install Python dependencies
-        run: pip install -r ci/runner/regression_test/requirements.txt
-      - name: Install tool-specific Python dependencies
-        if: ${{ matrix.tool.python_runner_deps != '' }}
-        run: pip install ${{ matrix.tool.python_runner_deps }}
-      - name: Clone gh-pages
-        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
-      - name: Run regression test
-        run: |
-          PYTHONPATH=ci/runner python -m regression_test.main \
-            --known-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors" \
-            --output "regression-test-report-${{ matrix.tool.name }}.json" \
-            --tool-name "${{ matrix.tool.name }}" \
-            --commands-json '${{ toJSON(matrix.tool.commands) }}' \
-            --language "${{ matrix.tool.language }}" \
-            --language-config "ci/conf/languages.yaml" \
-            --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
-            --unknown-errors-output "${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
-            --assets ${{ matrix.tool.assets }} \
-            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
-      - name: Upload report
-        if: always()
-        uses: actions/upload-artifact@v6
-        with:
-          name: regression-test-report-${{ matrix.tool.name }}
-          path: regression-test-report-${{ matrix.tool.name }}.json
-      - name: Install mds_report dependencies
-        if: failure()
-        run: pip install -r ci/runner/mds_report/requirements.txt
-      - name: Generate MDS diagram
-        if: failure() && hashFiles(format('{0}-{1}.json', env.REGRESSION_UNKNOWN_ERRORS_PATTERN, matrix.tool.name)) != ''
-        run: |
-          PYTHONPATH=ci/runner python -m mds_report.main \
-            --unknown-errors-input "${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
-            --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
-            --tool-name "${{ matrix.tool.name }}" \
-            --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
-            --output "regression-error-distances-${{ matrix.tool.name }}.html"
-      - name: Upload regression MDS artifact
-        if: failure() && hashFiles(format('regression-error-distances-{0}.html', matrix.tool.name)) != ''
-        uses: actions/upload-artifact@v6
-        with:
-          name: regression-error-distances-${{ matrix.tool.name }}
-          path: regression-error-distances-${{ matrix.tool.name }}.html
+      matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.matrix) }}
+    uses: ./.github/workflows/run-tool.yml
+    secrets: inherit
+    with:
+      tool_json: ${{ toJSON(matrix.tool) }}
+      python_module: regression_test.main
+      requirements_file: ci/runner/regression_test/requirements.txt
+      args: |
+        --known-errors-dir "$GH_PAGES_PATH/found_errors"
+        --output "regression-test-report-${{ matrix.tool.name }}.json"
+        --tool-name "${{ matrix.tool.name }}"
+        --commands-json '${{ toJSON(matrix.tool.commands) }}'
+        --language "${{ matrix.tool.language }}"
+        --language-config "ci/conf/languages.yaml"
+        --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error"
+        --unknown-errors-output regression-unknown-errors-${{ matrix.tool.name }}.json
+        --assets ${{ matrix.tool.assets }}
+        --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
+      unknown_errors_path: regression-unknown-errors-${{ matrix.tool.name }}.json
+      artifact_1_name: regression-test-report-${{ matrix.tool.name }}
+      artifact_1_path: regression-test-report-${{ matrix.tool.name }}.json
+      artifact_1_always: true
+
 
   count-lines:
     name: Count lines of specification
