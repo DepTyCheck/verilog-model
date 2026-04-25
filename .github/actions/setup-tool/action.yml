@@ -34,11 +34,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-      with:
-        persist-credentials: false
-
     - name: Update apt
       shell: bash
       run: sudo apt update -qq
