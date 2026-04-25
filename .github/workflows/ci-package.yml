@@ -286,7 +286,7 @@ jobs:
         --commands-json '${{ toJSON(matrix.tool.commands) }}'
         --language "${{ matrix.tool.language }}"
         --language-config "ci/conf/languages.yaml"
-        --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error"
+        --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/error"
         --unknown-errors-output regression-unknown-errors-${{ matrix.tool.name }}.json
         --assets ${{ matrix.tool.assets }}
         --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
