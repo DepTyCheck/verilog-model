@@ -140,7 +140,7 @@
 		</div>
 	</div>
 	<div class="relative mt-6">
-		<p class="mb-2 text-sm dark:text-white">{sortedErrors.length} issues</p>
+		<p class="mb-2 text-sm dark:text-white">{sortedErrors.length}/{allFoundErrors.length} issues ({Math.round((sortedErrors.length / allFoundErrors.length) * 100)}%)</p>
 		<div bind:this={scrollContainer} style="overflow-x: auto; max-width: 100%;">
 			<table class="w-full min-w-max divide-y divide-gray-200 text-sm dark:divide-gray-600">
 				<thead class="bg-gray-50 dark:bg-gray-700">
