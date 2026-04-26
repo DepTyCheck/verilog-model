@@ -1,7 +1,7 @@
 import unittest
 
 from dataset_builder.src.filter import passing_filenames
-from dataset_builder.src.per_file_report import FileRecord, MatchRecord, ToolReport
+from dataset_builder.src.per_file_report import FileRecord, ToolReport
 
 
 def _report(tool: str, files: list[tuple[str, str]]) -> ToolReport:

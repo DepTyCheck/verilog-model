@@ -1,0 +1,109 @@
+---
+name: Run tool on files
+description: |
+  Run the canonical Python runner over a directory of source files. On
+  failure, build the MDS distance report from the same per-file JSON.
+  Always uploads the per-file JSON; uploads the MDS HTML on failure only.
+
+inputs:
+  tool-name:
+    required: true
+  tool-version:
+    required: false
+    default: ""
+  tool-commit:
+    required: false
+    default: ""
+  model-commit:
+    required: false
+    default: ""
+  commands-json:
+    required: true
+    description: "matrix.tool.commands JSON"
+  input-dir:
+    required: true
+  file-pattern:
+    required: false
+    default: "*"
+  ignored-errors-dir:
+    required: true
+  assets:
+    required: false
+    default: ""
+  extra-ignored-regexes:
+    required: false
+    default: ""
+  output-json:
+    required: false
+    default: ""
+  mds-on-failure:
+    required: false
+    default: "true"
+  job-link:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve output JSON path
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.output-json }}" ]; then
+          path="${{ inputs.output-json }}"
+        else
+          path="${{ inputs.tool-name }}-per-file.json"
+        fi
+        echo "PER_FILE_JSON=$path" >> "$GITHUB_ENV"
+
+    - name: Run tool
+      shell: bash
+      run: |
+        set +e
+        PYTHONPATH=ci/runner python -m runner.main \
+          --input-dir "${{ inputs.input-dir }}" \
+          --file-pattern "${{ inputs.file-pattern }}" \
+          --tool-name "${{ inputs.tool-name }}" \
+          --tool-version "${{ inputs.tool-version }}" \
+          --tool-commit "${{ inputs.tool-commit }}" \
+          --model-commit "${{ inputs.model-commit }}" \
+          --commands-json '${{ inputs.commands-json }}' \
+          --ignored-errors-dir "${{ inputs.ignored-errors-dir }}" \
+          --assets ${{ inputs.assets }} \
+          --extra-ignored-regexes ${{ inputs.extra-ignored-regexes }} \
+          --output "$PER_FILE_JSON"
+        echo "RUNNER_EXIT=$?" >> "$GITHUB_ENV"
+
+    - name: Install MDS deps (on failure)
+      if: ${{ env.RUNNER_EXIT != '0' && inputs.mds-on-failure == 'true' }}
+      shell: bash
+      run: pip install -r ci/runner/mds_report/requirements.txt
+
+    - name: Generate MDS report (on failure)
+      if: ${{ env.RUNNER_EXIT != '0' && inputs.mds-on-failure == 'true' && hashFiles(env.PER_FILE_JSON) != '' }}
+      shell: bash
+      run: |
+        PYTHONPATH=ci/runner python -m mds_report.main \
+          --per-file-input "$PER_FILE_JSON" \
+          --ignored-errors-dir "${{ inputs.ignored-errors-dir }}" \
+          --tool-name "${{ inputs.tool-name }}" \
+          --job-link "${{ inputs.job-link }}" \
+          --output error_distances.html
+
+    - name: Upload per-file JSON
+      if: ${{ always() && hashFiles(env.PER_FILE_JSON) != '' }}
+      uses: actions/upload-artifact@v6
+      with:
+        name: ${{ inputs.tool-name }}-per-file.json
+        path: ${{ env.PER_FILE_JSON }}
+
+    - name: Upload MDS HTML
+      if: ${{ failure() && hashFiles('error_distances.html') != '' }}
+      uses: actions/upload-artifact@v6
+      with:
+        name: error-distances-${{ inputs.tool-name }}
+        path: error_distances.html
+
+    - name: Re-raise runner exit code
+      if: ${{ env.RUNNER_EXIT != '0' }}
+      shell: bash
+      run: exit 1

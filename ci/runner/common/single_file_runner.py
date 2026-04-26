@@ -1,16 +1,15 @@
+# ci/runner/common/single_file_runner.py
 import tempfile
 import uuid
 from pathlib import Path
 
 from common.assets import Assets
 from common.command_config import CommandConfig
-from common.command_output import AnalyzisResult
-from common.error_types import UnexpectedError
 from common.ignored_errors_list import IgnoredErrorsList
 from common.logger import get_logger
 from common.make_command import make_command
 from common.run_command import run_command
-from common.run_tool_command import analyze_result
+from common.run_tool_command import CommandResult, MatchRecord, analyze_command
 
 
 def run_file(
@@ -20,17 +19,18 @@ def run_file(
     file_suffix: str,
     assets: Assets | None = None,
     logical_name: str | None = None,
-) -> AnalyzisResult:
+) -> list[CommandResult]:
     """
-    Write content to a temp file inside a temp directory, run commands in
-    sequence (stopping on first failure), and return the AnalyzisResult.
+    Write content to a temp file, run commands in sequence (stop on first failing
+    command), and return one CommandResult per command actually executed.
 
-    logical_name: if provided, used as the file path in error records instead
-                  of the actual temp path — preserves meaningful paths for callers
-                  that already know the original file location.
+    Stops on first command whose outcome is not "clean" — matching legacy
+    behaviour. Length of returned list is 1..N, where N == len(commands).
     """
     get_logger().debug(f"Processing: {logical_name or '(unnamed)'}")
     get_logger().debug(f"File content:\n{content}")
+
+    results: list[CommandResult] = []
 
     with tempfile.TemporaryDirectory(dir=Path.cwd()) as tmp_dir:
         if assets is not None:
@@ -46,24 +46,19 @@ def run_file(
                 cmd = make_command(cmd_config.run, tmp_path, content)
             except Exception as exc:
                 get_logger().warning(f"make_command failed for {report_path!r}: {exc}")
-                return AnalyzisResult(
-                    found_matches=[],
-                    unexpected_errors=[
-                        UnexpectedError(
-                            tool_output_error_text=str(exc),
-                            test_file_path=report_path,
-                        )
-                    ],
-                    all_errors_are_known=False,
+                results.append(
+                    CommandResult(
+                        command=cmd_config.run,
+                        outcome="unknown",
+                        matches=[MatchRecord(error_id="unknown", matched_text=str(exc))],
+                    )
                 )
+                return results
 
             cmd_result = run_command(cmd, cwd=tmp_dir)
+            command_result = analyze_command(cmd, cmd_result, cmd_config, known_errors, report_path)
+            results.append(command_result)
+            if command_result.outcome != "clean":
+                return results
 
-            if cmd_result.timed_out:
-                return AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True, timed_out=True)
-
-            success, result = analyze_result(cmd_result, cmd_config, known_errors, report_path)
-            if not success:
-                return result
-
-        return AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True)
+        return results

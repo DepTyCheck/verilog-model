@@ -1,38 +1,40 @@
-#!/usr/bin/env python3
+# ci/runner/mds_report/main.py
 """
-mds_report — generate an MDS distance diagram from unknown errors.
+mds_report — generate an MDS distance diagram from a per-file JSON report.
 
-Usage (from ci/runner/):
-  python -m mds_report.main \
-    --unknown-errors-input unknown_errors.json \
-    --ignored-errors-dir   verilog-gh-pages/found_errors/iverilog \
-    --tool-name            iverilog \
-    --job-link             https://github.com/... \
-    --output               error_distances.html
+Reads a runner.main per-file JSON, flattens commands[].matches[], collects
+matches whose error_id == "unknown", and plots them against the registered
+known errors for the tool.
 """
 
-import json
 import logging
 
+from common.ignored_errors_list import IgnoredErrorsList
 from common.logger import configure_logger
-from common.unknown_error_reporter import UnknownErrorEntry
+from common.per_file_report import load_report
 from mds_report.mds_distances_report import MDSDistancesReport
 from mds_report.parse_args import parse_args
-from tools_run.src.ignored_errors_list import IgnoredErrorsList
+from mds_report.unknown_error_entry import UnknownErrorEntry
+
+
+def _collect_unknowns(report) -> list[UnknownErrorEntry]:
+    entries: list[UnknownErrorEntry] = []
+    for f in report.files:
+        for c in f.commands:
+            for m in c.matches:
+                if m.error_id == "unknown":
+                    entries.append(UnknownErrorEntry(file_path=f.filename, error_text=m.matched_text))
+    return entries
 
 
 def main() -> None:
     configure_logger(level=logging.INFO)
     args = parse_args()
 
-    with open(args.unknown_errors_input, encoding="utf-8") as fh:
-        raw = json.load(fh)
-    new_errors = [UnknownErrorEntry(**entry) for entry in raw]
+    report = load_report(args.per_file_input)
+    new_errors = _collect_unknowns(report)
 
-    ignored_errors = IgnoredErrorsList(
-        dir_path=args.ignored_errors_dir,
-        tool=args.tool_name,
-    )
+    ignored_errors = IgnoredErrorsList(dir_path=args.ignored_errors_dir, tool=args.tool_name)
 
     MDSDistancesReport(
         new_errors=new_errors,

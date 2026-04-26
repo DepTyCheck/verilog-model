@@ -9,7 +9,7 @@ from common.tool_error_regex import ToolErrorRegex
 class ErrorMatcherProtocol(Protocol):
     """
     Any object that can match tool output against known error patterns.
-    Satisfied by tools_run's IgnoredErrorsList without explicit inheritance.
+    Satisfied by common.ignored_errors_list.IgnoredErrorsList without explicit inheritance.
     """
 
     def match(self, input_text: str, mode: MatchingMode) -> FoundMatch | None: ...

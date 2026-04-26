@@ -16,10 +16,3 @@ sh local_run_unit_tests.sh
 ```bash
 python local_integration_test.py
 ```
-
-- Using iverilog
-  From `ci/runner`:
-
-```bash
-pip install -r regression_test/requirements.txt && python -m regression_test.integration_tests.test_iverilog
-```

@@ -185,7 +185,6 @@ tools:
       cd ..
       sudo make install
       cd ..
-      bash ci/runner/tools_run/rename_tests.sh
     version: yosys --version
     commands:
       - run: yosys -m slang -p "read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean"
