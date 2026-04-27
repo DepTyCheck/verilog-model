@@ -10,10 +10,10 @@ from regression_input.main import main as regression_input_main
 
 SAMPLE_YAML_SV = """\
 id: err_a
-tool: iverilog
+target: iverilog
 regex: 'error: a'
 title: 'A'
-lang: sv
+profile: sv
 examples:
   - foo:
       minified_example: |
@@ -26,10 +26,10 @@ examples:
 
 SAMPLE_YAML_VHDL = """\
 id: err_b
-tool: ghdl
+target: ghdl
 regex: 'error: b'
 title: 'B'
-lang: vhdl
+profile: vhdl
 examples:
   - bar:
       minified_example: |
@@ -40,7 +40,7 @@ examples:
 class TestRegressionInputMain(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp())
-        self.known = self.tmp / "found_errors"
+        self.known = self.tmp / "found_issues"
         (self.known / "iverilog").mkdir(parents=True)
         (self.known / "ghdl").mkdir(parents=True)
         (self.known / "iverilog" / "err_a.yaml").write_text(SAMPLE_YAML_SV)

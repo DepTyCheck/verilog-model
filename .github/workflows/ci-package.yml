@@ -32,7 +32,7 @@ env:
   BUILD_DIR: ".build"
   PACKAGE_NAME: verilog-model
   ERROR_DISTANCES_OUT: error_distances.html
-  GH_PAGES_PATH: verilog-gh-pages
+  DATASET_PATH: dataset-clone
   # RUN_STATS_PATTERN: "run-stats.json"
   # COMBINED_RUN_STATS_FILE: "combined-run-stats.json"
 
@@ -236,8 +236,6 @@ jobs:
       matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.matrix) }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    env:
-      GH_PAGES_PATH: verilog-gh-pages
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -281,8 +279,8 @@ jobs:
           VER_CMD="${{ matrix.tool.version }}"
           echo "TOOL_VERSION=$($VER_CMD 2>&1 | head -1 || true)" >> "$GITHUB_ENV"
 
-      - name: Clone gh-pages
-        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch "$GH_PAGES_PATH"
+      - name: Clone dataset
+        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch dataset --single-branch "$DATASET_PATH"
 
       - name: Download generated files
         uses: actions/download-artifact@v8
@@ -300,7 +298,7 @@ jobs:
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           input-dir: generated-${{ matrix.tool.language }}
           file-pattern: ${{ matrix.tool.file_pattern }}
-          ignored-errors-dir: ${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}
+          ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
           output-json: ${{ matrix.tool.name }}-per-file.json
@@ -315,8 +313,6 @@ jobs:
       matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.matrix) }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    env:
-      GH_PAGES_PATH: verilog-gh-pages
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -362,13 +358,13 @@ jobs:
           VER_CMD="${{ matrix.tool.version }}"
           echo "TOOL_VERSION=$($VER_CMD 2>&1 | head -1 || true)" >> "$GITHUB_ENV"
 
-      - name: Clone gh-pages
-        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch "$GH_PAGES_PATH"
+      - name: Clone dataset
+        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch dataset --single-branch "$DATASET_PATH"
 
       - name: Materialise regression inputs
         run: |
           PYTHONPATH=ci/runner python -m regression_input.main \
-            --known-errors-dir "$GH_PAGES_PATH/found_errors" \
+            --known-errors-dir "$DATASET_PATH/found_issues" \
             --language ${{ matrix.tool.language }} \
             --language-config ci/conf/languages.yaml \
             --out-dir regression-input
@@ -383,7 +379,7 @@ jobs:
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           input-dir: regression-input
           file-pattern: '*'
-          ignored-errors-dir: ${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}
+          ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
           output-json: regression-${{ matrix.tool.name }}-per-file.json
@@ -394,7 +390,7 @@ jobs:
         run: |
           PYTHONPATH=ci/runner python -m regression_analyze.main \
             --per-file-input regression-${{ matrix.tool.name }}-per-file.json \
-            --known-errors-dir "$GH_PAGES_PATH/found_errors" \
+            --known-errors-dir "$DATASET_PATH/found_issues" \
             --language ${{ matrix.tool.language }} \
             --tool-name ${{ matrix.tool.name }} \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/error" \
@@ -518,7 +514,6 @@ jobs:
       contents: write
     env:
       DATASET_BRANCH: dataset
-      DATASET_PATH: dataset-branch
       PER_FILE_DIR: per-file-results
     steps:
       - name: Checkout
