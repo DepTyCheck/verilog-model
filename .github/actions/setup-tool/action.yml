@@ -1,17 +1,25 @@
 name: Setup tool
-description: Clone, build (with caching), and install a tool from source.
+description: |
+  Clone, build (with caching), and install a tool from source.
+  When `tool-repo` is empty, clone/build/cache/install are skipped — useful
+  for tools shipped via system packages or pip (declared in
+  `tool.python_runner_deps` in tools.yaml).
 
 inputs:
   tool-name:
     required: true
   tool-repo:
-    required: true
+    required: false
+    default: ""
   tool-path:
-    required: true
+    required: false
+    default: ""
   tool-build:
-    required: true
+    required: false
+    default: ""
   tool-install:
-    required: true
+    required: false
+    default: ""
   tool-deps:
     required: false
     default: ""
@@ -39,13 +47,20 @@ runs:
       run: sudo apt update -qq
 
     - name: Clone tool
+      if: inputs.tool-repo != ''
       shell: bash
       run: |
         git clone ${{ inputs.tool-repo }} ${{ inputs.tool-path }}
         cd ${{ inputs.tool-path }}
         echo "COMMIT_HASH=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
+    - name: Set empty COMMIT_HASH for source-less tools
+      if: inputs.tool-repo == ''
+      shell: bash
+      run: echo "COMMIT_HASH=" >> "$GITHUB_ENV"
+
     - name: Restore from cache
+      if: inputs.tool-repo != ''
       id: cache-build
       uses: actions/cache/restore@v5
       with:
@@ -99,20 +114,21 @@ runs:
       run: ${{ inputs.tool-pre-build }}
 
     - name: Build tool
-      if: steps.cache-build.outputs.cache-hit != 'true'
+      if: inputs.tool-repo != '' && steps.cache-build.outputs.cache-hit != 'true'
       shell: bash
       run: |
         cd ${{ inputs.tool-path }}
         ${{ inputs.tool-build }}
 
     - name: Save build
-      if: steps.cache-build.outputs.cache-hit != 'true'
+      if: inputs.tool-repo != '' && steps.cache-build.outputs.cache-hit != 'true'
       uses: actions/cache/save@v5
       with:
         path: ${{ inputs.tool-path }}
         key: ${{ steps.cache-build.outputs.cache-primary-key }}
 
     - name: Install tool
+      if: inputs.tool-install != ''
       shell: bash
       run: |
         cd ${{ inputs.tool-path }}

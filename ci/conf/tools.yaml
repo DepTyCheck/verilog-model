@@ -111,20 +111,14 @@ tools:
     language: sv
     file_pattern: "*.sv"
     repo: https://github.com/gmlarumbe/tree-sitter-systemverilog.git
-    deps: gcc python3
     path: tssv
-    pre_build: |
-      sudo npm install -g tree-sitter-cli@0.21
-    build: |
-      tree-sitter generate --abi 14
-      tree-sitter build -o sv.so
-    python_runner_deps: tree-sitter==0.21.3
-    version: tree-sitter -V
+    install: pip install ".[core]"
+    version: |
+      python3 -c "from importlib.metadata import version as v; \
+        print('tree-sitter-systemverilog', v('tree-sitter-systemverilog'))"
     commands:
-      - run: python3 ci/conf/tree-sitter-sv/run_ts.py tssv/sv.so {file}
-    assets: >-
-      ci/conf/tree-sitter-sv/run_ts.py
-      tssv/sv.so
+      - run: python3 ci/conf/tree-sitter-sv/run_ts.py {file}
+    assets: ci/conf/tree-sitter-sv/run_ts.py
 
   - name: synlig
     language: sv
