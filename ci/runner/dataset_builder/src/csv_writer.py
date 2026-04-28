@@ -2,14 +2,12 @@ import csv
 from pathlib import Path
 
 HEADER = (
-    "filename",
     "when_issue_occurred",
     "tool_name",
-    "error_id",
-    "tool_version",
     "tool_commit",
+    "error_id",
     "model_commit",
-    "matched_error",
+    "filename",
 )
 
 

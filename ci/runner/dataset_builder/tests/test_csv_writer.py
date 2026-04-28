@@ -9,14 +9,12 @@ from dataset_builder.src.csv_writer import HEADER, append_rows
 
 def _row(**kwargs) -> dict:
     base = {
-        "filename": "2026_04_24-seed_111_222.sv",
         "when_issue_occurred": "2026-04-24",
         "tool_name": "slang",
-        "error_id": "err_foo",
-        "tool_version": "slang 7.0",
         "tool_commit": "abc123",
+        "error_id": "err_foo",
         "model_commit": "def456",
-        "matched_error": "error: foo",
+        "filename": "2026_04_24-seed_111_222.sv",
     }
     base.update(kwargs)
     return base
@@ -46,20 +44,12 @@ class TestAppendRows(unittest.TestCase):
         self.assertEqual(len(rows), 1)
 
     def test_appends_multiple_calls(self):
-        append_rows(Path(self.tmp), [_row()])
-        append_rows(Path(self.tmp), [_row(matched_error="error: bar")])
+        append_rows(Path(self.tmp), [_row(error_id="err_foo")])
+        append_rows(Path(self.tmp), [_row(error_id="err_bar")])
         rows = self._read_csv()
         self.assertEqual(len(rows), 2)
-
-    def test_matched_error_with_comma_quoted(self):
-        append_rows(Path(self.tmp), [_row(matched_error="error: foo, bar")])
-        raw = Path(self.tmp).read_text(encoding="utf-8")
-        self.assertIn('"error: foo, bar"', raw)
-
-    def test_matched_error_with_semicolon(self):
-        append_rows(Path(self.tmp), [_row(matched_error="error: a; b")])
-        rows = self._read_csv()
-        self.assertEqual(rows[0][HEADER.index("matched_error")], "error: a; b")
+        self.assertEqual(rows[0][HEADER.index("error_id")], "err_foo")
+        self.assertEqual(rows[1][HEADER.index("error_id")], "err_bar")
 
     def test_empty_rows_no_error(self):
         append_rows(Path(self.tmp), [])

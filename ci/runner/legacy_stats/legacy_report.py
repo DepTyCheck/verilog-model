@@ -13,15 +13,17 @@ class LegacyReport:
 
     @classmethod
     def build(cls, prev: PreviousReport, idx: FirstFoundIndex) -> "LegacyReport":
+        latest_run_date = datetime.fromisoformat(prev.runs[-1].date).date()
+
         rows: list[LegacyRow] = []
         for error_id, info in prev.errors.items():
             first_found = idx.lookup(error_id)
             last_date = datetime.fromisoformat(info.last.date).date()
 
-            total_runs = sum(run.amount for run in prev.runs if first_found <= datetime.fromisoformat(run.date).date() <= last_date)
+            total_runs = sum(run.amount for run in prev.runs if first_found <= datetime.fromisoformat(run.date).date() <= latest_run_date)
 
             if total_runs == 0:
-                raise ValueError(f"{error_id}: zero runs in window [{first_found.isoformat()}, {last_date.isoformat()}]")
+                raise ValueError(f"{error_id}: zero runs in window [{first_found.isoformat()}, {latest_run_date.isoformat()}]")
             if info.test_paths_count == 0:
                 raise ValueError(f"{error_id}: test_paths_count == 0")
 

@@ -48,10 +48,8 @@ def _match_rows(new_name: str, tool_records: list) -> list[dict]:
                     "when_issue_occurred": report.run_date,
                     "tool_name": report.tool_name,
                     "error_id": match.error_id,
-                    "tool_version": report.tool_version,
                     "tool_commit": report.tool_commit,
                     "model_commit": report.model_commit,
-                    "matched_error": match.matched_text,
                 }
             )
     return rows
