@@ -6,6 +6,7 @@ import unittest
 from combined_report.previous_report import PreviousReport
 from legacy_stats.first_found_index import FirstFoundIndex
 from legacy_stats.legacy_report import LegacyReport
+from legacy_stats.legacy_row import LegacyRow
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 FOUND_OK = os.path.join(DATA_DIR, "found_errors")
@@ -22,36 +23,73 @@ class TestLegacyReportBuild(unittest.TestCase):
         self.by_id = {row.error_id: row for row in self.report.rows}
 
     def test_alpha_window(self):
-        # firstFound=2025-07-19, latest_run=2026-02-15 -> 4 runs in window (totalRuns=40).
+        # firstFound=2025-07-19, last.date=2025-08-01 -> runs in window: 07-19, 08-01 (amount=10 each) -> 20
         row = self.by_id["alpha"]
-        self.assertAlmostEqual(row.occurrence_pct, 75.00)
-        self.assertAlmostEqual(row.files_pct, 37.50)
-        self.assertAlmostEqual(row.avg_errors_per_file, 2.00)
-        self.assertEqual(row.last_commit, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-        self.assertEqual(row.last_date, "01.08.2025")
+        self.assertEqual(row.runs_for_that_issue, 20)
+        self.assertEqual(row.overall_found_count, 30)
+        self.assertEqual(row.test_files_count, 15)
+        self.assertEqual(row.last_occurrence_tool_commit, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        self.assertEqual(row.last_occurrence_date, "2025-08-01")
 
     def test_beta_window(self):
-        # firstFound=2025-03-04, latest_run=2026-02-15 -> all 5 runs in window (totalRuns=50).
+        # firstFound=2025-03-04, last.date=2026-01-01 -> 4 runs in window -> 40
         row = self.by_id["beta"]
-        self.assertAlmostEqual(row.occurrence_pct, 120.00)
-        self.assertAlmostEqual(row.files_pct, 60.00)
+        self.assertEqual(row.runs_for_that_issue, 40)
+        self.assertEqual(row.overall_found_count, 60)
+        self.assertEqual(row.test_files_count, 30)
+        self.assertEqual(row.last_occurrence_date, "2026-01-01")
 
     def test_gamma_window(self):
-        # firstFound=2026-01-01, latest_run=2026-02-15 -> 2 runs in window (totalRuns=20).
+        # firstFound=2026-01-01, last.date=2026-01-01 -> 1 run -> 10
         row = self.by_id["gamma"]
-        self.assertAlmostEqual(row.occurrence_pct, 25.00)
-        self.assertAlmostEqual(row.files_pct, 25.00)
-        self.assertAlmostEqual(row.avg_errors_per_file, 1.00)
+        self.assertEqual(row.runs_for_that_issue, 10)
+        self.assertEqual(row.overall_found_count, 5)
+        self.assertEqual(row.test_files_count, 5)
+        self.assertEqual(row.last_occurrence_date, "2026-01-01")
 
-    def test_delta_first_found_equals_latest_run(self):
-        # firstFound=2026-02-15, latest_run=2026-02-15 -> 1 run in window (totalRuns=10).
+    def test_delta_first_found_equals_last_date(self):
+        # firstFound=2026-02-15, last.date=2026-02-15 -> 1 run -> 10
         row = self.by_id["delta"]
-        self.assertAlmostEqual(row.occurrence_pct, 100.00)
-        self.assertAlmostEqual(row.files_pct, 100.00)
+        self.assertEqual(row.runs_for_that_issue, 10)
+        self.assertEqual(row.overall_found_count, 10)
+        self.assertEqual(row.test_files_count, 10)
+        self.assertEqual(row.last_occurrence_date, "2026-02-15")
 
-    def test_sort_descending_occurrence_then_alphabetical(self):
+    def test_sort_overall_found_count_desc(self):
         ids = [row.error_id for row in self.report.rows]
-        self.assertEqual(ids, ["beta", "delta", "alpha", "gamma"])
+        self.assertEqual(ids, ["beta", "alpha", "delta", "gamma"])
+
+
+class TestLegacyReportSortTiebreak(unittest.TestCase):
+    def test_tie_on_overall_found_count_breaks_alphabetically(self):
+        rows = [
+            LegacyRow(
+                error_id="zz",
+                runs_for_that_issue=10,
+                overall_found_count=50,
+                test_files_count=5,
+                last_occurrence_tool_commit="z" * 40,
+                last_occurrence_date="2026-01-01",
+            ),
+            LegacyRow(
+                error_id="aa",
+                runs_for_that_issue=10,
+                overall_found_count=50,
+                test_files_count=5,
+                last_occurrence_tool_commit="a" * 40,
+                last_occurrence_date="2026-01-01",
+            ),
+            LegacyRow(
+                error_id="mm",
+                runs_for_that_issue=10,
+                overall_found_count=50,
+                test_files_count=5,
+                last_occurrence_tool_commit="m" * 40,
+                last_occurrence_date="2026-01-01",
+            ),
+        ]
+        rows.sort(key=lambda r: (-r.overall_found_count, r.error_id))
+        self.assertEqual([r.error_id for r in rows], ["aa", "mm", "zz"])
 
 
 class TestLegacyReportErrors(unittest.TestCase):
@@ -83,19 +121,26 @@ class TestLegacyReportCsv(unittest.TestCase):
         idx = FirstFoundIndex(FOUND_OK)
         self.report = LegacyReport.build(prev, idx)
 
-    def test_save_csv_header_and_row_format(self):
+    def test_save_csv_header_and_first_row(self):
         with tempfile.NamedTemporaryFile("r+", suffix=".csv", delete=False, encoding="utf-8") as tmp:
             self.report.save_csv(tmp.name)
             tmp.seek(0)
             reader = list(csv.reader(tmp))
         self.assertEqual(
             reader[0],
-            ["error_id", "occurrence_pct", "files_pct", "avg_errors_per_file", "last_commit", "last_date"],
+            [
+                "error_id",
+                "runs_for_that_issue",
+                "overall_found_count",
+                "test_files_count",
+                "last_occurrence_tool_commit",
+                "last_occurrence_date",
+            ],
         )
-        # First row corresponds to beta (highest occurrence_pct at 120.00)
+        # First row corresponds to beta (highest overall_found_count = 60)
         self.assertEqual(reader[1][0], "beta")
-        self.assertEqual(reader[1][1], "120.00")
-        self.assertEqual(reader[1][2], "60.00")
-        self.assertEqual(reader[1][3], "2.00")
+        self.assertEqual(reader[1][1], "40")
+        self.assertEqual(reader[1][2], "60")
+        self.assertEqual(reader[1][3], "30")
         self.assertEqual(reader[1][4], "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
-        self.assertEqual(reader[1][5], "01.01.2026")
+        self.assertEqual(reader[1][5], "2026-01-01")

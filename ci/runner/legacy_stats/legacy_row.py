@@ -4,22 +4,29 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class LegacyRow:
     error_id: str
-    occurrence_pct: float
-    files_pct: float
-    avg_errors_per_file: float
-    last_commit: str
-    last_date: str
+    runs_for_that_issue: int
+    overall_found_count: int
+    test_files_count: int
+    last_occurrence_tool_commit: str
+    last_occurrence_date: str
 
     @staticmethod
     def csv_header() -> list[str]:
-        return ["error_id", "occurrence_pct", "files_pct", "avg_errors_per_file", "last_commit", "last_date"]
+        return [
+            "error_id",
+            "runs_for_that_issue",
+            "overall_found_count",
+            "test_files_count",
+            "last_occurrence_tool_commit",
+            "last_occurrence_date",
+        ]
 
     def to_csv_fields(self) -> list[str]:
         return [
             self.error_id,
-            f"{self.occurrence_pct:.2f}",
-            f"{self.files_pct:.2f}",
-            f"{self.avg_errors_per_file:.2f}",
-            self.last_commit,
-            self.last_date,
+            str(self.runs_for_that_issue),
+            str(self.overall_found_count),
+            str(self.test_files_count),
+            self.last_occurrence_tool_commit,
+            self.last_occurrence_date,
         ]

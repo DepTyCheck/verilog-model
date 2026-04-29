@@ -13,32 +13,37 @@ class LegacyReport:
 
     @classmethod
     def build(cls, prev: PreviousReport, idx: FirstFoundIndex) -> "LegacyReport":
-        latest_run_date = datetime.fromisoformat(prev.runs[-1].date).date()
-
         rows: list[LegacyRow] = []
         for error_id, info in prev.errors.items():
             first_found = idx.lookup(error_id)
             last_date = datetime.fromisoformat(info.last.date).date()
 
-            total_runs = sum(run.amount for run in prev.runs if first_found <= datetime.fromisoformat(run.date).date() <= latest_run_date)
+            total_runs = sum(
+                run.amount
+                for run in prev.runs
+                if first_found <= datetime.fromisoformat(run.date).date() <= last_date
+            )
 
             if total_runs == 0:
-                raise ValueError(f"{error_id}: zero runs in window [{first_found.isoformat()}, {latest_run_date.isoformat()}]")
+                raise ValueError(
+                    f"{error_id}: zero runs in window "
+                    f"[{first_found.isoformat()}, {last_date.isoformat()}]"
+                )
             if info.test_paths_count == 0:
                 raise ValueError(f"{error_id}: test_paths_count == 0")
 
             rows.append(
                 LegacyRow(
                     error_id=error_id,
-                    occurrence_pct=round(info.overall / total_runs * 100, 2),
-                    files_pct=round(info.test_paths_count / total_runs * 100, 2),
-                    avg_errors_per_file=round(info.overall / info.test_paths_count, 2),
-                    last_commit=info.last.commit,
-                    last_date=last_date.strftime("%d.%m.%Y"),
+                    runs_for_that_issue=total_runs,
+                    overall_found_count=info.overall,
+                    test_files_count=info.test_paths_count,
+                    last_occurrence_tool_commit=info.last.commit,
+                    last_occurrence_date=last_date.isoformat(),
                 )
             )
 
-        rows.sort(key=lambda r: (-r.occurrence_pct, r.error_id))
+        rows.sort(key=lambda r: (-r.overall_found_count, r.error_id))
         return cls(rows)
 
     def save_csv(self, path: str | Path) -> None:
