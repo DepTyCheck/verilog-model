@@ -276,8 +276,10 @@ jobs:
 
       - name: Capture tool version
         run: |
-          VER_CMD="${{ matrix.tool.version }}"
-          echo "TOOL_VERSION=$($VER_CMD 2>&1 | head -1 || true)" >> "$GITHUB_ENV"
+          out=$({
+          ${{ matrix.tool.version }}
+          } 2>&1 | head -1 || true)
+          echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
       - name: Clone dataset
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch dataset --single-branch "$DATASET_PATH"
@@ -355,8 +357,10 @@ jobs:
 
       - name: Capture tool version
         run: |
-          VER_CMD="${{ matrix.tool.version }}"
-          echo "TOOL_VERSION=$($VER_CMD 2>&1 | head -1 || true)" >> "$GITHUB_ENV"
+          out=$({
+          ${{ matrix.tool.version }}
+          } 2>&1 | head -1 || true)
+          echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
       - name: Clone dataset
         run: git clone https://github.com/DepTyCheck/verilog-model.git --branch dataset --single-branch "$DATASET_PATH"

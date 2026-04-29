@@ -114,8 +114,7 @@ tools:
     path: tssv
     install: pip install ".[core]"
     version: |
-      python3 -c "from importlib.metadata import version as v; \
-        print('tree-sitter-systemverilog', v('tree-sitter-systemverilog'))"
+      python3 -c "from importlib.metadata import version as v; print('tree-sitter-systemverilog', v('tree-sitter-systemverilog'))"
     commands:
       - run: python3 ci/conf/tree-sitter-sv/run_ts.py {file}
     assets: ci/conf/tree-sitter-sv/run_ts.py
