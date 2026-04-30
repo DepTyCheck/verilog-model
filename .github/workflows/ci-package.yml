@@ -578,6 +578,41 @@ jobs:
           git remote set-url origin "https://x-access-token:${{ secrets.PAT_PUSH }}@github.com/${{ github.repository }}"
           git push origin ${{ env.DATASET_BRANCH }}
 
+  combined-stats:
+    name: Combined stats
+    runs-on: ubuntu-latest
+    needs: [save-dataset]
+    env:
+      DATASET_BRANCH: dataset
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install dataset_stats requirements
+        run: pip install -r ci/runner/dataset_stats/requirements.txt
+
+      - name: Clone dataset branch (post-save state)
+        run: |
+          git clone https://github.com/${{ github.repository }}.git \
+            --branch ${{ env.DATASET_BRANCH }} \
+            --single-branch \
+            "${{ env.DATASET_PATH }}"
+
+      - name: Build combined_stats.csv (print to console)
+        run: |
+          PYTHONPATH=ci/runner python -m dataset_stats.main \
+            --issues-csv "${{ env.DATASET_PATH }}/issues.csv" \
+            --files-dir "${{ env.DATASET_PATH }}/files" \
+            --found-issues-dir "${{ env.DATASET_PATH }}/found_issues" \
+            --legacy-stats-csv "${{ env.DATASET_PATH }}/legacy_stats.csv" \
+            --output -
+
   publish-container:
     name: Build and publish Docker image
     needs: [build-and-test, run-tools]

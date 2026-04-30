@@ -1,0 +1,11 @@
+stage: parsing
+target: tool-a
+profile: sv
+id: gamma
+title: Gamma
+issue_novelty: already_known
+maintainers_response: low
+examples:
+  - gamma_ex1:
+      first_found: 01.01.2026
+      minified_example: ""

@@ -3,7 +3,6 @@ from pathlib import Path
 
 HEADER = (
     "when_issue_occurred",
-    "tool_name",
     "tool_commit",
     "error_id",
     "model_commit",

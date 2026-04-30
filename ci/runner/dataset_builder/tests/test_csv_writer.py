@@ -10,7 +10,6 @@ from dataset_builder.src.csv_writer import HEADER, append_rows
 def _row(**kwargs) -> dict:
     base = {
         "when_issue_occurred": "2026-04-24",
-        "tool_name": "slang",
         "tool_commit": "abc123",
         "error_id": "err_foo",
         "model_commit": "def456",
@@ -57,13 +56,13 @@ class TestAppendRows(unittest.TestCase):
         self.assertEqual(len(rows), 0)
 
     def test_column_order_matches_header(self):
-        row = _row(filename="x.sv", tool_name="iverilog", error_id="err_bar")
+        row = _row(filename="x.sv", error_id="err_bar")
         append_rows(Path(self.tmp), [row])
         rows = self._read_csv()
         data_row = rows[0]
         self.assertEqual(data_row[HEADER.index("filename")], "x.sv")
-        self.assertEqual(data_row[HEADER.index("tool_name")], "iverilog")
         self.assertEqual(data_row[HEADER.index("error_id")], "err_bar")
+        self.assertNotIn("tool_name", HEADER)
 
 
 if __name__ == "__main__":
