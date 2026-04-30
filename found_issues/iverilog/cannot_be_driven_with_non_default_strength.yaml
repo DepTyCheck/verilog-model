@@ -1,0 +1,100 @@
+stage: synthesis
+profile: sv
+target: iverilog
+id: cannot_be_driven_with_non_default_strength
+title: Cannot be driven with non default strength
+regex: >
+  ariable .* cannot be driven by a primitive or continuous assignment with non-default strength
+issue_novelty: new
+issue_links:
+  - url: https://github.com/steveicarus/iverilog/issues/1268
+    link_name: >
+      #1268
+maintainers_response: bug
+examples:
+  - cannot_be_driven_with_non_default_strength_ex1:
+      first_found: 02.07.2025
+      minified_error: |
+        top.sv:4: error: variable c; cannot be driven by a primitive or continuous assignment with non-default strength.
+        1 error(s) during elaboration.
+      minified_example: |
+        module a(output logic c);
+          xor b(c, d, e);
+        endmodule: a
+      full_error: |
+        error: variable lbrkx; cannot be driven by a primitive or continuous assignment with non-default strength.
+      full_example: |
+        // Seed: 12348576575492672505,10002677915001445999
+
+        module iul
+          (output logic lbrkx, output logic [2:3] cvawpgb, output logic xnhyjs [4:3]);
+
+          xor al(lbrkx, eyezhdj, eyezhdj);
+          not ctwm(eyezhdj, lbrkx);
+
+          // Assigns
+          assign cvawpgb = 'b1x;
+          assign xnhyjs = '{'b1,'bx};
+          assign eyezhdj = 'b1;
+          assign eyezhdj = 'bx;
+        endmodule: iul
+
+        module xvicefqhnc
+          (output logic [2:0] mi, output logic [3:3] o);
+
+
+          not iiqhh(mgzexopir, dlg);
+
+          xor ttvhm(dlg, lzi, pyw);
+
+          and yyxdxc(lzi, dlg, okjrcx);
+
+          // Top inputs -> top outputs assigns
+
+          // Assigns
+          assign okjrcx = 'bz;
+          assign okjrcx = 'b0;
+          assign okjrcx = 'b1;
+          assign okjrcx = 'b0;
+          assign o = 'bz;
+          assign mi = 'bxx1;
+          assign dlg = 'b0;
+        endmodule: xvicefqhnc
+
+        // Seed after: 4925075022431791883,10002677915001445999
+  - cannot_be_driven_with_non_default_strength_ex2:
+      first_found: 18.07.2025
+      full_error: |
+        error: Variable 'nm' cannot be driven by a primitive or continuous assignment with non-default strength.
+      full_example: |
+        module pauht
+          ( output supply1 logic [2:1][4:3][4:4] wheupuag [3:1][4:3][2:0][0:1]
+          , output integer bfcpcps [1:2]
+          , output bit [1:0][4:4][3:4][1:0] nm
+          , output triand logic [4:0][4:3] jvlvzxp [0:1][4:4][2:2][4:1]
+          , input wor logic [1:2][0:0][4:0][2:3] nfywtz [3:0]
+          , input shortreal emg
+          , input byte dy
+          );
+
+
+          not rrtzpp(nm, xewuwwev);
+
+
+          // Top inputs -> top outputs assigns
+
+          // Single-driven assigns
+          assign bfcpcps = '{'b0,'b1};
+          assign xewuwwev = 'b0;
+          assign wheupuag = '{'{'{'{'bz,'b0},'{'bz,'bz},'{'b1,'bz}},'{'{'bz,'b1},'{'bx,'b0},'{'b0,'b0}}},'{'{'{'bx,'bz},'{'b0,'b1},'{'bz,'bx}},'{'{'b0,'b1},'{'bx,'b0},'{'b1,'b1}}},'{'{'{'bx,'b0},'{'bz,'bz},'{'bx,'b0}},'{'{'bz,'b0},'{'b0,'b1},'{'bz,'b0}}}};
+          assign jvlvzxp = '{'{'{'{'bx,'bz,'b0,'bz}}},'{'{'{'b1,'b0,'bx,'b0}}}};
+
+          // Multi-driven assigns
+        endmodule: pauht
+
+        module sjmhw
+          (input supply1 logic [0:3][1:2] svkeknmyib [4:3][3:2], input bit [1:2][3:0][2:3] ohyhcc);
+
+          // Multi-driven assigns
+          assign svkeknmyib = '{'{'b0,'bx},'{'b1,'bx}};
+        endmodule: sjmhw

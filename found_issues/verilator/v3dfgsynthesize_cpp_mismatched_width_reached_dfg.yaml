@@ -1,0 +1,142 @@
+stage: synthesis
+profile: sv
+target: verilator
+id: v3dfgsynthesize_cpp_mismatched_width_reached_dfg
+title: >
+  V3DfgSynthesize.cpp:442: Mismatched width reached DFG
+regex: >
+  Mismatched width reached DFG
+issue_novelty: new
+issue_links:
+  - url: https://github.com/verilator/verilator/issues/6323
+    link_name: >
+      #6323
+examples:
+  - v3dfgsynthesize_cpp_mismatched_width_reached_dfg_ex1:
+      first_found: 21.08.2025
+      minified_error: |
+        %Error: Internal Error: top.sv:7:13: ../V3DfgSynthesize.cpp:442: Mismatched width reached DFG
+      minified_example: |
+        module a(output logic [1:2] a1);
+          assign a1 = 'bz;
+        endmodule: a
+
+        module b (output logic b1);
+          a a_inst(.a1(b1));
+        endmodule: b
+      full_error: |
+        %Error: Internal Error: top.sv:56:15: ../V3DfgSynthesize.cpp:442: Mismatched width reached DFG
+      full_example: |
+        module ktygoq
+          ( output supply1 logic autonmydqi [0:1]
+          , output wor logic [2:0] lzwo
+          , output logic [3:3][2:0][4:3][0:1] qctrupp
+          , output reg [1:1][2:4] jfemua
+          , input tri0 logic [2:1] kwo [0:2]
+          );
+
+          not s(jfemua, lsdzvtdd);
+          not zeiubpvlkp(qc, qc);
+          not xroazngryu(hxvmwc, rex);
+
+          // Single-driven assigns
+          assign lsdzvtdd = 'bx;
+          assign qctrupp = 'bx;
+        endmodule: ktygoq
+
+        module ynkine
+          (output logic [1:2][0:4] ienm);
+
+          not frzppbqgdy(lkmprwmcn, biqrk);
+          nand vpyylpt(mv, mv, biqrk);
+          nand q(biqrk, yb, fjv);
+          or ahrqtiz(hdbxlquukp, biqrk, oaoeg);
+
+          // Single-driven assigns
+          assign ienm = 'bz;
+          assign yb = 'b1;
+          assign oaoeg = 'b1;
+          assign fjv = 'b0;
+        endmodule: ynkine
+
+        module jy
+          (output logic [2:0][1:2] d);
+
+          ynkine gox(.ienm(d));
+          or jgg(bmb, bn, kjdpwtuo);
+          not o(bn, bn);
+          not mjkkshf(kjdpwtuo, ohmwgszvvt);
+
+          // Single-driven assigns
+          assign ohmwgszvvt = 'bz;
+
+          // Multi-driven assigns
+          assign bmb = 'bz;
+          assign kjdpwtuo = 'bx;
+        endmodule: jy
+  - v3dfgsynthesize_cpp_mismatched_width_reached_dfg_ex2:
+      first_found: 13.09.2025
+      full_error: |
+        %Error: Internal Error: top.sv:37:25: ../V3DfgSynthesize.cpp:491: Mismatched width reached DFG
+      full_example: |
+        module xacrkvzgk
+          ( output wand logic [2:0][1:3] aqsykex [3:0][0:4][0:3]
+          , output wire logic [4:2][4:2]  wwlizoxh
+          , output realtime edpemzj [0:3][2:1][1:3][2:3]
+          , output tri logic [4:1][2:0][1:1] rcjk [2:1][3:3][3:1][2:3]
+          , input shortreal igzsla
+          , input realtime jhmgjsccl [1:4][4:1]
+          , input tri logic f [0:0][4:2][2:0]
+          , input reg [3:2] pzofjx [3:2]
+          );
+
+          // Single-driven assigns
+          assign edpemzj = edpemzj;
+
+          // Multi-driven assigns
+          assign wwlizoxh = '{'{'bz,'b111zz,'bz110},'{'b0xx0,'b11z11,'b011x},'{'bx10zx,'bx1xx0,'bz00}};
+          assign aqsykex = aqsykex;
+        endmodule: xacrkvzgk
+
+        module fzhg
+          (output supply1 logic [4:2][0:1][3:3][0:4] hswa [3:0], output realtime l, input uwire logic cljgmrrw [4:0]);
+
+          tri logic [4:1][2:0][1:1] bvm [2:1][3:3][3:1][2:3];
+          realtime xfwyvv [0:3][2:1][1:3][2:3];
+          wand logic [2:0][1:3] lrfgy [3:0][0:4][0:3];
+          reg [3:2] boldxpysx [3:2];
+          tri logic pdmmkfgb [0:0][4:2][2:0];
+          realtime cygbogk [1:4][4:1];
+
+          xor ulcwx(rtopizaeo, rkfpfirzvu, rkfpfirzvu);
+
+          xacrkvzgk fqrqwrfky( .aqsykex(lrfgy)
+                            , .wwlizoxh(rtopizaeo)
+                            , .edpemzj(xfwyvv)
+                            , .rcjk(bvm)
+                            , .igzsla(tmaarxhhh)
+                            , .jhmgjsccl(cygbogk)
+                            , .f(pdmmkfgb)
+                            , .pzofjx(boldxpysx)
+                            );
+          or oscrmcbbz(itiruu, itiruu, itiruu);
+          and hqfblcnyho(fuabnocnm, l, lynkrejto);
+
+          // Single-driven assigns
+          assign boldxpysx = '{'{'b00100,'b1},'{'b10zz,'b111}};
+
+          // Multi-driven assigns
+          assign itiruu = l;
+          assign hswa = hswa;
+          assign bvm = bvm;
+        endmodule: fzhg
+
+        module flwjdusdf
+          ();
+
+          not hmdcg(w, dyn);
+          and ns(vfv, ecrwzrslxc, waljwybw);
+
+          // Multi-driven assigns
+          assign dyn = 'b10z0z;
+        endmodule: flwjdusdf

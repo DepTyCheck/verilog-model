@@ -1,0 +1,52 @@
+stage: parsing
+profile: sv
+target: yosys-slang
+id: real_is_unsupported_for_conversion_to_bits
+title: Real is unsupported for conversion to bits
+issue_novelty: unsupported
+issue_links:
+  - url: https://github.com/povik/yosys-slang/issues/282
+    link_name: >
+      #282
+regex: >
+  is unsupported for conversion to bits in this context
+examples:
+  - real_is_unsupported_for_conversion_to_bits_ex1:
+      first_found: 02.02.2026
+      full_error: |
+        error: value of type 'shortreal' is unsupported for conversion to bits in this context
+      full_example: |
+        module amaunrn
+          ( output trireg logic [1:3][3:2][0:1][1:4] qndzb [4:0][2:4][1:0][1:1]
+          , output reg [4:1][4:3][0:2]  pjlvdbkm
+          , output logic [1:2][1:2][1:0]  revuogxehb
+          , output wire logic [3:0][0:2][1:3] iuc [4:4]
+          , input logic [1:4][4:4][0:1][1:0]  canhdtna
+          , input wire logic vimpkj [3:4][4:3][4:0][3:1]
+          , input supply1 logic [3:4][3:2][3:2][1:4] iilbszkqqx [4:1]
+          );
+
+          nand yfevxhqx(botv, qpl, canhdtna);
+          or mfw(huqoelgos, pjlvdbkm, huqoelgos);
+          not k(qpl, pjlvdbkm);
+
+          // Single-driven assigns
+          assign pjlvdbkm = qpl;
+
+          // Multi-driven assigns
+          assign vimpkj = '{'{'{'{'bxz11,'b1101z,'bzx},'{'b1xz0,'bz1,'bz0zx},'{'bxxz,'b00x,'bzx1},'{'bz0xx,'b10,'b00zx},'{'b0xz1,'b1,'bx1xx}},'{'{'b1z,'bz,'bx1},'{'bx0x,'b0xz,'bzz},'{'b1z1x,'b1z1,'bxx1},'{'b0z0,'b011,'bz},'{'bzxxzz,'b0,'b010}}},'{'{'{'bx1,'bx1,'bx0x0},'{'b0x1xz,'b100z,'bx0x},'{'bz0x0,'b0xz0,'bx},'{'bxz,'bxxz,'bz0z},'{'b101,'bzxzzz,'bx}},'{'{'b100,'bxzzzz,'b1},'{'b10,'b0x11,'b1z1},'{'bxx0z0,'bz,'b0110},'{'bz,'bxzz0z,'b0x1},'{'b011x,'bxz,'b100xx}}}};
+          assign qpl = huqoelgos;
+          assign iuc = '{'{'{'{'b0,'bzxz11,'b1},'{'b1zz,'bz1,'bx1z0x},'{'bz,'b10xz,'b10}},'{'{'bz,'bxzzx,'bxx},'{'bx,'b0,'b1z},'{'b1zx,'b0x0x,'bz}},'{'{'bx,'bxzzxx,'b0z},'{'bxx0zx,'b10xx1,'bzzxx1},'{'bz01,'b10zz0,'bx}},'{'{'bxx1,'b1xx,'b00z11},'{'bzz,'bxxx,'bz1x},'{'bx01,'bx1,'bzx}}}};
+          assign qndzb = qndzb;
+        endmodule: amaunrn
+
+        module wyovinsce
+          (output longint nob, input trireg logic [2:3][2:0] czirmwx [2:2], input shortreal lnjjtodo);
+
+          xor uqji(nob, nob, nob);
+          not ymtjtisoj(irqynk, nob);
+
+          // Multi-driven assigns
+          assign czirmwx = '{'{'{'b0z10,'bz,'bx11zx},'{'bzz,'b00z1,'b1}}};
+          assign irqynk = 'b0001;
+        endmodule: wyovinsce

@@ -1,0 +1,442 @@
+stage: analysis
+profile: sv
+target: synlig
+id: output_port_is_connected_to_constants_auto_hierarchy
+title: >
+  Port is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }
+regex: >
+  Output port .* is connected to constants:
+issue_novelty: new
+issue_links:
+  - url: https://github.com/chipsalliance/synlig/issues/2771
+    link_name: >
+      #2771
+examples:
+  - output_port_is_connected_to_constants_auto_hierarchy_ex1:
+      first_found: 21.07.2025
+      full_error: >
+        ERROR: Output port udbjmldhub.llfhyxo.agrbxoods (sbp) is connected to constants: { $auto$hierarchy.cc:1462:execute$6 1'0 }
+      full_example: |
+        module sbp
+          ( output triand logic [4:3] ohney
+          , output reg [4:2][4:2][3:4][3:3] agrbxoods
+          , output supply0 logic vkumvbjn
+          , output supply1 logic x [3:3]
+          , input bit [0:0][1:2] omfhsss
+          , input triand logic g [0:1][1:0][4:2]
+          , input reg l
+          , input logic [0:1][2:0][3:3] ov
+          );
+
+          // Single-driven assigns
+          assign x = '{'b0};
+
+          // Multi-driven assigns
+          assign vkumvbjn = 'b1;
+          assign x = '{'b1};
+          assign g = '{'{'{'b0,'b0,'bz},'{'bx,'bz,'b0}},'{'{'b1,'b0,'bx},'{'b1,'bx,'b0}}};
+          assign x = '{'b1};
+        endmodule: sbp
+
+        module udbjmldhub
+          ( output tri1 logic zfrz [4:0]
+          , output wire logic fdobyz
+          , output bit [2:2][4:0] wgcmxprkh
+          , output tri1 logic [2:1][2:4] pzg [2:0][0:2][1:0]
+          , input wor logic [0:3] dkp
+          , input supply0 logic s [3:1]
+          , input tri0 logic ngbav
+          , input logic [1:0] tb
+          );
+
+          triand logic biujcjgb [0:1][1:0][4:2];
+          supply1 logic jmxmerdxfq [3:3];
+
+          or vy(wo, uur, dpja);
+
+          sbp llfhyxo( .ohney(uur)
+                    , .agrbxoods(lp)
+                    , .vkumvbjn(wgcmxprkh)
+                    , .x(jmxmerdxfq)
+                    , .omfhsss(dfwhdv)
+                    , .g(biujcjgb)
+                    , .l(cbe)
+                    , .ov(kvsdekkba)
+                    );
+
+          xor slclbvryk(cbe, ezpaxyxhig, cbe);
+
+          // Multi-driven assigns
+          assign cbe = 'b1;
+          assign lp = 'b0;
+          assign zfrz = '{'b1,'bx,'bz,'bx,'bz};
+        endmodule: udbjmldhub
+
+        module lq
+          ( output wire logic [1:3][4:1][1:1][3:1] xooszipend [1:1][3:0][3:0][1:4]
+          , output shortreal snjgo
+          , output supply1 logic [0:2] i [1:0][2:0]
+          , input tri1 logic [0:1][2:0][3:4] pwap [1:3][0:0][4:2][0:2]
+          , input logic [2:1] shriue
+          , input logic xpdlqs [1:0][4:4]
+          , input wand logic [0:3] mymukcgfz [4:1][2:3]
+          );
+
+          or bhjx(kvvlmht, n, snjgo);
+          not tke(n, snjgo);
+          or fqlai(snjgo, efke, snjgo);
+
+          // Single-driven assigns
+          assign i = '{'{'bz,'bz,'b1},'{'b1,'b0,'b1}};
+          assign efke = 'b1;
+          assign xooszipend = '{'{'{'{'b1,'b1,'bz,'bz},'{'bx,'b0,'bx,'b0},'{'b0,'b0,'b1,'b0},'{'b1,'b0,'bx,'b0}},'{'{'bx,'b1,'b0,'b0},'{'bz,'b0,'b1,'bx},'{'bx,'b1,'b0,'bz},'{'b0,'bz,'b1,'b0}},'{'{'b0,'bx,'bz,'bz},'{'bx,'b0,'bx,'b1},'{'b1,'b0,'bx,'b0},'{'b1,'bx,'b0,'b0}},'{'{'b1,'bx,'b1,'b0},'{'bz,'b0,'b1,'b1},'{'bz,'bz,'bx,'b0},'{'b0,'bz,'bx,'bx}}}};
+        endmodule: lq
+
+  - output_port_is_connected_to_constants_auto_hierarchy_ex2:
+      first_found: 21.07.2025
+      full_error: >
+        ERROR: Output port qzjcl.zavpwmtnm.wfh (kxab) is connected to constants: 9'x
+      full_example: |
+        module cqrewiill
+          ( output triand logic [4:0] cjhxbs [0:3]
+          , output trior logic [1:3][4:0] dctzrckjp
+          , output supply1 logic [4:2] vbvcmvrb [2:4][0:0][3:0]
+          , output supply1 logic [3:3] qlockgum [2:1][4:3][0:4]
+          , input bit [4:3][3:0][0:2] rulysauoq
+          , input wor logic [0:4] qndoehr [0:2][0:1][2:3]
+          , input bit [1:0][1:3][0:4] rvl
+          );
+
+          assign dctzrckjp = rvl;
+
+          // Single-driven assigns
+          assign qlockgum = '{'{'{'b0,'bx,'bz,'bz,'b0},'{'bz,'bz,'b0,'bx,'b0}},'{'{'b0,'b1,'bz,'b0,'bx},'{'bz,'bz,'b0,'bz,'bx}}};
+          assign cjhxbs = '{'bz,'b1,'b0,'bx};
+          assign vbvcmvrb = '{'{'{'bz,'b0,'bx,'bx}},'{'{'bz,'bz,'b0,'bx}},'{'{'b1,'bz,'bz,'b0}}};
+
+          // Multi-driven assigns
+          assign qlockgum = '{'{'{'b1,'bz,'bz,'b0,'b1},'{'bz,'bz,'bz,'bx,'bz}},'{'{'bz,'bz,'bx,'b1,'bz},'{'bz,'bx,'b0,'bx,'bz}}};
+        endmodule: cqrewiill
+
+        module kxab
+          (output trireg logic [0:2] wfh [2:4], output bit [2:1] arkzhs [1:3], output bit rhaifxdm, input uwire logic [1:0] rmyqfj [0:1][1:0]);
+
+          wor logic [0:4] evihajrf [0:2][0:1][2:3];
+          triand logic [4:0] bihedomx [0:3];
+          supply1 logic [4:2] l [2:4][0:0][3:0];
+          supply1 logic [3:3] mpe [2:1][4:3][0:4];
+
+          not yykkyv(qrdahxx, pezqya);
+          not pu(mv, ulfqjdcxi);
+          cqrewiill vfdf( .cjhxbs(bihedomx)
+                        , .dctzrckjp(nmqdlpd)
+                        , .vbvcmvrb(l)
+                        , .qlockgum(mpe)
+                        , .rulysauoq(mv)
+                        , .qndoehr(evihajrf)
+                        , .rvl(rhaifxdm)
+                        );
+          not kj(rhaifxdm, suzqhvlewq);
+
+          // Single-driven assigns
+          assign evihajrf = '{'{'{'bx,'b0},'{'b1,'b1}},'{'{'b1,'b0},'{'bx,'bz}},'{'{'bx,'b0},'{'bz,'b0}}};
+          assign suzqhvlewq = 'bx;
+
+          // Multi-driven assigns
+          assign wfh = '{'b1,'bx,'b0};
+          assign wfh = '{'b1,'bx,'bx};
+        endmodule: kxab
+
+        module nil
+          (output trior logic [1:2][3:3][3:4] pbnkwobv [3:2][1:0], output reg [4:1] szc [0:3], input bit [0:3][2:0] wu);
+
+          // Single-driven assigns
+          assign szc = '{'b0,'bx,'bz,'bx};
+          assign pbnkwobv = '{'{'b0,'bx},'{'b1,'bx}};
+
+          // Multi-driven assigns
+          assign pbnkwobv = '{'{'b0,'bz},'{'bz,'bz}};
+        endmodule: nil
+
+        module qzjcl
+          ( output bit [3:1] lbuly
+          , output reg [1:1][2:4] ayjy [2:3]
+          , output logic yuosjhyef [0:3]
+          , output reg [4:4][0:1][4:2] yontivklty [4:2]
+          , input tri1 logic [0:4] xastjzuk [1:1][2:4]
+          , input reg [4:4][2:2][2:0][4:4] tni
+          , input logic [4:4] eifepkfgl [2:4][0:4]
+          );
+
+          uwire logic [1:0] ypzxja [0:1][1:0];
+          trireg logic [0:2] fzpjavmt [2:4];
+          bit [2:1] cmutf [1:3];
+          trior logic [1:2][3:3][3:4] dgxgctsuum [3:2][1:0];
+          reg [4:1] bbxuhubq [0:3];
+          trior logic [1:2][3:3][3:4] opnaewdoj [3:2][1:0];
+          reg [4:1] yshsvthc [0:3];
+
+          kxab zavpwmtnm(.wfh(fzpjavmt), .arkzhs(cmutf), .rhaifxdm(lbuly), .rmyqfj(ypzxja));
+          nil uandb(.pbnkwobv(dgxgctsuum), .szc(bbxuhubq), .wu(jmppebdqr));
+          nand ymhldrgfhu(tytdbwhxx, qnvcpza, tytdbwhxx);
+
+          nil nmjvmesls(.pbnkwobv(opnaewdoj), .szc(yshsvthc), .wu(txilnjr));
+
+          // Single-driven assigns
+          assign yontivklty = '{'bz,'b1,'bx};
+          assign ayjy = '{'bz,'b1};
+          assign yuosjhyef = '{'bx,'b0,'b0,'bx};
+          assign ypzxja = '{'{'bz,'bz},'{'bz,'bz}};
+          assign txilnjr = 'b1;
+
+          // Multi-driven assigns
+          assign fzpjavmt = '{'b0,'b0,'bx};
+        endmodule: qzjcl
+
+  - output_port_is_connected_to_constants_auto_hierarchy_z:
+      first_found: 04.08.2025
+      full_error: >
+        ERROR: Output port geudpzvsxu.vdvdlnyza.lbqrtrkng (bbqvupp) is connected to constants: { $auto$hierarchy.cc:1462:execute$4 1'z }
+      full_example: |
+        module bbqvupp
+          ( output bit [4:2][1:1][2:2] fwros
+          , output reg [1:4][0:1][0:1] ai
+          , output bit [3:1][1:0][0:0] lbqrtrkng
+          , output logic [4:0][1:2][1:2][0:3] a
+          , input realtime vdlbmlbii [2:3][2:0][4:1]
+          );
+
+          and o(h, c, h);
+
+          // Single-driven assigns
+          assign a = 'b1;
+          assign fwros = 'b0;
+          assign ai = 'bx;
+          assign lbqrtrkng = 'b0;
+
+          // Multi-driven assigns
+          assign h = 'bx;
+          assign h = 'bx;
+          assign h = 'bz;
+          assign h = 'bz;
+        endmodule: bbqvupp
+
+        module geudpzvsxu
+          (output trireg logic [1:3][2:2] qpyieagmi [0:3], output reg [1:2][3:2][4:3] busonhyr, output triand logic [2:1][1:2] mckn [4:0]);
+
+          realtime hyzmfohz [2:3][2:0][4:1];
+
+          and e(wmeprmh, bpwyueorw, gocwl);
+          bbqvupp vdvdlnyza(.fwros(busonhyr), .ai(bpwyueorw), .lbqrtrkng(gq), .a(lpswwxuuu), .vdlbmlbii(hyzmfohz));
+
+          // Single-driven assigns
+          assign mckn = '{'bz,'b1,'bx,'bx,'b1};
+          assign qpyieagmi = '{'b0,'b1,'b0,'bx};
+
+          // Multi-driven assigns
+          assign gq = 'bz;
+          assign qpyieagmi = '{'b1,'b1,'bx,'bx};
+          assign mckn = '{'bx,'bz,'bz,'b0,'b0};
+        endmodule: geudpzvsxu
+  - output_port_is_connected_to_constants_auto_hierarchy_8:
+      first_found: 20.08.2025
+      full_error: >
+        ERROR: Output port mdhaspwso.mbojk.zkn (nybpantrf) is connected to constants: { $auto$hierarchy.cc:1462:execute$6 8'00000000 }
+      full_example: |
+        module shwhirms
+          ( output shortreal ueyty
+          , input tri logic [0:1][1:4][1:3][1:3] igxxieh [2:4][4:0][4:1][2:3]
+          , input real vuk [3:0][1:2]
+          , input reg [2:0] cvuedb
+          );
+
+          xor wtclhetysm(t, ueyty, t);
+          not qgmqiqbpl(ueyty, brr);
+
+          // Single-driven assigns
+          assign brr = 'b1;
+
+          // Multi-driven assigns
+          assign t = 'b1;
+          assign t = 'bx;
+          assign t = 'bx;
+          assign t = 'bz;
+        endmodule: shwhirms
+
+        module nybpantrf
+          (output triand logic srm [0:2][0:3], output logic [3:4][0:4][2:1] mlq, output trior logic [1:4][2:1] ae [2:1], output int zkn);
+
+          tri logic [0:1][1:4][1:3][1:3] h [2:4][4:0][4:1][2:3];
+          real vaweqx [3:0][1:2];
+
+          not owzdsa(tix, zkn);
+          not yqnxlkpdz(mlq, nkqcbj);
+          shwhirms gegw(.ueyty(zkn), .igxxieh(h), .vuk(vaweqx), .cvuedb(zkn));
+
+          // Single-driven assigns
+          assign ae = '{'bx,'b0};
+          assign vaweqx = '{'{'b0,'bz},'{'bx,'bx},'{'bx,'b1},'{'bx,'bx}};
+          assign srm = '{'{'bz,'b0,'bx,'b0},'{'bz,'bx,'bx,'bx},'{'b0,'b1,'b1,'bz}};
+          assign h = '{'{'{'{'b0,'b1},'{'b1,'b1},'{'b0,'bx},'{'bz,'b0}},'{'{'b0,'bz},'{'b1,'b1},'{'b1,'b0},'{'b0,'b0}},'{'{'b0,'b1},'{'bx,'b0},'{'b0,'bx},'{'b0,'b0}},'{'{'b1,'b1},'{'b1,'b1},'{'bx,'b0},'{'b1,'bx}},'{'{'bz,'b0},'{'bx,'b0},'{'bz,'bx},'{'b1,'bx}}},'{'{'{'b1,'b0},'{'bx,'bx},'{'bx,'bx},'{'b1,'bz}},'{'{'b0,'b0},'{'b1,'b0},'{'b0,'b1},'{'b0,'b1}},'{'{'bx,'bx},'{'b0,'b0},'{'bx,'b0},'{'b1,'b1}},'{'{'bx,'b1},'{'bz,'b0},'{'bz,'bx},'{'b0,'bx}},'{'{'bx,'bz},'{'bz,'b0},'{'bx,'b1},'{'b0,'b1}}},'{'{'{'b0,'b1},'{'b0,'bz},'{'bz,'bx},'{'bz,'b1}},'{'{'bx,'b1},'{'b1,'bz},'{'b0,'b0},'{'bz,'bz}},'{'{'bx,'b0},'{'b0,'b0},'{'b1,'b1},'{'b0,'bz}},'{'{'b1,'bz},'{'b1,'bz},'{'bx,'bx},'{'b1,'b1}},'{'{'bz,'b0},'{'bx,'bz},'{'bx,'b1},'{'bx,'b1}}}};
+
+          // Multi-driven assigns
+          assign ae = '{'bz,'bz};
+        endmodule: nybpantrf
+
+        module mdhaspwso
+          ( output uwire logic ryg
+          , output supply0 logic [4:1][2:2][0:0][0:1] uzlgaoelv
+          , input logic [4:2] s
+          , input reg [3:2][2:0] mm [1:4]
+          , input reg [0:4][3:2][4:3] qbedoxcp
+          );
+
+          tri logic [0:1][1:4][1:3][1:3] ckqjae [2:4][4:0][4:1][2:3];
+          real lt [3:0][1:2];
+          triand logic abtmw [0:2][0:3];
+          trior logic [1:4][2:1] ueizey [2:1];
+
+          shwhirms pvvneordd(.ueyty(jbotghnut), .igxxieh(ckqjae), .vuk(lt), .cvuedb(uzlgaoelv));
+          nybpantrf mbojk(.srm(abtmw), .mlq(ryg), .ae(ueizey), .zkn(uzlgaoelv));
+
+          // Single-driven assigns
+          assign lt = '{'{'bz,'bz},'{'b0,'bx},'{'b1,'bz},'{'b0,'b1}};
+
+          // Multi-driven assigns
+          assign uzlgaoelv = 'b0;
+          assign jbotghnut = 'bz;
+        endmodule: mdhaspwso
+  - output_port_is_connected_to_constants_auto_hierarchy_shorter:
+      first_found: 10.09.2025
+      full_error: >
+        ERROR: Output port ihgsjtp.tmy.dnvrgqno (bmppkl) is connected to constants: { 2'00 \hsmhxncgqs }
+      full_example: |
+        module bmppkl
+          (output logic [0:1][2:1][2:3][2:4]  brwf, output reg [1:3]  dnvrgqno, output reg mreujppx [3:1]);
+
+          and ekxbmj(zkmytprpms, brwf, bsk);
+          not oyg(iimbfhm, dihvad);
+          xor iif(brwf, bbfyezpion, ense);
+          and rsrzeq(dgxopoz, xi, bsk);
+
+          assign mreujppx = mreujppx;
+        endmodule: bmppkl
+
+        module ihgsjtp
+          ( output reg [4:4][3:2][0:2][2:1]  tnhsva
+          , output triand logic [0:2][1:3][1:1][4:1]  pjevu
+          , input tri logic [2:0] xn [1:2][3:2][1:4]
+          , input shortreal hsmhxncgqs
+          , input logic [0:3][1:0][1:2] sjojggcnt [1:4]
+          );
+          reg wysxlcpioq [3:1];
+
+          and byn(wvzflknkpw, tnhsva, tnhsva);
+          bmppkl tmy(.brwf(tnhsva), .dnvrgqno(pjevu), .mreujppx(wysxlcpioq));
+          not rrodraez(pjevu, tnhsva);
+          nand lnnt(pjevu, pjevu, tnhsva);
+
+          // Multi-driven assigns
+          assign xn = '{'{'{'{'bzx00x,'bz0x1,'b10},'{'bz00z,'bx,'b10},'{'b011,'b0zz,'bxxxzz},'{'b0z0x,'bz0,'b0xz11}},'{'{'bz0010,'b1zz0x,'bzx1z},'{'b01x,'bzxz,'bz0x},'{'bz0,'b00xz,'b1},'{'b0z,'b0x1zz,'bz}}},'{'{'{'b1xxz,'bx1,'bx11},'{'bzx1x,'bxxxz,'b11x1},'{'b0x1x,'bz0x,'b11z11},'{'bzxx01,'bzxz1,'bz}},'{'{'b1001,'b0z,'b0x},'{'bxzxx,'bx,'bzx1x0},'{'b0,'b0zxz,'bzx011},'{'bx0x,'b1,'bx0}}}};
+          assign pjevu = hsmhxncgqs;
+          assign wvzflknkpw = tnhsva;
+        endmodule: ihgsjtp
+
+        module bqpgwsi
+          (output longint hdaa, output shortreal qff, output longint ydxs, output logic [2:3][4:0][2:4] zooulp [4:2]);
+          reg qk [3:1];
+
+          xor wh(hdaa, opfd, hdaa);
+          bmppkl mutvfug(.brwf(pf), .dnvrgqno(qff), .mreujppx(qk));
+          or puweibowqt(ydxs, lfzyrhjgep, qff);
+
+          // Single-driven assigns
+          assign zooulp = zooulp;
+
+          // Multi-driven assigns
+          assign lfzyrhjgep = 'bx1x0z;
+          assign pf = hdaa;
+          assign opfd = 'b1;
+        endmodule: bqpgwsi
+
+        module upmswy
+          ( output tri1 logic [3:2][4:2][2:3][2:3] kgcevp [1:2]
+          , output shortreal pxew [0:1][3:3][2:1]
+          , output uwire logic [2:0][3:1][3:0][3:0]  arshyrxyx
+          , input realtime uagbrmhn [1:2]
+          );
+          not lcwvcpbm(ovt, aaxmrsyje);
+
+          // Single-driven assigns
+          assign pxew = pxew;
+          assign arshyrxyx = arshyrxyx;
+
+          // Multi-driven assigns
+          assign kgcevp = kgcevp;
+          assign ovt = ovt;
+          assign aaxmrsyje = aaxmrsyje;
+        endmodule: upmswy
+  - output_port_is_connected_to_constants_auto_hierarchy_arr:
+      first_found: 28.09.2025
+      full_error: >
+        ERROR: Output port okmmu.igey.n (uqtuefe) is connected to constants: { \zodkrqghz [8:1] 1'0 }
+      full_example: |
+        module uqtuefe
+          ( output time badkwax
+          , output triand logic [3:2][0:1][2:4] mf [3:3][0:1]
+          , output logic [1:3][2:0]  n
+          , output trior logic [4:1][0:0][1:3] gbyi [3:4][0:2]
+          );
+
+          not hjzx(cfbgpsgsp, badkwax);
+          not vrpvuyew(badkwax, arlcswh);
+
+          // Single-driven assigns
+          assign n = '{'{'b1z1z,'bxz,'bx0},'{'b1xz1,'b0,'bx},'{'bxx,'bx0xx0,'bx}};
+        endmodule: uqtuefe
+
+        module okmmu
+          ( output shortint zodkrqghz
+          , output trior logic rszvvey
+          , output wire logic c [0:4][2:3][2:0]
+          , output supply0 logic tfhwwadcqs [0:1][1:3][0:0][4:2]
+          , input tri0 logic [2:1][1:1][0:1][0:4]  swac
+          );
+
+          trior logic [4:1][0:0][1:3] cbrdrx [3:4][0:2];
+          triand logic [3:2][0:1][2:4] dmsj [3:3][0:1];
+
+          uqtuefe igey(.badkwax(vvhtzqlxog), .mf(dmsj), .n(zodkrqghz), .gbyi(cbrdrx));
+          not gw(cbpaylbjuc, swac);
+          nand h(rszvvey, zodkrqghz, zdakk);
+
+          // Multi-driven assigns
+          assign swac = rszvvey;
+          assign dmsj = dmsj;
+          assign c = c;
+          assign cbpaylbjuc = zodkrqghz;
+        endmodule: okmmu
+
+        module bwtggwneo
+          (input triand logic jjymsq);
+
+          or dhafvwaa(xgppnh, kg, kg);
+          xor tdpqwcbk(rdqlobs, kg, kg);
+          not ra(nhq, kg);
+          nand f(yprv, kg, nhq);
+
+          // Multi-driven assigns
+          assign kg = 'b1zx0x;
+          assign rdqlobs = 'bzx00;
+          assign nhq = kg;
+          assign jjymsq = 'b00;
+          assign xgppnh = 'b0;
+        endmodule: bwtggwneo
+
+        module ctgmc
+          (input reg [0:0][4:4][4:4]  a, input triand logic [2:3]  rdlibzep, input reg [3:0][3:3][3:1] grrkjn [0:0], input wire logic [1:2][3:0][4:3] qz [2:0]);
+
+          // Multi-driven assigns
+          assign rdlibzep = '{'b0zzz0,'b0};
+          assign qz = '{'{'{'{'bx1xz,'b00},'{'bxx,'b1zzz1},'{'b10x,'b0},'{'bxzx,'bx100}},'{'{'bzzx,'b1},'{'b0x0,'b0z00z},'{'b001,'bzx0},'{'bx,'bx01xx}}},'{'{'{'b1,'bz00},'{'bz,'b10},'{'bxx1,'b10x},'{'b0x0x0,'b1z10}},'{'{'bx,'b10xx1},'{'bzx10z,'bx},'{'bzxz01,'b0zz1z},'{'b1,'bz0}}},'{'{'{'b111,'bx1},'{'b1101,'b101},'{'bx,'bx},'{'b00,'bzx1}},'{'{'b101,'b1z},'{'bxx1z,'bxx0z},'{'bz,'bxx1},'{'b10x,'b1}}}};
+        endmodule: ctgmc

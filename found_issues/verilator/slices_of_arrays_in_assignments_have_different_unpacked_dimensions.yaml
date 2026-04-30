@@ -1,0 +1,52 @@
+stage: synthesis
+profile: sv
+target: verilator
+id: slices_of_arrays_in_assignments_have_different_unpacked_dimensions
+title: Slices of arrays in assignments have different unpacked dimensions
+regex: >
+  Slices of arrays in assignments have different unpacked dimensions, .* versus .*
+issue_novelty: new
+issue_links:
+  - url: https://github.com/verilator/verilator/issues/6254#issuecomment-3146668599
+    link_name: >
+      #6254
+short_desc: Maintainer suggested to avoid reporting bugs related to tristates
+maintainers_response: low
+examples:
+  - slices_of_arrays_in_assignments_have_different_unpacked_dimensions_ex1:
+      first_found: 01.06.2025
+      full_error: |
+        %Error: top.sv:39:29: Slices of arrays in assignments have different unpacked dimensions, 4 versus 2
+          39 | ( output tri0 logic [0:4] hsxniwmvoq [1:2][4:1]
+      full_example: |
+        module gsha
+          (input logic [0:3][4:4] cqfmkxy, input reg [2:2][3:0][4:1][2:0] tuandlau);
+
+          or nxoixb(fedewp, fedewp, tuandlau);
+
+        endmodule: gsha
+
+        module drzpuza
+          ( output logic [2:4][1:4][1:4][1:1] i
+          , output uwire logic [1:2][0:3] gpskj
+          , output uwire logic [1:2][1:1][0:4][2:1] lokzl [0:0]
+          , input time imijbzrb [2:2]
+          , input real emtzmqiiq
+          , input logic [0:0][0:2] uzxwa
+          , input logic [1:0][0:0][1:4] yepbbdeuls
+          );
+
+          or jfnbnuewmr(vjcpmamhq, uzxwa, mwxbotd);
+
+        endmodule: drzpuza
+
+        module tovn
+          ( output tri0 logic [0:4] hsxniwmvoq [1:2][4:1]
+          , output tri0 logic ujyq [3:2][3:0][3:2][3:3]
+          , input tri1 logic [0:3][2:0][2:3] wup [0:2][3:3][1:4]
+          , input wand logic [2:4][2:3][2:2][1:4] dbbalmko [2:3][1:0][2:1][0:2]
+          );
+
+          not darbmui(ncjazspd, ncjazspd);
+
+        endmodule: tovn

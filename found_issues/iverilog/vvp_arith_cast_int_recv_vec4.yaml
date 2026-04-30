@@ -1,0 +1,27 @@
+issue_novelty: new
+profile: sv
+issue_links:
+  - url: https://github.com/steveicarus/iverilog/issues/1222
+    link_name: >
+      #1222
+maintainers_response: enhancement
+stage: simulation
+target: iverilog
+short_desc: Some functions are not implemented
+id: vvp_arith_cast_int_recv_vec4
+title: >
+  18vvp_arith_cast_int: recv_vec4 not implemented
+regex: >
+  vvp_arith_cast_int: recv_vec4 not implemented
+examples:
+  - vvp_arith_cast_int_recv_vec4_ex1:
+      first_found: 10.12.2024
+      minified_example: |
+        module a(output integer b, output real c);
+          and g(c, c, c);
+          assign b = c;
+        endmodule: a
+      minified_error: |
+        internal error: 18vvp_arith_cast_int: recv_vec4 not implemented
+        vvp: vvp_net.cc:3285: virtual void vvp_net_fun_t::recv_vec4(vvp_net_ptr_t, const vvp_vector4_t&, vvp_context_t): Assertion `0' failed.
+        Aborted
