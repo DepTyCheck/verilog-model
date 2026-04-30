@@ -44,21 +44,15 @@ class LegacyIndex:
             reader = csv.reader(f)
             header = next(reader, None)
             if header != _REQUIRED_HEADER:
-                raise ValueError(
-                    f"{path}: unexpected header {header!r}, expected {_REQUIRED_HEADER!r}"
-                )
+                raise ValueError(f"{path}: unexpected header {header!r}, expected {_REQUIRED_HEADER!r}")
             for row in reader:
                 if not row:
                     continue
                 if len(row) != len(_REQUIRED_HEADER):
-                    raise ValueError(
-                        f"{path}: expected {len(_REQUIRED_HEADER)} columns, got {len(row)}: {row!r}"
-                    )
+                    raise ValueError(f"{path}: expected {len(_REQUIRED_HEADER)} columns, got {len(row)}: {row!r}")
                 error_id, runs, overall, test_files, tool_commit, last_date = row
                 if error_id in self._entries:
-                    raise ValueError(
-                        f"{path}: duplicate error_id {error_id!r}"
-                    )
+                    raise ValueError(f"{path}: duplicate error_id {error_id!r}")
                 self._entries[error_id] = LegacyEntry(
                     runs=int(runs),
                     overall=int(overall),

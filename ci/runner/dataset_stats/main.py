@@ -8,9 +8,7 @@ from dataset_stats.legacy_index import LegacyIndex
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(
-        description="Build combined_stats.csv merging legacy_stats with issues.csv-derived stats."
-    )
+    p = argparse.ArgumentParser(description="Build combined_stats.csv merging legacy_stats with issues.csv-derived stats.")
     p.add_argument("--issues-csv", required=True, help="Path to dataset/issues.csv")
     p.add_argument("--files-dir", required=True, help="Path to dataset/files directory")
     p.add_argument(

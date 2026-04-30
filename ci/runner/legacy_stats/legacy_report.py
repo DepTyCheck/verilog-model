@@ -18,17 +18,10 @@ class LegacyReport:
             first_found = idx.lookup(error_id)
             last_date = datetime.fromisoformat(info.last.date).date()
 
-            total_runs = sum(
-                run.amount
-                for run in prev.runs
-                if first_found <= datetime.fromisoformat(run.date).date() <= last_date
-            )
+            total_runs = sum(run.amount for run in prev.runs if first_found <= datetime.fromisoformat(run.date).date() <= last_date)
 
             if total_runs == 0:
-                raise ValueError(
-                    f"{error_id}: zero runs in window "
-                    f"[{first_found.isoformat()}, {last_date.isoformat()}]"
-                )
+                raise ValueError(f"{error_id}: zero runs in window " f"[{first_found.isoformat()}, {last_date.isoformat()}]")
             if info.test_paths_count == 0:
                 raise ValueError(f"{error_id}: test_paths_count == 0")
 

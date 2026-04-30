@@ -48,9 +48,7 @@ class IssuesIndex:
                 if not row:
                     continue
                 if len(row) != 5:
-                    raise ValueError(
-                        f"{path}: expected 5 columns, got {len(row)}: {row!r}"
-                    )
+                    raise ValueError(f"{path}: expected 5 columns, got {len(row)}: {row!r}")
                 when, tool_commit, error_id, model_commit, filename = row
                 d = datetime.fromisoformat(when).date()
 

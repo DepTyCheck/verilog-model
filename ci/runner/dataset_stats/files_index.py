@@ -24,15 +24,9 @@ class FilesIndex:
                 continue
             m = _DATE_RE.match(path.name)
             if not m:
-                raise ValueError(
-                    f"{path}: filename does not match YYYY_MM_DD-seed_*_*.<ext> pattern"
-                )
+                raise ValueError(f"{path}: filename does not match YYYY_MM_DD-seed_*_*.<ext> pattern")
             try:
-                d = datetime.strptime(
-                    f"{m.group(1)}-{m.group(2)}-{m.group(3)}", "%Y-%m-%d"
-                ).date()
+                d = datetime.strptime(f"{m.group(1)}-{m.group(2)}-{m.group(3)}", "%Y-%m-%d").date()
             except ValueError as exc:
-                raise ValueError(
-                    f"{path}: unparseable date prefix: {exc}"
-                ) from exc
+                raise ValueError(f"{path}: unparseable date prefix: {exc}") from exc
             self._dates.append(d)

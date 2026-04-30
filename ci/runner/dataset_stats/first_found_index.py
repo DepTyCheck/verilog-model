@@ -32,9 +32,7 @@ class FirstFoundIndex:
         earliest = self._earliest_first_found(doc.get("examples") or [], path)
 
         if error_id in self._index:
-            raise ValueError(
-                f"{path}: duplicate error_id {error_id!r} (already seen for another yaml)"
-            )
+            raise ValueError(f"{path}: duplicate error_id {error_id!r} (already seen for another yaml)")
         self._index[error_id] = earliest
 
     @staticmethod
@@ -57,9 +55,7 @@ class FirstFoundIndex:
     @staticmethod
     def _parse_ddmmyyyy(raw: object, path: Path) -> date:
         if not isinstance(raw, str):
-            raise ValueError(
-                f"{path}: first_found must be a string, got {type(raw).__name__}"
-            )
+            raise ValueError(f"{path}: first_found must be a string, got {type(raw).__name__}")
         try:
             return datetime.strptime(raw, "%d.%m.%Y").date()
         except ValueError as exc:

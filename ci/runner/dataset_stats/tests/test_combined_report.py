@@ -109,12 +109,9 @@ class TestCombinedReportZeroRuns(unittest.TestCase):
 
             legacy_path = os.path.join(td, "legacy_stats.csv")
             with open(legacy_path, "w", encoding="utf-8") as f:
-                f.write(
-                    "error_id,runs_for_that_issue,overall_found_count,test_files_count,"
-                    "last_occurrence_tool_commit,last_occurrence_date\n"
-                )
+                f.write("error_id,runs_for_that_issue,overall_found_count,test_files_count," "last_occurrence_tool_commit,last_occurrence_date\n")
                 # zero legacy runs
-                f.write('alpha,0,1,1,legacyA,2025-06-15\n')
+                f.write("alpha,0,1,1,legacyA,2025-06-15\n")
 
             with self.assertRaises(ValueError) as ctx:
                 CombinedReport.build(
@@ -166,14 +163,7 @@ class TestCombinedReportLastOccurrenceTiebreak(unittest.TestCase):
         found = os.path.join(td, "found_issues", "tool-a")
         os.makedirs(found)
         with open(os.path.join(found, "gamma.yaml"), "w", encoding="utf-8") as f:
-            f.write(
-                "id: gamma\n"
-                "title: Gamma\n"
-                "examples:\n"
-                "  - gamma_ex1:\n"
-                "      first_found: 01.01.2025\n"
-                "      minified_example: \"\"\n"
-            )
+            f.write("id: gamma\n" "title: Gamma\n" "examples:\n" "  - gamma_ex1:\n" "      first_found: 01.01.2025\n" '      minified_example: ""\n')
 
         # files/ contains one file at new_date so new_runs == 1
         files_dir = os.path.join(td, "files")
@@ -189,18 +179,12 @@ class TestCombinedReportLastOccurrenceTiebreak(unittest.TestCase):
         # issues.csv: one row for gamma at new_date
         issues_path = os.path.join(td, "issues.csv")
         with open(issues_path, "w", encoding="utf-8") as f:
-            f.write(
-                f'"{new_date}","newTool","gamma","newModel",'
-                f'"{new_date_underscore}-seed_1_2.sv"\n'
-            )
+            f.write(f'"{new_date}","newTool","gamma","newModel",' f'"{new_date_underscore}-seed_1_2.sv"\n')
 
         # legacy_stats.csv: gamma row at legacy_date with non-zero runs
         legacy_path = os.path.join(td, "legacy_stats.csv")
         with open(legacy_path, "w", encoding="utf-8") as f:
-            f.write(
-                "error_id,runs_for_that_issue,overall_found_count,test_files_count,"
-                "last_occurrence_tool_commit,last_occurrence_date\n"
-            )
+            f.write("error_id,runs_for_that_issue,overall_found_count,test_files_count," "last_occurrence_tool_commit,last_occurrence_date\n")
             f.write(f"gamma,5,2,2,legacyTool,{legacy_date}\n")
 
         return CombinedReport.build(
