@@ -1,0 +1,6 @@
+id: x
+title: X
+examples:
+  - x_ex1:
+      first_found: not-a-date
+      minified_example: ""

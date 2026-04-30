@@ -1,0 +1,11 @@
+stage: parsing
+tool: tool-x
+id: other_only
+title: Some other id
+issue_novelty: already_known
+maintainers_response: low
+examples:
+  - other_only_ex1:
+      first_found: 01.01.2026
+      minified_error: |
+        whatever

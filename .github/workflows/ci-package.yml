@@ -32,11 +32,9 @@ env:
   BUILD_DIR: ".build"
   PACKAGE_NAME: verilog-model
   ERROR_DISTANCES_OUT: error_distances.html
-  GH_PAGES_PATH: verilog-gh-pages
-  RUN_STATS_PATTERN: "run-stats.json"
-  COMBINED_RUN_STATS_FILE: "combined-run-stats.json"
-  UNKNOWN_ERRORS_OUT: "unknown_errors.json"
-  REGRESSION_UNKNOWN_ERRORS_PATTERN: "regression-unknown-errors"
+  DATASET_PATH: dataset-clone
+  # RUN_STATS_PATTERN: "run-stats.json"
+  # COMBINED_RUN_STATS_FILE: "combined-run-stats.json"
 
 jobs:
   get-upstream-matrix:
@@ -178,7 +176,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: "${{ steps.gen.outputs.matrix }}"
-      check-matrix: "${{ steps.gen.outputs.check-matrix }}"
     steps:
       - uses: actions/checkout@v6
         with:
@@ -234,177 +231,175 @@ jobs:
   run-tools:
     name: ${{ matrix.tool.name }}
     needs: [test-python-units, generate-modules, get-tool-matrix]
-    timeout-minutes: 90
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.matrix) }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - name: Determine Gen Path
-        run: |
-          echo "GEN_PATH=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.tool.language }}" >> "$GITHUB_ENV"
-      - name: Setup tool
-        uses: ./.github/actions/setup-tool
-        with:
-          tool-name: ${{ matrix.tool.name }}
-          tool-repo: ${{ matrix.tool.repo }}
-          tool-path: ${{ matrix.tool.path }}
-          tool-build: ${{ matrix.tool.build }}
-          tool-install: ${{ matrix.tool.install }}
-          tool-deps: ${{ matrix.tool.deps }}
-          tool-version: ${{ matrix.tool.version }}
-          tool-rust-ver: ${{ matrix.tool.rust_ver }}
-          tool-pre-build: ${{ matrix.tool.pre_build }}
-          tool-third-party-release-repo: ${{ matrix.tool.third_party_release_repo }}
-          tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard }}
-      - name: Install runner deps
-        run: sudo apt install -y bc python3 python3-pip python3-venv
-      - name: Setup python venv
-        run: |
-          python3 -m venv .venv
-          source .venv/bin/activate
-          python3 -m pip install --upgrade pip
-          pip install -r ci/runner/tools_run/requirements.txt
-          if [ -n "${{ matrix.tool.python_runner_deps }}" ]; then
-            pip install ${{ matrix.tool.python_runner_deps }}
-          fi
-      - name: Clone gh-pages
-        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
-      - name: Download Generated Files
-        uses: actions/download-artifact@v8
-        with:
-          name: "${{ env.GEN_PATH }}"
-          path: "${{ env.GEN_PATH }}"
-      - name: Run
-        run: |
-          set +e
-          source .venv/bin/activate
-
-          cd "${{ env.GH_PAGES_PATH }}"
-          echo "Latest commit hash of ${{ env.GH_PAGES_PATH }}:"
-          git rev-parse HEAD
-          cd -
-
-          PYTHONPATH=ci/runner python3 -m tools_run.main \
-            --gen-path "${{ env.GEN_PATH }}" \
-            --file-pattern "${{ matrix.tool.file_pattern }}" \
-            --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
-            --tool-name "${{ matrix.tool.name }}" \
-            --commands-json '${{ toJSON(matrix.tool.commands) }}' \
-            --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
-            --unknown-errors-output "${{ env.UNKNOWN_ERRORS_OUT }}" \
-            --run-statistics-output "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}" \
-            --commit "${{ env.COMMIT_HASH }}" \
-            --assets ${{ matrix.tool.assets }} \
-            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
-
-          EXIT_CODE=$?
-          if [ $EXIT_CODE -ne 0 ]; then
-                exit 1
-          fi
-      - name: Upload run statistics
-        uses: actions/upload-artifact@v6
-        with:
-          name: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
-          path: "${{ matrix.tool.name }}-${{ env.RUN_STATS_PATTERN }}"
-      - name: Install mds_report dependencies
-        if: failure()
-        run: |
-          source .venv/bin/activate
-          pip install -r ci/runner/mds_report/requirements.txt
-      - name: Generate MDS diagram
-        if: failure() && hashFiles(env.UNKNOWN_ERRORS_OUT) != ''
-        run: |
-          source .venv/bin/activate
-          PYTHONPATH=ci/runner python3 -m mds_report.main \
-            --unknown-errors-input "${{ env.UNKNOWN_ERRORS_OUT }}" \
-            --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
-            --tool-name "${{ matrix.tool.name }}" \
-            --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
-            --output "${{ env.ERROR_DISTANCES_OUT }}"
-      - name: Upload error distances artifact
-        if: failure() && hashFiles(env.ERROR_DISTANCES_OUT) != ''
-        uses: actions/upload-artifact@v6
-        with:
-          name: error-distances-${{ matrix.tool.name }}
-          path: ${{ env.ERROR_DISTANCES_OUT }}
-
-  regression-test:
-    name: Regression test ${{ matrix.tool.name }}
     runs-on: ubuntu-latest
-    needs: [test-python-units, get-tool-matrix, run-tools]
-    if: always()
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.check-matrix) }}
+    timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Setup tool
-        uses: ./.github/actions/setup-tool
-        with:
-          tool-name: ${{ matrix.tool.name }}
-          tool-repo: ${{ matrix.tool.repo }}
-          tool-path: ${{ matrix.tool.path }}
-          tool-build: ${{ matrix.tool.build }}
-          tool-install: ${{ matrix.tool.install }}
-          tool-deps: ${{ matrix.tool.deps }}
-          tool-version: ${{ matrix.tool.version }}
-          tool-pre-build: ${{ matrix.tool.pre_build }}
+
+      - name: Install runner deps
+        run: |
+          sudo apt update -qq
+          sudo apt install -y bc
+
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
+
       - name: Install Python dependencies
-        run: pip install -r ci/runner/regression_test/requirements.txt
-      - name: Install tool-specific Python dependencies
-        if: ${{ matrix.tool.python_runner_deps != '' }}
-        run: pip install ${{ matrix.tool.python_runner_deps }}
-      - name: Clone gh-pages
-        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
-      - name: Run regression test
         run: |
-          PYTHONPATH=ci/runner python -m regression_test.main \
-            --known-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors" \
-            --output "regression-test-report-${{ matrix.tool.name }}.json" \
-            --tool-name "${{ matrix.tool.name }}" \
-            --commands-json '${{ toJSON(matrix.tool.commands) }}' \
-            --language "${{ matrix.tool.language }}" \
-            --language-config "ci/conf/languages.yaml" \
-            --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
-            --unknown-errors-output "${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
-            --assets ${{ matrix.tool.assets }} \
-            --extra-ignored-regexes ${{ matrix.tool.extra_ignored_regexes }}
-      - name: Upload report
-        if: always()
-        uses: actions/upload-artifact@v6
+          pip install -r ci/runner/runner/requirements.txt
+          EXTRA="${{ matrix.tool.python_runner_deps }}"
+          if [ -n "$EXTRA" ] && [ "$EXTRA" != "null" ]; then
+            pip install $EXTRA
+          fi
+
+      - name: Setup tool
+        uses: ./.github/actions/setup-tool
         with:
-          name: regression-test-report-${{ matrix.tool.name }}
-          path: regression-test-report-${{ matrix.tool.name }}.json
-      - name: Install mds_report dependencies
-        if: failure()
-        run: pip install -r ci/runner/mds_report/requirements.txt
-      - name: Generate MDS diagram
-        if: failure() && hashFiles(format('{0}-{1}.json', env.REGRESSION_UNKNOWN_ERRORS_PATTERN, matrix.tool.name)) != ''
+          tool-name: ${{ matrix.tool.name }}
+          tool-repo: ${{ matrix.tool.repo }}
+          tool-path: ${{ matrix.tool.path }}
+          tool-build: ${{ matrix.tool.build }}
+          tool-install: ${{ matrix.tool.install }}
+          tool-deps: ${{ matrix.tool.deps }}
+          tool-version: ${{ matrix.tool.version }}
+          tool-rust-ver: ${{ matrix.tool.rust_ver || '' }}
+          tool-pre-build: ${{ matrix.tool.pre_build || '' }}
+          tool-third-party-release-repo: ${{ matrix.tool.third_party_release_repo || '' }}
+          tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard || '' }}
+
+      - name: Capture tool version
         run: |
-          PYTHONPATH=ci/runner python -m mds_report.main \
-            --unknown-errors-input "${{ env.REGRESSION_UNKNOWN_ERRORS_PATTERN }}-${{ matrix.tool.name }}.json" \
-            --ignored-errors-dir "${{ env.GH_PAGES_PATH }}/found_errors/${{ matrix.tool.path }}" \
-            --tool-name "${{ matrix.tool.name }}" \
-            --job-link "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}" \
-            --output "regression-error-distances-${{ matrix.tool.name }}.html"
-      - name: Upload regression MDS artifact
-        if: failure() && hashFiles(format('regression-error-distances-{0}.html', matrix.tool.name)) != ''
-        uses: actions/upload-artifact@v6
+          out=$({
+          ${{ matrix.tool.version }}
+          } 2>&1 | head -1 || true)
+          echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
+
+      - name: Clone dataset
+        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch dataset --single-branch "$DATASET_PATH"
+
+      - name: Download generated files
+        uses: actions/download-artifact@v8
         with:
-          name: regression-error-distances-${{ matrix.tool.name }}
-          path: regression-error-distances-${{ matrix.tool.name }}.html
+          name: generated-${{ matrix.tool.language }}
+          path: generated-${{ matrix.tool.language }}
+
+      - name: Run tool on generated files
+        uses: ./.github/actions/run-tool-on-files
+        with:
+          tool-name: ${{ matrix.tool.name }}
+          tool-version: ${{ env.TOOL_VERSION }}
+          tool-commit: ${{ env.COMMIT_HASH }}
+          model-commit: ${{ github.sha }}
+          commands-json: ${{ toJSON(matrix.tool.commands) }}
+          input-dir: generated-${{ matrix.tool.language }}
+          file-pattern: ${{ matrix.tool.file_pattern }}
+          ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
+          assets: ${{ matrix.tool.assets }}
+          extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
+          output-json: ${{ matrix.tool.name }}-per-file.json
+          job-link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}
+
+  regression-test:
+    name: Regression test ${{ matrix.tool.name }}
+    needs: [test-python-units, get-tool-matrix, run-tools]
+    if: ${{ !cancelled() }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Install runner deps
+        run: |
+          sudo apt update -qq
+          sudo apt install -y bc
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r ci/runner/runner/requirements.txt
+          pip install -r ci/runner/regression_input/requirements.txt
+          pip install -r ci/runner/regression_analyze/requirements.txt
+          EXTRA="${{ matrix.tool.python_runner_deps }}"
+          if [ -n "$EXTRA" ] && [ "$EXTRA" != "null" ]; then
+            pip install $EXTRA
+          fi
+
+      - name: Setup tool
+        uses: ./.github/actions/setup-tool
+        with:
+          tool-name: ${{ matrix.tool.name }}
+          tool-repo: ${{ matrix.tool.repo }}
+          tool-path: ${{ matrix.tool.path }}
+          tool-build: ${{ matrix.tool.build }}
+          tool-install: ${{ matrix.tool.install }}
+          tool-deps: ${{ matrix.tool.deps }}
+          tool-version: ${{ matrix.tool.version }}
+          tool-rust-ver: ${{ matrix.tool.rust_ver || '' }}
+          tool-pre-build: ${{ matrix.tool.pre_build || '' }}
+          tool-third-party-release-repo: ${{ matrix.tool.third_party_release_repo || '' }}
+          tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard || '' }}
+
+      - name: Capture tool version
+        run: |
+          out=$({
+          ${{ matrix.tool.version }}
+          } 2>&1 | head -1 || true)
+          echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
+
+      - name: Clone dataset
+        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch dataset --single-branch "$DATASET_PATH"
+
+      - name: Materialise regression inputs
+        run: |
+          PYTHONPATH=ci/runner python -m regression_input.main \
+            --known-errors-dir "$DATASET_PATH/found_issues" \
+            --language ${{ matrix.tool.language }} \
+            --language-config ci/conf/languages.yaml \
+            --out-dir regression-input
+
+      - name: Run tool on regression examples
+        uses: ./.github/actions/run-tool-on-files
+        with:
+          tool-name: ${{ matrix.tool.name }}
+          tool-version: ${{ env.TOOL_VERSION }}
+          tool-commit: ${{ env.COMMIT_HASH }}
+          model-commit: ${{ github.sha }}
+          commands-json: ${{ toJSON(matrix.tool.commands) }}
+          input-dir: regression-input
+          file-pattern: '*'
+          ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
+          assets: ${{ matrix.tool.assets }}
+          extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
+          output-json: regression-${{ matrix.tool.name }}-per-file.json
+          job-link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}
+
+      - name: Build reproducibility table
+        if: ${{ always() && hashFiles(format('regression-{0}-per-file.json', matrix.tool.name)) != '' }}
+        run: |
+          PYTHONPATH=ci/runner python -m regression_analyze.main \
+            --per-file-input regression-${{ matrix.tool.name }}-per-file.json \
+            --known-errors-dir "$DATASET_PATH/found_issues" \
+            --language ${{ matrix.tool.language }} \
+            --tool-name ${{ matrix.tool.name }} \
+            --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/error" \
+            >> "$GITHUB_STEP_SUMMARY"
+
 
   count-lines:
     name: Count lines of specification
@@ -421,94 +416,202 @@ jobs:
         run: |
           PYTHONPATH=ci/runner python -m count_lines.main "src" >> "$GITHUB_STEP_SUMMARY"
 
-  compare-errors-stats:
-    name: Compare errors stats
+  # TODO: rewrite for the per-file JSON shape. Will consume per-file artifacts
+  # uploaded by run-tools. See docs/superpowers/specs/2026-04-26-ci-runner-unification-design.md.
+  # compare-errors-stats:
+  #   name: Compare errors stats
+  #   runs-on: ubuntu-latest
+  #   needs: [test-python-units, run-tools, regression-test]
+  #   if: ${{ github.event_name == 'pull_request' }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v6
+  #       with:
+  #         persist-credentials: false
+  #     - uses: actions/setup-python@v6
+  #       with:
+  #         python-version: "3.13"
+  #     - name: Download run statistics
+  #       uses: actions/download-artifact@v8
+  #       with:
+  #         path: run-stats
+  #         pattern: "*-${{ env.RUN_STATS_PATTERN }}"
+  #         merge-multiple: true
+  #     - name: Download regression test reports
+  #       uses: actions/download-artifact@v8
+  #       with:
+  #         path: known-errors-reports
+  #         pattern: "regression-test-report-*"
+  #         merge-multiple: true
+  #     - name: Clone gh-pages
+  #       run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
+  #     - name: Compare errors
+  #       run: |
+  #         PYTHONPATH=ci/runner python -m compare_errors.main \
+  #           --previous-report "${{ env.GH_PAGES_PATH }}/src/lib/data/errors-stats.json" \
+  #           --current-tools-reports-dir "run-stats" \
+  #           --tools-reports-pattern "*-${{ env.RUN_STATS_PATTERN }}" \
+  #           --tests-number ${{ env.GEN_TESTS_COUNT }} \
+  #           --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
+  #           --known-errors-reports-dir "known-errors-reports" \
+  #           >> "$GITHUB_STEP_SUMMARY"
+
+  # TODO: rewrite for the per-file JSON shape. Will consume per-file artifacts
+  # uploaded by run-tools. See docs/superpowers/specs/2026-04-26-ci-runner-unification-design.md.
+  # push-run-stats:
+  #   name: Push run stats
+  #   runs-on: ubuntu-latest
+  #   needs: [test-python-units, run-tools]
+  #   if: ${{ github.ref == 'refs/heads/master' }}
+  #   permissions:
+  #     contents: write
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v6
+  #       with:
+  #         token: ${{ secrets.PAT_PUSH }} # https://stackoverflow.com/a/77447725/15776812
+  #         persist-credentials: false # https://github.com/orgs/community/discussions/25702#discussioncomment-3248819
+  #
+  #     - name: Download run statistics
+  #       uses: actions/download-artifact@v8
+  #       with:
+  #         path: run-stats
+  #
+  #     - name: Clone gh-pages
+  #       run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
+  #
+  #     - name: Calc report path
+  #       run: |
+  #         RELATIVE_REPORT_PATH="src/lib/data/errors-stats.json"
+  #         echo "RELATIVE_REPORT_PATH=$RELATIVE_REPORT_PATH" >> "$GITHUB_ENV"
+  #         echo "REPORT_PATH=${{ env.GH_PAGES_PATH }}/$RELATIVE_REPORT_PATH" >> "$GITHUB_ENV"
+  #
+  #     - name: Combine statistics
+  #       run: |
+  #         PYTHONPATH=ci/runner python -m combined_report.main \
+  #           --previous-report "${{ env.REPORT_PATH }}" \
+  #           --current-tools-reports-dir "run-stats" \
+  #           --tools-reports-pattern "*-run-stats.json" \
+  #           --result-report "${{ env.REPORT_PATH }}" \
+  #           --tests-number ${{ env.GEN_TESTS_COUNT }}
+  #
+  #     - name: Bot Details
+  #       id: bot-details
+  #       uses: raven-actions/bot-details@v1
+  #
+  #     - name: Commit & push
+  #       run: |
+  #         cd ${{ env.GH_PAGES_PATH }}
+  #         git config --global user.name "${{ steps.bot-details.outputs.name }}"
+  #         git config --global user.email "${{ steps.bot-details.outputs.email }}"
+  #         git add ${{ env.RELATIVE_REPORT_PATH }}
+  #         git commit -m "[ bot ] Update runs statistics"
+  #         git remote set-url origin "https://x-access-token:${{ secrets.PAT_PUSH }}@github.com/${{ github.repository }}"
+  #         git push origin gh-pages
+
+  save-dataset:
+    name: Save dataset
     runs-on: ubuntu-latest
-    needs: [test-python-units, run-tools, regression-test]
-    if: ${{ github.event_name == 'pull_request' }}
+    needs: [run-tools]
+    # if: ${{ github.ref == 'refs/heads/master' }}
+    permissions:
+      contents: write
+    env:
+      DATASET_BRANCH: dataset
+      PER_FILE_DIR: per-file-results
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
+          token: ${{ secrets.PAT_PUSH }}
           persist-credentials: false
+
+      - name: Set run date
+        run: echo "RUN_DATE=$(date -u +%Y_%m_%d)" >> "$GITHUB_ENV"
+
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - name: Download run statistics
+
+      - name: Install dataset_builder requirements
+        run: pip install -r ci/runner/dataset_builder/requirements.txt
+
+      - name: Download generated files
         uses: actions/download-artifact@v8
         with:
-          path: run-stats
-          pattern: "*-${{ env.RUN_STATS_PATTERN }}"
+          pattern: "${{ env.GENERATION_DIR_PATTERN }}*"
+
+      - name: Download per-file results
+        uses: actions/download-artifact@v8
+        with:
+          pattern: "*-per-file.json"
+          path: "${{ env.PER_FILE_DIR }}"
           merge-multiple: true
-      - name: Download regression test reports
-        uses: actions/download-artifact@v8
-        with:
-          path: known-errors-reports
-          pattern: "regression-test-report-*"
-          merge-multiple: true
-      - name: Clone gh-pages
-        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
-      - name: Compare errors
+
+      - name: Clone dataset branch
         run: |
-          PYTHONPATH=ci/runner python -m compare_errors.main \
-            --previous-report "${{ env.GH_PAGES_PATH }}/src/lib/data/errors-stats.json" \
-            --current-tools-reports-dir "run-stats" \
-            --tools-reports-pattern "*-${{ env.RUN_STATS_PATTERN }}" \
-            --tests-number ${{ env.GEN_TESTS_COUNT }} \
-            --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
-            --known-errors-reports-dir "known-errors-reports" \
-            >> "$GITHUB_STEP_SUMMARY"
+          git clone https://github.com/${{ github.repository }}.git \
+            --branch ${{ env.DATASET_BRANCH }} \
+            --single-branch \
+            ${{ env.DATASET_PATH }}
 
-  push-run-stats:
-    name: Push run stats
-    runs-on: ubuntu-latest
-    needs: [test-python-units, run-tools]
-    if: ${{ github.ref == 'refs/heads/master' }}
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.PAT_PUSH }} # https://stackoverflow.com/a/77447725/15776812
-          persist-credentials: false # https://github.com/orgs/community/discussions/25702#discussioncomment-3248819
-
-      - name: Download run statistics
-        uses: actions/download-artifact@v8
-        with:
-          path: run-stats
-
-      - name: Clone gh-pages
-        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch gh-pages --single-branch ${{ env.GH_PAGES_PATH }}
-
-      - name: Calc report path
+      - name: Run dataset_builder
         run: |
-          RELATIVE_REPORT_PATH="src/lib/data/errors-stats.json"
-          echo "RELATIVE_REPORT_PATH=$RELATIVE_REPORT_PATH" >> "$GITHUB_ENV"
-          echo "REPORT_PATH=${{ env.GH_PAGES_PATH }}/$RELATIVE_REPORT_PATH" >> "$GITHUB_ENV"
-
-      - name: Combine statistics
-        run: |
-          PYTHONPATH=ci/runner python -m combined_report.main \
-            --previous-report "${{ env.REPORT_PATH }}" \
-            --current-tools-reports-dir "run-stats" \
-            --tools-reports-pattern "*-run-stats.json" \
-            --result-report "${{ env.REPORT_PATH }}" \
-            --tests-number ${{ env.GEN_TESTS_COUNT }}
+          PYTHONPATH=ci/runner python -m dataset_builder.main \
+            --generated-dirs ${{ env.GENERATION_DIR_PATTERN }}*/ \
+            --per-file-results-dir "${{ env.PER_FILE_DIR }}" \
+            --dataset-path "${{ env.DATASET_PATH }}" \
+            --run-date "${{ env.RUN_DATE }}"
 
       - name: Bot Details
         id: bot-details
         uses: raven-actions/bot-details@v1
 
-      - name: Commit & push
+      - name: Commit & push dataset
         run: |
-          cd ${{ env.GH_PAGES_PATH }}
+          cd ${{ env.DATASET_PATH }}
           git config --global user.name "${{ steps.bot-details.outputs.name }}"
           git config --global user.email "${{ steps.bot-details.outputs.email }}"
-          git add ${{ env.RELATIVE_REPORT_PATH }}
-          git commit -m "[ bot ] Update runs statistics"
+          git add files/ issues.csv
+          git diff --cached --quiet && echo "No changes to commit." && exit 0
+          git commit -m "[ bot ] Add dataset ${{ env.RUN_DATE }}"
           git remote set-url origin "https://x-access-token:${{ secrets.PAT_PUSH }}@github.com/${{ github.repository }}"
-          git push origin gh-pages
+          git push origin ${{ env.DATASET_BRANCH }}
+
+  combined-stats:
+    name: Combined stats
+    runs-on: ubuntu-latest
+    needs: [save-dataset]
+    env:
+      DATASET_BRANCH: dataset
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install dataset_stats requirements
+        run: pip install -r ci/runner/dataset_stats/requirements.txt
+
+      - name: Clone dataset branch (post-save state)
+        run: |
+          git clone https://github.com/${{ github.repository }}.git \
+            --branch ${{ env.DATASET_BRANCH }} \
+            --single-branch \
+            "${{ env.DATASET_PATH }}"
+
+      - name: Build combined_stats.csv (print to console)
+        run: |
+          PYTHONPATH=ci/runner python -m dataset_stats.main \
+            --issues-csv "${{ env.DATASET_PATH }}/issues.csv" \
+            --files-dir "${{ env.DATASET_PATH }}/files" \
+            --found-issues-dir "${{ env.DATASET_PATH }}/found_issues" \
+            --legacy-stats-csv "${{ env.DATASET_PATH }}/legacy_stats.csv" \
+            --output -
 
   publish-container:
     name: Build and publish Docker image

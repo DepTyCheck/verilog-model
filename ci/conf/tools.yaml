@@ -11,8 +11,7 @@ tools:
       sudo make -j$(nproc)
     install: |
       sudo make install
-    version: |
-      iverilog -V
+    version: iverilog -V
     commands:
       - run: iverilog -g2012 -o a.out {file}
         error_regex: '(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)'
@@ -33,8 +32,7 @@ tools:
       sudo cmake --build build -j$(nproc)
     install: |
       sudo cmake --install build --strip
-    version: |
-      slang --version
+    version: slang --version
     commands:
       - run: slang -Weverything {file}
         error_regex: 'error: [\S ]+$'
@@ -51,8 +49,7 @@ tools:
       make -j$(nproc)
     install: |
       sudo make install
-    version: |
-      verilator --version
+    version: verilator --version
     commands:
       - run: |
           rm -rf obj_dir && \
@@ -88,8 +85,7 @@ tools:
       sudo apt install -y libgoogle-perftools-dev
       sudo pip3 install orderedmultidict
       sudo make install
-    version: |
-      surelog --version
+    version: surelog --version
     commands:
       - run: surelog -parse -nopython -sv {file}
 
@@ -104,8 +100,7 @@ tools:
     install: |
       echo $PWD
       sudo stack install --allow-different-user --local-bin-path /usr/local/bin
-    version: |
-      sv2v --version
+    version: sv2v --version
     commands:
       - run: sv2v -v {file}
         error_regex: "sv2v:(?!CallStack$).+"
@@ -116,21 +111,13 @@ tools:
     language: sv
     file_pattern: "*.sv"
     repo: https://github.com/gmlarumbe/tree-sitter-systemverilog.git
-    deps: gcc python3
     path: tssv
-    pre_build: |
-      sudo npm install -g tree-sitter-cli@0.21
-    build: |
-      tree-sitter generate --abi 14
-      tree-sitter build -o sv.so
-    python_runner_deps: tree-sitter==0.21.3
+    install: pip install ".[core]"
     version: |
-      tree-sitter -V
+      python3 -c "from importlib.metadata import version as v; print('tree-sitter-systemverilog', v('tree-sitter-systemverilog'))"
     commands:
-      - run: python3 ci/conf/tree-sitter-sv/run_ts.py tssv/sv.so {file}
-    assets: >-
-      ci/conf/tree-sitter-sv/run_ts.py
-      tssv/sv.so
+      - run: python3 ci/conf/tree-sitter-sv/run_ts.py {file}
+    assets: ci/conf/tree-sitter-sv/run_ts.py
 
   - name: synlig
     language: sv
@@ -147,9 +134,7 @@ tools:
       make -j$(nproc)
     install: |
       sudo make install -j$(nproc)
-    version: |
-      synlig --version
-      synlig -h
+    version: synlig --version
     commands:
       - run: synlig -f systemverilog -o output.blif -S {file}
         error_regex: "ERROR: .*$"
@@ -165,8 +150,7 @@ tools:
       cargo build --release --example parse_sv
     install: |
       sudo install -m 755 target/release/examples/parse_sv /usr/local/bin/
-    version: |
-      parse_sv -h
+    version: parse_sv -h
     commands:
       - run: parse_sv {file}
 
@@ -194,7 +178,6 @@ tools:
       cd ..
       sudo make install
       cd ..
-      bash ci/runner/tools_run/rename_tests.sh
     version: yosys --version
     commands:
       - run: yosys -m slang -p "read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean"
