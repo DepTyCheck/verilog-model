@@ -33,6 +33,7 @@ env:
   PACKAGE_NAME: verilog-model
   ERROR_DISTANCES_OUT: error_distances.html
   DATASET_PATH: dataset-clone
+  DATASET_BRANCH: dataset
   # RUN_STATS_PATTERN: "run-stats.json"
   # COMBINED_RUN_STATS_FILE: "combined-run-stats.json"
 
@@ -282,7 +283,7 @@ jobs:
           echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
       - name: Clone dataset
-        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch dataset --single-branch "$DATASET_PATH"
+        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
 
       - name: Download generated files
         uses: actions/download-artifact@v8
@@ -363,7 +364,7 @@ jobs:
           echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
       - name: Clone dataset
-        run: git clone https://github.com/DepTyCheck/verilog-model.git --branch dataset --single-branch "$DATASET_PATH"
+        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
 
       - name: Materialise regression inputs
         run: |
@@ -435,8 +436,7 @@ jobs:
       - name: Install requirements
         run: pip install -r ci/runner/compare_errors/requirements.txt
       - name: Clone dataset branch
-        run: git clone https://github.com/${{ github.repository }}.git \
-               --branch dataset --single-branch "$DATASET_PATH"
+        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
       - name: Download per-file artifacts
         uses: actions/download-artifact@v8
         with:
@@ -521,7 +521,6 @@ jobs:
     permissions:
       contents: write
     env:
-      DATASET_BRANCH: dataset
       PER_FILE_DIR: per-file-results
     steps:
       - name: Checkout
@@ -554,10 +553,7 @@ jobs:
 
       - name: Clone dataset branch
         run: |
-          git clone https://github.com/${{ github.repository }}.git \
-            --branch ${{ env.DATASET_BRANCH }} \
-            --single-branch \
-            ${{ env.DATASET_PATH }}
+          git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
 
       - name: Run dataset_builder
         run: |
@@ -586,8 +582,6 @@ jobs:
     name: Combined stats
     runs-on: ubuntu-latest
     needs: [save-dataset]
-    env:
-      DATASET_BRANCH: dataset
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -602,11 +596,7 @@ jobs:
         run: pip install -r ci/runner/dataset_stats/requirements.txt
 
       - name: Clone dataset branch (post-save state)
-        run: |
-          git clone https://github.com/${{ github.repository }}.git \
-            --branch ${{ env.DATASET_BRANCH }} \
-            --single-branch \
-            "${{ env.DATASET_PATH }}"
+        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
 
       - name: Build combined_stats.csv (print to console)
         run: |
