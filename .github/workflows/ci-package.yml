@@ -447,9 +447,13 @@ jobs:
         run: |
           mkdir -p "$REGRESSION_DIR"
           mv "$PER_FILE_DIR"/regression-*-per-file.json "$REGRESSION_DIR"/ 2>/dev/null || true
-          count=$(find "$REGRESSION_DIR" -name 'regression-*-per-file.json' | wc -l)
-          if [ "$count" -eq 0 ]; then
+          regression_count=$(find "$REGRESSION_DIR" -name 'regression-*-per-file.json' | wc -l)
+          if [ "$regression_count" -eq 0 ]; then
             echo "::warning::No regression artifacts found — Reproduced column will show all ❌"
+          fi
+          current_count=$(find "$PER_FILE_DIR" -name '*-per-file.json' | wc -l)
+          if [ "$current_count" -eq 0 ]; then
+            echo "::warning::No run-tools per-file artifacts found — Current column will be 0% for all rows"
           fi
       - name: Compare
         run: |
@@ -550,6 +554,9 @@ jobs:
           pattern: "*-per-file.json"
           path: "${{ env.PER_FILE_DIR }}"
           merge-multiple: true
+
+      - name: Drop regression per-file artifacts
+        run: rm -f "$PER_FILE_DIR"/regression-*-per-file.json
 
       - name: Clone dataset branch
         run: |

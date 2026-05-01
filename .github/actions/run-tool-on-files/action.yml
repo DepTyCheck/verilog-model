@@ -93,7 +93,7 @@ runs:
       if: ${{ always() && hashFiles(env.PER_FILE_JSON) != '' }}
       uses: actions/upload-artifact@v6
       with:
-        name: ${{ inputs.tool-name }}-per-file.json
+        name: ${{ env.PER_FILE_JSON }}
         path: ${{ env.PER_FILE_JSON }}
 
     - name: Upload MDS HTML
