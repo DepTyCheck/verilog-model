@@ -1,0 +1,11 @@
+stage: parsing
+tool: tool-a
+id: alpha
+title: Alpha
+issue_novelty: already_known
+maintainers_response: low
+examples:
+  - alpha_ex1:
+      first_found: 19.07.2025
+      minified_error: |
+        whatever

@@ -1,0 +1,11 @@
+stage: parsing
+tool: tool-b
+id: delta
+title: Delta
+issue_novelty: already_known
+maintainers_response: low
+examples:
+  - delta_ex1:
+      first_found: 15.02.2026
+      minified_error: |
+        whatever

@@ -1,0 +1,4 @@
+error_id,runs_for_that_issue,overall_found_count,test_files_count,last_occurrence_tool_commit,last_occurrence_date
+alpha,100,50,40,legacyA,2025-06-15
+beta,200,100,80,legacyB,2025-12-01
+zeta,50,25,10,legacyZ,2025-04-04

@@ -1,0 +1,58 @@
+{
+  "errors": {
+    "alpha": {
+      "overall": 30,
+      "test_paths_count": 15,
+      "last": {
+        "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "date": "2025-08-01T12:00:00.000000"
+      }
+    },
+    "beta": {
+      "overall": 60,
+      "test_paths_count": 30,
+      "last": {
+        "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "date": "2026-01-01T12:00:00.000000"
+      }
+    },
+    "gamma": {
+      "overall": 5,
+      "test_paths_count": 5,
+      "last": {
+        "commit": "cccccccccccccccccccccccccccccccccccccccc",
+        "date": "2026-01-01T12:00:00.000000"
+      }
+    },
+    "delta": {
+      "overall": 10,
+      "test_paths_count": 10,
+      "last": {
+        "commit": "dddddddddddddddddddddddddddddddddddddddd",
+        "date": "2026-02-15T12:00:00.000000"
+      }
+    }
+  },
+  "runs": [
+    {
+      "date": "2025-03-04T12:00:00.000000",
+      "amount": 10
+    },
+    {
+      "date": "2025-07-19T12:00:00.000000",
+      "amount": 10
+    },
+    {
+      "date": "2025-08-01T12:00:00.000000",
+      "amount": 10
+    },
+    {
+      "date": "2026-01-01T12:00:00.000000",
+      "amount": 10
+    },
+    {
+      "date": "2026-02-15T12:00:00.000000",
+      "amount": 10
+    }
+  ]
+}

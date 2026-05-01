@@ -4,12 +4,12 @@ import re
 
 import numpy as np
 import plotly.graph_objects as go
+from common.ignored_errors_list import IgnoredErrorsList
 from common.logger import get_logger
-from common.unknown_error_reporter import UnknownErrorEntry
+from common.utils import print_pretty
+from mds_report.unknown_error_entry import UnknownErrorEntry
 from sklearn.manifold import MDS
 from textdistance import LZMANCD
-from tools_run.src.ignored_errors_list import IgnoredErrorsList
-from tools_run.src.utils import print_pretty
 
 
 def compute_ncd_for_errors(nodes_text: list[str]) -> dict[tuple[int, int], float]:

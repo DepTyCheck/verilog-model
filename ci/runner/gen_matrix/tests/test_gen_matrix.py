@@ -1,6 +1,9 @@
 """Unit tests for gen_matrix/gen_matrix.py."""
 
 import json
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -104,12 +107,6 @@ class TestBuildMatrix(unittest.TestCase):
         decoded = json.loads(json.dumps(build_matrix(tools)))
         self.assertEqual(len(decoded["include"]), len(tools))
 
-    def test_check_matrix_contains_all_tools(self):
-        tools = load_tools(str(TOOLS_YAML))
-        check_matrix_names = {item["tool"]["name"] for item in build_matrix(tools)["include"]}
-        matrix_names = {item["tool"]["name"] for item in build_matrix(tools)["include"]}
-        self.assertEqual(check_matrix_names, matrix_names)
-
 
 class TestRoundTrip(unittest.TestCase):
 
@@ -136,3 +133,31 @@ class TestRoundTrip(unittest.TestCase):
             self.assertGreater(len(tool["commands"]), 0)
             for cmd in tool["commands"]:
                 self.assertIn("run", cmd)
+
+
+class TestMainOutput(unittest.TestCase):
+
+    def test_main_writes_only_matrix_line(self):
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".out", delete=False) as f:
+            output_path = f.name
+        self.addCleanup(os.unlink, output_path)
+
+        env = os.environ.copy()
+        env["GITHUB_OUTPUT"] = output_path
+        env["PYTHONPATH"] = str(Path(__file__).parents[2])
+
+        subprocess.run(
+            [sys.executable, "-m", "gen_matrix.main"],
+            env=env,
+            check=True,
+            cwd=Path(__file__).parents[2],
+        )
+
+        with open(output_path, encoding="utf-8") as f:
+            content = f.read()
+        self.assertTrue(content.strip(), "gen_matrix.main wrote nothing to GITHUB_OUTPUT")
+        lines = content.strip().split("\n")
+
+        self.assertEqual(len(lines), 1, f"Expected 1 output line, got: {lines}")
+        self.assertTrue(lines[0].startswith("matrix="))
+        self.assertNotIn("check-matrix=", lines[0])

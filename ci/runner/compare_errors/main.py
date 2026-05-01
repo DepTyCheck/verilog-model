@@ -1,94 +1,53 @@
 import argparse
-import json
 from pathlib import Path
 
-from combined_report.previous_report import PreviousReport
-from combined_report.tools_report_list import ToolsReportsList
 from common.argparse_helpers import add_error_url_prefix_arg
+from dataset_stats.combined_report import CombinedReport
+from dataset_stats.files_index import FilesIndex
+from dataset_stats.first_found_index import FirstFoundIndex
+from dataset_stats.issues_index import IssuesIndex
+from dataset_stats.legacy_index import LegacyIndex
 
 from .compare_errors import ErrorsComparison
+from .current_index import CurrentIndex
+from .historical_index import HistoricalIndex
+from .reproduced_index import ReproducedIndex
 from .table_formatter import format_table
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Compare error statistics between historical data and current run")
-    parser.add_argument(
-        "--previous-report",
-        type=str,
-        required=True,
-        help="Path to the previous combined report JSON (historical data)",
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(
+        description="Compare per-error_id occurrence percentages between the dataset branch and the current PR.",
     )
-    parser.add_argument(
-        "--current-tools-reports-dir",
-        type=str,
-        required=True,
-        help="Directory containing current run tool report JSON files",
-    )
-    parser.add_argument(
-        "--tools-reports-pattern",
-        type=str,
-        required=True,
-        help="Glob pattern to match tool report files",
-    )
-    parser.add_argument(
-        "--tests-number",
-        type=int,
-        required=True,
-        help="Number of test cases in the current run",
-    )
-    add_error_url_prefix_arg(parser, "URL prefix for error links, e.g. https://org.github.io/repo/error (error ID will be appended)")
-    parser.add_argument(
-        "--known-errors-reports-dir",
-        type=str,
-        required=False,
-        default=None,
-        help=(
-            "Directory containing regression-test JSON reports "
-            "(schema: {error_id: {example_name: bool}}). "
-            "When provided, a 'Reproduced' column is added to the table."
-        ),
-    )
-    return parser.parse_args()
+    p.add_argument("--dataset-path", required=True, help="Path to a clone of the dataset branch")
+    p.add_argument("--per-file-results-dir", required=True, help="Directory of <tool>-per-file.json artifacts from run-tools")
+    p.add_argument("--regression-results-dir", required=True, help="Directory of regression-<tool>-per-file.json artifacts from regression-test")
+    add_error_url_prefix_arg(p, "URL prefix for error links, e.g. https://org.github.io/repo/error (error_id will be appended)")
+    return p.parse_args()
 
 
-def _load_known_errors(reports_dir: str) -> dict[str, bool]:
-    """
-    Scan reports_dir for *.json files and merge them into a flat
-    {error_id: reproduced} dict.  An error is reproduced if any example
-    in any report file evaluates to True.
-    """
-    result: dict[str, bool] = {}
-    for path in Path(reports_dir).glob("*.json"):
-        try:
-            with open(path, encoding="utf-8") as f:
-                report: dict[str, dict[str, bool]] = json.load(f)
-            for error_id, examples in report.items():
-                result[error_id] = result.get(error_id, False) or any(examples.values())
-        except Exception:
-            pass
-    return result
+def _build_historical(dataset_path: str) -> HistoricalIndex:
+    root = Path(dataset_path)
+    report = CombinedReport.build(
+        issues=IssuesIndex(root / "issues.csv"),
+        files=FilesIndex(root / "files"),
+        first_found=FirstFoundIndex(root / "found_issues"),
+        legacy=LegacyIndex(root / "legacy_stats.csv"),
+    )
+    return HistoricalIndex(report)
 
 
 def main() -> None:
     args = parse_args()
 
-    previous_report = PreviousReport(file_path=args.previous_report)
-    tools_reports_list = ToolsReportsList(
-        dir_path=args.current_tools_reports_dir,
-        pattern=args.tools_reports_pattern,
-    )
+    historical = _build_historical(args.dataset_path)
+    current = CurrentIndex(args.per_file_results_dir)
+    reproduced = ReproducedIndex(args.regression_results_dir, args.dataset_path)
 
-    comparison = ErrorsComparison(
-        previous_report=previous_report,
-        tools_reports_list=tools_reports_list,
-        tests_number=args.tests_number,
-    )
+    deltas = ErrorsComparison(historical=historical, current=current).compare()
+    known_errors = {d.error_id: reproduced.reproduced(d.error_id) for d in deltas}
 
-    known_errors = _load_known_errors(args.known_errors_reports_dir) if args.known_errors_reports_dir else None
-
-    deltas = comparison.compare()
-    table = format_table(deltas, error_url_prefix=args.error_url_prefix, known_errors=known_errors)
-    print(table)
+    print(format_table(deltas, error_url_prefix=args.error_url_prefix, known_errors=known_errors))
 
 
 if __name__ == "__main__":
