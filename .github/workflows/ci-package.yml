@@ -34,6 +34,10 @@ env:
   ERROR_DISTANCES_OUT: error_distances.html
   DATASET_PATH: dataset-clone
   DATASET_BRANCH: dataset
+  KEEP_DIVERSE_URL: https://github.com/DepTyCheck/keep_diverse.git
+  KEEP_DIVERSE_BRANCH: experimental/compare_datasets
+  KEEP_DIVERSE_REPO: keep-diverse
+  FILTERED_DIR_PATTERN: "filtered-"
   # RUN_STATS_PATTERN: "run-stats.json"
   # COMBINED_RUN_STATS_FILE: "combined-run-stats.json"
 
@@ -613,6 +617,230 @@ jobs:
             --found-issues-dir "${{ env.DATASET_PATH }}/found_issues" \
             --legacy-stats-csv "${{ env.DATASET_PATH }}/legacy_stats.csv" \
             --output -
+
+  filter-dataset:
+    name: Filter dataset
+    runs-on: ubuntu-latest
+    needs: [save-dataset]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Clone keep_diverse
+        run: |
+          git clone ${{ env.KEEP_DIVERSE_URL }} \
+            --branch ${{ env.KEEP_DIVERSE_BRANCH }} \
+            --single-branch \
+            ${{ env.KEEP_DIVERSE_REPO }}
+
+      - name: Install keep_diverse
+        run: |
+          pip install -r ${{ env.KEEP_DIVERSE_REPO }}/requirements.txt
+          pip install -e ${{ env.KEEP_DIVERSE_REPO }}/
+
+      - name: Clone dataset branch
+        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
+
+      - name: Split dataset files by language
+        run: |
+          mkdir -p dataset-files-sv dataset-files-vhdl
+          find "${{ env.DATASET_PATH }}/files" -name '*.sv'   -exec cp {} dataset-files-sv/   \;
+          find "${{ env.DATASET_PATH }}/files" -name '*.vhdl' -exec cp {} dataset-files-vhdl/ \;
+
+      - name: Filter sv files
+        run: |
+          PYTHONPATH=${{ env.KEEP_DIVERSE_REPO }} python ${{ env.KEEP_DIVERSE_REPO }}/tsdm_main.py \
+            --dir dataset-files-sv \
+            --kept-files kept-files-sv.txt \
+            --filtration-plot filtration-sv.svg
+
+      - name: Filter vhdl files
+        run: |
+          PYTHONPATH=${{ env.KEEP_DIVERSE_REPO }} python ${{ env.KEEP_DIVERSE_REPO }}/tsdm_main.py \
+            --dir dataset-files-vhdl \
+            --kept-files kept-files-vhdl.txt \
+            --filtration-plot filtration-vhdl.svg
+
+      - name: Collect filtered sv files
+        run: |
+          mkdir -p filtered-sv
+          xargs -a kept-files-sv.txt cp -t filtered-sv/
+
+      - name: Collect filtered vhdl files
+        run: |
+          mkdir -p filtered-vhdl
+          xargs -a kept-files-vhdl.txt cp -t filtered-vhdl/
+
+      - name: Upload filtration plots
+        uses: actions/upload-artifact@v6
+        with:
+          name: filtration-plots
+          path: |
+            filtration-sv.svg
+            filtration-vhdl.svg
+
+      - name: Upload kept-files lists
+        uses: actions/upload-artifact@v6
+        with:
+          name: kept-files-lists
+          path: |
+            kept-files-sv.txt
+            kept-files-vhdl.txt
+
+      - name: Upload filtered sv files
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ env.FILTERED_DIR_PATTERN }}sv
+          path: filtered-sv/
+
+      - name: Upload filtered vhdl files
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ env.FILTERED_DIR_PATTERN }}vhdl
+          path: filtered-vhdl/
+
+  run-tools-filtered:
+    name: Filtered ${{ matrix.tool.name }}
+    needs: [test-python-units, filter-dataset, get-tool-matrix]
+    if: ${{ !cancelled() }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Install runner deps
+        run: |
+          sudo apt update -qq
+          sudo apt install -y bc
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r ci/runner/runner/requirements.txt
+          EXTRA="${{ matrix.tool.python_runner_deps }}"
+          if [ -n "$EXTRA" ] && [ "$EXTRA" != "null" ]; then
+            pip install $EXTRA
+          fi
+
+      - name: Setup tool
+        uses: ./.github/actions/setup-tool
+        with:
+          tool-name: ${{ matrix.tool.name }}
+          tool-repo: ${{ matrix.tool.repo }}
+          tool-path: ${{ matrix.tool.path }}
+          tool-build: ${{ matrix.tool.build }}
+          tool-install: ${{ matrix.tool.install }}
+          tool-deps: ${{ matrix.tool.deps }}
+          tool-version: ${{ matrix.tool.version }}
+          tool-rust-ver: ${{ matrix.tool.rust_ver || '' }}
+          tool-pre-build: ${{ matrix.tool.pre_build || '' }}
+          tool-third-party-release-repo: ${{ matrix.tool.third_party_release_repo || '' }}
+          tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard || '' }}
+
+      - name: Capture tool version
+        run: |
+          out=$({
+          ${{ matrix.tool.version }}
+          } 2>&1 | head -1 || true)
+          echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
+
+      - name: Clone dataset
+        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
+
+      - name: Download filtered files
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.language }}
+          path: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.language }}
+
+      - name: Run tool on filtered files
+        uses: ./.github/actions/run-tool-on-files
+        with:
+          tool-name: ${{ matrix.tool.name }}
+          tool-version: ${{ env.TOOL_VERSION }}
+          tool-commit: ${{ env.COMMIT_HASH }}
+          model-commit: ${{ github.sha }}
+          commands-json: ${{ toJSON(matrix.tool.commands) }}
+          input-dir: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.language }}
+          file-pattern: ${{ matrix.tool.file_pattern }}
+          ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
+          assets: ${{ matrix.tool.assets }}
+          extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
+          output-json: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.name }}-per-file.json
+          job-link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}
+
+  compare-errors-filtered:
+    name: Compare errors (filtered)
+    runs-on: ubuntu-latest
+    needs: [test-python-units, run-tools-filtered, regression-test]
+    if: ${{ !cancelled() }}
+    env:
+      PER_FILE_DIR: filtered-per-file-results
+      REGRESSION_DIR: regression-results
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install requirements
+        run: pip install -r ci/runner/compare_errors/requirements.txt
+
+      - name: Clone dataset branch
+        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
+
+      - name: Download filtered per-file artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: "${{ env.FILTERED_DIR_PATTERN }}*-per-file.json"
+          path: ${{ env.PER_FILE_DIR }}
+          merge-multiple: true
+
+      - name: Download regression artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: "regression-*-per-file.json"
+          path: ${{ env.REGRESSION_DIR }}
+          merge-multiple: true
+
+      - name: Check artifact counts
+        run: |
+          current_count=$(find "$PER_FILE_DIR" -name '*.json' | wc -l)
+          regression_count=$(find "$REGRESSION_DIR" -name '*.json' | wc -l)
+          if [ "$regression_count" -eq 0 ]; then
+            echo "::warning::No regression artifacts — Reproduced column will show all ❌"
+          fi
+          if [ "$current_count" -eq 0 ]; then
+            echo "::warning::No filtered per-file artifacts — Current column will be 0% for all rows"
+          fi
+
+      - name: Compare
+        run: |
+          PYTHONPATH=ci/runner python -m compare_errors.main \
+            --dataset-path "$DATASET_PATH" \
+            --per-file-results-dir "$PER_FILE_DIR" \
+            --regression-results-dir "$REGRESSION_DIR" \
+            --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
+            >> "$GITHUB_STEP_SUMMARY"
 
   publish-container:
     name: Build and publish Docker image
