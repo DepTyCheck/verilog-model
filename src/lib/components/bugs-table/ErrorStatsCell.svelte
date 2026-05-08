@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { A, Tooltip } from 'flowbite-svelte';
-	import type { ErrorsStats } from '$lib/parsed-error-stats';
+	import type { ErrorStat } from '$lib/generated/errors-stats';
 	import type { ErrorPercentages } from '$lib/components/bugs-table/error-stats-utils';
 	import { formatDateDMY } from '$lib/index';
 
 	import { linkToCommitForErrStat } from '$lib/components/bugs-table/error-stats-utils';
 
 	export let errorId: string;
-	export let errorsStats: ErrorsStats;
+	export let errorsStats: Record<string, ErrorStat>;
 	export let percentages: ErrorPercentages | undefined = undefined;
 
-	const errorStat = errorsStats.errors[errorId];
+	const errorStat = errorsStats[errorId];
 
 	let overallPercentage = '0';
 	let testPathsPercentage = '0';
@@ -29,13 +29,13 @@
 		totalRuns = percentages!.totalRuns;
 		overallPercentage = formatPercentage(percentages!.overall);
 		testPathsPercentage = formatPercentage(percentages!.testFiles);
-		errorsPerFailedTest = (errorStat.overall / errorStat.test_paths_count).toFixed(2);
+		errorsPerFailedTest = (errorStat.overall / errorStat.test_files_count).toFixed(2);
 
 		linkToolGithub = linkToCommitForErrStat(errorStat);
 	} catch (e) {}
 
-	const lastCommit = errorStat && errorStat.last ? errorStat.last.commit.substring(0, 7) : '';
-	const lastDate = errorStat && errorStat.last ? formatDateDMY(errorStat.last.date) : '';
+	const lastCommit = errorStat ? errorStat.last_commit.substring(0, 7) : '';
+	const lastDate = errorStat ? formatDateDMY(new Date(errorStat.last_date)) : '';
 </script>
 
 {#if errorStat}
@@ -53,6 +53,6 @@
 		</div>
 	</div>
 	<Tooltip type="auto">
-		{`Found ${errorStat.overall} times across ${errorStat.test_paths_count} files over ${totalRuns} runs. On average ${errorsPerFailedTest} errors per failing file. The most recent occurrence was in commit ${lastCommit} on ${lastDate}`}
+		{`Found ${errorStat.overall} times across ${errorStat.test_files_count} files over ${totalRuns} runs. On average ${errorsPerFailedTest} errors per failing file. The most recent occurrence was in commit ${lastCommit} on ${lastDate}`}
 	</Tooltip>
 {/if}

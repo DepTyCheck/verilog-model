@@ -28,3 +28,15 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Dataset branch cloned alongside this branch for build-time data
+/dataset/
+
+# Build-time stats CSV produced by the main workflow
+/combined_stats.csv
+
+# Generated stats module
+/src/lib/generated/errors-stats.ts
+
+# ci/dataset branch cloned for combined_stats.csv generation
+/verilog-model/

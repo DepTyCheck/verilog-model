@@ -25,11 +25,12 @@ export type FoundErrorExample = {
 
 export type FoundError = {
 	stage?: string | null;
-	lang: string;
-	tool: string;
+	profile: string;
+	target: string;
 	id: string;
 	title: string;
 	short_desc?: string | null;
+	regex?: string | null;
 	examples: FoundErrorExample[];
 	issue_type: IssueType[] | null;
 	issue_links?: IssueLink[];

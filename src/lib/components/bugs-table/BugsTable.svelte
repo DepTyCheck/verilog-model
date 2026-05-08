@@ -24,7 +24,7 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { fixLink, getMaintainersResponseDisplay } from '$lib/index';
-	import { errorsStats } from '$lib/parsed-error-stats';
+	import { errorsStats } from '$lib/generated/errors-stats';
 	import ErrorStatsCell from '$lib/components/bugs-table/ErrorStatsCell.svelte';
 	import IssueLinksCell from '$lib/components/bugs-table/IssueLinksCell.svelte';
 	import { errorPercentages } from '$lib/components/bugs-table/error-stats-utils';
@@ -43,7 +43,7 @@
 	);
 	let issueTypeChoices: CheckBoxChoice[] = createIssueTypeChoices(allFoundErrors);
 
-	let toolGroup: string[] = [];
+	let targetGroup: string[] = [];
 	let stageGroup: string[] = [];
 	let issueTypeGroup: string[] = [];
 	let noveltyGroup: string[] = [];
@@ -55,7 +55,7 @@
 		set: (v: string[]) => void;
 		getValue: (e: FoundError) => any;
 	}> = [
-		{ param: 'tools', get: () => toolGroup, set: (v) => (toolGroup = v), getValue: (e) => e.tool },
+		{ param: 'targets', get: () => targetGroup, set: (v) => (targetGroup = v), getValue: (e) => e.target },
 		{ param: 'stage', get: () => stageGroup, set: (v) => (stageGroup = v), getValue: (e) => e.stage },
 		{ param: 'issue_type', get: () => issueTypeGroup, set: (v) => (issueTypeGroup = v), getValue: (e) => e.issue_type },
 		{ param: 'novelty', get: () => noveltyGroup, set: (v) => (noveltyGroup = v), getValue: (e) => e.issue_novelty },
@@ -99,7 +99,7 @@
 		loadFromQueryParams(page.url);
 	});
 	$: filteredErrors = applyFilters(allFoundErrors, [
-		createFilter(toolGroup, (e) => e.tool),
+		createFilter(targetGroup, (e) => e.target),
 		createFilter(stageGroup, (e) => e.stage),
 		createFilter(issueTypeGroup, (e) => e.issue_type),
 		createFilter(noveltyGroup, (e) => e.issue_novelty),
@@ -149,9 +149,9 @@
 						<TableColSortHead label="Title" sortKey="title" {sortColumn} {sortDest} {setSort} />
 						<TableColFilterHead
 							choices={toolChoices}
-							bind:group={toolGroup}
+							bind:group={targetGroup}
 							label="Tool"
-							name="tools"
+							name="targets"
 						/>
 						<TableColSortHead
 							label="First Found"
@@ -207,7 +207,7 @@
 									{item.title}
 								</A>
 							</TableData>
-							<TableData>{item.tool}</TableData>
+							<TableData>{item.target}</TableData>
 							<TableData>{formatDateDMY(getFirstFound(item))}</TableData>
 							<TableData>
 								<IssueTypeBadges types={item.issue_type} />
@@ -225,7 +225,7 @@
 								{/if}
 							</TableData>
 							<TableData widthClass="w-48">
-								{#if errorsStats.errors[item.id]}
+								{#if errorsStats[item.id]}
 									<ErrorStatsCell
 										errorId={item.id}
 										{errorsStats}

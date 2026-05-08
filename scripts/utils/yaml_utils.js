@@ -68,7 +68,7 @@ export function parseYamlFile(filePath) {
     const content = fs.readFileSync(filePath, 'utf8');
     const doc = parse(content);
 
-    const { stage, lang, tool, id, short_desc, title, examples, issue_novelty, issue_links, maintainers_response } = doc;
+    const { stage, profile, target, regex, id, short_desc, title, examples, issue_novelty, issue_links, maintainers_response } = doc;
 
     const parsedExamples = [];
     if (Array.isArray(examples)) {
@@ -90,8 +90,9 @@ export function parseYamlFile(filePath) {
 
     return {
       stage: stage,
-      lang,
-      tool,
+      profile,
+      target,
+      regex: regex ?? null,
       id,
       title,
       short_desc: short_desc || null,

@@ -15,8 +15,8 @@ export function createChoices<T>(errors: FoundError[], getValue: (error: FoundEr
 export function createToolChoices(errors: FoundError[]): CheckBoxChoice[] {
 	return createChoices(
 		errors,
-		(error) => error.tool,
-		(tool) => tool
+		(error) => error.target,
+		(target) => target
 	);
 }
 

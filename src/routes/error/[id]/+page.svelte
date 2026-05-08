@@ -12,7 +12,7 @@
 	import NoveltyBadge from '$lib/components/NoveltyBadge.svelte';
 	import MaintainersResponseBadge from '$lib/components/MaintainersResponseBadge.svelte';
 	import ErrorStatsCell from '$lib/components/bugs-table/ErrorStatsCell.svelte';
-	import { errorsStats } from '$lib/parsed-error-stats';
+	import { errorsStats } from '$lib/generated/errors-stats';
 	import { errorPercentages } from '$lib/components/bugs-table/error-stats-utils';
 
 	let id: string = String(page.params.id);
@@ -31,8 +31,11 @@
 	{:else if foundError}
 		<h1 class="mb-4 text-2xl font-semibold dark:text-white">{foundError.title}</h1>
 		<dl class="mb-8 divide-y divide-gray-100 border-y border-gray-100 dark:divide-gray-800 dark:border-gray-800">
-			{#if foundError.tool}
-				<FieldDisplay label="Tool" value={foundError.tool} />
+			{#if foundError.target}
+				<FieldDisplay label="Tool" value={foundError.target} />
+			{/if}
+			{#if foundError.regex}
+				<FieldDisplay label="Regex" value={foundError.regex} />
 			{/if}
 			{#if foundError.stage}
 				<FieldDisplay label="Stage" value={foundError.stage} />
@@ -55,7 +58,7 @@
 					<MaintainersResponseBadge response={foundError.maintainers_response} />
 				</FieldDisplay>
 			{/if}
-			{#if errorsStats.errors[foundError.id]}
+			{#if errorsStats[foundError.id]}
 				<FieldDisplay label="Stats">
 					<ErrorStatsCell
 						errorId={foundError.id}

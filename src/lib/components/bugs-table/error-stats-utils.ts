@@ -1,8 +1,7 @@
 import toolLinks from '$lib/data/tools-git-links.json';
-import { errorsStats as prodErrorsStats, getParsedErrorStats } from '$lib/parsed-error-stats';
-import type { ErrorStat, ErrorsStats } from '$lib/parsed-error-stats';
+import { errorsStats as prodErrorsStats } from '$lib/generated/errors-stats';
+import type { ErrorStat } from '$lib/generated/errors-stats';
 import { allFoundErrors as prodFoundErrors } from '$lib/generated/errors-data';
-import { getFirstFound } from '$lib/index';
 import type { FoundError } from '$lib/core';
 
 export function getToolLink(toolName: string): string {
@@ -20,53 +19,31 @@ export type ErrorPercentages = {
 	totalRuns: number;
 };
 
-export class ErrorStatsCalculator {
-	constructor(
-		private errorsStats: ErrorsStats,
-		private foundErrors: FoundError[]
-	) {}
-
-	linkToCommitForErrStat(errStat: ErrorStat): string {
-		const foundError = this.foundErrors.find((e) => e.id === errStat.error_id);
-		return linkToCommit(foundError!.tool, errStat.last.commit);
-	}
-
-	findRunsCount(from: Date, to: Date): number {
-		const relevantRuns = this.errorsStats.runs.filter((run) => run.date >= from && run.date <= to);
-		return relevantRuns.reduce((sum, run) => sum + run.amount, 0);
-	}
-
-	runsForErrorsStat(errStat: ErrorStat): number {
-		const foundError = this.foundErrors.find((e) => e.id == errStat.error_id);
-		const firstFound = getFirstFound(foundError!);
-
-		const latestRunDate = this.errorsStats.runs[this.errorsStats.runs.length - 1]?.date;
-		const totalRuns = this.findRunsCount(firstFound!, latestRunDate);
-		return totalRuns;
-	}
-
-	issueOccurancePct(errStat: ErrorStat): ErrorPercentages {
-		const totalRuns = this.runsForErrorsStat(errStat);
-		let pcts = [errStat.overall, errStat.test_paths_count].map((count) => (count / totalRuns) * 100);
-		return { overall: pcts[0], testFiles: pcts[1], totalRuns };
-	}
-
-	calculateErrorPercentages(): Record<string, ErrorPercentages> {
-		const result: Record<string, ErrorPercentages> = {};
-		for (const [errorId, errorStat] of Object.entries(this.errorsStats.errors)) {
-			try {
-				const { overall, testFiles, totalRuns } = this.issueOccurancePct(errorStat);
-				result[errorId] = { overall, testFiles, totalRuns };
-			} catch (e) {}
-		}
-		return result;
-	}
+export function linkToCommitForErrStatWith(
+	errStat: ErrorStat,
+	foundErrors: FoundError[]
+): string {
+	const foundError = foundErrors.find((e) => e.id === errStat.error_id);
+	return linkToCommit(foundError!.target, errStat.last_commit);
 }
 
-export const defaultCalculator = new ErrorStatsCalculator(prodErrorsStats, prodFoundErrors);
+export function calculateErrorPercentages(
+	errorsStats: Record<string, ErrorStat>
+): Record<string, ErrorPercentages> {
+	const result: Record<string, ErrorPercentages> = {};
+	for (const [errorId, errStat] of Object.entries(errorsStats)) {
+		if (errStat.runs === 0) continue;
+		result[errorId] = {
+			overall: (errStat.overall / errStat.runs) * 100,
+			testFiles: (errStat.test_files_count / errStat.runs) * 100,
+			totalRuns: errStat.runs
+		};
+	}
+	return result;
+}
 
 export function linkToCommitForErrStat(errStat: ErrorStat): string {
-	return defaultCalculator.linkToCommitForErrStat(errStat);
+	return linkToCommitForErrStatWith(errStat, prodFoundErrors);
 }
 
-export const errorPercentages = defaultCalculator.calculateErrorPercentages();
+export const errorPercentages = calculateErrorPercentages(prodErrorsStats);

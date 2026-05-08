@@ -1,12 +1,10 @@
-name: Check & Deploy
+name: PR Validation
 
 on:
-  push:
+  pull_request:
     branches:
       - gh-pages
-    tags:
-      - '**'
-  pull_request:
+  push:
     branches:
       - gh-pages
 
@@ -21,31 +19,18 @@ defaults:
     shell: bash
 
 jobs:
-  lint-yaml:
-    name: Validate YAML Syntax
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.x'
-
-      - name: Install yamllint
-        run: pip install yamllint
-
-      - name: Run yamllint
-        run: |
-          yamllint -c .yamllint found_errors/
-
   unit-tests:
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+
+      - name: Checkout dataset branch
+        uses: actions/checkout@v6
+        with:
+          ref: dataset
+          path: dataset
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -55,49 +40,38 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-      
-      - name: Generate errors data file
-        run: npm run generate
+
+      - name: Bootstrap & generate
+        run: npm run pre
 
       - name: Run tests
         run: npm run test
 
   build-site:
     name: Build site
-    needs: [unit-tests, lint-yaml]
+    needs: [unit-tests]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Checkout dataset branch
+        uses: actions/checkout@v6
+        with:
+          ref: dataset
+          path: dataset
+
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: npm
+
       - name: Install dependencies
         run: npm install
+
       - name: build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
         run: |
           npm run build
-      - name: Upload Artifacts
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: 'build/'
-
-  deploy:
-    name: Deploy site
-    if: github.event_name == 'push'
-    needs: build-site
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v5
