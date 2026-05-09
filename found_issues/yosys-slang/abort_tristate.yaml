@@ -4,7 +4,7 @@ target: yosys-slang
 id: abort_tristate
 title: Abort due to tristate
 regex: >
-  slang_frontend\.cc:(2627|2629|2654)
+  slang_frontend\.cc:(2627|2629|2654|2659)
 examples:
   - abort_tristate_ex1:
       first_found: 07.04.2026
@@ -90,3 +90,59 @@ examples:
           assign muq = u;
           assign wjaqyzx = wjaqyzx;
         endmodule: tayibb
+
+  - abort_tristate_ex4:
+      first_found: 08.05.2026
+      minified_error: |
+        ERROR: Abort in /yosys-slang/src/slang_frontend.cc:2659.
+      minified_example: |
+        module vjjqa (inout tri1 logic aqhljy [1:0]);
+        endmodule: vjjqa
+      full_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2659.
+      full_example: |
+        module bxsooh ();
+
+          not lvmsc(f, f);
+          or qlhsoij(f, rvqvflwwuh, xq);
+          xnor skhsv(fsckaf, maabslzovd, f);
+
+          // Multi-driven assigns
+          assign xq = 'b0z;
+        endmodule: bxsooh
+
+        module vjjqa ( inout tri logic cg [2:0][0:2]
+                    , inout tri1 logic aqhljy [1:0]
+                    , input triand logic [4:1] u [4:1][2:2][4:2]
+                    , output reg [0:3] hillwiofpq [1:3]
+                    );
+
+          or vtwot(joymcjkqt, joymcjkqt, joymcjkqt);
+          xnor fdnvn(joymcjkqt, joymcjkqt, joymcjkqt);
+
+          // Single-driven assigns
+          assign hillwiofpq = '{'{'b111x,'b1z,'bz01x,'bxz010},'{'bz01,'b1x10,'b10z,'b1},'{'bzzz,'b01,'bzz00,'b01xxx}};
+
+          // Multi-driven assigns
+          assign u = u;
+        endmodule: vjjqa
+
+        module ek ();
+
+          xnor hoffodpzwq(ueps, zs, zs);
+          xnor xrreb(zs, ueps, ij);
+          xnor yiqbbjp(n, ueps, isgzwwkssk);
+          xnor vmn(ij, odao, ueps);
+
+        endmodule: ek
+
+        module fnhy ();
+
+          bxsooh uklgdfgt();
+          not cnoygj(ryizgbi, cmesns);
+          bxsooh urz();
+
+          // Multi-driven assigns
+          assign cmesns = 'b1zx0;
+          assign ryizgbi = 'bx;
+        endmodule: fnhy
