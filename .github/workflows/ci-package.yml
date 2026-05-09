@@ -589,39 +589,57 @@ jobs:
           git remote set-url origin "https://x-access-token:${{ secrets.PAT_PUSH }}@github.com/${{ github.repository }}"
           git push origin ${{ env.DATASET_BRANCH }}
 
-  combined-stats:
-    name: Combined stats
-    runs-on: ubuntu-latest
+  build-site:
+    name: Build site
     needs: [save-dataset]
+    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout gh-pages branch
         uses: actions/checkout@v6
         with:
+          ref: gh-pages
           persist-credentials: false
-
-      - uses: actions/setup-python@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          python-version: "3.13"
+          node-version: 20
+          cache: npm
+      - name: Pre-build
+        run: npm run pre
+      - name: Build
+        env:
+          BASE_PATH: '/${{ github.event.repository.name }}'
+        run: npm run build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: build/
 
-      - name: Install dataset_stats requirements
-        run: pip install -r ci/runner/dataset_stats/requirements.txt
-
-      - name: Clone dataset branch (post-save state)
-        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
-
-      - name: Build combined_stats.csv (print to console)
-        run: |
-          PYTHONPATH=ci/runner python -m dataset_stats.main \
-            --issues-csv "${{ env.DATASET_PATH }}/issues.csv" \
-            --files-dir "${{ env.DATASET_PATH }}/files" \
-            --found-issues-dir "${{ env.DATASET_PATH }}/found_issues" \
-            --legacy-stats-csv "${{ env.DATASET_PATH }}/legacy_stats.csv" \
-            --output -
+  deploy:
+    name: Deploy site
+    needs: [build-site]
+    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
 
   filter-dataset:
-    name: Filter dataset
+    name: Filter dataset (${{ matrix.language }})
     runs-on: ubuntu-latest
     needs: [save-dataset]
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [sv, vhdl]
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -647,63 +665,40 @@ jobs:
       - name: Clone dataset branch
         run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
 
-      - name: Split dataset files by language
+      - name: Copy dataset files
         run: |
-          mkdir -p dataset-files-sv dataset-files-vhdl
-          find "${{ env.DATASET_PATH }}/files" -name '*.sv'   -exec cp {} dataset-files-sv/   \;
-          find "${{ env.DATASET_PATH }}/files" -name '*.vhdl' -exec cp {} dataset-files-vhdl/ \;
+          mkdir -p dataset-files
+          find "${{ env.DATASET_PATH }}/files" -name '*.${{ matrix.language }}' -exec cp {} dataset-files/ \;
 
-      - name: Filter sv files
-        run: |
-          PYTHONPATH=${{ env.KEEP_DIVERSE_REPO }} python ${{ env.KEEP_DIVERSE_REPO }}/tsdm_main.py \
-            --dir dataset-files-sv \
-            --kept-files kept-files-sv.txt \
-            --filtration-plot filtration-sv.svg
-
-      - name: Filter vhdl files
+      - name: Filter files
         run: |
           PYTHONPATH=${{ env.KEEP_DIVERSE_REPO }} python ${{ env.KEEP_DIVERSE_REPO }}/tsdm_main.py \
-            --dir dataset-files-vhdl \
-            --kept-files kept-files-vhdl.txt \
-            --filtration-plot filtration-vhdl.svg
+            --dir dataset-files \
+            --kept-files kept-files.txt \
+            --filtration-plot filtration.svg
 
-      - name: Collect filtered sv files
+      - name: Collect filtered files
         run: |
-          mkdir -p filtered-sv
-          xargs -a kept-files-sv.txt cp -t filtered-sv/
+          mkdir -p filtered
+          xargs -a kept-files.txt cp -t filtered/
 
-      - name: Collect filtered vhdl files
-        run: |
-          mkdir -p filtered-vhdl
-          xargs -a kept-files-vhdl.txt cp -t filtered-vhdl/
-
-      - name: Upload filtration plots
+      - name: Upload filtration plot
         uses: actions/upload-artifact@v6
         with:
-          name: filtration-plots
-          path: |
-            filtration-sv.svg
-            filtration-vhdl.svg
+          name: filtration-plot-${{ matrix.language }}
+          path: filtration.svg
 
-      - name: Upload kept-files lists
+      - name: Upload kept-files list
         uses: actions/upload-artifact@v6
         with:
-          name: kept-files-lists
-          path: |
-            kept-files-sv.txt
-            kept-files-vhdl.txt
+          name: kept-files-list-${{ matrix.language }}
+          path: kept-files.txt
 
-      - name: Upload filtered sv files
+      - name: Upload filtered files
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ env.FILTERED_DIR_PATTERN }}sv
-          path: filtered-sv/
-
-      - name: Upload filtered vhdl files
-        uses: actions/upload-artifact@v6
-        with:
-          name: ${{ env.FILTERED_DIR_PATTERN }}vhdl
-          path: filtered-vhdl/
+          name: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.language }}
+          path: filtered/
 
   run-tools-filtered:
     name: Filtered ${{ matrix.tool.name }}
