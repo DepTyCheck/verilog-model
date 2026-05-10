@@ -1,52 +1,48 @@
-from combined_report.percentages import occurrence_pct, total_test_count
-from combined_report.previous_report import PreviousReport
-from combined_report.tools_report_list import ToolsReportsList
+from dataclasses import dataclass
+from typing import Protocol
 
 
+class _Historical(Protocol):
+    def error_ids(self) -> set[str]: ...
+    def historical_pct(self, error_id: str) -> float: ...
+
+
+class _Current(Protocol):
+    def error_ids(self) -> set[str]: ...
+    def current_pct(self, error_id: str) -> float: ...
+
+
+@dataclass(frozen=True)
 class ErrorPercentageDelta:
-    def __init__(self, error_id: str, historical_pct: float, current_pct: float):
-        self.error_id = error_id
-        self.historical_pct = historical_pct
-        self.current_pct = current_pct
-        self.delta_pct = current_pct - historical_pct
+    error_id: str
+    historical_pct: float
+    current_pct: float
+
+    @property
+    def delta_pct(self) -> float:
+        return self.current_pct - self.historical_pct
 
 
 class ErrorsComparison:
-    def __init__(
-        self,
-        previous_report: PreviousReport,
-        tools_reports_list: ToolsReportsList,
-        tests_number: int,
-    ):
-        self.previous_report = previous_report
-        self.tools_reports_list = tools_reports_list
-        self.tests_number = tests_number
+    """Joins historical and current error percentages into a sorted delta list.
 
-    def current_run_counts(self) -> dict[str, int]:
-        counts: dict[str, int] = {}
-        for tool_report in self.tools_reports_list.reports:
-            for error_report in tool_report.errors:
-                counts[error_report.error_id] = counts.get(error_report.error_id, 0) + error_report.overall
-        return counts
+    `ReproducedIndex` is intentionally wired at the call site (`main.py`)
+    rather than here so this class stays dependency-free and easily testable
+    with stub indexes.
+    """
+
+    def __init__(self, historical: _Historical, current: _Current):
+        self._historical = historical
+        self._current = current
 
     def compare(self) -> list[ErrorPercentageDelta]:
-        current_counts = self.current_run_counts()
-        all_ids = set(self.previous_report.errors.keys()) | set(current_counts.keys())
-
-        historical_total = total_test_count(self.previous_report.runs)
-
-        deltas = []
+        hist_ids = self._historical.error_ids()
+        curr_ids = self._current.error_ids()
+        all_ids = hist_ids | curr_ids
+        deltas: list[ErrorPercentageDelta] = []
         for error_id in all_ids:
-            prev_overall = self.previous_report.errors[error_id].overall if error_id in self.previous_report.errors else 0
-            historical_pct = occurrence_pct(prev_overall, historical_total)
-            current_pct = occurrence_pct(current_counts.get(error_id, 0), self.tests_number)
-            deltas.append(
-                ErrorPercentageDelta(
-                    error_id=error_id,
-                    historical_pct=historical_pct,
-                    current_pct=current_pct,
-                )
-            )
-
+            h = self._historical.historical_pct(error_id) if error_id in hist_ids else 0.0
+            c = self._current.current_pct(error_id) if error_id in curr_ids else 0.0
+            deltas.append(ErrorPercentageDelta(error_id=error_id, historical_pct=h, current_pct=c))
         deltas.sort(key=lambda d: abs(d.delta_pct), reverse=True)
         return deltas

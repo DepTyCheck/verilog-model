@@ -1,0 +1,11 @@
+stage: parsing
+tool: tool-b
+id: dup
+title: Duplicate id B
+issue_novelty: already_known
+maintainers_response: low
+examples:
+  - dup_b:
+      first_found: 02.06.2025
+      minified_error: |
+        whatever

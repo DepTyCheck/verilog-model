@@ -17,9 +17,24 @@ sh local_run_unit_tests.sh
 python local_integration_test.py
 ```
 
-- Using iverilog
-  From `ci/runner`:
+## Dev
+
+Handle legacy stats.
 
 ```bash
-pip install -r regression_test/requirements.txt && python -m regression_test.integration_tests.test_iverilog
+PYTHONPATH=ci/runner python -m legacy_stats.main \
+      --previous-report ./latest-error-stats.json \
+      --found-errors-dir ./verilog-gh-pages/found_errors \
+      --output ./legacy_stats.csv
+```
+
+Combine legacy stats with modern.
+
+```bash
+PYTHONPATH=ci/runner python -m dataset_stats.main \
+    --issues-csv debug_dataset/issues.csv \
+    --files-dir debug_dataset/files \
+    --found-issues-dir debug_dataset/found_issues \
+    --legacy-stats-csv debug_dataset/legacy_stats.csv \
+    --output combined_stats.csv
 ```

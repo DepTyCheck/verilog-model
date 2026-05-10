@@ -1,0 +1,11 @@
+stage: parsing
+tool: tool-a
+id: bad_date
+title: Bad date
+issue_novelty: already_known
+maintainers_response: low
+examples:
+  - bad_date_ex1:
+      first_found: "2025-07-19"
+      minified_error: |
+        whatever

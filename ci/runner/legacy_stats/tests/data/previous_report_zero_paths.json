@@ -1,0 +1,22 @@
+{
+  "errors": {
+    "alpha": {
+      "overall": 0,
+      "test_paths_count": 0,
+      "last": {
+        "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "date": "2025-08-01T12:00:00.000000"
+      }
+    }
+  },
+  "runs": [
+    {
+      "date": "2025-07-19T12:00:00.000000",
+      "amount": 10
+    },
+    {
+      "date": "2025-08-01T12:00:00.000000",
+      "amount": 10
+    }
+  ]
+}

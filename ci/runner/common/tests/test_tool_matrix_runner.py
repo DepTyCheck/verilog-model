@@ -4,21 +4,22 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from common.command_config import CommandConfig
-from common.command_output import AnalyzisResult
-from common.error_types import UnexpectedError
+from common.run_tool_command import CommandResult, MatchRecord
 from common.tool_matrix_runner import FileInput, ResultCollector, run_all
 
 
-def _clean() -> AnalyzisResult:
-    return AnalyzisResult(found_matches=[], unexpected_errors=[], all_errors_are_known=True)
+def _clean() -> list[CommandResult]:
+    return [CommandResult(command="tool x", outcome="clean", matches=[])]
 
 
-def _fail(path: str = "f.sv") -> AnalyzisResult:
-    return AnalyzisResult(
-        found_matches=[],
-        unexpected_errors=[UnexpectedError("boom", path)],
-        all_errors_are_known=False,
-    )
+def _fail() -> list[CommandResult]:
+    return [
+        CommandResult(
+            command="tool x",
+            outcome="unknown",
+            matches=[MatchRecord(error_id="unknown", matched_text="boom")],
+        )
+    ]
 
 
 class TestFileInput(unittest.TestCase):
@@ -48,11 +49,11 @@ class TestResultCollector(unittest.TestCase):
     def test_accumulates_pairs(self):
         rc = ResultCollector()
         fi = FileInput(content="a", file_suffix=".sv", context=None)
-        result = _clean()
-        rc.handle(fi, result)
+        results = _clean()
+        rc.handle(fi, results)
         self.assertEqual(len(rc.results()), 1)
         self.assertIs(rc.results()[0][0], fi)
-        self.assertIs(rc.results()[0][1], result)
+        self.assertIs(rc.results()[0][1], results)
 
     def test_has_unknown_errors_false_when_all_clean(self):
         rc = ResultCollector()

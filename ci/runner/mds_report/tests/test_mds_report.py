@@ -8,8 +8,8 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 from common.error_types import MatchingMode
 from common.ignored_errors_list import IgnoredErrorsList
-from common.unknown_error_reporter import UnknownErrorEntry
 from mds_report.mds_distances_report import MDSDistancesReport
+from mds_report.unknown_error_entry import UnknownErrorEntry
 
 
 def _make_ignored(patterns: list[str]):

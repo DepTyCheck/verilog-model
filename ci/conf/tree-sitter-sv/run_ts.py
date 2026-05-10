@@ -1,25 +1,23 @@
 import sys
 
-import tree_sitter
+import tree_sitter_systemverilog as tssv
+from tree_sitter import Language, Parser
 
 
 def main():
-    if len(sys.argv) != 3:
-        print("Usage: run_ts.py <tree-sitter-sv-lib-path> <file-to-parse>")
+    if len(sys.argv) != 2:
+        print("Usage: run_ts.py <file-to-parse>")
         sys.exit(1)
 
-    ts_lib_path = sys.argv[1]
-    file_path = sys.argv[2]
+    file_path = sys.argv[1]
 
-    sv = tree_sitter.Language(ts_lib_path, "systemverilog")
-    parser = tree_sitter.Parser()
-    parser.set_language(sv)
+    parser = Parser(Language(tssv.language()))
 
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, "rb") as f:
             source_code = f.read()
 
-        tree = parser.parse(bytes(source_code, "utf-8"))
+        tree = parser.parse(source_code)
 
         if tree.root_node is not None:
             print(f"Successfully parsed {file_path}")

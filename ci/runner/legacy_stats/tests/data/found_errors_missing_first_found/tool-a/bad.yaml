@@ -1,0 +1,10 @@
+stage: parsing
+tool: tool-a
+id: missing_ff
+title: Missing first_found
+issue_novelty: already_known
+maintainers_response: low
+examples:
+  - missing_ff_ex1:
+      minified_error: |
+        whatever

@@ -1,0 +1,17 @@
+stage: parsing
+target: tool-a
+profile: sv
+id: beta
+title: Beta
+issue_novelty: already_known
+maintainers_response: low
+examples:
+  - beta_ex1:
+      first_found: 23.09.2025
+      minified_example: ""
+  - beta_ex2:
+      first_found: 04.03.2025
+      minified_example: ""
+  - beta_ex3:
+      first_found: 12.05.2025
+      minified_example: ""

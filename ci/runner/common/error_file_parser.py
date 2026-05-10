@@ -21,7 +21,7 @@ class ErrorFile:
     regex: str
     mode: MatchingMode
     title: str
-    language: str  # source language of examples ("sv", "vhdl", …); read from "lang" YAML key
+    language: str  # source language of examples ("sv", "vhdl", …); read from "profile" YAML key
     examples: List[Example] = field(default_factory=list)
 
 
@@ -55,7 +55,7 @@ def parse_error_files(dir_path: str, tool: str | None = None) -> List[ErrorFile]
     """
     Load all YAML error files from dir_path.
 
-    If tool is given, only load files whose 'tool' field matches.
+    If tool is given, only load files whose 'target' YAML key matches.
     Files missing 'id' or 'regex' are skipped with a warning.
     """
     path = Path(dir_path)
@@ -73,7 +73,7 @@ def parse_error_files(dir_path: str, tool: str | None = None) -> List[ErrorFile]
             with open(yaml_file, "r", encoding="utf-8") as f:
                 data = yaml.safe_load(f)
 
-            file_tool = data.get("tool")
+            file_tool = data.get("target")
             if tool is not None and file_tool != tool:
                 continue
 
@@ -93,7 +93,7 @@ def parse_error_files(dir_path: str, tool: str | None = None) -> List[ErrorFile]
                     regex=regex.rstrip("\n"),
                     mode=mode,
                     title=data.get("title", ""),
-                    language=data.get("lang", "sv"),
+                    language=data.get("profile", "sv"),
                     examples=_parse_examples(data.get("examples")),
                 )
             )

@@ -1,3 +1,4 @@
+# ci/runner/common/tool_matrix_runner.py
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -5,8 +6,8 @@ from typing import Any, Iterable, Protocol
 
 from common.assets import Assets
 from common.command_config import CommandConfig
-from common.command_output import AnalyzisResult
 from common.ignored_errors_list import IgnoredErrorsList
+from common.run_tool_command import CommandResult
 from common.single_file_runner import run_file
 
 
@@ -20,23 +21,23 @@ class FileInput:
 
 
 class ResultHandler(Protocol):
-    def handle(self, file_input: FileInput, result: AnalyzisResult) -> None: ...
+    def handle(self, file_input: FileInput, results: list[CommandResult]) -> None: ...
 
 
 class ResultCollector:
-    """Standard ResultHandler: accumulates (FileInput, AnalyzisResult) pairs."""
+    """Standard ResultHandler: accumulates (FileInput, list[CommandResult]) pairs."""
 
     def __init__(self) -> None:
-        self._results: list[tuple[FileInput, AnalyzisResult]] = []
+        self._results: list[tuple[FileInput, list[CommandResult]]] = []
 
-    def handle(self, file_input: FileInput, result: AnalyzisResult) -> None:
-        self._results.append((file_input, result))
+    def handle(self, file_input: FileInput, results: list[CommandResult]) -> None:
+        self._results.append((file_input, results))
 
-    def results(self) -> list[tuple[FileInput, AnalyzisResult]]:
+    def results(self) -> list[tuple[FileInput, list[CommandResult]]]:
         return list(self._results)
 
     def has_unknown_errors(self) -> bool:
-        return any(r.unexpected_errors for _, r in self._results)
+        return any(cr.outcome == "unknown" for _, results in self._results for cr in results)
 
 
 def run_all(
@@ -45,9 +46,9 @@ def run_all(
     known_errors: IgnoredErrorsList,
     handler: ResultHandler,
 ) -> None:
-    """Stateless runner: iterate inputs, analyse each with run_file, dispatch to handler."""
+    """Iterate inputs, run each through run_file, dispatch the per-command list to handler."""
     for file_input in inputs:
-        result = run_file(
+        results = run_file(
             content=file_input.content,
             commands=commands,
             known_errors=known_errors,
@@ -55,4 +56,4 @@ def run_all(
             assets=file_input.assets,
             logical_name=file_input.logical_name,
         )
-        handler.handle(file_input, result)
+        handler.handle(file_input, results)

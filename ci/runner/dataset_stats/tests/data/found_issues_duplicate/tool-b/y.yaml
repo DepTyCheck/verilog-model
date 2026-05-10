@@ -1,0 +1,6 @@
+id: dup
+title: Second
+examples:
+  - y_ex1:
+      first_found: 02.01.2026
+      minified_example: ""

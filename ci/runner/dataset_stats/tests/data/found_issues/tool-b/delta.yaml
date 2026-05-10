@@ -1,0 +1,11 @@
+stage: parsing
+target: tool-b
+profile: sv
+id: delta
+title: Delta
+issue_novelty: already_known
+maintainers_response: low
+examples:
+  - delta_ex1:
+      first_found: 15.02.2026
+      minified_example: ""

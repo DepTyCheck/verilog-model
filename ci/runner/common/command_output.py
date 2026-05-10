@@ -10,6 +10,7 @@ class AnalyzisResult:
     found_matches: list[ErrorMatchInTest]
     unexpected_errors: list[UnexpectedError]
     all_errors_are_known: bool
+    timed_out: bool = False
 
 
 class FoundWholeMatch(AnalyzisResult):
