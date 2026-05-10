@@ -5,9 +5,9 @@ import yaml
 
 
 class FirstFoundIndex:
-    def __init__(self, found_issues_dir: str | Path):
+    def __init__(self, found_dir: str | Path):
         self._index: dict[str, date] = {}
-        self._scan(Path(found_issues_dir))
+        self._scan(Path(found_dir))
 
     def lookup(self, error_id: str) -> date:
         if error_id not in self._index:
@@ -59,4 +59,4 @@ class FirstFoundIndex:
         try:
             return datetime.strptime(raw, "%d.%m.%Y").date()
         except ValueError as exc:
-            raise ValueError(f"{path}: unparseable first_found {raw!r}: {exc}") from exc
+            raise ValueError(f"{path}: unparsable first_found {raw!r}: {exc}") from exc

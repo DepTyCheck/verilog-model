@@ -1,5 +1,5 @@
 import csv
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
 
@@ -11,6 +11,33 @@ class IssuesEntry:
     last_date: date
     last_tool_commit: str
     last_model_commit: str
+
+
+@dataclass
+class _Acc:
+    count: int = 0
+    filenames: set[str] = field(default_factory=set)
+    last_date: date | None = None
+    last_tool: str = ""
+    last_model: str = ""
+
+    def add(self, when: date, tool_commit: str, model_commit: str, filename: str) -> None:
+        self.count += 1
+        self.filenames.add(filename)
+        if self.last_date is None or when >= self.last_date:
+            self.last_date = when
+            self.last_tool = tool_commit
+            self.last_model = model_commit
+
+    def to_entry(self) -> IssuesEntry:
+        assert self.last_date is not None
+        return IssuesEntry(
+            overall_count=self.count,
+            distinct_filenames=len(self.filenames),
+            last_date=self.last_date,
+            last_tool_commit=self.last_tool,
+            last_model_commit=self.last_model,
+        )
 
 
 class IssuesIndex:
@@ -35,38 +62,18 @@ class IssuesIndex:
         return error_id in self._entries
 
     def _build(self, path: Path) -> None:
-        # Per-id accumulators
-        counts: dict[str, int] = {}
-        filenames: dict[str, set[str]] = {}
-        last_date: dict[str, date] = {}
-        last_tool: dict[str, str] = {}
-        last_model: dict[str, str] = {}
-
+        accs: dict[str, _Acc] = {}
         with open(path, "r", encoding="utf-8", newline="") as f:
-            reader = csv.reader(f)
-            for row in reader:
+            for row in csv.reader(f):
                 if not row:
                     continue
                 if len(row) != 5:
                     raise ValueError(f"{path}: expected 5 columns, got {len(row)}: {row!r}")
                 when, tool_commit, error_id, model_commit, filename = row
-                d = datetime.fromisoformat(when).date()
-
-                counts[error_id] = counts.get(error_id, 0) + 1
-                filenames.setdefault(error_id, set()).add(filename)
-
-                # Last-row-wins for any row whose date >= current max
-                prev = last_date.get(error_id)
-                if prev is None or d >= prev:
-                    last_date[error_id] = d
-                    last_tool[error_id] = tool_commit
-                    last_model[error_id] = model_commit
-
-        for error_id, n in counts.items():
-            self._entries[error_id] = IssuesEntry(
-                overall_count=n,
-                distinct_filenames=len(filenames[error_id]),
-                last_date=last_date[error_id],
-                last_tool_commit=last_tool[error_id],
-                last_model_commit=last_model[error_id],
-            )
+                accs.setdefault(error_id, _Acc()).add(
+                    datetime.fromisoformat(when).date(),
+                    tool_commit,
+                    model_commit,
+                    filename,
+                )
+        self._entries = {eid: acc.to_entry() for eid, acc in accs.items()}

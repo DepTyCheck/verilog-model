@@ -9,9 +9,39 @@ from common.command_config import parse_commands
 from common.ignored_errors_list import IgnoredErrorsList
 from common.input_iter import iter_test_files
 from common.logger import configure_logger, get_logger
-from common.per_file_report import CommandRecord, FileRecord, MatchRecord, PerFileReport
+from common.per_file_report import CommandRecord, FileRecord, MatchRecord, PerFileReport, file_outcome
 from common.tool_matrix_runner import ResultCollector, run_all
 from runner.parse_args import parse_args
+
+
+def _print_final_report(report: PerFileReport) -> None:
+    counts: dict[str, int] = {"clean": 0, "known_errors": 0, "unknown": 0, "timeout": 0}
+    unknown_files: list[tuple[str, list[str]]] = []
+
+    for file_rec in report.files:
+        outcome = file_outcome(file_rec)
+        counts[outcome] = counts.get(outcome, 0) + 1
+        if outcome in ("unknown", "timeout"):
+            texts = [m.matched_text for cmd in file_rec.commands for m in cmd.matches if m.error_id == "unknown"]
+            if texts:
+                unknown_files.append((file_rec.filename, texts))
+
+    if unknown_files:
+        print("\nUnknown errors:")
+        for filename, texts in unknown_files:
+            for text in texts:
+                first_line = text.splitlines()[0] if text else ""
+                print(f"  [{filename}] {first_line}")
+
+    failed = counts["unknown"] + counts["timeout"]
+    total = sum(counts.values())
+    print(
+        f"\nTest Statistics:\n"
+        f"  Clean tests:   {counts['clean']}\n"
+        f"  Known issues:  {counts['known_errors']}\n"
+        f"  Failed tests:  {failed}\n"
+        f"  Total tests:   {total}"
+    )
 
 
 def main() -> None:
@@ -65,6 +95,8 @@ def main() -> None:
 
     report.save(args.output)
     logger.info(f"Per-file report saved to {args.output}")
+
+    _print_final_report(report)
 
     has_unknown = collector.has_unknown_errors()
     sys.exit(1 if has_unknown else 0)

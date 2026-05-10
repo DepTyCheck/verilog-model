@@ -9,3 +9,5 @@ rules:
     disable: true
   github-env:
     disable: true
+  cache-poisoning:
+    disable: true

@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 
 from combined_report.previous_report import PreviousReport
-from legacy_stats.first_found_index import FirstFoundIndex
+from common.first_found_index import FirstFoundIndex
 from legacy_stats.legacy_row import LegacyRow
 
 

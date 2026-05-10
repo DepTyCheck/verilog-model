@@ -37,7 +37,7 @@ class TestFilesIndex(unittest.TestCase):
 
 
 class TestFilesIndexBadName(unittest.TestCase):
-    def test_unparseable_filename_raises(self):
+    def test_unparsable_filename_raises(self):
         with self.assertRaises(ValueError) as ctx:
             FilesIndex(FILES_BAD)
         self.assertIn("not_a_dated_file.sv", str(ctx.exception))

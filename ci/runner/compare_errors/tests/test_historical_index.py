@@ -1,10 +1,10 @@
 import os
 import unittest
 
+from common.first_found_index import FirstFoundIndex
 from compare_errors.historical_index import HistoricalIndex
 from dataset_stats.combined_report import CombinedReport
 from dataset_stats.files_index import FilesIndex
-from dataset_stats.first_found_index import FirstFoundIndex
 from dataset_stats.issues_index import IssuesIndex
 from dataset_stats.legacy_index import LegacyIndex
 

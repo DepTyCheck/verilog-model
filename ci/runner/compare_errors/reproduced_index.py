@@ -2,7 +2,7 @@ from pathlib import Path
 
 from common.error_file_parser import parse_error_files
 from common.per_file_report import load_report
-from regression_analyze.reproducibility import parse_example_filename
+from regression_analyze.reproducibility import iter_reproductions
 
 
 class ReproducedIndex:
@@ -38,16 +38,8 @@ class ReproducedIndex:
 
     def _ingest(self, path: Path, dataset_path: Path) -> None:
         report = load_report(path)
-        tool = report.tool_name
-        expected = self._build_expected(dataset_path, tool)
-        for f in report.files:
-            parsed = parse_example_filename(f.filename)
-            if parsed is None:
-                continue
-            if parsed not in expected:
-                continue
-            error_id = expected[parsed]
-            reproduced = any(m.error_id == error_id for c in f.commands for m in c.matches)
+        expected = self._build_expected(dataset_path, report.tool_name)
+        for _parsed, error_id, reproduced in iter_reproductions(report, expected):
             self._reproduced[error_id] = self._reproduced.get(error_id, False) or reproduced
 
     @staticmethod

@@ -1,7 +1,7 @@
 import argparse
 
 from combined_report.previous_report import PreviousReport
-from legacy_stats.first_found_index import FirstFoundIndex
+from common.first_found_index import FirstFoundIndex
 from legacy_stats.legacy_report import LegacyReport
 
 

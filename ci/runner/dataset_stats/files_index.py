@@ -28,5 +28,5 @@ class FilesIndex:
             try:
                 d = datetime.strptime(f"{m.group(1)}-{m.group(2)}-{m.group(3)}", "%Y-%m-%d").date()
             except ValueError as exc:
-                raise ValueError(f"{path}: unparseable date prefix: {exc}") from exc
+                raise ValueError(f"{path}: unparsable date prefix: {exc}") from exc
             self._dates.append(d)

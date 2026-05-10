@@ -29,6 +29,22 @@ def parse_example_filename(filename: str) -> tuple[str, str] | None:
     return name, ttype
 
 
+def iter_reproductions(report: PerFileReport, expected: dict[tuple[str, str], str]):
+    """Yield ``((example_name, type), error_id, reproduced)`` for each report
+    file whose parsed ``(name, type)`` is in ``expected``.
+
+    Files whose filename does not parse, or whose pair is not in ``expected``,
+    are skipped silently.
+    """
+    for f in report.files:
+        parsed = parse_example_filename(f.filename)
+        if parsed is None or parsed not in expected:
+            continue
+        error_id = expected[parsed]
+        reproduced = any(m.error_id == error_id for c in f.commands for m in c.matches)
+        yield parsed, error_id, reproduced
+
+
 def build_reproducibility_table(
     report: PerFileReport,
     expected: dict[tuple[str, str], str],
@@ -42,14 +58,7 @@ def build_reproducibility_table(
     (e.g. cross-language examples or stale entries).
     """
     table: dict[str, dict[str, bool]] = {}
-    for f in report.files:
-        parsed = parse_example_filename(f.filename)
-        if parsed is None:
-            continue
-        if parsed not in expected:
-            continue
-        error_id = expected[parsed]
-        reproduced = any(m.error_id == error_id for c in f.commands for m in c.matches)
+    for parsed, error_id, reproduced in iter_reproductions(report, expected):
         key = f"{parsed[0]}-{parsed[1]}"
         table.setdefault(error_id, {})[key] = reproduced
     return table

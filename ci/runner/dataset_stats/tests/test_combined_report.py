@@ -3,9 +3,9 @@ import os
 import tempfile
 import unittest
 
+from common.first_found_index import FirstFoundIndex
 from dataset_stats.combined_report import CombinedReport
 from dataset_stats.files_index import FilesIndex
-from dataset_stats.first_found_index import FirstFoundIndex
 from dataset_stats.issues_index import IssuesIndex
 from dataset_stats.legacy_index import LegacyIndex
 
@@ -109,7 +109,7 @@ class TestCombinedReportZeroRuns(unittest.TestCase):
 
             legacy_path = os.path.join(td, "legacy_stats.csv")
             with open(legacy_path, "w", encoding="utf-8") as f:
-                f.write("error_id,runs_for_that_issue,overall_found_count,test_files_count," "last_occurrence_tool_commit,last_occurrence_date\n")
+                f.write("error_id,runs_for_that_issue,overall_found_count,test_files_count,last_occurrence_tool_commit,last_occurrence_date\n")
                 # zero legacy runs
                 f.write("alpha,0,1,1,legacyA,2025-06-15\n")
 
@@ -163,7 +163,14 @@ class TestCombinedReportLastOccurrenceTiebreak(unittest.TestCase):
         found = os.path.join(td, "found_issues", "tool-a")
         os.makedirs(found)
         with open(os.path.join(found, "gamma.yaml"), "w", encoding="utf-8") as f:
-            f.write("id: gamma\n" "title: Gamma\n" "examples:\n" "  - gamma_ex1:\n" "      first_found: 01.01.2025\n" '      minified_example: ""\n')
+            f.write(
+                "id: gamma\n"
+                + "title: Gamma\n"
+                + "examples:\n"
+                + "  - gamma_ex1:\n"
+                + "      first_found: 01.01.2025\n"
+                + '      minified_example: ""\n'
+            )
 
         # files/ contains one file at new_date so new_runs == 1
         files_dir = os.path.join(td, "files")
@@ -184,7 +191,7 @@ class TestCombinedReportLastOccurrenceTiebreak(unittest.TestCase):
         # legacy_stats.csv: gamma row at legacy_date with non-zero runs
         legacy_path = os.path.join(td, "legacy_stats.csv")
         with open(legacy_path, "w", encoding="utf-8") as f:
-            f.write("error_id,runs_for_that_issue,overall_found_count,test_files_count," "last_occurrence_tool_commit,last_occurrence_date\n")
+            f.write("error_id,runs_for_that_issue,overall_found_count,test_files_count,last_occurrence_tool_commit,last_occurrence_date\n")
             f.write(f"gamma,5,2,2,legacyTool,{legacy_date}\n")
 
         return CombinedReport.build(
