@@ -5,6 +5,7 @@ import unittest
 
 from combined_report.previous_report import PreviousReport
 from common.first_found_index import FirstFoundIndex
+from common.stats_csv import CSV_HEADER
 from legacy_stats.legacy_report import LegacyReport
 from legacy_stats.legacy_row import LegacyRow
 
@@ -126,17 +127,7 @@ class TestLegacyReportCsv(unittest.TestCase):
             self.report.save_csv(tmp.name)
             tmp.seek(0)
             reader = list(csv.reader(tmp))
-        self.assertEqual(
-            reader[0],
-            [
-                "error_id",
-                "runs_for_that_issue",
-                "overall_found_count",
-                "test_files_count",
-                "last_occurrence_tool_commit",
-                "last_occurrence_date",
-            ],
-        )
+        self.assertEqual(reader[0], CSV_HEADER)
         # First row corresponds to beta (highest overall_found_count = 60)
         self.assertEqual(reader[1][0], "beta")
         self.assertEqual(reader[1][1], "40")

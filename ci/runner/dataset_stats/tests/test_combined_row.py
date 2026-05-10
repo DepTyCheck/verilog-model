@@ -1,22 +1,12 @@
 import unittest
 
+from common.stats_csv import CSV_HEADER
 from dataset_stats.combined_row import CombinedRow
 
 
 class TestCombinedRow(unittest.TestCase):
     def test_csv_header(self):
-        self.assertEqual(
-            CombinedRow.csv_header(),
-            [
-                "error_id",
-                "runs_for_that_issue",
-                "overall_found_count",
-                "test_files_count",
-                "last_occurrence_tool_commit",
-                "last_occurrence_date",
-                "last_model_commit",
-            ],
-        )
+        self.assertEqual(CombinedRow.csv_header(), [*CSV_HEADER, "last_model_commit"])
 
     def test_to_csv_fields_includes_model_commit(self):
         row = CombinedRow(

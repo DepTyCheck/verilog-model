@@ -4,6 +4,7 @@ import tempfile
 import unittest
 
 from common.first_found_index import FirstFoundIndex
+from common.stats_csv import CSV_HEADER
 from dataset_stats.combined_report import CombinedReport
 from dataset_stats.files_index import FilesIndex
 from dataset_stats.issues_index import IssuesIndex
@@ -109,7 +110,7 @@ class TestCombinedReportZeroRuns(unittest.TestCase):
 
             legacy_path = os.path.join(td, "legacy_stats.csv")
             with open(legacy_path, "w", encoding="utf-8") as f:
-                f.write("error_id,runs_for_that_issue,overall_found_count,test_files_count,last_occurrence_tool_commit,last_occurrence_date\n")
+                f.write(",".join(CSV_HEADER) + "\n")
                 # zero legacy runs
                 f.write("alpha,0,1,1,legacyA,2025-06-15\n")
 
@@ -130,18 +131,7 @@ class TestCombinedReportCsv(unittest.TestCase):
             report.save_csv(tmp.name)
             tmp.seek(0)
             reader = list(csv.reader(tmp))
-        self.assertEqual(
-            reader[0],
-            [
-                "error_id",
-                "runs_for_that_issue",
-                "overall_found_count",
-                "test_files_count",
-                "last_occurrence_tool_commit",
-                "last_occurrence_date",
-                "last_model_commit",
-            ],
-        )
+        self.assertEqual(reader[0], [*CSV_HEADER, "last_model_commit"])
         # First data row = beta (highest overall = 101)
         self.assertEqual(reader[1][0], "beta")
         self.assertEqual(reader[1][2], "101")

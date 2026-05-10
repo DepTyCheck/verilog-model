@@ -387,7 +387,7 @@ jobs:
           model-commit: ${{ github.sha }}
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           input-dir: regression-input
-          file-pattern: '*'
+          file-pattern: "*"
           ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
@@ -404,7 +404,6 @@ jobs:
             --tool-name ${{ matrix.tool.name }} \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/error" \
             >> "$GITHUB_STEP_SUMMARY"
-
 
   count-lines:
     name: Count lines of specification
@@ -556,7 +555,7 @@ jobs:
         run: npm run pre
       - name: Build
         env:
-          BASE_PATH: '/${{ github.event.repository.name }}'
+          BASE_PATH: "/${{ github.event.repository.name }}"
         run: npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

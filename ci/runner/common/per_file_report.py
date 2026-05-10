@@ -52,12 +52,18 @@ class FileRecord:
 
 
 @dataclass
-class PerFileReport:
+class ToolMeta:
+    """Identifying fields shared by every tool-run report variant."""
+
     tool_name: str
     tool_version: str
     tool_commit: str
     model_commit: str
     run_date: str
+
+
+@dataclass
+class PerFileReport(ToolMeta):
     files: list[FileRecord] = field(default_factory=list)
 
     def add_file(self, record: FileRecord) -> None:

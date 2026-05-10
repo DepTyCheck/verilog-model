@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
 
+from common.stats_csv import CSV_HEADER as _REQUIRED_HEADER
+
 
 @dataclass(frozen=True)
 class LegacyEntry:
@@ -11,16 +13,6 @@ class LegacyEntry:
     test_files: int
     last_tool_commit: str
     last_date: date
-
-
-_REQUIRED_HEADER = [
-    "error_id",
-    "runs_for_that_issue",
-    "overall_found_count",
-    "test_files_count",
-    "last_occurrence_tool_commit",
-    "last_occurrence_date",
-]
 
 
 class LegacyIndex:

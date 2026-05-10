@@ -1,35 +1,15 @@
 from dataclasses import dataclass
 
+from common.stats_csv import CSV_HEADER, StatsRow
+
 
 @dataclass(frozen=True)
-class CombinedRow:
-    error_id: str
-    runs_for_that_issue: int
-    overall_found_count: int
-    test_files_count: int
-    last_occurrence_tool_commit: str
-    last_occurrence_date: str
-    last_model_commit: str
+class CombinedRow(StatsRow):
+    last_model_commit: str = ""
 
-    @staticmethod
-    def csv_header() -> list[str]:
-        return [
-            "error_id",
-            "runs_for_that_issue",
-            "overall_found_count",
-            "test_files_count",
-            "last_occurrence_tool_commit",
-            "last_occurrence_date",
-            "last_model_commit",
-        ]
+    @classmethod
+    def csv_header(cls) -> list[str]:
+        return [*CSV_HEADER, "last_model_commit"]
 
     def to_csv_fields(self) -> list[str]:
-        return [
-            self.error_id,
-            str(self.runs_for_that_issue),
-            str(self.overall_found_count),
-            str(self.test_files_count),
-            self.last_occurrence_tool_commit,
-            self.last_occurrence_date,
-            self.last_model_commit,
-        ]
+        return [*super().to_csv_fields(), self.last_model_commit]

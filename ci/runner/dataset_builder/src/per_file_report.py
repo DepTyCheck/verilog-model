@@ -6,17 +6,11 @@ the shape `dataset_builder.main` and `dataset_builder.filter` already
 expect, so they do not need to know about the per-command schema.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from common.per_file_report import file_outcome
+from common.per_file_report import MatchRecord, ToolMeta, file_outcome
 from common.per_file_report import load_report as _load_canonical
-
-
-@dataclass
-class MatchRecord:
-    error_id: str
-    matched_text: str
 
 
 @dataclass
@@ -27,13 +21,8 @@ class FileRecord:
 
 
 @dataclass
-class ToolReport:
-    tool_name: str
-    tool_version: str
-    tool_commit: str
-    model_commit: str
-    run_date: str
-    files: list[FileRecord]
+class ToolReport(ToolMeta):
+    files: list[FileRecord] = field(default_factory=list)
 
 
 def load_report(path: Path) -> ToolReport:

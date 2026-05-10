@@ -1,5 +1,6 @@
 import unittest
 
+from common.stats_csv import CSV_HEADER
 from legacy_stats.legacy_row import LegacyRow
 
 
@@ -26,14 +27,4 @@ class TestLegacyRow(unittest.TestCase):
         )
 
     def test_header_constant_matches_schema(self):
-        self.assertEqual(
-            LegacyRow.csv_header(),
-            [
-                "error_id",
-                "runs_for_that_issue",
-                "overall_found_count",
-                "test_files_count",
-                "last_occurrence_tool_commit",
-                "last_occurrence_date",
-            ],
-        )
+        self.assertEqual(LegacyRow.csv_header(), CSV_HEADER)
