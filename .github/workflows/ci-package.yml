@@ -562,7 +562,7 @@ jobs:
   deploy:
     name: Deploy site
     needs: [build-site]
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     permissions:
       pages: write
