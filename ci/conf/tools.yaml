@@ -79,6 +79,7 @@ tools:
       python3-psutil python3-dev default-jre lcov zlib1g-dev
     path: surelog
     build: |
+      pip3 install orderedmultidict psutil
       git submodule update --init --recursive
       make -j$(nproc)
     install: |
