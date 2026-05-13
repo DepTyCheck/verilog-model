@@ -4,7 +4,7 @@ target: yosys-slang
 id: abort_tristate
 title: Abort due to tristate
 regex: >
-  slang_frontend\.cc:(2627|2629|2654|2659|2700)
+  slang_frontend\.cc:(2627|2629|2654|2659|2700|2983)
 examples:
   - abort_tristate_ex1:
       first_found: 07.04.2026
