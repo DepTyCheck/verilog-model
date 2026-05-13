@@ -84,7 +84,7 @@ tools:
       make -j$(nproc)
     install: |
       sudo apt install -y libgoogle-perftools-dev
-      sudo pip3 install orderedmultidict
+      pip3 install orderedmultidict
       sudo make install
     version: surelog --version
     commands:

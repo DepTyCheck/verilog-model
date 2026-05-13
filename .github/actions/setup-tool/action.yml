@@ -117,6 +117,7 @@ runs:
       if: inputs.tool-repo != '' && steps.cache-build.outputs.cache-hit != 'true'
       shell: bash
       run: |
+        echo "Build tool"
         cd ${{ inputs.tool-path }}
         ${{ inputs.tool-build }}
 
@@ -131,6 +132,7 @@ runs:
       if: inputs.tool-install != ''
       shell: bash
       run: |
+        echo "Install tool"
         cd ${{ inputs.tool-path }}
         ${{ inputs.tool-install }}
 
