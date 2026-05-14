@@ -138,11 +138,13 @@ Show (TypeLiteralVect l t)
 ||| logic [1:0][4:0] m;
 ||| assign m = 'b01010101;
 Show (TypeLiteral sv) where
-  show (RL  x) = show x
-  show (AL  x) = show x
-  show (VL  x) = show x
-  show (PAL x) = show x
-  show (UAL x) = show x
+  show (RL   x) = show x
+  show (AL   x) = show x
+  show (VL   x) = show x
+  show (PALF x) = show x
+  show (PALM x) = show x
+  show (UALF x) = show x
+  show (UALM x) = show x
 
 Show (TypeLiteralVect l t) where
   show x = "'{\{joinBy "," $ map show $ toList x}}"
@@ -153,21 +155,22 @@ pn "" = ""
 pn a = " \{a}"
 
 showBasic : SVType -> String
-showBasic (RVar x)            = show x
-showBasic (AVar x)            = show x
-showBasic (VVar x)            = show x
-showBasic (PackedArr   t k j) = showBasic t
-showBasic (UnpackedArr t k j) = showBasic t
+showBasic (RVar x)          = show x
+showBasic (AVar x)          = show x
+showBasic (VVar x)          = show x
+showBasic (PackedArr   t _) = showBasic t
+showBasic (UnpackedArr t _) = showBasic t
+
+showArrayDims : ArrayShape -> String
+showArrayDims (One (MkPair s e))    = "[\{show s}:\{show e}]"
+showArrayDims (MkPair s e `More` t) = "[\{show s}:\{show e}]" ++ showArrayDims t
 
 showPackedSVT : SVType -> String
-showPackedSVT (RVar x)              = show x
-showPackedSVT (AVar x)              = show x
-showPackedSVT (VVar x)              = show x
-showPackedSVT (PackedArr t {p} s e) = "\{showBasic t} [\{show s}:\{show e}]\{packDims t}" where
-  packDims : SVType -> String
-  packDims (PackedArr t s e) = "[\{show s}:\{show e}]" ++ packDims t
-  packDims _                 = ""
-showPackedSVT (UnpackedArr t   s e) = ""
+showPackedSVT (RVar x)                = show x
+showPackedSVT (AVar x)                = show x
+showPackedSVT (VVar x)                = show x
+showPackedSVT (PackedArr t {p} shape) = "\{showBasic t} \{showArrayDims shape}" where
+showPackedSVT (UnpackedArr t   _)     = ""
 
 ||| examples:
 ||| bit uP [3:0]; //1-D unpacked
@@ -181,18 +184,14 @@ showPackedSVT (UnpackedArr t   s e) = ""
 ||| int Array[0:7][0:31]; // array declaration using ranges
 ||| int Array[8][32];     // array declaration using sizes
 showSVType : SVType -> (name : String) -> String
-showSVType rv@(RVar x)                name = "\{show x}\{pn name}"
-showSVType sv@(AVar x)                name = "\{show x}\{pn name}"
-showSVType vv@(VVar x)                name = "\{show x}\{pn name}"
-showSVType pa@(PackedArr   t {p} s e) name = "\{showPackedSVT pa}\{pn name}"
-showSVType ua@(UnpackedArr t     s e) name = "\{showPackedSVT $ basic t} \{name} [\{show s}:\{show e}]\{unpDimensions t}" where
+showSVType rv@(RVar x)              name = "\{show x}\{pn name}"
+showSVType sv@(AVar x)              name = "\{show x}\{pn name}"
+showSVType vv@(VVar x)              name = "\{show x}\{pn name}"
+showSVType pa@(PackedArr   t {p} _) name = "\{showPackedSVT pa} \{pn name}"
+showSVType ua@(UnpackedArr t     s) name = "\{showPackedSVT t} \{name} \{showArrayDims s}" where
   basic : SVType -> SVType
-  basic (UnpackedArr t _ _) = basic t
-  basic t                   = t
-
-  unpDimensions : SVType -> String
-  unpDimensions (UnpackedArr t s e) = "[\{show s}:\{show e}]" ++ unpDimensions t
-  unpDimensions _                   = ""
+  basic (UnpackedArr t _) = basic t
+  basic t                 = t
 
 showSVObj : SVObject -> (name : String) -> String
 showSVObj (Net nt t) name = "\{show nt} \{showSVType t name}"
