@@ -1,4 +1,4 @@
-name: PR Validation
+name: Build & Deploy website
 
 on:
   pull_request:
@@ -7,8 +7,10 @@ on:
   push:
     branches:
       - gh-pages
+  workflow_call:
 
-permissions: read-all
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}@${{ github.ref }}
@@ -25,6 +27,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          ref: gh-pages
 
       - name: Checkout dataset branch
         uses: actions/checkout@v6
@@ -54,6 +58,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: gh-pages
 
       - name: Checkout dataset branch
         uses: actions/checkout@v6
@@ -75,3 +81,24 @@ jobs:
           BASE_PATH: '/${{ github.event.repository.name }}'
         run: |
           npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: build
+
+  deploy:
+    name: Deploy site
+    needs: [build-site]
+    if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/gh-pages' || github.ref == 'refs/heads/dataset' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
