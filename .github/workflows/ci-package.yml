@@ -399,7 +399,6 @@ jobs:
           PYTHONPATH=ci/runner python -m regression_analyze.main \
             --per-file-input regression-${{ matrix.tool.name }}-per-file.json \
             --known-errors-dir "$DATASET_PATH/found_issues" \
-            --language ${{ matrix.tool.language }} \
             --tool-name ${{ matrix.tool.name }} \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/error" \
             >> "$GITHUB_STEP_SUMMARY"
@@ -468,12 +467,12 @@ jobs:
   save-dataset:
     name: Save dataset
     runs-on: ubuntu-latest
-    needs: [run-tools]
-    # if: ${{ github.ref == 'refs/heads/master' }}
+    needs: [run-tools, regression-test]
     permissions:
       contents: write
     env:
       PER_FILE_DIR: per-file-results
+      REGRESSION_DIR: regression-results
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -491,6 +490,9 @@ jobs:
       - name: Install dataset_builder requirements
         run: pip install -r ci/runner/dataset_builder/requirements.txt
 
+      - name: Install regression_csv requirements
+        run: pip install -r ci/runner/regression_csv/requirements.txt
+
       - name: Download generated files
         uses: actions/download-artifact@v8
         with:
@@ -503,8 +505,10 @@ jobs:
           path: "${{ env.PER_FILE_DIR }}"
           merge-multiple: true
 
-      - name: Drop regression per-file artifacts
-        run: rm -f "$PER_FILE_DIR"/regression-*-per-file.json
+      - name: Split regression artifacts
+        run: |
+          mkdir -p "$REGRESSION_DIR"
+          mv "$PER_FILE_DIR"/regression-*-per-file.json "$REGRESSION_DIR"/ 2>/dev/null || true
 
       - name: Clone dataset branch
         run: |
@@ -518,6 +522,13 @@ jobs:
             --dataset-path "${{ env.DATASET_PATH }}" \
             --run-date "${{ env.RUN_DATE }}"
 
+      - name: Build regression CSV
+        run: |
+          PYTHONPATH=ci/runner python -m regression_csv.main \
+            --regression-results-dir "${{ env.REGRESSION_DIR }}" \
+            --known-errors-dir "${{ env.DATASET_PATH }}/found_issues" \
+            --out-csv "${{ env.DATASET_PATH }}/latest_regression_test.csv"
+
       - name: Bot Details
         id: bot-details
         uses: raven-actions/bot-details@v1
@@ -527,53 +538,20 @@ jobs:
           cd ${{ env.DATASET_PATH }}
           git config --global user.name "${{ steps.bot-details.outputs.name }}"
           git config --global user.email "${{ steps.bot-details.outputs.email }}"
-          git add files/ issues.csv
+          git add files/ issues.csv latest_regression_test.csv
           git diff --cached --quiet && echo "No changes to commit." && exit 0
           git commit -m "[ bot ] Add dataset ${{ env.RUN_DATE }}"
           git remote set-url origin "https://x-access-token:${{ secrets.PAT_PUSH }}@github.com/${{ github.repository }}"
           git push origin ${{ env.DATASET_BRANCH }}
 
-  build-site:
-    name: Build site
+  build-and-deploy-site:
+    name: Build & deploy gh-pages site
     needs: [save-dataset]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v6
-        with:
-          ref: gh-pages
-          persist-credentials: false
-      - name: Install Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: npm
-      - name: Pre-build
-        run: npm run pre
-      - name: Build
-        env:
-          BASE_PATH: "/${{ github.event.repository.name }}"
-        run: npm run build
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: build/
-
-  deploy:
-    name: Deploy site
-    needs: [build-site]
-    if: ${{ github.ref == 'refs/heads/master' }}
-    runs-on: ubuntu-latest
     permissions:
+      contents: read
       pages: write
       id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v5
+    uses: DepTyCheck/verilog-model/.github/workflows/gh-pages-ci.yaml@gh-pages
 
   filter-dataset:
     name: Filter dataset (${{ matrix.language }})
