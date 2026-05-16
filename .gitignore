@@ -38,5 +38,8 @@ vite.config.ts.timestamp-*
 # Generated stats module
 /src/lib/generated/errors-stats.ts
 
+# Generated regression module
+/src/lib/generated/errors-regression.ts
+
 # ci/dataset branch cloned for combined_stats.csv generation
 /verilog-model/

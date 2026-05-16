@@ -19,17 +19,12 @@ export type ErrorPercentages = {
 	totalRuns: number;
 };
 
-export function linkToCommitForErrStatWith(
-	errStat: ErrorStat,
-	foundErrors: FoundError[]
-): string {
+export function linkToCommitForErrStatWith(errStat: ErrorStat, foundErrors: FoundError[]): string {
 	const foundError = foundErrors.find((e) => e.id === errStat.error_id);
 	return linkToCommit(foundError!.target, errStat.last_commit);
 }
 
-export function calculateErrorPercentages(
-	errorsStats: Record<string, ErrorStat>
-): Record<string, ErrorPercentages> {
+export function calculateErrorPercentages(errorsStats: Record<string, ErrorStat>): Record<string, ErrorPercentages> {
 	const result: Record<string, ErrorPercentages> = {};
 	for (const [errorId, errStat] of Object.entries(errorsStats)) {
 		if (errStat.runs === 0) continue;

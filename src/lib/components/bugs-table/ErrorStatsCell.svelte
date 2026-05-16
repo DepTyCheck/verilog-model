@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { A, Tooltip } from 'flowbite-svelte';
+	import { Tooltip } from 'flowbite-svelte';
 	import type { ErrorStat } from '$lib/generated/errors-stats';
 	import type { ErrorPercentages } from '$lib/components/bugs-table/error-stats-utils';
 	import { formatDateDMY } from '$lib/index';
-
-	import { linkToCommitForErrStat } from '$lib/components/bugs-table/error-stats-utils';
 
 	export let errorId: string;
 	export let errorsStats: Record<string, ErrorStat>;
@@ -15,7 +13,6 @@
 	let overallPercentage = '0';
 	let testPathsPercentage = '0';
 	let totalRuns = 0;
-	let linkToolGithub = '';
 	let errorsPerFailedTest = '0';
 
 	function formatPercentage(percentage: number): string {
@@ -30,8 +27,6 @@
 		overallPercentage = formatPercentage(percentages!.overall);
 		testPathsPercentage = formatPercentage(percentages!.testFiles);
 		errorsPerFailedTest = (errorStat.overall / errorStat.test_files_count).toFixed(2);
-
-		linkToolGithub = linkToCommitForErrStat(errorStat);
 	} catch (e) {}
 
 	const lastCommit = errorStat ? errorStat.last_commit.substring(0, 7) : '';
@@ -46,9 +41,6 @@
 
 		<div class="whitespace-nowrap">
 			<span class="text-gray-600">Last:</span>
-			<A href={linkToolGithub} rel="noopener noreferrer">
-				{lastCommit}
-			</A>
 			{lastDate}
 		</div>
 	</div>

@@ -31,6 +31,9 @@
 	import IssueTypeBadges from '$lib/components/IssueTypeBadges.svelte';
 	import NoveltyBadge from '$lib/components/NoveltyBadge.svelte';
 	import MaintainersResponseBadge from '$lib/components/MaintainersResponseBadge.svelte';
+	import { errorReproducedStates } from '$lib/generated/errors-regression';
+	import { createReproducedChoices } from '$lib/components/bugs-table/regression-utils';
+	import ReproductionBadge from '$lib/components/bugs-table/ReproductionBadge.svelte';
 
 	let scrollContainer: HTMLDivElement;
 
@@ -42,12 +45,14 @@
 		getMaintainersResponseDisplay
 	);
 	let issueTypeChoices: CheckBoxChoice[] = createIssueTypeChoices(allFoundErrors);
+	let reproducedChoices: CheckBoxChoice[] = createReproducedChoices();
 
 	let targetGroup: string[] = [];
 	let stageGroup: string[] = [];
 	let issueTypeGroup: string[] = [];
 	let noveltyGroup: string[] = [];
 	let maintainersGroup: string[] = [];
+	let reproducedGroup: string[] = [];
 
 	const filterDefs: Array<{
 		param: string;
@@ -59,7 +64,8 @@
 		{ param: 'stage', get: () => stageGroup, set: (v) => (stageGroup = v), getValue: (e) => e.stage },
 		{ param: 'issue_type', get: () => issueTypeGroup, set: (v) => (issueTypeGroup = v), getValue: (e) => e.issue_type },
 		{ param: 'novelty', get: () => noveltyGroup, set: (v) => (noveltyGroup = v), getValue: (e) => e.issue_novelty },
-		{ param: 'maintainers', get: () => maintainersGroup, set: (v) => (maintainersGroup = v), getValue: (e) => e.maintainers_response }
+		{ param: 'maintainers', get: () => maintainersGroup, set: (v) => (maintainersGroup = v), getValue: (e) => e.maintainers_response },
+		{ param: 'reproduced', get: () => reproducedGroup, set: (v) => (reproducedGroup = v), getValue: (e) => errorReproducedStates[e.id] }
 	];
 
 	let sortColumn: SortableColumn = 'title';
@@ -103,7 +109,8 @@
 		createFilter(stageGroup, (e) => e.stage),
 		createFilter(issueTypeGroup, (e) => e.issue_type),
 		createFilter(noveltyGroup, (e) => e.issue_novelty),
-		createFilter(maintainersGroup, (e) => e.maintainers_response)
+		createFilter(maintainersGroup, (e) => e.maintainers_response),
+		createFilter(reproducedGroup, (e) => errorReproducedStates[e.id])
 	]);
 
 	$: sortedErrors = new SortedIssues(filteredErrors, errorPercentages).sorted(sortColumn, sortDest);
@@ -191,7 +198,13 @@
 							{sortColumn}
 							{sortDest}
 							{setSort}
-							hint="% of all runs / % of failed files / errors per failing file"
+							hint="% of all runs /<br>% of failed files /<br>errors per failing file"
+						/>
+						<TableColFilterHead
+							choices={reproducedChoices}
+							bind:group={reproducedGroup}
+							label="Reproduced"
+							name="reproduced"
 						/>
 					</tr>
 				</thead>
@@ -232,6 +245,9 @@
 										percentages={errorPercentages[item.id]}
 									/>
 								{/if}
+							</TableData>
+							<TableData>
+								<ReproductionBadge state={errorReproducedStates[item.id] ?? 'untested'} />
 							</TableData>
 						</tr>
 					{/each}

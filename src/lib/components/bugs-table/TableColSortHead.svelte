@@ -36,7 +36,7 @@
 		</Button>
 		{#if hint}
 			<div class="mt-1 text-center text-xs text-gray-500 dark:text-gray-400">
-				{hint}
+				{@html hint}
 			</div>
 		{/if}
 		<slot />

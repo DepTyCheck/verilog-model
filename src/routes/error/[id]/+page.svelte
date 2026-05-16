@@ -14,6 +14,8 @@
 	import ErrorStatsCell from '$lib/components/bugs-table/ErrorStatsCell.svelte';
 	import { errorsStats } from '$lib/generated/errors-stats';
 	import { errorPercentages } from '$lib/components/bugs-table/error-stats-utils';
+	import { errorReproducedStates, exampleReproducedStates } from '$lib/generated/errors-regression';
+	import ReproductionBadge from '$lib/components/bugs-table/ReproductionBadge.svelte';
 
 	let id: string = String(page.params.id);
 	let foundError: FoundError | null = null;
@@ -67,6 +69,12 @@
 					/>
 				</FieldDisplay>
 			{/if}
+			<FieldDisplay label="Reproduced">
+				<ReproductionBadge
+					showText
+					state={errorReproducedStates[foundError.id] ?? 'untested'}
+				/>
+			</FieldDisplay>
 			{#if foundError.issue_links && foundError.issue_links.length > 0}
 				<FieldDisplay label="Related issues">
 					<IssueLinksCell issueLinks={foundError.issue_links} />
@@ -85,7 +93,13 @@
 						<CodeBlock code={example.minified_error} />
 					{/if}
 					{#if example.minified_example != null && example.minified_example !== ''}
-						<h3 class="mt-4 mb-1 font-semibold">Minified example</h3>
+						<h3 class="mt-4 mb-1 flex items-center gap-8 font-semibold">
+							Minified example
+							<ReproductionBadge
+								showText
+								state={exampleReproducedStates[example.id]?.minified ?? 'untested'}
+							/>
+						</h3>
 						<CodeBlock code={example.minified_example} language="verilog" />
 					{/if}
 					{#if example.full_error != null && example.full_error !== ''}
@@ -93,7 +107,13 @@
 						<CodeBlock code={example.full_error} />
 					{/if}
 					{#if example.full_example != null && example.full_example !== ''}
-						<h3 class="mt-4 mb-1 font-semibold">Generated example</h3>
+						<h3 class="mt-4 mb-1 flex items-center gap-8 font-semibold">
+							Generated example
+							<ReproductionBadge
+								showText
+								state={exampleReproducedStates[example.id]?.full ?? 'untested'}
+							/>
+						</h3>
 						<CodeBlock code={example.full_example} language="verilog" />
 					{/if}
 				</VCard>
