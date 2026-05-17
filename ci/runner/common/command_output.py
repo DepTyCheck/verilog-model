@@ -14,8 +14,17 @@ class AnalyzisResult:
 
 
 class FoundWholeMatch(AnalyzisResult):
-    def __init__(self, found_match: FoundMatch, test_path: str):
-        self.found_matches = [ErrorMatchInTest(match=found_match, test_path=test_path)]
+    def __init__(
+        self,
+        found_match: FoundMatch,
+        test_path: str,
+        specific_matches: list[ErrorMatchInTest] | None = None,
+    ):
+        # Keep every specific match already found, then append the whole-output
+        # match. A successful whole match is treated as covering any errors the
+        # specific patterns left unexpected, so the result is "all errors known".
+        self.found_matches = list(specific_matches or [])
+        self.found_matches.append(ErrorMatchInTest(match=found_match, test_path=test_path))
         self.unexpected_errors = []
         self.all_errors_are_known = True
 
@@ -55,7 +64,11 @@ class CommandOutput:
         # try WHOLE mode before reporting as unknown.
         whole_output_match = WholeOutputMatch(self.out, ignored_errors_list)
         if whole_output_match.found_match is not None:
-            return FoundWholeMatch(found_match=whole_output_match.found_match, test_path=file_path)
+            return FoundWholeMatch(
+                found_match=whole_output_match.found_match,
+                test_path=file_path,
+                specific_matches=extracted_errors.found_matches,
+            )
 
         if extracted_errors.some_matches_found():
             return AnalyzisResult(
