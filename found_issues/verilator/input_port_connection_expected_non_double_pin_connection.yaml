@@ -10,6 +10,7 @@ issue_links:
       #5877
 regex: >
   Input port connection '[A-z]+' expected non-complex non-double pin connection in width check
+maintainers_response: bug
 examples:
   - input_port_connection_expected_non_double_pin_connection_ex1:
       first_found: 15.02.2025

@@ -11,6 +11,7 @@ issue_links:
     link_name: >
       #6254
 short_desc: Maintainer suggested to avoid reporting bugs related to tristates
+maintainers_response: low
 examples:
   - replacement_dfgvertex_has_different_type_ex1:
       first_found: 11.09.2025

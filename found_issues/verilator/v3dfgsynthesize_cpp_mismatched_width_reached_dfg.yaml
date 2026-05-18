@@ -11,6 +11,7 @@ issue_links:
   - url: https://github.com/verilator/verilator/issues/6323
     link_name: >
       #6323
+maintainers_response: bug
 examples:
   - v3dfgsynthesize_cpp_mismatched_width_reached_dfg_ex1:
       first_found: 21.08.2025

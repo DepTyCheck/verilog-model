@@ -10,6 +10,7 @@ issue_links:
       #5878
 regex: >
   Wire inputs its own output, creating circular logic
+maintainers_response: wontfix
 examples:
   - wire_inputs_its_own_output_ex1:
       first_found: 10.12.2024

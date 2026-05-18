@@ -10,6 +10,7 @@ issue_links:
       #5876
 regex: >
   Expected integral \(non-'real'\) input to
+maintainers_response: low
 examples:
   - expected_integral_input_to_gate_ex1:
       first_found: 10.12.2024
