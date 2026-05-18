@@ -21,6 +21,20 @@ import Text.PrettyPrint.Bernardy
 vtypeOf : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection VHDL s usl subUs -> VHDLType
 vtypeOf mc = dtToVHt $ typeOf mc
 
+Show PredefinedArrayTypes where
+  show BOOLEAN_VECTOR = "boolean_vector"
+  show BIT_VECTOR     = "bit_vector"
+  show INTEGER_VECTOR = "integer_vector"
+  show REAL_VECTOR    = "real_vector"
+  show TIME_VECTOR    = "time_vector"
+
+Show ArrayDirection where
+  show Up     = "to"
+  show Down = "downto"
+
+Show Dimension where
+  show (MkDim start end direction) = "(\{show start} \{show direction} \{show end})"
+
 printType : (type : VHDLType) -> Gen0 String
 printType (Enum CHARACTER)      = pure $ "character"
 printType (Enum BIT)            = pure $ "bit"
@@ -30,6 +44,8 @@ printType Integer'              = pure $ "integer"
 printType Physical              = pure $ "time"
 printType Real                  = pure $ "real"
 printType StdLogic              = pure $ "std_logic"
+printType (Array t d)           = pure $ "\{show t}\{show d}"
+printType (StdLogicVector d)    = pure $ "std_logic_vector\{show d}"
 
 printPort : (name : String) -> (dir : String) -> (type : VHDLType) -> Gen0 String
 printPort name dir t = do
@@ -94,8 +110,13 @@ parameters {opts : LayoutOpts} (entityName : String) (archName : String)
     isMCTopPort f | (MkMC Nothing (Just _) _ _ @{_} @{OnlyTSK}) = True
     isMCTopPort f | (MkMC Nothing Nothing  _ _ @{_} @{NoTop})   = False
 
+  isLogic : DataType VHDL -> Bool
+  isLogic (VHD StdLogic)           = True
+  isLogic (VHD $ StdLogicVector _) = True
+  isLogic _                        = False
+
   portsHaveLogic : List (Fin $ length mcs) -> Bool
-  portsHaveLogic fins = foldl (\b, f => if (VHD StdLogic == (typeOf $ index mcs f)) then True else b) False fins
+  portsHaveLogic fins = foldl (\b, f => if (isLogic $ typeOf $ index mcs f) then True else b) False fins
 
   ||| Multiconnections which does not represent connection to top port are treated like signals.
   filterTopOrSub : (f : Fin (length mcs) -> Bool) -> List (Fin $ length mcs)

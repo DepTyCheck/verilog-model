@@ -474,8 +474,9 @@ namespace VHDLRules
 
   public export
   isMDVHDL : VHDLType -> Bool
-  isMDVHDL StdLogic = True
-  isMDVHDL _        = False
+  isMDVHDL StdLogic           = True
+  isMDVHDL (StdLogicVector _) = True
+  isMDVHDL _                  = False
 
   public export
   typesCompatibleVHDL : (mc : DataType VHDL) -> (p : DataType VHDL) -> Bool
