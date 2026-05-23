@@ -17,6 +17,82 @@ Eq PredefinedEnumeration where
   (==) SEVERITY_LEVEL SEVERITY_LEVEL = True
   (==) _ _ = False
 
+
+namespace Arrays
+
+  public export
+  data ArrayDirection = Up | Down
+
+  public export
+  record Dimension where
+    constructor MkDim
+    start     : Nat
+    end       : Nat
+    direction : ArrayDirection
+
+  ||| 5.2 Scalar types
+  ||| 5.2.1 General
+  ||| The range L to R is called an ascending range; if L > R, then the range is a null range. The range L downto
+  ||| R is called a descending range; if L < R, then the range is a null range. L is called the left bound of the range,
+  ||| and R is called the right bound of the range
+  ||| IEEE 1076-2019
+  public export
+  length : Dimension -> Nat
+  length (MkDim l r Up)     = if l > r then Z else S $ r `minus` l
+  length (MkDim l r Down) = if l < r then Z else S $ l `minus` r
+
+  public export %inline
+  (.length) : Dimension -> Nat
+  (.length) = length
+
+  ||| 9.2.3 Relational operators
+  ||| For two one-dimensional array values, matching elements are those (if any) whose index values match in the
+  ||| following sense: the left bounds of the index ranges are defined to match; if two elements match, the
+  ||| elements immediately to their right are also defined to match.
+  ||| IEEE 1076-2019
+  |||
+  ||| So the lengths must be equal, but the bounds and direction need not be
+  public export
+  dimsCompatible : Dimension -> Dimension -> Bool
+  dimsCompatible d d' = length d == length d'
+
+  ||| 5.3.2.3 Predefined array types
+  ||| IEEE 1076-2019
+  public export
+  data PredefinedArrayTypes = BOOLEAN_VECTOR | BIT_VECTOR | INTEGER_VECTOR | REAL_VECTOR | TIME_VECTOR -- TODO: Add STRING
+
+  public export
+  Eq PredefinedArrayTypes where
+    -- (==) STRING STRING = True
+    (==) BOOLEAN_VECTOR BOOLEAN_VECTOR = True
+    (==) BIT_VECTOR BIT_VECTOR = True
+    (==) INTEGER_VECTOR INTEGER_VECTOR = True
+    (==) REAL_VECTOR REAL_VECTOR = True
+    (==) TIME_VECTOR TIME_VECTOR = True
+    (==) _ _ = False
+
+
+-- ||| 5.3.2 Array types
+-- ||| 5.3.2.1 General
+-- ||| An array is characterised by:
+-- |||   - its dimensionality (number of indices)
+-- |||   - the type of each index
+-- |||   - the range of each index
+-- |||   - the element subtype
+-- |||
+-- ||| array_type_definition ::=
+-- |||       unbounded_array_definition
+-- |||     | constrained_array_definition
+-- |||
+-- ||| unbounded_array_definition   ::= array ( index_subtype_definition { , index_subtype_definition } )
+-- |||                                     of element_subtype_indication
+-- ||| constrained_array_definition ::= array index_constraint
+-- |||                                     of element_subtype_indication
+-- |||
+-- ||| index_subtype_definition ::= type_mark range <>
+-- ||| index_constraint         ::= ( discrete_range { , discrete_range } )
+-- ||| IEEE 1076-2019
+
 ||| Currently only signal and variable types are implemented, and only these types can be declared as ports.
 public export
 data VHDLType : Type where
@@ -33,11 +109,12 @@ data VHDLType : Type where
   ||| The only predefined floating-point type is the type REAL.
   ||| IEEE 1076-2019
   Real : VHDLType
-  -- Arrays 5.3.2 Array types
+  Array : PredefinedArrayTypes -> Dimension -> VHDLType
   -- Records 5.3.3 Record types
   ||| ΙΕΕΕ 1164−1993
   StdLogic : VHDLType
-  -- STD_LOGIC_VECTOR
+  ||| ΙΕΕΕ 1164−1993
+  StdLogicVector : Dimension -> VHDLType
   -- resolved SIGNED and UNSIGNED from IEEE.NUMERIC_STD
 
 public export
@@ -47,6 +124,8 @@ Eq VHDLType where
   (==) Physical Physical = True
   (==) Real Real = True
   (==) StdLogic StdLogic = True
+  (==) (Array t d) (Array t' d') = t == t' && dimsCompatible d d'
+  (==) (StdLogicVector d) (StdLogicVector d') = dimsCompatible d d'
   (==) _ _ = False
 
 
