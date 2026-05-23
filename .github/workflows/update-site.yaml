@@ -1,0 +1,17 @@
+---
+name: Update site
+
+on:
+  push:
+    branches:
+      - dataset
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy-site:
+    name: Build & deploy gh-pages site
+    uses: DepTyCheck/verilog-model/.github/workflows/gh-pages-ci.yaml@gh-pages

@@ -4,7 +4,7 @@ target: verilator
 id: unsupported_tristate_construct_triand_graph
 title: Unsupported tristate construct (in graph; not converted)
 regex: >
-  Unsupported tristate construct \(in graph; not converted\): (CONST|VARREF|INITITEM|ASSIGNW|OR|NOT)
+  Unsupported tristate construct \(in graph; not converted\): (CONST|VARREF|INITITEM|ASSIGNW|OR|NOT|AND)
 issue_novelty: unsupported
 examples:
   - unsupported_tristate_construct_triand_graph_const:
@@ -276,3 +276,57 @@ examples:
           assign jmkrmz = 'bz;
           assign jmkrmz = 'b0;
         endmodule: tpngttowo
+  - unsupported_tristate_construct_triand_graph_and:
+      first_found: 19.05.2026
+      full_error: |
+        %Error-UNSUPPORTED: top.sv:15:7: Unsupported tristate construct (in graph; not converted): AND
+      full_example: |
+        module tgrgnulyie (output supply0 logic [0:0][4:3][0:3][3:4] tcnjvvc [1:4], input wor logic [2:1][1:3][1:0] lq);
+
+          xor fbmfzplha(lq, lq, lq);
+          not bshfpzmt(lq, lq);
+          xor orrw(lq, ugpjgyit, xqopdo);
+          xnor k(e, lq, e);
+
+          // Multi-driven assigns
+          assign lq = '{'{'{'b0x0,'bz0z},'{'b0z0,'b11},'{'bz,'bx1x0x}},'{'{'bz1,'b0},'{'b0xxz,'b00zx0},'{'b1,'b1z}}};
+        endmodule: tgrgnulyie
+
+        module vokxnw ();
+          // Unpacked net declarations
+          supply0 logic [0:0][4:3][0:3][3:4] upaabqj [1:4];
+
+          or qcn(r, zuldchlhw, r);
+          xnor nqrl(wu, kfre, rttkjmldnj);
+          tgrgnulyie lrrencg(.tcnjvvc(upaabqj), .lq(nyjfa));
+
+        endmodule: vokxnw
+
+        module vxoeom ( output tri logic [0:2][1:4][2:3] ujy [3:4]
+                      , inout wand logic [4:1][4:1][2:3][2:0] k [4:2][2:2]
+                      , input supply0 logic [0:1][3:2][2:3][2:0] u [4:1][3:4][3:0]
+                      );
+
+          xnor dfvq(c, c, c);
+          or ppppsjvgf(c, c, klzxzlhayi);
+
+          // Multi-driven assigns
+          assign u = u;
+          assign klzxzlhayi = 'bz;
+        endmodule: vxoeom
+
+        module m ( inout wor logic [4:2] ctzx [0:4][0:4]
+                , inout wand logic [0:1][3:2][1:0] kiduig [1:1][2:2][4:4]
+                , inout wor logic [0:0][4:4][0:2] euoqzkpghb [2:4][4:1][0:0]
+                );
+
+          or fdc(rqcks, dia, voogv);
+          or im(rqcks, rqcks, rqcks);
+          nand v(rqcks, srqbrnqk, rqcks);
+          or mkb(r, r, nznzhewa);
+
+          // Multi-driven assigns
+          assign nznzhewa = rqcks;
+          assign kiduig = kiduig;
+          assign euoqzkpghb = euoqzkpghb;
+        endmodule: m
