@@ -203,7 +203,7 @@
 						<TableColFilterHead
 							choices={reproducedChoices}
 							bind:group={reproducedGroup}
-							label="Reproduced"
+							label="Reproduced<br>in last run"
 							name="reproduced"
 						/>
 					</tr>
