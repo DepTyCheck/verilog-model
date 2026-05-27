@@ -50,9 +50,9 @@ function main() {
 	);
 
 	step(
-		'clone ci/save-dataset branch into ./verilog-model',
+		'clone master branch into ./verilog-model',
 		() => existsSync(path.join(cwd, 'verilog-model')),
-		() => run('git', ['clone', '--branch', 'ci/save-dataset', '--single-branch', url, 'verilog-model'])
+		() => run('git', ['clone', '--branch', 'master', '--single-branch', url, 'verilog-model'])
 	);
 
 	step(
