@@ -109,8 +109,6 @@ namespace Atom
   ||| The 1-bit wide data type.
   |||
   ||| A multibit data type is declared by specifying a range, creating a packed array.
-  ||| The `PABasic` predicate implements this restriction and allows only `Atom` values as basic elements.
-  |||
   ||| This type corresponds to `integer_vector_type` in the IEEE 1800-2023 EBNF.
   public export
   data Atom = Bit' | Logic' | Reg';
@@ -175,8 +173,6 @@ namespace SVType
   data SVType : Type
   public export
   data AllowedNetData : SVType -> Type
-  public export
-  data PABasic : SVType -> Type
   public export
   data VarOrPacked : SVType -> Type
 
@@ -281,7 +277,7 @@ namespace SVType
     ||| arrays of scalars
     |||
     ||| IEEE 1800-2023
-    PackedArr : (t : SVType) -> (p : PABasic t) => (shape : ArrayShape) -> SVType
+    PackedArr : (atomType : Atom) -> (shape : ArrayShape) -> SVType
     ||| The main difference between an unpacked array and a packed array is that
     ||| an unpacked array is not guaranteed to be represented as a contiguous set of bits
     |||
@@ -311,13 +307,6 @@ namespace SVType
     -- Event
     -- User-defined
 
-  ||| 7.4.1 Packed arrays
-  ||| Packed arrays can be made of only the single bit data types (bit, logic, reg), enumerated types, and
-  ||| recursively other packed arrays and packed structures.
-  public export
-  data PABasic : SVType -> Type where
-    PS : PABasic $ AVar s
-
   ||| 6.11.1 Integral types
   |||
   ||| The term integral is used throughout this standard to refer to the data types that can represent a single basic
@@ -326,7 +315,7 @@ namespace SVType
   data SVIntegral : SVType -> Type where
     AT : SVIntegral $ AVar t
     VT : SVIntegral $ VVar t
-    PT : (p : PABasic t) => SVIntegral $ PackedArr t shape
+    PT : SVIntegral $ PackedArr atomType shape
     -- Packed struct, union, enum
 
   public export
@@ -335,7 +324,8 @@ namespace SVType
     S4R : State4 $ AT {t=Reg'}
     V4I : State4 $ VT {t=Integer'}
     V4T : State4 $ VT {t=Time'}
-    SP : {t : SVType} -> (p : PABasic t) => (i : SVIntegral t) => State4 i -> State4 $ PT {t}
+    P4L : State4 $ PT {atomType = Logic'} {shape}
+    P4R : State4 $ PT {atomType = Reg'} {shape}
 
   ||| 6.7.1 Net declarations with built-in net types
   ||| A lexical restriction applies to the use of the reg keyword in a net or port declaration. A net type keyword
@@ -345,7 +335,8 @@ namespace SVType
   data NotReg : SVIntegral svt -> Type where
     NRSL : NotReg $ AT {t=Logic'}
     NRSB : NotReg $ AT {t=Bit'}
-    NRPT : {t : SVType} -> (p : PABasic t) => (i : SVIntegral t) => NotReg i => NotReg $ PT {t}
+    NRPL : NotReg $ PT {atomType = Logic'} {shape}
+    NRPB : NotReg $ PT {atomType = Bit'} {shape}
 
   ||| 6.7.1 Net declarations with built-in net types
   ||| Certain restrictions apply to the data type of a net. A valid data type for a net shall be one of the following:
@@ -369,7 +360,7 @@ namespace SVType
   bitsCnt (RVar x)              = bitsCnt x
   bitsCnt (AVar x)              = 1
   bitsCnt (VVar x)              = bitsCnt x
-  bitsCnt (PackedArr   t shape) = elementsCnt shape * bitsCnt t
+  bitsCnt (PackedArr   t shape) = elementsCnt shape
   bitsCnt (UnpackedArr t _)     = bitsCnt t
 
   public export
@@ -377,7 +368,7 @@ namespace SVType
   isSigned (RVar x)            = True
   isSigned (AVar x)            = False
   isSigned (VVar x)            = isSigned x
-  isSigned (PackedArr   t _)   = isSigned t
+  isSigned (PackedArr   t _)   = False
   isSigned (UnpackedArr t _)   = isSigned t
 
   public export
@@ -393,7 +384,7 @@ namespace SVType
     VR : VarOrPacked $ RVar t
     VS : VarOrPacked $ AVar t
     VV : VarOrPacked $ VVar t
-    VP : (p : PABasic t) => VarOrPacked $ PackedArr t shape
+    VP : VarOrPacked $ PackedArr atomType shape
 
 namespace SVObject
 

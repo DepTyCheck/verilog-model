@@ -158,7 +158,7 @@ showBasic : SVType -> String
 showBasic (RVar x)          = show x
 showBasic (AVar x)          = show x
 showBasic (VVar x)          = show x
-showBasic (PackedArr   t _) = showBasic t
+showBasic (PackedArr   t _) = show t
 showBasic (UnpackedArr t _) = showBasic t
 
 showArrayDims : ArrayShape -> String
@@ -169,7 +169,7 @@ showPackedSVT : SVType -> String
 showPackedSVT (RVar x)                = show x
 showPackedSVT (AVar x)                = show x
 showPackedSVT (VVar x)                = show x
-showPackedSVT (PackedArr t {p} shape) = "\{showBasic t} \{showArrayDims shape}" where
+showPackedSVT (PackedArr t shape) = "\{show t} \{showArrayDims shape}" where
 showPackedSVT (UnpackedArr t   _)     = ""
 
 ||| examples:
@@ -187,7 +187,7 @@ showSVType : SVType -> (name : String) -> String
 showSVType rv@(RVar x)              name = "\{show x}\{pn name}"
 showSVType sv@(AVar x)              name = "\{show x}\{pn name}"
 showSVType vv@(VVar x)              name = "\{show x}\{pn name}"
-showSVType pa@(PackedArr   t {p} _) name = "\{showPackedSVT pa} \{pn name}"
+showSVType pa@(PackedArr   t     _) name = "\{showPackedSVT pa} \{pn name}"
 showSVType ua@(UnpackedArr t     s) name = "\{showPackedSVT t} \{name} \{showArrayDims s}" where
   basic : SVType -> SVType
   basic (UnpackedArr t _) = basic t
