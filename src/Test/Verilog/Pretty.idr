@@ -123,12 +123,20 @@ Show (BinaryList s) where
     showLinear (One  x)    = show x
     showLinear (More x xs) = show x ++ showLinear xs
 
-Show (TypeLiteralVect l t)
+chunksOf : (n : Nat) -> List a -> List (List a)
+chunksOf 0 _  = []
+chunksOf _ [] = []
+chunksOf n xs = take n xs :: assert_total (chunksOf n (drop n xs))
+
+showShaped : ArrayShape -> List String -> String
+showShaped (One _)         elems = "'{\{joinBy "," elems}}"
+showShaped (_ `More` rest) elems =
+  let chunks = chunksOf (elementsCnt rest) elems
+  in "'{\{joinBy "," $ map (showShaped rest) chunks}}"
 
 ||| Single bit example:
 ||| logic m;
 ||| assign m = 'b1;
-||| TODO: print the length of literal sometimes
 |||
 ||| UAL x example:
 ||| logic m [1:0][4:0];
@@ -138,13 +146,16 @@ Show (TypeLiteralVect l t)
 ||| logic [1:0][4:0] m;
 ||| assign m = 'b01010101;
 Show (TypeLiteral sv) where
-  show (RL   x) = show x
-  show (AL   x) = show x
-  show (VL   x) = show x
-  show (PALF x) = show x
-  show (PALM x) = show x
-  show (UALF x) = show x
-  show (UALM x) = show x
+  show (RL  x) = show x
+  show (AL  x) = show x
+  show (VL  x) = show x
+  show (PAL {atomType} x) = "'b\{concatMap atomBits $ toList x}" where
+    atomBits : TypeLiteral (AVar atomType) -> String
+    atomBits (AL bl) = showBits bl where
+      showBits : BinaryList s -> String
+      showBits (One  b)    = show b
+      showBits (More b bs) = show b ++ showBits bs
+  show (UAL shape x) = showShaped shape $ map show $ toList x
 
 Show (TypeLiteralVect l t) where
   show x = "'{\{joinBy "," $ map show $ toList x}}"

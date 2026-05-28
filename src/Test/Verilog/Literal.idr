@@ -47,9 +47,5 @@ namespace TypeLiteralVect
     RL   : BinaryList S4 -> TypeLiteral $ RVar t
     AL   : BinaryList (states t) -> TypeLiteral $ AVar t
     VL   : BinaryList (states t) -> TypeLiteral $ VVar t
-    PALF : TypeLiteralVect (S $ max s e `minus` min s e) (AVar atomType) -> TypeLiteral $ PackedArr atomType (One $ MkPair s e)
-    PALM : TypeLiteralVect (S $ max s e `minus` min s e) (PackedArr atomType shape) ->
-           TypeLiteral $ PackedArr atomType (MkPair s e `More` shape)
-    UALF : (p : VarOrPacked t) => TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ UnpackedArr t (One $ MkPair s e)
-    UALM : {shape : ArrayShape} -> (p : VarOrPacked t) => TypeLiteralVect (S $ max s e `minus` min s e) (UnpackedArr t shape) ->
-           TypeLiteral $ UnpackedArr t (MkPair s e `More` shape)
+    PAL  : TypeLiteralVect (elementsCnt shape) (AVar atomType) -> TypeLiteral $ PackedArr atomType shape
+    UAL  : (p : VarOrPacked t) => (shape : ArrayShape) -> TypeLiteralVect (elementsCnt shape) t -> TypeLiteral $ UnpackedArr t shape
