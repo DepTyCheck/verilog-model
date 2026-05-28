@@ -390,10 +390,10 @@ namespace SVType
 
   public export
   data VarOrPacked : SVType -> Type where
-  VR : VarOrPacked $ RVar t
-  VS : VarOrPacked $ AVar t
-  VV : VarOrPacked $ VVar t
-  VP : (p : PABasic t) => VarOrPacked $ PackedArr t shape
+    VR : VarOrPacked $ RVar t
+    VS : VarOrPacked $ AVar t
+    VV : VarOrPacked $ VVar t
+    VP : (p : PABasic t) => VarOrPacked $ PackedArr t shape
 
 namespace SVObject
 
