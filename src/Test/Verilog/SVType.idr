@@ -146,6 +146,29 @@ namespace Real
   bitsCnt Real'      = 64
   bitsCnt Realtime'  = 64
 
+namespace ArrayShape
+
+  public export
+  record NatPair where
+    constructor MkPair
+    start : Nat
+    end : Nat
+
+  public export
+  (.length) : NatPair -> Nat
+  (.length) np = S (max np.start np.end `minus` min np.start np.end)
+
+  public export
+  data ArrayShape : Type where
+    One : NatPair -> ArrayShape
+    More : NatPair -> ArrayShape -> ArrayShape
+
+  public export
+  isDimensionCompatibleWith : ArrayShape -> ArrayShape -> Bool
+  isDimensionCompatibleWith (One x)        (One y)        = x.length == y.length
+  isDimensionCompatibleWith (h1 `More` t1) (h2 `More` t2) = (h1.length == h2.length) && isDimensionCompatibleWith t1 t2
+  isDimensionCompatibleWith _         _                   = False
+
 namespace SVType
 
   public export
@@ -154,6 +177,8 @@ namespace SVType
   data AllowedNetData : SVType -> Type
   public export
   data PABasic : SVType -> Type
+  public export
+  data VarOrPacked : SVType -> Type
 
   ||| Variable types
   |||
@@ -256,7 +281,7 @@ namespace SVType
     ||| arrays of scalars
     |||
     ||| IEEE 1800-2023
-    PackedArr : (t : SVType) -> (p : PABasic t) => Nat -> Nat -> SVType
+    PackedArr : (t : SVType) -> (p : PABasic t) => (shape : ArrayShape) -> SVType
     ||| The main difference between an unpacked array and a packed array is that
     ||| an unpacked array is not guaranteed to be represented as a contiguous set of bits
     |||
@@ -269,7 +294,7 @@ namespace SVType
     ||| than, equal to, or less than the second value.
     |||
     ||| IEEE 1800-2023
-    UnpackedArr : SVType -> Nat -> Nat -> SVType
+    UnpackedArr : (t : SVType) -> (p : VarOrPacked t) => (shape : ArrayShape) -> SVType
     -- TODO: Add constructors to `TypeLiteral` when add new types to SVType
     -- Dynamic array
     -- Associative array
@@ -292,7 +317,6 @@ namespace SVType
   public export
   data PABasic : SVType -> Type where
     PS : PABasic $ AVar s
-    PA : {t : SVType} -> (p : PABasic t) => PABasic $ PackedArr t s e
 
   ||| 6.11.1 Integral types
   |||
@@ -302,7 +326,7 @@ namespace SVType
   data SVIntegral : SVType -> Type where
     AT : SVIntegral $ AVar t
     VT : SVIntegral $ VVar t
-    PT : {t : SVType} -> (p : PABasic t) => SVIntegral $ PackedArr t s e
+    PT : (p : PABasic t) => SVIntegral $ PackedArr t shape
     -- Packed struct, union, enum
 
   public export
@@ -332,32 +356,44 @@ namespace SVType
   data AllowedNetData : SVType -> Type where
     -- Imp : ImplOrPacked Implicit
     NA : (i : SVIntegral obj) => (s : State4 i) => NotReg i => AllowedNetData obj
-    NB : AllowedNetData t => AllowedNetData $ UnpackedArr t s e
+    NB : AllowedNetData t => VarOrPacked t => AllowedNetData $ UnpackedArr t shape
     -- TODO: unpacked structure, union
 
   public export
+  elementsCnt : ArrayShape -> Nat
+  elementsCnt (One x)      = x.length
+  elementsCnt (h `More` t) = h.length * elementsCnt t
+
+  public export
   bitsCnt : SVType -> Nat
-  bitsCnt (RVar x)            = bitsCnt x
-  bitsCnt (AVar x)            = 1
-  bitsCnt (VVar x)            = bitsCnt x
-  bitsCnt (PackedArr   t s e) = S (max s e `minus` min s e) * bitsCnt t
-  bitsCnt (UnpackedArr t s e) = bitsCnt t
+  bitsCnt (RVar x)              = bitsCnt x
+  bitsCnt (AVar x)              = 1
+  bitsCnt (VVar x)              = bitsCnt x
+  bitsCnt (PackedArr   t shape) = elementsCnt shape * bitsCnt t
+  bitsCnt (UnpackedArr t _)     = bitsCnt t
 
   public export
   isSigned : SVType -> Bool
   isSigned (RVar x)            = True
   isSigned (AVar x)            = False
   isSigned (VVar x)            = isSigned x
-  isSigned (PackedArr   t _ _) = isSigned t
-  isSigned (UnpackedArr t _ _) = isSigned t
+  isSigned (PackedArr   t _)   = isSigned t
+  isSigned (UnpackedArr t _)   = isSigned t
 
   public export
   states : SVType -> State
   states (RVar x)            = S4
   states (AVar x)            = states x
   states (VVar x)            = states x
-  states (PackedArr   t s e) = states t
-  states (UnpackedArr t s e) = states t
+  states (PackedArr   t _)   = states t
+  states (UnpackedArr t _)   = states t
+
+  public export
+  data VarOrPacked : SVType -> Type where
+  VR : VarOrPacked $ RVar t
+  VS : VarOrPacked $ AVar t
+  VV : VarOrPacked $ VVar t
+  VP : (p : PABasic t) => VarOrPacked $ PackedArr t shape
 
 namespace SVObject
 
@@ -437,17 +473,10 @@ data ResolvedNet : SVObject -> Type where
   NTI : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Tri' t
   NWA : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Wand' t
   NWO : {t : SVType} -> (p : AllowedNetData t) => ResolvedNet $ Net Wor' t
-
-public export
-data VarOrPacked : SVType -> Type where
-  VR : VarOrPacked $ RVar t
-  VS : VarOrPacked $ AVar t
-  VV : VarOrPacked $ VVar t
-  VP : {t : SVType} -> (p : PABasic t) => VarOrPacked $ PackedArr t s e
-
+  
 public export
 data IsUnpackedArr : SVType -> Type where
-  IUA : IsUnpackedArr $ UnpackedArr t s e
+  IUA : (p : VarOrPacked t) => IsUnpackedArr $ UnpackedArr t shape
 
 public export
 defaultNetType : SVObject
@@ -512,8 +541,8 @@ namespace SVObjList
 
 public export
 isUnpacked' : SVType -> Bool
-isUnpacked' (UnpackedArr _ _ _) = True
-isUnpacked' _                   = False
+isUnpacked' (UnpackedArr _ _) = True
+isUnpacked' _                 = False
 
 public export
 isUnpacked : SVObject -> Bool
