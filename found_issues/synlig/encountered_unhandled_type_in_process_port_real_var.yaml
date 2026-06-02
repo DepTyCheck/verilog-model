@@ -2,6 +2,7 @@ stage: synthesis
 profile: sv
 target: synlig
 id: encountered_unhandled_type_in_process_port_real_var
+issue_novelty: new
 title: >
   Encountered unhandled type in process_port: real_var
 regex: >
