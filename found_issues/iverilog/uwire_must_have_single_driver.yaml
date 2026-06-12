@@ -1,3 +1,4 @@
+list: issues
 stage: synthesis
 profile: sv
 short_desc: (implicit) uwire <name> must have a single driver, found <num>

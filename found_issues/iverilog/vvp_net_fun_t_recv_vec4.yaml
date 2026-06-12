@@ -1,3 +1,4 @@
+list: issues
 stage: simulation
 profile: sv
 target: iverilog

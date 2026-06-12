@@ -1,4 +1,5 @@
-stage: analysis
+list: issues
+stage: synthesis
 profile: sv
 target: yosys-slang
 id: conflicting_init_values_for_signal

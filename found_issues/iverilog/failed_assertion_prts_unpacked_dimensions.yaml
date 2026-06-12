@@ -1,3 +1,4 @@
+list: issues
 stage: synthesis
 profile: sv
 issue_novelty: new

@@ -1,3 +1,4 @@
+list: issues
 stage: synthesis
 profile: sv
 target: verilator

@@ -1,3 +1,4 @@
+list: issues
 stage: parsing
 profile: sv
 target: yosys

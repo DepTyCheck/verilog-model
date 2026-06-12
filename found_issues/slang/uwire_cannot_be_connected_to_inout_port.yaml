@@ -1,0 +1,82 @@
+list: controversial
+profile: sv
+target: slang
+id: uwire_cannot_be_connected_to_inout_port
+title: Uwire cannot be connected to inout port
+issue_novelty: new
+regex: >
+  'uwire' net .* cannot be connected to 'inout' port
+examples:
+  - uwire_cannot_be_connected_to_inout_port_ex1:
+      first_found: 23.05.2026
+      minified_error: |
+        error: 'uwire' net 'b1' cannot be connected to 'inout' port
+      minified_example: |
+        module a (inout wire logic a1);
+        endmodule: a
+
+        module b (output uwire logic b1);
+          a a_inst(.a1(b1));
+        endmodule: b
+      full_error: |
+        error: 'uwire' net 'vssoazdx' cannot be connected to 'inout' port
+      full_example: |
+        module v ( inout triand logic qqrazlwnx [1:0]
+                , inout tri logic odqesshhp [1:0][4:1][2:0][0:4]
+                , inout tri0 logic [1:2][3:3][0:2][4:1] tewmocxv
+                , output supply1 logic [0:0] dqzen [1:3][1:2][3:0]
+                );
+          
+          xnor tdesiea(xzykxuc, nzbazr, xzykxuc);
+          xnor w(rmiflaimgy, xzykxuc, rmiflaimgy);
+          or dhndse(tmmbge, nzbazr, uxnhfme);
+          
+        endmodule: v
+
+        module fmmmkwh (output trior logic [0:1][0:1][0:3][1:1] i, output bit wiusk [4:2], output reg [2:4][1:1] xlqkzpqe [0:3], inout wor logic [4:4] goyqvk);
+          // Unpacked net declarations
+          supply1 logic [0:0] cjzhxgioes [1:3][1:2][3:0];
+          tri logic rm [1:0][4:1][2:0][0:4];
+          triand logic wu [1:0];
+          
+          v bie(.qqrazlwnx(wu), .odqesshhp(rm), .tewmocxv(i), .dqzen(cjzhxgioes));
+          and mmqxj(r, oxftmxmy, i);
+          
+          // Single-driven assigns
+          assign xlqkzpqe = '{'{'{'b0x},'{'bzx},'{'b01}},'{'{'bz0010},'{'bx0zxz},'{'bz1xz0}},'{'{'bx},'{'b0zz},'{'b0}},'{'{'bx1},'{'b10z},'{'bz11x1}}};
+          assign wiusk = wiusk;
+          
+          // Multi-driven assigns
+          assign cjzhxgioes = cjzhxgioes;
+          assign r = goyqvk;
+          assign wu = '{'b0,'b0zz};
+          assign oxftmxmy = 'b11;
+        endmodule: fmmmkwh
+
+        module hfaqos (output real awj, input tri0 logic [1:1][4:3] jm, output uwire logic [4:1][3:2][3:4][0:1] vssoazdx);
+          // Unpacked net declarations
+          reg [2:4][1:1] k [0:3];
+          bit eq [4:2];
+          supply1 logic [0:0] brotmuc [1:3][1:2][3:0];
+          tri logic kqcyduj [1:0][4:1][2:0][0:4];
+          triand logic sog [1:0];
+          
+          v gtvkikpy(.qqrazlwnx(sog), .odqesshhp(kqcyduj), .tewmocxv(vssoazdx), .dqzen(brotmuc));
+          xnor gukjezh(qplyvaw, jm, qplyvaw);
+          fmmmkwh by(.i(jm), .wiusk(eq), .xlqkzpqe(k), .goyqvk(qplyvaw));
+          xnor iuffvqtjxa(g, g, bjdklto);
+          
+          
+          // Multi-driven assigns
+          assign sog = '{'b0,'bx0z};
+          assign brotmuc = brotmuc;
+          assign kqcyduj = '{'{'{'{'bz1,'bz1z0,'b100,'b1x0xz,'bxzz1},'{'bz,'b1zxx,'bzx,'bzx0,'b00zx},'{'b1zz,'b00,'b0zz0,'b0z0,'bzzz}},'{'{'bz0z,'b1x0,'b1,'b000z,'bzzx1},'{'bx01,'b001,'bz,'bxx0,'bxx01x},'{'b01x1,'b0x00x,'bx101,'bz,'bx1}},'{'{'bx01,'bz0z,'b1z,'bz,'b11},'{'b01,'b0zzx,'b00,'bz,'b10xx},'{'bz,'b1x1x,'b1,'b1z,'b00zz0}},'{'{'b0x,'bx0101,'bz1xx,'bz01z,'b01},'{'bzz00x,'b11zx,'bxx01,'b10,'b0x},'{'b1x00,'bxxxz,'b0x0,'b0z,'bz}}},'{'{'{'bxx01z,'bz100,'b01zx0,'b010xx,'bz},'{'b0x0x,'b0z00z,'bxxx11,'bz0,'b1},'{'b01zz1,'b1,'b01,'b00z,'b1z}},'{'{'bz,'b1111,'bz101,'bx111x,'b0z0},'{'b11x0x,'bxz0zx,'bz,'bz01,'bx0},'{'b1,'b01x,'bx,'bxxz,'b0xz1}},'{'{'b11x,'b1x1x,'b10,'bzxzx,'b01z},'{'bx0x,'b0,'bxx11,'b101x,'bzz1},'{'bz,'bx0,'b01x,'b1,'b0xxzz}},'{'{'bx,'bxxxz,'b0001z,'b011,'b0},'{'b0101,'bz01,'bzx111,'b001,'bxx},'{'b11,'b1z1zz,'bzz,'b0110,'b10z}}}};
+          assign jm = jm;
+          assign bjdklto = qplyvaw;
+        endmodule: hfaqos
+
+        module hovax (inout trior logic [1:4][3:2][0:2] qw [4:0][3:3][4:1], input logic iitpxp, inout trireg logic yugnbfcovq [0:1][3:0][4:3][4:4]);
+          
+          and cf(mv, klnaqcu, iitpxp);
+
+        endmodule: hovax

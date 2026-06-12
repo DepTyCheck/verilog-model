@@ -1,3 +1,4 @@
+list: issues
 stage: analysis
 profile: sv
 target: synlig
