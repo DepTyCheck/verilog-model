@@ -289,31 +289,29 @@ namespace SystemVerilogRules
 
   public export
   basicIntegral : SVType -> Bool
-  basicIntegral (RVar x)            = False
-  basicIntegral (AVar x)            = True
-  basicIntegral (VVar x)            = True
-  basicIntegral (PackedArr   t _ _) = True
-  basicIntegral (UnpackedArr x _ _) = basicIntegral x
+  basicIntegral (RVar x)           = False
+  basicIntegral (AVar x)           = True
+  basicIntegral (VVar x)           = True
+  basicIntegral (PackedArr   t _)  = True
+  basicIntegral (UnpackedArr x _)  = basicIntegral x
 
   public export
   isVarOrPacked' : SVType -> Bool
-  isVarOrPacked' (RVar _)            = True
-  isVarOrPacked' (AVar _)            = True
-  isVarOrPacked' (VVar _)            = True
-  isVarOrPacked' (PackedArr   _ _ _) = True
-  isVarOrPacked' (UnpackedArr _ _ _) = False
+  isVarOrPacked' (RVar _)          = True
+  isVarOrPacked' (AVar _)          = True
+  isVarOrPacked' (VVar _)          = True
+  isVarOrPacked' (PackedArr   _ _) = True
+  isVarOrPacked' (UnpackedArr _ _) = False
 
   ||| 6.22.2 Equivalent types
   ||| d) Unpacked fixed-size array types are equivalent if they have equivalent element types and equal size; the actual range bounds may differ.
   ||| IEEE 1800-2023
   public export
   sameUnpackedDims : SVType -> SVType -> Bool
-  sameUnpackedDims (UnpackedArr t s e) (UnpackedArr t' s' e') =
-    S (max s e `minus` min s e) == S (max s' e' `minus` min s' e')
-    && sameUnpackedDims t t'
-  sameUnpackedDims (UnpackedArr _ _ _) _ = False
-  sameUnpackedDims _ (UnpackedArr _ _ _) = False
-  sameUnpackedDims _ _                   = True
+  sameUnpackedDims (UnpackedArr t shape) (UnpackedArr t' shape') = shape `isDimensionCompatibleWith` shape'
+  sameUnpackedDims (UnpackedArr _ _) _                           = False
+  sameUnpackedDims _ (UnpackedArr _ _)                           = False
+  sameUnpackedDims _ _                                           = True
 
   ||| 6.22.2 Equivalent types
   ||| c) Packed arrays, packed structures, packed unions, and built-in integral types are equivalent if they

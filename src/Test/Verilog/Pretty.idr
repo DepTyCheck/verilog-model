@@ -123,12 +123,20 @@ Show (BinaryList s) where
     showLinear (One  x)    = show x
     showLinear (More x xs) = show x ++ showLinear xs
 
-Show (TypeLiteralVect l t)
+chunksOf : (n : Nat) -> List a -> List (List a)
+chunksOf 0 _  = []
+chunksOf _ [] = []
+chunksOf n xs = take n xs :: assert_total (chunksOf n (drop n xs))
+
+showShaped : ArrayShape -> List String -> String
+showShaped (One _)         elems = "'{\{joinBy "," elems}}"
+showShaped (_ `More` rest) elems =
+  let chunks = chunksOf (elementsCnt rest) elems
+  in "'{\{joinBy "," $ map (showShaped rest) chunks}}"
 
 ||| Single bit example:
 ||| logic m;
 ||| assign m = 'b1;
-||| TODO: print the length of literal sometimes
 |||
 ||| UAL x example:
 ||| logic m [1:0][4:0];
@@ -141,8 +149,13 @@ Show (TypeLiteral sv) where
   show (RL  x) = show x
   show (AL  x) = show x
   show (VL  x) = show x
-  show (PAL x) = show x
-  show (UAL x) = show x
+  show (PAL {atomType} x) = "'b\{concatMap atomBits $ toList x}" where
+    atomBits : TypeLiteral (AVar atomType) -> String
+    atomBits (AL bl) = showBits bl where
+      showBits : BinaryList s -> String
+      showBits (One  b)    = show b
+      showBits (More b bs) = show b ++ showBits bs
+  show (UAL shape x) = showShaped shape $ map show $ toList x
 
 Show (TypeLiteralVect l t) where
   show x = "'{\{joinBy "," $ map show $ toList x}}"
@@ -153,21 +166,22 @@ pn "" = ""
 pn a = " \{a}"
 
 showBasic : SVType -> String
-showBasic (RVar x)            = show x
-showBasic (AVar x)            = show x
-showBasic (VVar x)            = show x
-showBasic (PackedArr   t k j) = showBasic t
-showBasic (UnpackedArr t k j) = showBasic t
+showBasic (RVar x)          = show x
+showBasic (AVar x)          = show x
+showBasic (VVar x)          = show x
+showBasic (PackedArr   t _) = show t
+showBasic (UnpackedArr t _) = showBasic t
+
+showArrayDims : ArrayShape -> String
+showArrayDims (One (MkPair s e))    = "[\{show s}:\{show e}]"
+showArrayDims (MkPair s e `More` t) = "[\{show s}:\{show e}]" ++ showArrayDims t
 
 showPackedSVT : SVType -> String
-showPackedSVT (RVar x)              = show x
-showPackedSVT (AVar x)              = show x
-showPackedSVT (VVar x)              = show x
-showPackedSVT (PackedArr t {p} s e) = "\{showBasic t} [\{show s}:\{show e}]\{packDims t}" where
-  packDims : SVType -> String
-  packDims (PackedArr t s e) = "[\{show s}:\{show e}]" ++ packDims t
-  packDims _                 = ""
-showPackedSVT (UnpackedArr t   s e) = ""
+showPackedSVT (RVar x)                = show x
+showPackedSVT (AVar x)                = show x
+showPackedSVT (VVar x)                = show x
+showPackedSVT (PackedArr t shape) = "\{show t} \{showArrayDims shape}" where
+showPackedSVT (UnpackedArr t   _)     = ""
 
 ||| examples:
 ||| bit uP [3:0]; //1-D unpacked
@@ -181,18 +195,14 @@ showPackedSVT (UnpackedArr t   s e) = ""
 ||| int Array[0:7][0:31]; // array declaration using ranges
 ||| int Array[8][32];     // array declaration using sizes
 showSVType : SVType -> (name : String) -> String
-showSVType rv@(RVar x)                name = "\{show x}\{pn name}"
-showSVType sv@(AVar x)                name = "\{show x}\{pn name}"
-showSVType vv@(VVar x)                name = "\{show x}\{pn name}"
-showSVType pa@(PackedArr   t {p} s e) name = "\{showPackedSVT pa}\{pn name}"
-showSVType ua@(UnpackedArr t     s e) name = "\{showPackedSVT $ basic t} \{name} [\{show s}:\{show e}]\{unpDimensions t}" where
+showSVType rv@(RVar x)              name = "\{show x}\{pn name}"
+showSVType sv@(AVar x)              name = "\{show x}\{pn name}"
+showSVType vv@(VVar x)              name = "\{show x}\{pn name}"
+showSVType pa@(PackedArr   t     _) name = "\{showPackedSVT pa} \{pn name}"
+showSVType ua@(UnpackedArr t     s) name = "\{showPackedSVT t} \{name} \{showArrayDims s}" where
   basic : SVType -> SVType
-  basic (UnpackedArr t _ _) = basic t
-  basic t                   = t
-
-  unpDimensions : SVType -> String
-  unpDimensions (UnpackedArr t s e) = "[\{show s}:\{show e}]" ++ unpDimensions t
-  unpDimensions _                   = ""
+  basic (UnpackedArr t _) = basic t
+  basic t                 = t
 
 showSVObj : SVObject -> (name : String) -> String
 showSVObj (Net nt t) name = "\{show nt} \{showSVType t name}"
