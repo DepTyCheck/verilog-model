@@ -1,13 +1,18 @@
 list: controversial
 profile: sv
-target: slang
-id: uwire_cannot_be_connected_to_inout_port
-title: Uwire cannot be connected to inout port
+target: yosys-slang
+id: uwire_cannot_be_connected_to_inout_port_yosys
+title: Uwire cannot be connected to inout port (yosys)
 issue_novelty: new
 regex: >
   'uwire' net .* cannot be connected to 'inout' port
+issue_links:
+  - local_id: uwire_cannot_be_connected_to_inout_port
+    link_name: >
+      Parent
+    link_icon: logo_no_bg.png
 examples:
-  - uwire_cannot_be_connected_to_inout_port_ex1:
+  - uwire_cannot_be_connected_to_inout_port_yosys_ex1:
       first_found: 23.05.2026
       minified_error: |
         error: 'uwire' net 'b1' cannot be connected to 'inout' port
