@@ -19,7 +19,10 @@ VHDLKeywords = [
   "label", "procedure", "units", "component", "library", "process", "until", "configuration", "linkage", "property", "use", "constant", "context",
   "literal", "protected", "loop", "private", "variable", "cover", "pure", "view", "map", "vpkg", "default", "mod", "range", "vmode", "disconnect",
   "downto", "record", "vprop", "register", "vunit", "reject", "else", "release", "wait", "elsif", "rem", "when", "end", "report", "while", "entity",
-  "exit", "restrict", "with", "return", "rol", "xnor", "ror", "xor"
+  "exit", "restrict", "with", "return", "rol", "xnor", "ror", "xor",
+  -- Predefined and basic type names
+  "character", "bit", "boolean", "severity_level", "integer", "time", "real", "std_logic", "std_logic_vector", "boolean_vector", "bit_vector",
+  "integer_vector", "real_vector", "time_vector", "string"
 ]
 
 export

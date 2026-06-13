@@ -1,9 +1,10 @@
-module Test.VHDL.VHDLDesign
+module Test.VHDL.Design
 
 import Data.Fuel
 
 import Test.Common.Utils
 
+import Test.Common.Assign
 import Test.Common.DataType
 import Test.Common.Design
 
@@ -22,7 +23,7 @@ data VHDLDesign : DesignUnitSigsList VHDL -> Type where
 export
 genVHDL : Fuel -> Gen MaybeEmpty $ VHDLDesign StdDesigns
 genVHDL x = do
-  raw <- genDesignUnitsList x VHDL StdDesigns
+  raw <- genDesignUnitsList x VHDL StdDesigns @{charsGen}
   res <- extend x raw
   pure res where
     extend : Fuel -> {dus : _} -> DesignUnitsList dus -> Gen MaybeEmpty $ VHDLDesign dus

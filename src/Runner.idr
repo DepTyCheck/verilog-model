@@ -15,8 +15,8 @@ import Test.DepTyCheck.Gen.Coverage
 
 import Test.Common.UniqueFins.Derived
 import Test.Common.UniqueNames.Derived
--- import Test.Verilog.Connections.Derived
-import Test.Verilog.TMPExpression.Derived
+import Test.Common.PrintableDesigns
+import Test.VHDL.Pretty.Derived
 import Test.Common.Design.Derived
 
 import Test.Common.Gen
@@ -201,10 +201,6 @@ ensureParentDir : String -> IO ()
 ensureParentDir path = case init $ split (=='/') path of
   []   => pure ()
   dirs => createDir'' $ joinBy "/" dirs
-
-startComment : Lang -> String
-startComment SystemVerilog = "//"
-startComment VHDL          = "--"
 
 content : Cfg -> String -> StdGen -> StdGen -> String
 content cfg generatedModule initialSeed seedAfter = case cfg.seedInFile of

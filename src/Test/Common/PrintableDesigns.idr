@@ -73,7 +73,7 @@ genPDNames : {lk : Nat} -> (keywords : SVect lk) -> Fuel -> {l : _} -> {usl : _}
                 --  ** allNames : SVect ((subUs.length) + ((length mcs) + (S (length usl))))
                  ** uniqueDes : UniqNames (S (length usl)) (unitName :: allDesignNames pds)
                  ** UniqNames (subUs.length + (length mcs + (S $ length usl))) (subNames ++ connNames ++ unitName :: allDesignNames pds))
-genPDNames kw x pds (MkDesign s subUs mcs) = do
+genPDNames kw x pds (MkDesign s subUs mcs _ _ _ _) = do
   -- Generate design unit name
   (unitName ** uniqueDes) <- genOneUniqueName kw x (allDesignNames pds) un
   let allDesEntNames : ?
@@ -145,10 +145,65 @@ eqmf (Just f) f' = f == f'
 export
 resolveInpsOutsNames : {l : _} -> {usl : _} -> {s : _} -> {subUs : _} -> {mcs : _} ->
                        DesignUnit {l} s usl subUs mcs -> Vect (length mcs) String -> (Vect (length $ s.ports) String)
-resolveInpsOutsNames (MkDesign s subUs mcs) mcsNames = map findName $ allFins (length $ s.ports) where
+resolveInpsOutsNames (MkDesign s subUs mcs _ _ _ _) mcsNames = map findName $ allFins (length $ s.ports) where
   mfinToName : Maybe (Fin $ length mcs) -> String
   mfinToName Nothing  = "(error: resolveInpsOutsNames nothing portsLen: \{show $ length $ s.ports})" -- impossible
   mfinToName (Just f) = index f mcsNames
 
   findName : Fin (totalTops' s) -> String
   findName f = mfinToName $ findIndex (\(MkMC tsc tsk ssc ssk) => eqmf tsc f || eqmf tsk f) $ toVect mcs
+
+export
+startComment : Lang -> String
+startComment SystemVerilog = "//"
+startComment VHDL          = "--"
+
+export
+printComment : Lang -> String -> String
+printComment l str = "\{startComment l} \{str}"
+
+nonEmpty : List a -> Bool
+nonEmpty [] = False
+nonEmpty _  = True
+
+-- Concat filled sections. Drop empty sections
+export
+sepSections : {opts : _} -> List (List $ Doc opts) -> List $ Doc opts
+sepSections sections = concat $ intersperse [emptyLine] $ filter nonEmpty sections
+
+export
+vsepSections : {opts : _} -> List (List $ Doc opts) -> Doc opts
+vsepSections = vsep . sepSections
+
+export
+printAssignsSection : {l : _} -> {usl : _} -> {s : _} -> {subUs : _} -> {mcs : _} ->
+                      (design : DesignUnit {l} s usl subUs mcs) ->
+                      {opts : _} -> (print' : ({f : _} -> Fin (mcs.length) -> Expr l mcs f -> Gen0 $ Doc opts)) ->
+                      Gen0 $ List $ Doc opts
+printAssignsSection (MkDesign s subUs mcs sdAssigns sdExprs mdAssigns mdExprs) print' = do
+  sd <- singleDrivens
+  md <- multiDrivens
+
+  pure $ sepSections [sd, md] where
+
+  headerIfNotEmpty : List (Doc opts) -> String -> List $ Doc opts
+  headerIfNotEmpty []          _   = []
+  headerIfNotEmpty els@(x::xs) str = line str :: els
+
+  printAssigns : {fins : _} -> ExpVect l mcs fins -> Gen0 $ List $ Doc opts
+  printAssigns {fins = []}        []        = pure []
+  printAssigns {fins = (f :: fs)} (e :: es) = do
+    cur <- print' f e
+    rest <- printAssigns es
+    pure $ cur :: rest
+
+  anyDrivens : {fins : _} -> (exprs : ExpVect l mcs fins) -> (header : String) -> Gen0 $ List $ Doc opts
+  anyDrivens exprs header = do
+    assigns <- printAssigns exprs
+    pure $ headerIfNotEmpty assigns $ printComment l header
+
+  singleDrivens : Gen0 $ List $ Doc opts
+  singleDrivens = anyDrivens sdExprs "Single-driven assignments"
+
+  multiDrivens : Gen0 $ List $ Doc opts
+  multiDrivens = anyDrivens mdExprs "Multi-driven assignments"

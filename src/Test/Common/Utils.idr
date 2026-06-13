@@ -20,9 +20,13 @@ namespace FinsList
   (.asList) (x::xs) = x :: xs.asList
 
   public export
+  length : FinsList n -> Nat
+  length []      = 0
+  length (x::xs) = S $ length xs
+
+  public export %inline
   (.length) : FinsList n -> Nat
-  (.length) []      = 0
-  (.length) (x::xs) = S xs.length
+  (.length) = length
 
   public export
   index : (fs : FinsList s) -> Fin fs.length -> Fin s

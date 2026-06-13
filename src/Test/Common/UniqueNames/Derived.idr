@@ -7,6 +7,6 @@ import System.Random.Pure.StdGen
 
 %default total
 
-%logging "deptycheck.derive" 7
+%logging "deptycheck.derive" 20
 
 Test.Common.UniqueNames.rawNewName' = deriveGen

@@ -1,5 +1,7 @@
 module Test.Verilog.Literal
 
+import Data.Vect
+
 import public Test.Verilog.SVType
 
 %default total
@@ -27,25 +29,55 @@ namespace BinaryList
     One  : Binary s -> BinaryList s
     More : Binary s -> BinaryList s -> BinaryList s
 
-namespace TypeLiteralVect
+namespace BinaryVect
+
+  ||| Length-indexed non-empty list of bits.
+  public export
+  data BinaryVect : Nat -> State -> Type where
+    One  : Binary s -> BinaryVect 1 s
+    More : Binary s -> BinaryVect n s -> BinaryVect (S n) s
 
   public export
-  data TypeLiteral : SVType -> Type
+  toVect : BinaryVect n s -> Vect n (Binary s)
+  toVect (One  x)    = [x]
+  toVect (More x xs) = x :: toVect xs
 
   public export
-  data TypeLiteralVect : Nat -> SVType-> Type where
-    Nil  : TypeLiteralVect 0 t
-    (::) : TypeLiteral t -> TypeLiteralVect n t -> TypeLiteralVect (S n) t
+  length : BinaryVect n s -> Nat
+  length (One  _)    = 1
+  length (More _ xs) = S $ length xs
+
+  public export %inline
+  (.length) : BinaryVect n s -> Nat
+  (.length) = length
+
+public export
+data BitsList : Nat -> State -> Type where
+  Unsized : BinaryList s   -> BitsList n s
+  Sized   : BinaryVect n s -> BitsList n s
+
+namespace SVTypeLiteralVect
+
+  public export
+  data SVTypeLiteral : SVType -> Type
+
+  public export
+  data SVTypeLiteralVect : Nat -> SVType-> Type where
+    Nil  : SVTypeLiteralVect 0 t
+    (::) : SVTypeLiteral t -> SVTypeLiteralVect n t -> SVTypeLiteralVect (S n) t
 
   export
-  toList : TypeLiteralVect l t -> List $ TypeLiteral t
+  toList : SVTypeLiteralVect l t -> List $ SVTypeLiteral t
   toList []      = []
   toList (x::xs) = x :: toList xs
 
   public export
-  data TypeLiteral : SVType -> Type where
-    RL  : BinaryList S4 -> TypeLiteral $ RVar t
-    AL  : BinaryList (states t) -> TypeLiteral $ AVar t
-    VL  : BinaryList (states t) -> TypeLiteral $ VVar t
-    PAL : {t : SVType} -> (p : PABasic t) => TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ PackedArr t s e
-    UAL : TypeLiteralVect (S $ max s e `minus` min s e) t -> TypeLiteral $ UnpackedArr t s e
+  data SVTypeLiteral : SVType -> Type where
+    RL  : BitsList (Real.bitsCnt t) S4 -> SVTypeLiteral $ RVar t
+    AL  : BitsList 1 (states t) -> SVTypeLiteral $ AVar t
+    VL  : BitsList (Vector.bitsCnt t) (states t) -> SVTypeLiteral $ VVar t
+    ||| Structure literal
+    PAL  : {t : SVType} -> (p : PABasic t) => SVTypeLiteralVect (S $ max s e `minus` min s e) t -> SVTypeLiteral $ PackedArr t s e
+    ||| A flat bits list
+    PANL : {t : SVType} -> (p : PABasic t) => BitsList (bitsCnt $ PackedArr t s e) (states t) -> SVTypeLiteral $ PackedArr t s e
+    UAL  : SVTypeLiteralVect (S $ max s e `minus` min s e) t -> SVTypeLiteral $ UnpackedArr t s e
