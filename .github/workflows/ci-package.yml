@@ -481,7 +481,9 @@ jobs:
           persist-credentials: false
 
       - name: Set run date
-        run: echo "RUN_DATE=$(date -u +%Y_%m_%d)" >> "$GITHUB_ENV"
+        run: |
+          echo "RUN_DATE=$(date -u +%Y_%m_%d)" >> "$GITHUB_ENV"
+          echo "RUN_ISO_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
 
       - uses: actions/setup-python@v6
         with:
@@ -529,6 +531,11 @@ jobs:
             --known-errors-dir "${{ env.DATASET_PATH }}/found_issues" \
             --out-csv "${{ env.DATASET_PATH }}/latest_regression_test.csv"
 
+      - name: Write run metadata
+        run: |
+          printf '{\n  "last_regression_test_date": "%s"\n}\n' \
+            "$RUN_ISO_DATE" > "${{ env.DATASET_PATH }}/latest_run_metadata.json"
+
       - name: Bot Details
         id: bot-details
         uses: raven-actions/bot-details@v1
@@ -538,7 +545,7 @@ jobs:
           cd ${{ env.DATASET_PATH }}
           git config --global user.name "${{ steps.bot-details.outputs.name }}"
           git config --global user.email "${{ steps.bot-details.outputs.email }}"
-          git add files/ issues.csv latest_regression_test.csv
+          git add files/ issues.csv latest_regression_test.csv latest_run_metadata.json
           git diff --cached --quiet && echo "No changes to commit." && exit 0
           git commit -m "[ bot ] Add dataset ${{ env.RUN_DATE }}"
           git remote set-url origin "https://x-access-token:${{ secrets.PAT_PUSH }}@github.com/${{ github.repository }}"
