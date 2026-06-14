@@ -7,9 +7,10 @@ Keys:
 - title: A short, descriptive title for the error.
 - target: The name of the tool where the error was encountered.
 - profile: HDL language (sv, vhdl)
-- issue_type: The type of the issue (crash, bad_message, infinite_loop)
+- list: Which list the issue belongs to: `issues` (main) or `controversial`. Required. No issue belongs to both.
+- issue_type: The type of the issue (crash, bad_message, infinite_loop, feature)
 - short_desc: A concise summary of the error
-- issue_novelty: The novelty of the issue (new, already_known, unsupported, feature, late)
+- issue_novelty: The novelty of the issue (new, already_known, unsupported, late)
 - issue_links: 
   - url: An URL to the related issue, if available
   - local_id: id of an existing issue in current repo
