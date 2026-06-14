@@ -5,7 +5,9 @@ target: verilator
 id: assigning_to_input_const_variable
 title: >
   Assigning to input/const variable
-issue_novelty: feature
+issue_novelty: new
+issue_type:
+  - feature
 issue_links:
   - url: https://github.com/verilator/verilator/issues/5875
     link_name: >

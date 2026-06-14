@@ -4,7 +4,13 @@ profile: sv
 target: iverilog
 id: net_can_not_be_type_of_bool
 title: Net can not be of type `bool`.
-issue_novelty: feature
+issue_novelty: new
+issue_type:
+  - feature
+issue_links:
+  - url: https://github.com/steveicarus/iverilog/issues/1271#issuecomment-3246414554
+    link_name: >
+      #1271
 short_desc: iverilog doesn't support the `int` type from SystemVerilog. Instead, it's implemented through the Verilog-AMS extension
 regex: >
   Net .* can not be of type

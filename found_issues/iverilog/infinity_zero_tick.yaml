@@ -1,4 +1,4 @@
-list: issues
+list: controversial
 stage: simulation
 profile: sv
 short_desc: The first simulation tick runs indefinitely
