@@ -59,3 +59,21 @@ export function buildReproducedStates(foundErrors, csvRows) {
 
 	return { errorReproducedStates, exampleReproducedStates };
 }
+
+/**
+ * Pull the last regression-run date out of latest_run_metadata.json content.
+ * Degrades to null on any problem — the file is produced by an external job.
+ *
+ * @param {string | null} raw  file contents, or null when the file is absent
+ * @returns {string | null}
+ */
+export function extractLastRunDate(raw) {
+	if (raw == null) return null;
+	try {
+		const meta = JSON.parse(raw);
+		const date = meta?.last_regression_test_date;
+		return typeof date === 'string' && date.length > 0 ? date : null;
+	} catch {
+		return null;
+	}
+}

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildReproducedStates } from '../scripts/utils/regression_utils.js';
+import { buildReproducedStates, extractLastRunDate } from '../scripts/utils/regression_utils.js';
 import { createReproducedChoices } from '../src/lib/components/bugs-table/regression-utils';
 
 // Minimal shape buildReproducedStates needs: { id, examples: [{ id }] }
@@ -66,5 +66,24 @@ describe('createReproducedChoices', () => {
 		const choices = createReproducedChoices();
 		expect(choices.map((c) => c.value)).toEqual(['reproduced', 'not_reproduced', 'untested']);
 		expect(choices.map((c) => c.label)).toEqual(['Reproduced', 'Not reproduced', 'Not tested']);
+	});
+});
+
+describe('extractLastRunDate', () => {
+	it('returns the iso date from valid metadata', () => {
+		const raw = '{ "last_regression_test_date": "2026-06-14T06:35:30Z" }';
+		expect(extractLastRunDate(raw)).toBe('2026-06-14T06:35:30Z');
+	});
+
+	it('returns null for null input', () => {
+		expect(extractLastRunDate(null)).toBeNull();
+	});
+
+	it('returns null when the field is absent', () => {
+		expect(extractLastRunDate('{ "other": 1 }')).toBeNull();
+	});
+
+	it('returns null for unparseable json', () => {
+		expect(extractLastRunDate('not json')).toBeNull();
 	});
 });

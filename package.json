@@ -8,7 +8,7 @@
 		"generate": "node scripts/gen_errors_data.js ./dataset/found_issues src/lib/generated/errors-data.ts",
 		"check:unique_ids": "node scripts/check_unique_ids.js ./dataset/found_issues",
 		"gen:stats": "node scripts/gen_stats_data.js ./combined_stats.csv src/lib/generated/errors-stats.ts",
-		"gen:regression": "node scripts/gen_regression_data.js ./dataset/found_issues ./dataset/latest_regression_test.csv src/lib/generated/errors-regression.ts",
+		"gen:regression": "node scripts/gen_regression_data.js ./dataset/found_issues ./dataset/latest_regression_test.csv src/lib/generated/errors-regression.ts ./dataset/latest_run_metadata.json",
 		"pre": "npm run bootstrap && npm run check:unique_ids && npm run generate && npm run gen:stats && npm run gen:regression",
 		"dev": "npm run pre && vite dev",
 		"build": "npm run pre && vite build",

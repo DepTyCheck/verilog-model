@@ -2,6 +2,25 @@ import fs from 'fs';
 import path from 'path';
 import { parse } from 'yaml';
 
+const VALID_LISTS = ['issues', 'controversial'];
+
+/**
+ * @param {unknown} list
+ * @param {string} filePath
+ * @returns {string}
+ */
+export function validateList(list, filePath) {
+	if (!VALID_LISTS.includes(/** @type {string} */ (list))) {
+		throw new Error(`Invalid or missing "list" in ${filePath}: got ${JSON.stringify(list)}, expected one of ${VALID_LISTS.join(', ')}`);
+	}
+	return /** @type {string} */ (list);
+}
+
+/**
+ * @param {string} dir
+ * @param {string[]} [fileList]
+ * @returns {string[]}
+ */
 export function findYamlFiles(dir, fileList = []) {
 	const files = fs.readdirSync(dir);
 
@@ -19,6 +38,10 @@ export function findYamlFiles(dir, fileList = []) {
 	return fileList;
 }
 
+/**
+ * @param {string | null | undefined} dateStr
+ * @returns {Date | null}
+ */
 function parseDate(dateStr) {
 	if (!dateStr) return null;
 	const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(dateStr);
@@ -32,6 +55,9 @@ function parseDate(dateStr) {
 }
 
 // Helper function to clean issue_links by removing undefined/null properties
+/**
+ * @param {unknown} issueLinks
+ */
 function cleanIssueLinks(issueLinks) {
 	if (!Array.isArray(issueLinks)) return [];
 
@@ -63,12 +89,17 @@ function cleanIssueLinks(issueLinks) {
 }
 
 // Function to parse a YAML file and convert it to FoundError format
+/**
+ * @param {string} filePath
+ */
 export function parseYamlFile(filePath) {
 	try {
 		const content = fs.readFileSync(filePath, 'utf8');
 		const doc = parse(content);
 
-		const { stage, profile, target, regex, id, short_desc, title, examples, issue_novelty, issue_links, maintainers_response } = doc;
+		const { stage, profile, target, regex, id, short_desc, title, examples, issue_novelty, issue_links, maintainers_response, list } = doc;
+
+		const validatedList = validateList(list, filePath);
 
 		const parsedExamples = [];
 		if (Array.isArray(examples)) {
@@ -100,10 +131,11 @@ export function parseYamlFile(filePath) {
 			issue_links: cleanIssueLinks(issue_links),
 			issue_novelty: issue_novelty || null,
 			maintainers_response: maintainers_response || null,
-			issue_type: doc.issue_type || null
+			issue_type: doc.issue_type || null,
+			list: validatedList
 		};
 	} catch (error) {
-		console.error(`Error parsing ${filePath}:`, error.message);
+		console.error(`Error parsing ${filePath}:`, error instanceof Error ? error.message : String(error));
 		process.exit(1);
 	}
 }

@@ -7,6 +7,7 @@ import type { ErrorPercentages } from '../src/lib/components/bugs-table/error-st
 const mockErrors: FoundError[] = [
     {
         id: 'error1',
+        list: 'issues',
         title: 'Zebra error',
         profile: 'sv',
         target: 'iverilog',
@@ -22,6 +23,7 @@ const mockErrors: FoundError[] = [
     },
     {
         id: 'error2',
+        list: 'issues',
         title: 'Alpha error',
         profile: 'sv',
         target: 'verilator',
@@ -37,6 +39,7 @@ const mockErrors: FoundError[] = [
     },
     {
         id: 'error3',
+        list: 'issues',
         title: 'Beta error',
         profile: 'sv',
         target: 'iverilog',
@@ -52,6 +55,7 @@ const mockErrors: FoundError[] = [
     },
     {
         id: 'error4',
+        list: 'issues',
         title: 'Gamma error',
         profile: 'sv',
         target: 'verilator',
@@ -161,6 +165,7 @@ describe('sortErrors', () => {
                 ...mockErrors,
                 {
                     id: 'error5',
+                    list: 'issues',
                     title: 'Error without stats',
                     profile: 'sv',
                     target: 'iverilog',
@@ -199,6 +204,7 @@ describe('sortErrors', () => {
             const duplicateTitles: FoundError[] = [
                 {
                     id: 'dup1',
+                    list: 'issues',
                     title: 'Same title',
                     profile: 'sv',
                     target: 'iverilog',
@@ -209,6 +215,7 @@ describe('sortErrors', () => {
                 },
                 {
                     id: 'dup2',
+                    list: 'issues',
                     title: 'Same title',
                     profile: 'sv',
                     target: 'verilator',

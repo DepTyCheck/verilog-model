@@ -69,7 +69,7 @@
 					/>
 				</FieldDisplay>
 			{/if}
-			<FieldDisplay label="Reproduced">
+			<FieldDisplay label="Still relevant">
 				<ReproductionBadge
 					showText
 					state={errorReproducedStates[foundError.id] ?? 'untested'}

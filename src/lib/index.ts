@@ -38,8 +38,6 @@ export function displayIssueNovelty(status: IssueNovelty): DisplayInfo {
 			return { text: 'Known before', color: 'indigo' };
 		case 'unsupported':
 			return { text: 'Unsupported', color: 'green' };
-		case 'feature':
-			return { text: 'Feature', color: 'gray' };
 		case 'late':
 			return { text: 'Late', color: 'gray' };
 		default:
@@ -55,6 +53,8 @@ export function getIssueTypeDisplay(type: IssueType): DisplayInfo {
 			return { text: 'Bad message', color: 'yellow' };
 		case 'infinite_loop':
 			return { text: 'Infinite loop', color: 'purple' };
+		case 'feature':
+			return { text: 'Feature', color: 'gray' };
 		default:
 			return { text: '', color: 'gray' };
 	}
@@ -100,8 +100,6 @@ export function getNoveltyTooltip(status: IssueNovelty): string {
 			return 'This issue was already known before';
 		case 'unsupported':
 			return 'This feature is not supported by the tool and is not planned in the near future';
-		case 'feature':
-			return 'Actually it is not a bug, but a feature';
 		case 'late':
 			return 'An issue was detected, but the maintainers resolved it before it was reported';
 		case null:

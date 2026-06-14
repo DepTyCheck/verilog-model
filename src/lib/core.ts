@@ -3,9 +3,10 @@ export type CheckBoxChoice = {
 	label: string;
 };
 
-export type IssueNovelty = 'new' | 'already_known' | 'unsupported' | 'feature' | 'late' | null;
+export type IssueNovelty = 'new' | 'already_known' | 'unsupported' | 'late' | null;
 export type MaintainersResponse = 'bug' | 'enhancement' | 'low' | 'wontfix' | null;
-export type IssueType = 'crash' | 'bad_message' | 'infinite_loop' | null;
+export type IssueType = 'crash' | 'bad_message' | 'infinite_loop' | 'feature' | null;
+export type IssueList = 'issues' | 'controversial';
 
 export type IssueLink = {
 	url?: string;
@@ -36,6 +37,7 @@ export type FoundError = {
 	issue_links?: IssueLink[];
 	issue_novelty: IssueNovelty;
 	maintainers_response: MaintainersResponse;
+	list: IssueList;
 };
 
 export type SortableColumn = 'firstFound' | 'title' | 'stats';

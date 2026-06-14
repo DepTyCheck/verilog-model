@@ -5,19 +5,20 @@
 	import { allFoundErrors } from '$lib/generated/errors-data';
 	import { githubUrl, depTyCheckGithubUrl } from '$lib/consts';
 
-	const issues = allFoundErrors.filter((e) => e.list === 'issues');
+	const controversial = allFoundErrors.filter((e) => e.list === 'controversial');
 </script>
 
 <div class={defaultMargin}>
-	<BugsTable errors={issues} heading="Found bugs & issues" {description} />
+	<BugsTable errors={controversial} heading="Controversial issues" {description} />
 </div>
 
 {#snippet description()}
 	<p class="text-base font-normal text-gray-500 dark:text-gray-300">
-		This is a list of bugs and issues found by
+		This list gathers controversial HDL behaviors discovered by
 		<A href={githubUrl} class="underline">verilog-model</A> using
-		<A href={depTyCheckGithubUrl} class="underline">DepTyCheck</A> for various HDL analysis tools.
+		<A href={depTyCheckGithubUrl} class="underline">DepTyCheck</A>.
 		<br />
-		There are examples that reproduce these bugs.
+		It highlights cases where the IEEE standard is unclear, leading to different interpretations among
+		HDL analysis tools that may or may not be considered errors.
 	</p>
 {/snippet}

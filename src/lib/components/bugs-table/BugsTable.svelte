@@ -6,8 +6,6 @@
 	import TableData from '$lib/components/bugs-table/TableData.svelte';
 	import BottomScrollbar from '$lib/components/bugs-table/BottomScrollbar.svelte';
 	import { type CheckBoxChoice, type SortableColumn, type SortDirection, type FoundError } from '$lib/core';
-	import { githubUrl, depTyCheckGithubUrl } from '$lib/consts';
-	import { allFoundErrors } from '$lib/generated/errors-data';
 	import { formatDateDMY, getFirstFound } from '$lib/index';
 	import {
 		createToolChoices,
@@ -31,28 +29,43 @@
 	import IssueTypeBadges from '$lib/components/IssueTypeBadges.svelte';
 	import NoveltyBadge from '$lib/components/NoveltyBadge.svelte';
 	import MaintainersResponseBadge from '$lib/components/MaintainersResponseBadge.svelte';
-	import { errorReproducedStates } from '$lib/generated/errors-regression';
+	import { errorReproducedStates, lastRunDate } from '$lib/generated/errors-regression';
 	import { createReproducedChoices } from '$lib/components/bugs-table/regression-utils';
 	import ReproductionBadge from '$lib/components/bugs-table/ReproductionBadge.svelte';
+	import type { Snippet } from 'svelte';
 
-	let scrollContainer: HTMLDivElement;
+	interface Props {
+		errors: FoundError[];
+		heading: string;
+		description: Snippet;
+	}
 
-	let toolChoices: CheckBoxChoice[] = createToolChoices(allFoundErrors);
-	let stageChoices: CheckBoxChoice[] = createStageChoices(allFoundErrors);
-	let noveltyChoices: CheckBoxChoice[] = createNoveltyChoices(allFoundErrors);
-	let maintainersChoices: CheckBoxChoice[] = createMaintainersChoices(
-		allFoundErrors,
+	let { errors, heading, description }: Props = $props();
+
+	const lastRunDateObj = lastRunDate ? new Date(lastRunDate) : null;
+	const relevantTooltip =
+		lastRunDateObj && !isNaN(lastRunDateObj.getTime())
+			? `Which errors were reproduced during the last regression run (${formatDateDMY(lastRunDateObj)}).`
+			: 'Which errors were reproduced during the last regression run.';
+
+	let scrollContainer: HTMLDivElement = $state()!;
+
+	let toolChoices = $derived(createToolChoices(errors));
+	let stageChoices = $derived(createStageChoices(errors));
+	let noveltyChoices = $derived(createNoveltyChoices(errors));
+	let maintainersChoices = $derived(createMaintainersChoices(
+		errors,
 		getMaintainersResponseDisplay
-	);
-	let issueTypeChoices: CheckBoxChoice[] = createIssueTypeChoices(allFoundErrors);
+	));
+	let issueTypeChoices = $derived(createIssueTypeChoices(errors));
 	let reproducedChoices: CheckBoxChoice[] = createReproducedChoices();
 
-	let targetGroup: string[] = [];
-	let stageGroup: string[] = [];
-	let issueTypeGroup: string[] = [];
-	let noveltyGroup: string[] = [];
-	let maintainersGroup: string[] = [];
-	let reproducedGroup: string[] = [];
+	let targetGroup: string[] = $state([]);
+	let stageGroup: string[] = $state([]);
+	let issueTypeGroup: string[] = $state([]);
+	let noveltyGroup: string[] = $state([]);
+	let maintainersGroup: string[] = $state([]);
+	let reproducedGroup: string[] = $state([]);
 
 	const filterDefs: Array<{
 		param: string;
@@ -68,8 +81,8 @@
 		{ param: 'reproduced', get: () => reproducedGroup, set: (v) => (reproducedGroup = v), getValue: (e) => errorReproducedStates[e.id] }
 	];
 
-	let sortColumn: SortableColumn = 'title';
-	let sortDest: SortDirection = 'asc';
+	let sortColumn: SortableColumn = $state('title');
+	let sortDest: SortDirection = $state('asc');
 
 	function updateQueryParams() {
 		if (!browser) return;
@@ -104,16 +117,16 @@
 	onMount(() => {
 		loadFromQueryParams(page.url);
 	});
-	$: filteredErrors = applyFilters(allFoundErrors, [
+	let filteredErrors = $derived(applyFilters(errors, [
 		createFilter(targetGroup, (e) => e.target),
 		createFilter(stageGroup, (e) => e.stage),
 		createFilter(issueTypeGroup, (e) => e.issue_type),
 		createFilter(noveltyGroup, (e) => e.issue_novelty),
 		createFilter(maintainersGroup, (e) => e.maintainers_response),
 		createFilter(reproducedGroup, (e) => errorReproducedStates[e.id])
-	]);
+	]));
 
-	$: sortedErrors = new SortedIssues(filteredErrors, errorPercentages).sorted(sortColumn, sortDest);
+	let sortedErrors = $derived(new SortedIssues(filteredErrors, errorPercentages).sorted(sortColumn, sortDest));
 
 	function setSort(col: SortableColumn) {
 		if (sortColumn === col) {
@@ -125,29 +138,23 @@
 		if (browser) updateQueryParams();
 	}
 
-	$: if (browser && filteredErrors) updateQueryParams();
+	$effect(() => {
+		if (browser && filteredErrors) updateQueryParams();
+	});
 </script>
 
 <Card size="xl" class="max-w-none p-4 shadow-sm sm:p-6">
 	<div class="items-center justify-between lg:flex">
 		<div class="mt-px mb-4 lg:mb-0">
-			<Heading tag="h3" class="mb-2 -ml-0.25 text-xl font-semibold dark:text-white"
-				>Found bugs & issues</Heading
-			>
-			<p class="text-base font-normal text-gray-500 dark:text-gray-300">
-				This is a list of bugs and issues found by
-				<A href={githubUrl} class="underline">verilog-model</A> using
-				<A href={depTyCheckGithubUrl} class="underline">DepTyCheck</A> for various HDL analysis tools.
-				<br />
-				There are examples that reproduce these bugs.
-			</p>
+			<Heading tag="h3" class="mb-2 -ml-0.25 text-xl font-semibold dark:text-white">{heading}</Heading>
+				{@render description()}
 		</div>
 		<div class="flex items-center gap-2">
 			<Button color="light" onclick={clearAllFilters}>Clear filters</Button>
 		</div>
 	</div>
 	<div class="relative mt-6">
-		<p class="mb-2 text-sm dark:text-white">{sortedErrors.length}/{allFoundErrors.length} issues ({Math.round((sortedErrors.length / allFoundErrors.length) * 100)}%)</p>
+		<p class="mb-2 text-sm dark:text-white">{sortedErrors.length}/{errors.length} issues ({Math.round((sortedErrors.length / errors.length) * 100)}%)</p>
 		<div bind:this={scrollContainer} style="overflow-x: auto; max-width: 100%;">
 			<table class="w-full min-w-max divide-y divide-gray-200 text-sm dark:divide-gray-600">
 				<thead class="bg-gray-50 dark:bg-gray-700">
@@ -203,8 +210,9 @@
 						<TableColFilterHead
 							choices={reproducedChoices}
 							bind:group={reproducedGroup}
-							label="Reproduced<br>in last run"
+							label="Still<br>relevant"
 							name="reproduced"
+							tooltip={relevantTooltip}
 						/>
 					</tr>
 				</thead>
