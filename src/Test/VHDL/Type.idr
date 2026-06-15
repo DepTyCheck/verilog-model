@@ -1,4 +1,6 @@
-module Test.VHDL.VHDLType
+module Test.VHDL.Type
+
+import public Data.Nat
 
 %default total
 
@@ -20,15 +22,51 @@ Eq PredefinedEnumeration where
 
 namespace Arrays
 
+  ||| 5.3.2.3 Predefined array types
+  ||| IEEE 1076-2019
+  public export
+  data PredefinedArrayTypes = BOOLEAN_VECTOR | BIT_VECTOR | INTEGER_VECTOR | REAL_VECTOR | TIME_VECTOR | STRING
+
+  public export
+  Eq PredefinedArrayTypes where
+    (==) STRING STRING = True
+    (==) BOOLEAN_VECTOR BOOLEAN_VECTOR = True
+    (==) BIT_VECTOR BIT_VECTOR = True
+    (==) INTEGER_VECTOR INTEGER_VECTOR = True
+    (==) REAL_VECTOR REAL_VECTOR = True
+    (==) TIME_VECTOR TIME_VECTOR = True
+    (==) _ _ = False
+
   public export
   data ArrayDirection = Up | Down
 
   public export
-  record Dimension where
+  data IndexType = Natural | Positive
+
+  public export
+  data BoundsForPredefinedArrays : PredefinedArrayTypes -> IndexType -> Type where
+    BBV  : BoundsForPredefinedArrays BOOLEAN_VECTOR Natural
+    BBV' : BoundsForPredefinedArrays BIT_VECTOR Natural
+    BIV  : BoundsForPredefinedArrays INTEGER_VECTOR Natural
+    BRV  : BoundsForPredefinedArrays REAL_VECTOR Natural
+    BTV  : BoundsForPredefinedArrays TIME_VECTOR Natural
+    ||| 5.3.2.3 Predefined array types
+    ||| type STRING is array (POSITIVE range <>) of CHARACTER;
+    ||| IEEE 1076-2019
+    BS   : BoundsForPredefinedArrays STRING Positive
+
+  public export
+  data CheckBounds : IndexType -> (start : Nat) -> (end : Nat) -> Type where
+    MkNat : CheckBounds Natural s e
+    MkPos : (s : Nat) -> (0 _ : IsSucc s) => (e : Nat) -> (0 _ : IsSucc e) => CheckBounds Positive s e
+
+  public export
+  record Dimension t where
     constructor MkDim
     start     : Nat
     end       : Nat
     direction : ArrayDirection
+    {auto 0 bounds  : CheckBounds t start end}
 
   ||| 5.2 Scalar types
   ||| 5.2.1 General
@@ -37,12 +75,12 @@ namespace Arrays
   ||| and R is called the right bound of the range
   ||| IEEE 1076-2019
   public export
-  length : Dimension -> Nat
-  length (MkDim l r Up)     = if l > r then Z else S $ r `minus` l
+  length : Dimension t -> Nat
+  length (MkDim l r Up)   = if l > r then Z else S $ r `minus` l
   length (MkDim l r Down) = if l < r then Z else S $ l `minus` r
 
   public export %inline
-  (.length) : Dimension -> Nat
+  (.length) : Dimension t -> Nat
   (.length) = length
 
   ||| 9.2.3 Relational operators
@@ -53,24 +91,8 @@ namespace Arrays
   |||
   ||| So the lengths must be equal, but the bounds and direction need not be
   public export
-  dimsCompatible : Dimension -> Dimension -> Bool
+  dimsCompatible : Dimension t -> Dimension t' -> Bool
   dimsCompatible d d' = length d == length d'
-
-  ||| 5.3.2.3 Predefined array types
-  ||| IEEE 1076-2019
-  public export
-  data PredefinedArrayTypes = BOOLEAN_VECTOR | BIT_VECTOR | INTEGER_VECTOR | REAL_VECTOR | TIME_VECTOR -- TODO: Add STRING
-
-  public export
-  Eq PredefinedArrayTypes where
-    -- (==) STRING STRING = True
-    (==) BOOLEAN_VECTOR BOOLEAN_VECTOR = True
-    (==) BIT_VECTOR BIT_VECTOR = True
-    (==) INTEGER_VECTOR INTEGER_VECTOR = True
-    (==) REAL_VECTOR REAL_VECTOR = True
-    (==) TIME_VECTOR TIME_VECTOR = True
-    (==) _ _ = False
-
 
 -- ||| 5.3.2 Array types
 -- ||| 5.3.2.1 General
@@ -109,12 +131,13 @@ data VHDLType : Type where
   ||| The only predefined floating-point type is the type REAL.
   ||| IEEE 1076-2019
   Real : VHDLType
-  Array : PredefinedArrayTypes -> Dimension -> VHDLType
+  -- TODO: Declaration array without dims is allowed too e : out std_logic_vector;
+  Array : (at : PredefinedArrayTypes) -> {0 _ : BoundsForPredefinedArrays at idt} -> Dimension idt -> VHDLType
   -- Records 5.3.3 Record types
   ||| ΙΕΕΕ 1164−1993
   StdLogic : VHDLType
   ||| ΙΕΕΕ 1164−1993
-  StdLogicVector : Dimension -> VHDLType
+  StdLogicVector : Dimension Natural -> VHDLType
   -- resolved SIGNED and UNSIGNED from IEEE.NUMERIC_STD
 
 public export

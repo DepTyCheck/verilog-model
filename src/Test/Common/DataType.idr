@@ -4,7 +4,7 @@ import Data.Fin
 import Data.Vect
 
 import public Test.Verilog.SVType
-import public Test.VHDL.VHDLType
+import public Test.VHDL.Type
 
 %default total
 

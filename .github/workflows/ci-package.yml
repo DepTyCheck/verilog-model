@@ -314,6 +314,7 @@ jobs:
   regression-test:
     name: Regression test ${{ matrix.tool.name }}
     needs: [test-python-units, get-tool-matrix, run-tools]
+    if: ${{ !cancelled() && needs.test-python-units.result == 'success' && needs.get-tool-matrix.result == 'success' }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.get-tool-matrix.outputs.matrix) }}

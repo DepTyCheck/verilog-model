@@ -1,32 +1,5 @@
 module Test.Verilog.Pretty
 
--- import Data.Either
--- import Data.List
--- import Data.List.Extra
--- import Data.List1
--- import Data.List.Lazy
--- import Data.String
--- import Data.List.Elem
-
--- import Data.Fin.Split
--- import Data.Fuel
--- import Data.Vect
--- import Data.Vect.Extra
-
--- import Data.Fin.ToFin
-
--- import Test.Verilog.UniqueNames.Derived
--- import Test.Verilog.PrintableModules
-
--- -- import Test.Verilog.SVType
--- -- import Test.Verilog.Connections
--- import Test.Verilog.Assign
--- import Test.Verilog.Literal
--- import Test.Verilog.TMPExpression
--- import Test.Verilog.Warnings
--- import Test.Verilog.SVDesign
-
-
 import Data.Fuel
 import Data.Vect
 import Data.Vect.Extra
@@ -37,38 +10,18 @@ import Data.String
 import Test.Common.Design
 import public Test.Common.PrintableDesigns
 import public Test.Common.UniqueNames
-import Test.Verilog.SVDesign
+import Test.Verilog.Design
 import Test.Verilog.Warnings
 import public Test.Verilog.UniqueNames
 import Test.Verilog.SVType
 import Test.Verilog.Literal
-import Test.Verilog.TMPExpression
+import Test.Verilog.Expression
 
 import Test.DepTyCheck.Gen
 import Text.PrettyPrint.Bernardy
 import Syntax.IHateParens.List
 
 %default total
-
--- public export
--- toTotalInputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
---                   (idx : Fin subMs.asList.length) ->
---                   Fin (index ms (index' subMs.asList idx)).inpsCount ->
---                   Fin $ totalInputs {ms} subMs
--- toTotalInputsIdx {subMs=i::is} idx x with 0 (sym $ svolistAppendLen (index ms i).inputs (allInputs {ms} is))
---                                         | 0 (length ((index ms i).inputs ++ allInputs {ms} is))
---   toTotalInputsIdx FZ       x | Refl | _ = indexSum $ Left x
---   toTotalInputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalInputsIdx idx x
-
--- public export
--- toTotalOutputsIdx : {ms : _} -> {subMs : FinsList ms.length} ->
---                     (idx : Fin subMs.asList.length) ->
---                     Fin (index ms $ index' subMs.asList idx).outsCount ->
---                     Fin $ totalOutputs {ms} subMs
--- toTotalOutputsIdx {subMs=i::is} idx x with 0 (sym $ svolistAppendLen (index ms i).outputs (allOutputs {ms} is))
---                                          | 0 (length ((index ms i).outputs ++ allOutputs {ms} is))
---   toTotalOutputsIdx FZ       x | Refl | _ = indexSum $ Left x
---   toTotalOutputsIdx (FS idx) x | Refl | _ = indexSum $ Right $ toTotalOutputsIdx idx x
 
 Show SVPortMode where
   show In    = "input"
@@ -123,7 +76,17 @@ Show (BinaryList s) where
     showLinear (One  x)    = show x
     showLinear (More x xs) = show x ++ showLinear xs
 
-Show (TypeLiteralVect l t)
+Show (BinaryVect n s) where
+  show bv = "'b\{showLinear bv}" where
+    showLinear : BinaryVect m s -> String
+    showLinear (One  x)    = show x
+    showLinear (More x xs) = show x ++ showLinear xs
+
+Show (BitsList n s) where
+  show (Unsized x) = show x
+  show (Sized   x) = show x
+
+Show (SVTypeLiteralVect l t)
 
 ||| Single bit example:
 ||| logic m;
@@ -137,14 +100,15 @@ Show (TypeLiteralVect l t)
 ||| PAL x example:
 ||| logic [1:0][4:0] m;
 ||| assign m = 'b01010101;
-Show (TypeLiteral sv) where
+Show (SVTypeLiteral sv) where
   show (RL  x) = show x
   show (AL  x) = show x
   show (VL  x) = show x
-  show (PAL x) = show x
-  show (UAL x) = show x
+  show (PAL  x) = show x
+  show (PANL x) = show x
+  show (UAL  x) = show x
 
-Show (TypeLiteralVect l t) where
+Show (SVTypeLiteralVect l t) where
   show x = "'{\{joinBy "," $ map show $ toList x}}"
 
 ||| print name
@@ -210,32 +174,9 @@ printConnections keyword cons names = zipWith (\conn, name => "\{keyword} \{show
 printAssign : String -> String -> String
 printAssign l r = "assign \{l} = \{r};"
 
-printAssigns : List (String, String) -> List String
-printAssigns []             = []
-printAssigns ((l, r) :: xs) = printAssign l r :: printAssigns xs
-
-||| It's impossible to connect top inputs to top outputs directly because top ports must have unique names.
-||| However, such an assignment may be declared so that these ports can transmit values
-|||
-||| ex:
-||| module a(output int o1, output int o2, input int i1);
-|||   assign o1 = i1;
-|||   assign o2 = i1;
-||| endmodule
-resolveConAssigns : Vect sk (Maybe (Fin inps)) -> Vect sk String -> Vect inps String -> Vect sk (Maybe String)
-resolveConAssigns v outNames inpNames = map (resolveConn outNames inpNames) $ withIndex v where
-  resolveConn: Vect sk String -> Vect inps String -> (Fin sk, Maybe (Fin inps)) -> Maybe String
-  resolveConn outNames inpNames (finOut, finInpM) = case finInpM of
-    Nothing     => Nothing
-    Just finInp => Just $ printAssign (index finOut outNames) (index finInp inpNames)
-
-printTMPExpr : Vect (length mcs) String -> TMPExpression mcs t -> String
+printTMPExpr : Vect (length mcs) String -> SVTMPExpression mcs t -> String
 printTMPExpr _     (MkLiteral  l) = show l
 printTMPExpr names (MkQualName f) = index f names
-
-printTMPExprs : Vect (length mcs) String -> TMPExList mcs fs -> List String
-printTMPExprs _     []        = []
-printTMPExprs names (b :: xs) = printTMPExpr names b :: printTMPExprs names xs
 
 getNames : Vect l String -> FinsList l -> List String
 getNames names []        = []
@@ -246,6 +187,7 @@ parameters {opts : LayoutOpts}
            (moduleName : String) (topNames : Vect (s.portsCnt) String) (subEntNames : Vect (subUs.length) String)
            (mcs : MultiConnectionsList SystemVerilog s usl subUs) (mcsNames : Vect (length mcs) String)
            (prevEntNames : SVect $ usl.length) (pds : PrintableDesigns SystemVerilog usl)
+           (design : DesignUnit {l=SystemVerilog} s usl subUs mcs)
 
   subModuleTypeName : Fin subUs.length -> String
   subModuleTypeName subFin = index (index subUs subFin) $ toVect prevEntNames
@@ -328,35 +270,38 @@ parameters {opts : LayoutOpts}
   unpackedDeclDocs : List $ Doc opts
   unpackedDeclDocs = catMaybes $ toList $ zipWith unpackedDecl (toVect mcs) mcsNames
 
-  unpackedSection : Doc opts
+  unpackedSection : List $ Doc opts
   unpackedSection = case unpackedDeclDocs of
-    [] => empty
-    ds => vsep $ line "// Unpacked net declarations" :: ds ++ [emptyLine]
+    [] => []
+    ds => line "// Unpacked net declarations" :: ds
 
-  assignSection : String -> List String -> List $ Doc opts
-  assignSection comment assigns = line comment :: map line assigns
+  printExpr : Expr SystemVerilog mcs f -> Gen0 String
+  printExpr (SV x) = pure $ printTMPExpr mcsNames x
 
-  context : (sdAssignments : List String) -> (mdAssignments : List String) -> Gen0 $ Doc opts
-  context sdAssignments mdAssignments = pure $ vsep
-    [
-      unpackedSection
-    , vsep $ map subModuleDecl (toList $ zip subEntNames $ Vect.allFins subUs.length)
-    , emptyLine
-    , vsep $ assignSection "// Single-driven assigns" sdAssignments
-    , emptyLine
-    , vsep $ assignSection "// Multi-driven assigns"  mdAssignments
-    ]
+  printAssign' : Fin (length mcs) -> Expr SystemVerilog mcs f -> Gen0 $ Doc opts
+  printAssign' f expr = do
+    exprStr <- printExpr expr
+    pure $ line $ printAssign (index f mcsNames) exprStr
 
+  context : Gen0 $ Doc opts
+  context = do
+    assigns <- printAssignsSection design printAssign'
+    pure $ vsepSections
+      [
+        unpackedSection
+      , map subModuleDecl (toList $ zip subEntNames $ Vect.allFins subUs.length)
+      , assigns
+      ]
 
   topPorts : Gen0 $ List $ Doc opts
   topPorts = forEachTopPort mcs topNames print where
     print : DataType SystemVerilog -> String -> PortMode SystemVerilog -> Gen MaybeEmpty (Doc opts)
     print (SVT obj) name mode = pure $ line "\{show mode} \{showSVObj obj name}"
 
-  printModule : (sdAssignments : List String) -> (mdAssignments : List String) -> Gen0 $ Doc opts
-  printModule sdAssignments mdAssignments = do
+  printModule : Gen0 $ Doc opts
+  printModule = do
     tp <- topPorts
-    ctx <- context sdAssignments mdAssignments
+    ctx <- context
     pure $ vsep
       [
         line "module \{moduleName} " <+> generalList (line "(") (line ");") comma tp
@@ -368,7 +313,7 @@ export
 prettyModules : {opts : _} -> {dus : _} -> Fuel ->
                (pds : PrintableDesigns SystemVerilog dus) -> UniqNames dus.length (allDesignNames pds) => SVDesign dus -> Gen0 $ Doc opts
 prettyModules _ _         End                                                                          = pure empty
-prettyModules x pds @{un} (New {s} {usl} {subUs} {mcs} basic sdAssigns sdExprs mdAssigns mdExprs cont) = do
+prettyModules x pds @{un} (New basic@(MkDesign s {usl} subUs mcs sdAssigns sdExprs mdAssigns mdExprs) cont) = do
   (moduleName ** connNames ** subEntNames ** unDes ** unEntConnSub) <- genPDNames VerilogKeywords x pds {un} basic
   let allEntConSubNames : ?
       allEntConSubNames = subEntNames ++ connNames ++ moduleName :: allDesignNames pds
@@ -377,10 +322,6 @@ prettyModules x pds @{un} (New {s} {usl} {subUs} {mcs} basic sdAssigns sdExprs m
   let subEntNamesVect : ?
       subEntNamesVect = toVect subEntNames
 
-  -- Resolve assigns
-  let sdAssignments = printAssigns $ zip (getNames mcsNames sdAssigns) $ printTMPExprs mcsNames sdExprs
-  let mdAssignments = printAssigns $ zip (getNames mcsNames mdAssigns) $ printTMPExprs mcsNames mdExprs
-
   -- Resolve names
   let topNames = resolveInpsOutsNames basic mcsNames
   let generatedPrintableInfo : ?
@@ -388,7 +329,7 @@ prettyModules x pds @{un} (New {s} {usl} {subUs} {mcs} basic sdAssigns sdExprs m
 
   -- Recursive call to use at the end
   recur <- prettyModules {opts} x (generatedPrintableInfo :: pds) @{unDes} cont
-  cur <- printModule s moduleName topNames subEntNamesVect mcs mcsNames (allDesignNames pds) pds sdAssignments mdAssignments
+  cur <- printModule s moduleName topNames subEntNamesVect mcs mcsNames (allDesignNames pds) pds basic
   pure $ vsep
     [
       cur

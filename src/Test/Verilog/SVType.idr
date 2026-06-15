@@ -270,7 +270,7 @@ namespace SVType
     |||
     ||| IEEE 1800-2023
     UnpackedArr : SVType -> Nat -> Nat -> SVType
-    -- TODO: Add constructors to `TypeLiteral` when add new types to SVType
+    -- TODO: Add constructors to `SVTypeLiteral` when add new types to SVType
     -- Dynamic array
     -- Associative array
     -- Queue

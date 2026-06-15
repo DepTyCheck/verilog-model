@@ -5,9 +5,9 @@ import Data.Fuel
 import Test.Common.Design
 import public Test.Common.DataType
 
-import Test.Verilog.SVDesign
+import Test.Verilog.Design
 import Test.Verilog.Defaults
-import Test.VHDL.VHDLDesign
+import Test.VHDL.Design
 import Test.VHDL.Defaults
 
 import Test.DepTyCheck.Gen
