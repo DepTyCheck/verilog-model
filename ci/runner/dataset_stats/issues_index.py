@@ -20,10 +20,12 @@ class _Acc:
     last_date: date | None = None
     last_tool: str = ""
     last_model: str = ""
+    dates: list[date] = field(default_factory=list)
 
     def add(self, when: date, tool_commit: str, model_commit: str, filename: str) -> None:
         self.count += 1
         self.filenames.add(filename)
+        self.dates.append(when)
         if self.last_date is None or when >= self.last_date:
             self.last_date = when
             self.last_tool = tool_commit
@@ -48,6 +50,7 @@ class IssuesIndex:
 
     def __init__(self, csv_path: str | Path):
         self._entries: dict[str, IssuesEntry] = {}
+        self._dates: dict[str, list[date]] = {}
         self._build(Path(csv_path))
 
     def error_ids(self) -> list[str]:
@@ -60,6 +63,9 @@ class IssuesIndex:
 
     def has(self, error_id: str) -> bool:
         return error_id in self._entries
+
+    def occurrence_dates(self, error_id: str) -> list[date]:
+        return list(self._dates.get(error_id, []))
 
     def _build(self, path: Path) -> None:
         accs: dict[str, _Acc] = {}
@@ -77,3 +83,4 @@ class IssuesIndex:
                     filename,
                 )
         self._entries = {eid: acc.to_entry() for eid, acc in accs.items()}
+        self._dates = {eid: list(acc.dates) for eid, acc in accs.items()}

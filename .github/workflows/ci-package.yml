@@ -431,6 +431,12 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+      - name: Get last master commit date
+        id: master-date
+        run: |
+          git fetch --depth=1 origin master || true
+          date="$(git log -1 --format=%cs FETCH_HEAD 2>/dev/null || true)"
+          echo "date=${date:-$(date -u +%F)}" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
@@ -462,11 +468,13 @@ jobs:
             --dataset-path "$DATASET_PATH" \
             --per-file-results-dir "$PER_FILE_DIR" \
             --regression-results-dir "$REGRESSION_DIR" \
+            --master-commit-date "${{ steps.master-date.outputs.date }}" \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
             >> "$GITHUB_STEP_SUMMARY"
 
   save-dataset:
     name: Save dataset
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     needs: [run-tools, regression-test]
     permissions:
@@ -563,6 +571,7 @@ jobs:
 
   filter-dataset:
     name: Filter dataset (${{ matrix.language }})
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     needs: [save-dataset]
     strategy:
@@ -631,6 +640,7 @@ jobs:
 
   run-tools-filtered:
     name: Filtered ${{ matrix.tool.name }}
+    if: ${{ github.event_name != 'pull_request' }}
     needs: [test-python-units, filter-dataset, get-tool-matrix]
     strategy:
       fail-fast: false
@@ -709,6 +719,7 @@ jobs:
 
   compare-errors-filtered:
     name: Compare errors (filtered)
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     needs: [test-python-units, run-tools-filtered, regression-test]
     env:
@@ -719,7 +730,12 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
-
+      - name: Get last master commit date
+        id: master-date
+        run: |
+          git fetch --depth=1 origin master || true
+          date="$(git log -1 --format=%cs FETCH_HEAD 2>/dev/null || true)"
+          echo "date=${date:-$(date -u +%F)}" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
@@ -761,6 +777,7 @@ jobs:
             --dataset-path "$DATASET_PATH" \
             --per-file-results-dir "$PER_FILE_DIR" \
             --regression-results-dir "$REGRESSION_DIR" \
+            --master-commit-date "${{ steps.master-date.outputs.date }}" \
             --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
             >> "$GITHUB_STEP_SUMMARY"
 

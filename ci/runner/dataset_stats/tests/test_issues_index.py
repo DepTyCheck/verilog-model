@@ -44,6 +44,16 @@ class TestIssuesIndex(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.idx.lookup("nonexistent")
 
+    def test_occurrence_dates_alpha(self):
+        # 4 alpha rows: 2025-07-19 and three on 2025-08-01
+        self.assertEqual(
+            sorted(self.idx.occurrence_dates("alpha")),
+            [date(2025, 7, 19), date(2025, 8, 1), date(2025, 8, 1), date(2025, 8, 1)],
+        )
+
+    def test_occurrence_dates_unknown_returns_empty(self):
+        self.assertEqual(self.idx.occurrence_dates("nonexistent"), [])
+
 
 if __name__ == "__main__":
     unittest.main()
