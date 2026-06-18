@@ -56,7 +56,7 @@ def _run_simple(mock_make, mock_run, exec_result):
     mock_run.return_value = exec_result
     cmd = CommandConfig(run="tool {file}", error_regex=ToolErrorRegex("error: .*"))
     ignored = _make_ignored([])
-    return run_file("module m; endmodule", [cmd], ignored, ".sv")
+    return run_file("module m; endmodule", [cmd], ignored, ".sv", "hook.sh")
 
 
 class TestRunFileClean(unittest.TestCase):
@@ -94,7 +94,7 @@ class TestRunFileFailure(unittest.TestCase):
 
         cmd = CommandConfig(run="tool {file}", error_regex=ToolErrorRegex("some weird crash"))
         ignored = _make_ignored([])
-        results = run_file("module m; endmodule", [cmd], ignored, ".sv")
+        results = run_file("module m; endmodule", [cmd], ignored, ".sv", "hook.sh")
 
         unknowns = _unknown_results(results)
         self.assertEqual(len(unknowns), 1)
@@ -109,7 +109,7 @@ class TestRunFileFailure(unittest.TestCase):
 
         cmd = CommandConfig(run="tool {file}", error_regex=ToolErrorRegex(r"error: .*"))
         ignored = _make_ignored(["error: syntax error"], mode=MatchingMode.SPECIFIC)
-        results = run_file("module m; endmodule", [cmd], ignored, ".sv")
+        results = run_file("module m; endmodule", [cmd], ignored, ".sv", "hook.sh")
 
         self.assertEqual(_unknown_results(results), [])
         self.assertEqual(len(_known_records(results)), 1)
@@ -122,7 +122,7 @@ class TestRunFileFailure(unittest.TestCase):
 
         cmd = CommandConfig(run="tool {file}", error_regex=ToolErrorRegex(r"syntax error: .*"))
         ignored = _make_ignored(["Assertion failed"], mode=MatchingMode.WHOLE)
-        results = run_file("module m; endmodule", [cmd], ignored, ".sv")
+        results = run_file("module m; endmodule", [cmd], ignored, ".sv", "hook.sh")
 
         self.assertEqual(_unknown_results(results), [])
         self.assertEqual(results[0].outcome, "known_errors")
@@ -133,7 +133,7 @@ class TestRunFileFailure(unittest.TestCase):
 
         cmd = CommandConfig(run="tool {file}", error_regex=ToolErrorRegex("error: .*"))
         ignored = _make_ignored([])
-        results = run_file("module m; endmodule", [cmd], ignored, ".sv")
+        results = run_file("module m; endmodule", [cmd], ignored, ".sv", "hook.sh")
 
         unknowns = _unknown_results(results)
         self.assertEqual(len(unknowns), 1)
@@ -148,7 +148,7 @@ class TestRunFileFailure(unittest.TestCase):
         cmd1 = CommandConfig(run="cmd1 {file}", error_regex=None)
         cmd2 = CommandConfig(run="cmd2 {file}", error_regex=None)
         ignored = _make_ignored([])
-        run_file("module m; endmodule", [cmd1, cmd2], ignored, ".sv")
+        run_file("module m; endmodule", [cmd1, cmd2], ignored, ".sv", "hook.sh")
 
         self.assertEqual(mock_run.call_count, 1)
 
@@ -163,7 +163,7 @@ class TestRunFileFailure(unittest.TestCase):
 
         cmd = CommandConfig(run="tool {file}", error_regex=None)
         ignored = _make_ignored([])
-        results = run_file("content", [cmd], ignored, ".sv", logical_name="/original/path.sv")
+        results = run_file("content", [cmd], ignored, ".sv", "hook.sh", logical_name="/original/path.sv")
 
         unknowns = _unknown_results(results)
         self.assertEqual(len(unknowns), 1)
@@ -181,7 +181,7 @@ class TestRunFileAssets(unittest.TestCase):
         assets = MagicMock()
         cmd = CommandConfig(run="tool {file}")
         ignored = _make_ignored([])
-        run_file("content", [cmd], ignored, ".sv", assets=assets)
+        run_file("content", [cmd], ignored, ".sv", "hook.sh", assets=assets)
 
         assets.copy_to_tmp_dir.assert_called_once()
 

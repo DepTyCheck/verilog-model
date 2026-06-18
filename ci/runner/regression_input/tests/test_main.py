@@ -45,22 +45,22 @@ class TestRegressionInputMain(unittest.TestCase):
         (self.known / "ghdl").mkdir(parents=True)
         (self.known / "iverilog" / "err_a.yaml").write_text(SAMPLE_YAML_SV)
         (self.known / "ghdl" / "err_b.yaml").write_text(SAMPLE_YAML_VHDL)
-        self.lang_config = self.tmp / "languages.yaml"
-        self.lang_config.write_text("sv: .sv\nvhdl: .vhdl\n")
+        self.profiles_config = self.tmp / "profiles.yaml"
+        self.profiles_config.write_text("sv:\n  file_extension: .sv\nvhdl:\n  file_extension: .vhdl\n")
         self.out = self.tmp / "out"
 
     def tearDown(self):
         shutil.rmtree(self.tmp)
 
-    def _run(self, language: str) -> int:
+    def _run(self, profile: str) -> int:
         argv = [
             "regression_input.main",
             "--known-errors-dir",
             str(self.known),
-            "--language",
-            language,
-            "--language-config",
-            str(self.lang_config),
+            "--profile",
+            profile,
+            "--profiles-config",
+            str(self.profiles_config),
             "--out-dir",
             str(self.out),
         ]
@@ -78,7 +78,7 @@ class TestRegressionInputMain(unittest.TestCase):
         self.assertEqual(names, ["foo-full.sv", "foo-minified.sv"])
         self.assertIn("module a;", (self.out / "foo-minified.sv").read_text())
 
-    def test_vhdl_filters_by_language(self):
+    def test_vhdl_filters_by_profile(self):
         rc = self._run("vhdl")
         self.assertEqual(rc, 0)
         names = sorted(p.name for p in self.out.iterdir())

@@ -4,7 +4,7 @@ Local CI integration test — mirrors the locally-runnable jobs in ci-package.ym
 in the same order and validates each artifact before proceeding.
 
 Pipeline:
-  Step 1  get-tool-matrix   → gen_matrix.main        → matrix/check-matrix JSON
+  Step 1  get-tool-matrix   → gen_matrix.main        → matrix JSON
   Step 2  get-test-matrix   → gen_test_matrix.py     → suite discovery JSON
   Step 3  test-python-units → each suite from Step 2 → all suites must pass
   Step 4  count-lines       → count_lines.main        → non-empty text output
@@ -31,7 +31,7 @@ RUNNER_DIR = Path(__file__).parent
 REPO_ROOT = RUNNER_DIR.parents[1]
 SRC_DIR = REPO_ROOT / "src"
 
-_REQUIRED_TOOL_FIELDS = ("name", "language", "commands")
+_REQUIRED_TOOL_FIELDS = ("name", "profile", "commands")
 
 # ---------------------------------------------------------------------------
 # Result tracking
@@ -157,12 +157,12 @@ def _validate_suite_matrix(data: dict) -> list[str]:
 
 def step_get_tool_matrix() -> dict | None:
     """
-    Run gen_matrix.main, parse its stdout, validate both matrices.
+    Run gen_matrix.main, parse its stdout, validate the matrix.
     Returns the parsed artifacts dict on success, None on failure.
     """
     _sep("Step 1 · get-tool-matrix  (gen_matrix.main)")
 
-    rc, stdout, stderr = _run([sys.executable, "-m", "gen_matrix.main"])
+    rc, stdout, stderr = _run([sys.executable, "-m", "gen_matrix.main", "--tools-config", str(REPO_ROOT / "ci" / "conf" / "tools.yaml")])
     if rc != 0:
         _err(f"gen_matrix.main exited {rc}")
         if stderr:
@@ -174,7 +174,7 @@ def step_get_tool_matrix() -> dict | None:
     artifacts: dict[str, dict] = {}
     errors: list[str] = []
 
-    for key in ("matrix", "check-matrix"):
+    for key in ("matrix",):
         if key not in kv:
             errors.append(f"missing output key '{key}'")
             continue
@@ -193,9 +193,7 @@ def step_get_tool_matrix() -> dict | None:
         return None
 
     matrix_names = sorted(item["tool"]["name"] for item in artifacts["matrix"]["include"])
-    check_names = sorted(item["tool"]["name"] for item in artifacts["check-matrix"]["include"])
     _ok(f"matrix: {len(matrix_names)} tools — {', '.join(matrix_names)}")
-    _ok(f"check-matrix: {len(check_names)} tools — {', '.join(check_names)}")
     results.record(True)
     return artifacts
 

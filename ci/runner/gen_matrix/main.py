@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-"""Read ci/conf/tools.yaml and emit GHA matrix JSON to $GITHUB_OUTPUT."""
+"""Read a tools config YAML and emit GHA matrix JSON to $GITHUB_OUTPUT."""
 
+import argparse
 import json
 import os
-from pathlib import Path
 
 from gen_matrix.gen_matrix import build_matrix, load_tools
 
 
 def main() -> None:
-    # ci/runner/gen_matrix/main.py -> up three levels -> ci/conf/tools.yaml
-    tools_yaml = Path(__file__).parents[2] / "conf" / "tools.yaml"
+    parser = argparse.ArgumentParser(description="Emit a GHA tool matrix from a tools config YAML.")
+    parser.add_argument("--tools-config", type=str, required=True, help="Path to tools.yaml")
+    args = parser.parse_args()
 
-    tools = load_tools(str(tools_yaml))
+    tools = load_tools(args.tools_config)
     matrix_json = json.dumps(build_matrix(tools))
 
     github_output = os.environ.get("GITHUB_OUTPUT")

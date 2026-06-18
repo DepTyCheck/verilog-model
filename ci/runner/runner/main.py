@@ -56,7 +56,10 @@ def main() -> None:
     )
     commands = parse_commands(args.commands_json)
     assets = Assets(args.assets) if args.assets else None
-    file_suffix = Path(args.file_pattern).suffix or ".sv"
+    file_suffix = Path(args.file_pattern).suffix
+    if not file_suffix:
+        logger.error(f"--file-pattern {args.file_pattern!r} has no file extension; cannot derive a suffix")
+        sys.exit(2)
 
     input_dir = Path(args.input_dir)
     if not input_dir.exists():
@@ -69,7 +72,7 @@ def main() -> None:
     logger.info(f"Found {len(files)} files matching {args.file_pattern!r} in {input_dir}")
 
     collector = ResultCollector()
-    run_all(iter_test_files(files, file_suffix, assets), commands, known_errors, collector)
+    run_all(iter_test_files(files, file_suffix, assets), commands, known_errors, args.translate_hook, collector)
 
     report = PerFileReport(
         tool_name=args.tool_name,

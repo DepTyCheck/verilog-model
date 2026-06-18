@@ -16,12 +16,12 @@ TOOLS_YAML = Path(__file__).parents[3] / "conf" / "tools.yaml"
 _MINIMAL_YAML = """\
 tools:
   - name: tool-a
-    language: sv
+    profile: sv
     commands:
       - run: tool-a {file}
         error_regex: 'error: .*'
   - name: tool-b
-    language: vhdl
+    profile: vhdl
     commands:
       - run: tool-b {file}
 """
@@ -54,7 +54,7 @@ class TestLoadTools(unittest.TestCase):
     def test_required_fields_present(self):
         tools = load_tools(str(TOOLS_YAML))
         for tool in tools:
-            for field in ("name", "language", "commands"):
+            for field in ("name", "profile", "commands"):
                 self.assertIn(field, tool, f"Tool '{tool.get('name')}' missing field '{field}'")
 
     def test_commands_is_non_empty_list(self):
@@ -147,7 +147,7 @@ class TestMainOutput(unittest.TestCase):
         env["PYTHONPATH"] = str(Path(__file__).parents[2])
 
         subprocess.run(
-            [sys.executable, "-m", "gen_matrix.main"],
+            [sys.executable, "-m", "gen_matrix.main", "--tools-config", str(TOOLS_YAML)],
             env=env,
             check=True,
             cwd=Path(__file__).parents[2],

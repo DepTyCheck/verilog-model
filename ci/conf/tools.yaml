@@ -1,7 +1,6 @@
 tools:
   - name: iverilog
-    language: sv
-    file_pattern: "*.sv"
+    profile: sv
     repo: https://github.com/steveicarus/iverilog.git
     deps: autoconf autotools-dev bison flex libfl-dev gperf make gcc g++ cmake python3
     path: iverilog
@@ -22,8 +21,7 @@ tools:
       "Code generation had .* error\(s\)\."
 
   - name: slang
-    language: sv
-    file_pattern: "*.sv"
+    profile: sv
     repo: https://github.com/MikePopoloski/slang.git
     deps: cmake
     path: slang
@@ -38,8 +36,7 @@ tools:
         error_regex: 'error: [\S ]+$'
 
   - name: verilator
-    language: sv
-    file_pattern: "*.sv"
+    profile: sv
     repo: https://github.com/verilator/verilator.git
     deps: autoconf autotools-dev bison flex help2man libfl-dev libelf-dev cmake
     path: verilator
@@ -70,8 +67,7 @@ tools:
     assets: ci/conf/verilator/testbench.cpp
 
   - name: surelog
-    language: sv
-    file_pattern: "*.sv"
+    profile: sv
     repo: https://github.com/chipsalliance/Surelog.git
     deps: >-
       cmake gcc build-essential git pkg-config tclsh swig uuid-dev
@@ -91,8 +87,7 @@ tools:
       - run: surelog -parse -nopython -sv {file}
 
   - name: zachjs-sv2v
-    language: sv
-    file_pattern: "*.sv"
+    profile: sv
     repo: https://github.com/zachjs/sv2v.git
     deps: haskell-stack
     path: zachjs-sv2v
@@ -109,8 +104,7 @@ tools:
       "sv2v:Language\.SystemVerilog\.AST\.Type"
 
   - name: tree-sitter-systemverilog
-    language: sv
-    file_pattern: "*.sv"
+    profile: sv
     repo: https://github.com/gmlarumbe/tree-sitter-systemverilog.git
     path: tssv
     install: pip install ".[core]"
@@ -121,8 +115,7 @@ tools:
     assets: ci/conf/tree-sitter-sv/run_ts.py
 
   - name: synlig
-    language: sv
-    file_pattern: "*.sv"
+    profile: sv
     repo: https://github.com/chipsalliance/synlig.git
     deps: >-
       gcc-11 g++-11 build-essential cmake tclsh ant default-jre swig google-perftools
@@ -141,8 +134,7 @@ tools:
         error_regex: "ERROR: .*$"
 
   - name: sv_parser
-    language: sv
-    file_pattern: "*.sv"
+    profile: sv
     repo: https://github.com/dalance/sv-parser.git
     deps: cargo
     rust_ver: "1.94"
@@ -156,8 +148,7 @@ tools:
       - run: parse_sv {file}
 
   - name: yosys-slang
-    language: sv
-    file_pattern: "*.sv"
+    profile: sv
     repo: https://github.com/povik/yosys-slang.git
     deps: >-
       gawk git cmake make python3 lld bison clang flex libffi-dev libfl-dev libreadline-dev pkg-config tcl-dev zlib1g-dev graphviz xdot
@@ -187,8 +178,7 @@ tools:
       "too many errors emitted, stopping now"
 
   - name: ghdl
-    language: vhdl
-    file_pattern: "*.vhdl"
+    profile: vhdl
     repo: https://github.com/ghdl/ghdl.git
     deps: llvm gnat clang libc++-dev libc++abi-dev
     path: ghdl

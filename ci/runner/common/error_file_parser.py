@@ -21,7 +21,7 @@ class ErrorFile:
     regex: str
     mode: MatchingMode
     title: str
-    language: str  # source language of examples ("sv", "vhdl", …); read from "profile" YAML key
+    profile: str  # source profile of examples ("sv", "vhdl", …); read from "profile" YAML key
     examples: List[Example] = field(default_factory=list)
 
 
@@ -79,8 +79,9 @@ def parse_error_files(dir_path: str, tool: str | None = None) -> List[ErrorFile]
 
             error_id = data.get("id")
             regex = data.get("regex")
-            if error_id is None or regex is None:
-                get_logger().warning(f"Skipping {yaml_file}: missing 'id' or 'regex'")
+            profile = data.get("profile")
+            if error_id is None or regex is None or profile is None:
+                get_logger().warning(f"Skipping {yaml_file}: missing 'id', 'regex' or 'profile'")
                 continue
 
             mode_raw = data.get("matching_mode")
@@ -93,7 +94,7 @@ def parse_error_files(dir_path: str, tool: str | None = None) -> List[ErrorFile]
                     regex=regex.rstrip("\n"),
                     mode=mode,
                     title=data.get("title", ""),
-                    language=data.get("profile", "sv"),
+                    profile=profile,
                     examples=_parse_examples(data.get("examples")),
                 )
             )

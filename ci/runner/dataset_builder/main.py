@@ -12,9 +12,7 @@ from dataset_builder.src.rename import rename_file
 
 def _parse_args():
     p = argparse.ArgumentParser(description="Build dataset from per-file tool results.")
-    p.add_argument(
-        "--generated-dirs", nargs="+", required=True, help="Directories containing generated source files (e.g. generated-sv/ generated-vhdl/)"
-    )
+    p.add_argument("--generated-dirs", nargs="+", required=True, help="Directories containing generated source files")
     p.add_argument("--per-file-results-dir", required=True, help="Directory containing *-per-file.json files from run-tools jobs")
     p.add_argument("--dataset-path", required=True, help="Path to cloned dataset branch")
     p.add_argument("--run-date", required=True, help="Date string in YYYY_MM_dd format (used in output filenames)")
@@ -26,7 +24,7 @@ def _find_source(filename: str, generated_dirs: list[Path]) -> Path:
         candidate = d / filename
         if candidate.exists():
             return candidate
-    raise FileNotFoundError(f"Source file not found in any generated-dir: {filename!r}")
+    raise FileNotFoundError(f"Source file not found in any generated dir: {filename!r}")
 
 
 def _group_by_filename(reports, passing: set[str]) -> dict[str, list]:

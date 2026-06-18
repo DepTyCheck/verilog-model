@@ -1,0 +1,6 @@
+sv:
+  file_extension: ".sv"
+  translate_hook: ci/scripts/sv.py
+vhdl:
+  file_extension: ".vhdl"
+  translate_hook: ci/scripts/vhdl.py

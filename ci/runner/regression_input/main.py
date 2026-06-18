@@ -3,8 +3,8 @@ import logging
 from pathlib import Path
 
 from common.error_file_parser import parse_error_files
-from common.language_config import get_file_extension, load_language_config
 from common.logger import configure_logger, get_logger
+from common.profiles_config import get_file_extension, load_profiles_config
 from regression_input.parse_args import parse_args
 
 
@@ -13,8 +13,8 @@ def main() -> None:
     args = parse_args()
     logger = get_logger()
 
-    extensions = load_language_config(args.language_config)
-    suffix = get_file_extension(args.language, extensions)
+    profiles = load_profiles_config(args.profiles_config)
+    suffix = get_file_extension(args.profile, profiles)
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -28,7 +28,7 @@ def main() -> None:
     seen: set[str] = set()
     for tool_dir in sorted(p for p in base.iterdir() if p.is_dir()):
         for ef in parse_error_files(str(tool_dir)):
-            if ef.language != args.language:
+            if ef.profile != args.profile:
                 continue
             for ex in ef.examples:
                 filename = f"{ex.name}-{ex.type}{suffix}"
