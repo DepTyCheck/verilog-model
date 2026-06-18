@@ -1,8 +1,24 @@
 """Shared fixture builders for compare_errors tests."""
 
 import json
+import os
 import textwrap
 from pathlib import Path
+
+# Reuses ci/runner/dataset_stats/tests/data/ — see plan
+# docs/superpowers/plans/2026-04-30-compare-errors-revival.md Task 2.
+DATASET_DATA_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "..",
+    "..",
+    "dataset_stats",
+    "tests",
+    "data",
+)
+ISSUES = os.path.join(DATASET_DATA_DIR, "issues.csv")
+FILES = os.path.join(DATASET_DATA_DIR, "files")
+FOUND = os.path.join(DATASET_DATA_DIR, "found_issues")
+LEGACY = os.path.join(DATASET_DATA_DIR, "legacy_stats.csv")
 
 
 def write_per_file(

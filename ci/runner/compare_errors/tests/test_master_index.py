@@ -1,4 +1,3 @@
-import os
 import unittest
 from datetime import date
 
@@ -7,21 +6,10 @@ from compare_errors.master_index import MasterIndex
 from dataset_stats.files_index import FilesIndex
 from dataset_stats.issues_index import IssuesIndex
 
-DATASET_DATA_DIR = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "..",
-    "..",
-    "dataset_stats",
-    "tests",
-    "data",
-)
-ISSUES = os.path.join(DATASET_DATA_DIR, "issues.csv")
-FILES = os.path.join(DATASET_DATA_DIR, "files")
-FOUND = os.path.join(DATASET_DATA_DIR, "found_issues")
+from ._helpers import FILES, FOUND, ISSUES
 
 
 def _build(master_commit_date: date, today: date) -> MasterIndex:
-    # Reuses ci/runner/dataset_stats/tests/data/ (same fixture as historical_index test).
     return MasterIndex(
         issues=IssuesIndex(ISSUES),
         files=FilesIndex(FILES),
