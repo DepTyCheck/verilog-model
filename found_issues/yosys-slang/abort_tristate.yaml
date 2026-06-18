@@ -6,7 +6,7 @@ id: abort_tristate
 title: Abort due to tristate
 issue_novelty: new
 regex: >
-  slang_frontend\.cc:(2627|2629|2654|2659|2700|2983|3010|3012)
+  slang_frontend\.cc:(2627|2629|2654|2659|2700|2983|3010|3012|3018)
 issue_type:
   - crash
   - bad_message
