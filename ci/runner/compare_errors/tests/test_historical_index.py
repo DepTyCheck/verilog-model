@@ -1,4 +1,3 @@
-import os
 import unittest
 
 from common.first_found_index import FirstFoundIndex
@@ -8,23 +7,10 @@ from dataset_stats.files_index import FilesIndex
 from dataset_stats.issues_index import IssuesIndex
 from dataset_stats.legacy_index import LegacyIndex
 
-DATASET_DATA_DIR = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "..",
-    "..",
-    "dataset_stats",
-    "tests",
-    "data",
-)
-ISSUES = os.path.join(DATASET_DATA_DIR, "issues.csv")
-FILES = os.path.join(DATASET_DATA_DIR, "files")
-FOUND = os.path.join(DATASET_DATA_DIR, "found_issues")
-LEGACY = os.path.join(DATASET_DATA_DIR, "legacy_stats.csv")
+from ._helpers import FILES, FOUND, ISSUES, LEGACY
 
 
 def _build():
-    # Reuses ci/runner/dataset_stats/tests/data/ on purpose — see plan
-    # docs/superpowers/plans/2026-04-30-compare-errors-revival.md Task 2.
     report = CombinedReport.build(
         issues=IssuesIndex(ISSUES),
         files=FilesIndex(FILES),
