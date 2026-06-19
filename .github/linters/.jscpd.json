@@ -3,7 +3,8 @@
     "**/thirdparty/**",
     "**/.github/**",
     "**/ci/runner/tools-run/tests/**",
-    "**/tests/**/*.json"
+    "**/tests/**/*.json",
+    "**/*.idr"
   ],
   "noSymlinks": "true",
   "exitCode": 10
