@@ -22,9 +22,6 @@ inputs:
     description: "matrix.tool.commands JSON"
   input-dir:
     required: true
-  file-pattern:
-    required: false
-    default: "*"
   ignored-errors-dir:
     required: true
   assets:
@@ -41,6 +38,13 @@ inputs:
     default: "true"
   job-link:
     required: true
+  profile:
+    required: true
+    description: "Profile name, resolved against profiles-config"
+  profiles-config:
+    required: false
+    default: ci/conf/profiles.yaml
+    description: "Path to profiles.yaml"
 
 runs:
   using: composite
@@ -55,18 +59,23 @@ runs:
         fi
         echo "PER_FILE_JSON=$path" >> "$GITHUB_ENV"
 
+    - name: Resolve profile
+      shell: bash
+      run: python3 ci/scripts/resolve_profile.py --profiles "${{ inputs.profiles-config }}" --profile "${{ inputs.profile }}" >> "$GITHUB_ENV"
+
     - name: Run tool
       shell: bash
       run: |
         set +e
         PYTHONPATH=ci/runner python -m runner.main \
           --input-dir "${{ inputs.input-dir }}" \
-          --file-pattern "${{ inputs.file-pattern }}" \
+          --file-pattern "$FILE_PATTERN" \
           --tool-name "${{ inputs.tool-name }}" \
           --tool-version "${{ inputs.tool-version }}" \
           --tool-commit "${{ inputs.tool-commit }}" \
           --model-commit "${{ inputs.model-commit }}" \
           --commands-json '${{ inputs.commands-json }}' \
+          --translate-hook "$TRANSLATE_HOOK" \
           --ignored-errors-dir "${{ inputs.ignored-errors-dir }}" \
           --assets ${{ inputs.assets }} \
           --extra-ignored-regexes ${{ inputs.extra-ignored-regexes }} \

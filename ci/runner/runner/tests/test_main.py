@@ -11,6 +11,9 @@ from unittest.mock import patch
 from common.run_command import ExecutionResult
 from runner.main import main as runner_main
 
+# runner/tests/ -> runner -> ci/runner -> ci
+_SV_HOOK = Path(__file__).resolve().parents[3] / "scripts" / "sv.py"
+
 
 def _exec(ok: bool, output: str = "") -> ExecutionResult:
     return ExecutionResult(command_executed_successfully=True, result_code_is_ok=ok, timed_out=False, output=output)
@@ -49,6 +52,8 @@ class TestRunnerMain(unittest.TestCase):
             json.dumps([{"run": "echo {file}", "error_regex": None}]),
             "--ignored-errors-dir",
             str(self.ignored_dir),
+            "--translate-hook",
+            str(_SV_HOOK),
             "--output",
             str(self.out),
         ]
@@ -62,8 +67,11 @@ class TestRunnerMain(unittest.TestCase):
 
     def _run(self, exec_results: list[ExecutionResult]) -> int:
         argv = self._argv(self.input_dir)
+        _real_subprocess_run = subprocess.run
         with patch.object(sys, "argv", argv), patch("common.run_command.subprocess.run") as mock_run:
             # Each call returns the next ExecutionResult — mock subprocess directly.
+            # make_command also uses subprocess.run (list arg + capture_output=True);
+            # delegate those to the real subprocess so sv.py executes correctly.
             iterator = iter(exec_results)
 
             class _Completed:
@@ -71,7 +79,10 @@ class TestRunnerMain(unittest.TestCase):
                     self.returncode = 0 if ok else 1
                     self.stdout = output
 
-            def _side_effect(*_args, **_kwargs):
+            def _side_effect(*args, **kwargs):
+                # make_command passes a list; run_command passes a shell string
+                if args and isinstance(args[0], list):
+                    return _real_subprocess_run(*args, check=kwargs.pop("check", False), **kwargs)
                 er = next(iterator)
                 return _Completed(er.result_code_is_ok, er.output)
 
@@ -118,13 +129,29 @@ class TestRunnerMain(unittest.TestCase):
         # subprocess.run raising TimeoutExpired must classify as outcome="timeout" (not "unknown")
         # and runner must exit 0 — timeouts do NOT fail the job.
         argv = self._argv(self.input_dir)
+        _real_subprocess_run = subprocess.run
         with patch.object(sys, "argv", argv), patch("common.run_command.subprocess.run") as mock_run:
-            mock_run.side_effect = subprocess.TimeoutExpired(cmd="stub", timeout=1)
+
+            def _timeout_side_effect(*args, **kwargs):
+                # make_command passes a list; let sv.py run for real
+                if args and isinstance(args[0], list):
+                    return _real_subprocess_run(*args, check=kwargs.pop("check", False), **kwargs)
+                raise subprocess.TimeoutExpired(cmd="stub", timeout=1)
+
+            mock_run.side_effect = _timeout_side_effect
             exit_code = self._invoke()
         self.assertEqual(exit_code, 0)
         data = json.loads(self.out.read_text())
         outcomes = [c["outcome"] for f in data["files"] for c in f["commands"]]
         self.assertEqual(outcomes, ["timeout", "timeout"])
+
+    def test_file_pattern_without_suffix_exits_two(self):
+        argv = self._argv(self.input_dir)
+        i = argv.index("--file-pattern")
+        argv[i + 1] = "*"  # glob with no extension
+        with patch.object(sys, "argv", argv):
+            exit_code = self._invoke()
+        self.assertEqual(exit_code, 2)
 
 
 if __name__ == "__main__":

@@ -1,12 +1,12 @@
 import logging
 
 
-def get_logger(name: str = "verilog_model_ci"):
+def get_logger(name: str = "ci_runner"):
     return logging.getLogger(name)
 
 
 def configure_logger(
-    name: str = "verilog_model_ci",
+    name: str = "ci_runner",
     fmt: str = "%(asctime)s - %(relativeCreated)d ms - %(levelname)s - %(funcName)s - %(message)s",
     level: int = logging.INFO,
 ):

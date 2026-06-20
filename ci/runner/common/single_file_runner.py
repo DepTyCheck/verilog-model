@@ -17,6 +17,7 @@ def run_file(
     commands: list[CommandConfig],
     known_errors: IgnoredErrorsList,
     file_suffix: str,
+    translate_hook: str,
     assets: Assets | None = None,
     logical_name: str | None = None,
 ) -> list[CommandResult]:
@@ -43,7 +44,7 @@ def run_file(
 
         for cmd_config in commands:
             try:
-                cmd = make_command(cmd_config.run, tmp_path, content)
+                cmd = make_command(cmd_config.run, tmp_path, translate_hook)
             except Exception as exc:
                 get_logger().warning(f"make_command failed for {report_path!r}: {exc}")
                 results.append(
@@ -55,8 +56,7 @@ def run_file(
                 )
                 return results
 
-            cmd_result = run_command(cmd, cwd=tmp_dir)
-            command_result = analyze_command(cmd, cmd_result, cmd_config, known_errors, report_path)
+            command_result = analyze_command(cmd, run_command(cmd, cwd=tmp_dir), cmd_config, known_errors, report_path)
             results.append(command_result)
             if command_result.outcome != "clean":
                 return results

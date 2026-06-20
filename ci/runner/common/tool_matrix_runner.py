@@ -44,6 +44,7 @@ def run_all(
     inputs: Iterable[FileInput],
     commands: list[CommandConfig],
     known_errors: IgnoredErrorsList,
+    translate_hook: str,
     handler: ResultHandler,
 ) -> None:
     """Iterate inputs, run each through run_file, dispatch the per-command list to handler."""
@@ -53,6 +54,7 @@ def run_all(
             commands=commands,
             known_errors=known_errors,
             file_suffix=file_input.file_suffix,
+            translate_hook=translate_hook,
             assets=file_input.assets,
             logical_name=file_input.logical_name,
         )

@@ -12,7 +12,7 @@ def parse_args() -> argparse.Namespace:
         "--found-errors-dir",
         type=str,
         required=True,
-        help="Path to verilog-gh-pages/found_errors directory containing tool subdirs of yaml files",
+        help="Path to a found_errors directory containing per-tool subdirs of YAML files",
     )
     parser.add_argument("--output", type=str, required=True, help="Path to write legacy_stats.csv")
     return parser.parse_args()

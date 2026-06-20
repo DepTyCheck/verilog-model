@@ -129,14 +129,14 @@ jobs:
       #   run: pack test ${{ env.PACKAGE_NAME }}
 
   generate-modules:
-    name: Generate ${{ matrix.language }} files
+    name: Generate ${{ matrix.profile }} files
     needs: build-and-test
     runs-on: ubuntu-latest
     container: ghcr.io/stefan-hoeck/idris2-pack:latest
     strategy:
       fail-fast: false
       matrix:
-        language: [sv, vhdl]
+        profile: [sv, vhdl]
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -158,14 +158,14 @@ jobs:
           sync
       - name: Set env vars
         run: |
-          echo "OUT_DIR=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.language }}" >> "$GITHUB_ENV"
-          echo "COV_DIR=mcov_${{ matrix.language }}" >> "$GITHUB_ENV"
+          echo "OUT_DIR=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.profile }}" >> "$GITHUB_ENV"
+          echo "COV_DIR=mcov_${{ matrix.profile }}" >> "$GITHUB_ENV"
       - name: Generate modules
         run: |
           pack run ${{ env.PACKAGE_NAME }} \
             --to "${{ env.OUT_DIR }}" \
             -n ${{ env.GEN_TESTS_COUNT }} \
-            --lang ${{ matrix.language }} \
+            --lang ${{ matrix.profile }} \
             --seed-name \
             --seed-content \
             --coverage "${{ env.COV_DIR }}"
@@ -173,7 +173,7 @@ jobs:
         run: cat ${{ env.COV_DIR }}
       - uses: actions/upload-artifact@v6
         with:
-          name: "${{ env.GENERATION_DIR_PATTERN }}${{ matrix.language }}"
+          name: "${{ env.GENERATION_DIR_PATTERN }}${{ matrix.profile }}"
           path: "${{ env.OUT_DIR }}"
 
   get-tool-matrix:
@@ -192,7 +192,7 @@ jobs:
         run: pip install -r ci/runner/gen_matrix/requirements.txt
       - name: Generate matrix
         id: gen
-        run: PYTHONPATH=ci/runner python -m gen_matrix.main
+        run: PYTHONPATH=ci/runner python -m gen_matrix.main --tools-config ci/conf/tools.yaml
 
   get-test-matrix:
     name: Discover test suites
@@ -292,8 +292,8 @@ jobs:
       - name: Download generated files
         uses: actions/download-artifact@v8
         with:
-          name: generated-${{ matrix.tool.language }}
-          path: generated-${{ matrix.tool.language }}
+          name: generated-${{ matrix.tool.profile }}
+          path: generated-${{ matrix.tool.profile }}
 
       - name: Run tool on generated files
         uses: ./.github/actions/run-tool-on-files
@@ -303,8 +303,8 @@ jobs:
           tool-commit: ${{ env.COMMIT_HASH }}
           model-commit: ${{ github.sha }}
           commands-json: ${{ toJSON(matrix.tool.commands) }}
-          input-dir: generated-${{ matrix.tool.language }}
-          file-pattern: ${{ matrix.tool.file_pattern }}
+          profile: ${{ matrix.tool.profile }}
+          input-dir: generated-${{ matrix.tool.profile }}
           ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
@@ -374,8 +374,8 @@ jobs:
         run: |
           PYTHONPATH=ci/runner python -m regression_input.main \
             --known-errors-dir "$DATASET_PATH/found_issues" \
-            --language ${{ matrix.tool.language }} \
-            --language-config ci/conf/languages.yaml \
+            --profile ${{ matrix.tool.profile }} \
+            --profiles-config ci/conf/profiles.yaml \
             --out-dir regression-input
 
       - name: Run tool on regression examples
@@ -386,8 +386,8 @@ jobs:
           tool-commit: ${{ env.COMMIT_HASH }}
           model-commit: ${{ github.sha }}
           commands-json: ${{ toJSON(matrix.tool.commands) }}
+          profile: ${{ matrix.tool.profile }}
           input-dir: regression-input
-          file-pattern: "*"
           ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
@@ -570,14 +570,14 @@ jobs:
     uses: DepTyCheck/verilog-model/.github/workflows/gh-pages-ci.yaml@gh-pages
 
   filter-dataset:
-    name: Filter dataset (${{ matrix.language }})
+    name: Filter dataset (${{ matrix.profile }})
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     needs: [save-dataset]
     strategy:
       fail-fast: false
       matrix:
-        language: [sv, vhdl]
+        profile: [sv, vhdl]
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -603,10 +603,13 @@ jobs:
       - name: Clone dataset branch
         run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
 
+      - name: Resolve profile
+        run: python3 ci/scripts/resolve_profile.py --profiles ci/conf/profiles.yaml --profile ${{ matrix.profile }} >> "$GITHUB_ENV"
+
       - name: Copy dataset files
         run: |
           mkdir -p dataset-files
-          find "${{ env.DATASET_PATH }}/files" -name '*.${{ matrix.language }}' -exec cp {} dataset-files/ \;
+          find "${{ env.DATASET_PATH }}/files" -name "$FILE_PATTERN" -exec cp {} dataset-files/ \;
 
       - name: Filter files
         run: |
@@ -623,19 +626,19 @@ jobs:
       - name: Upload filtration plot
         uses: actions/upload-artifact@v6
         with:
-          name: filtration-plot-${{ matrix.language }}
+          name: filtration-plot-${{ matrix.profile }}
           path: filtration.svg
 
       - name: Upload kept-files list
         uses: actions/upload-artifact@v6
         with:
-          name: kept-files-list-${{ matrix.language }}
+          name: kept-files-list-${{ matrix.profile }}
           path: kept-files.txt
 
       - name: Upload filtered files
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.language }}
+          name: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.profile }}
           path: filtered/
 
   run-tools-filtered:
@@ -698,8 +701,8 @@ jobs:
       - name: Download filtered files
         uses: actions/download-artifact@v8
         with:
-          name: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.language }}
-          path: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.language }}
+          name: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.profile }}
+          path: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.profile }}
 
       - name: Run tool on filtered files
         uses: ./.github/actions/run-tool-on-files
@@ -709,8 +712,8 @@ jobs:
           tool-commit: ${{ env.COMMIT_HASH }}
           model-commit: ${{ github.sha }}
           commands-json: ${{ toJSON(matrix.tool.commands) }}
-          input-dir: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.language }}
-          file-pattern: ${{ matrix.tool.file_pattern }}
+          profile: ${{ matrix.tool.profile }}
+          input-dir: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.profile }}
           ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}

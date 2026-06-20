@@ -1,32 +1,22 @@
-import re
+import subprocess
 
 
-def find_top_module_sv(file_content: str) -> str:
-    """Find the top (last) module name in the given SystemVerilog design."""
-    matches = re.findall(r"(?<=module )\w+", file_content, re.MULTILINE)
-    if matches:
-        return matches[-1]
-    raise Exception("No top module found")
-
-
-def find_top_entity_vhdl(file_content: str) -> str:
-    """Find the top (last) entity name in the given VHDL design."""
-    matches = re.findall(r"(?<=entity )\w+(?= is)", file_content, re.MULTILINE | re.IGNORECASE)
-    if matches:
-        return matches[-1]
-    raise Exception("No top entity found")
-
-
-def make_command(cmd: str, file_path: str, file_content: str) -> str:
+def make_command(template: str, file_path: str, translate_hook: str) -> str:
     """
-    Build a concrete command string from a template.
+    Build a concrete command string by delegating to a per-profile hook.
 
-    Placeholders: {file}, {top_module}, {vhdl_top_entity}
+    Runs ``python3 <translate_hook> <template> <file_path>`` and returns the
+    hook's stdout (the concrete command) with trailing whitespace stripped. The
+    hook owns all placeholder substitution ({file} and any profile-specific
+    placeholders). Raises if the hook exits non-zero.
     """
-    command = cmd
-    if "{top_module}" in command:
-        command = command.replace("{top_module}", find_top_module_sv(file_content))
-    if "{vhdl_top_entity}" in command:
-        command = command.replace("{vhdl_top_entity}", find_top_entity_vhdl(file_content))
-    command = command.replace("{file}", file_path)
-    return command
+    proc = subprocess.run(
+        ["python3", translate_hook, template, file_path],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if proc.returncode != 0:
+        detail = proc.stderr.strip() or proc.stdout.strip()
+        raise Exception(f"translate hook failed ({translate_hook}): {detail}")
+    return proc.stdout.strip()

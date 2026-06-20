@@ -82,7 +82,7 @@ class TestRunAll(unittest.TestCase):
         known_errors = MagicMock()
         collector = ResultCollector()
 
-        run_all(inputs, commands, known_errors, collector)
+        run_all(inputs, commands, known_errors, "hook.sh", collector)
 
         self.assertEqual(mock_run_file.call_count, 2)
         self.assertEqual(len(collector.results()), 2)
@@ -93,7 +93,7 @@ class TestRunAll(unittest.TestCase):
 
         fi = FileInput(content="x", file_suffix=".sv", context=None, logical_name="/orig.sv")
         collector = ResultCollector()
-        run_all([fi], [CommandConfig(run="t {file}")], MagicMock(), collector)
+        run_all([fi], [CommandConfig(run="t {file}")], MagicMock(), "hook.sh", collector)
 
         _, kwargs = mock_run_file.call_args
         self.assertEqual(kwargs["logical_name"], "/orig.sv")
@@ -102,7 +102,7 @@ class TestRunAll(unittest.TestCase):
     def test_run_all_stateless_no_return(self, mock_run_file):
         mock_run_file.return_value = _clean()
         collector = ResultCollector()
-        run_all([], [], MagicMock(), collector)
+        run_all([], [], MagicMock(), "hook.sh", collector)
         self.assertEqual(collector.results(), [])
 
 
