@@ -1,0 +1,9 @@
+// Seed: 2758650652214492710,6516773034751908819
+
+module jko (input logic nnxx);
+  
+endmodule: jko
+
+
+
+// Seed after: 8363343069341697312,6516773034751908819

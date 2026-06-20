@@ -1,0 +1,47 @@
+// Seed: 14096690971162066553,6516773034751908819
+
+module ex (inout wire logic [2:3][2:3][3:4] ifac, output logic [0:3] bql, inout wor logic [3:0][4:1] ovsyspgo [0:2][0:2][1:3]);
+  not zsmf(jzgiqgyjb, bql);
+  // warning: implicit conversion of port connection truncates from 4 to 1 bits
+  //   logic [0:3] bql -> logic bql
+  
+  not kuaswkoffw(ijletcu, bql);
+  // warning: implicit conversion of port connection truncates from 4 to 1 bits
+  //   logic [0:3] bql -> logic bql
+  
+  xnor ewvhqnz(bql, fhvua, bql);
+  // warning: implicit conversion of port connection truncates from 4 to 1 bits
+  //   logic [0:3] bql -> logic bql
+  //
+  // warning: implicit conversion of port connection truncates from 4 to 1 bits
+  //   logic [0:3] bql -> logic bql
+  
+  xnor fhjwdyzq(fhvua, fhvua, ijletcu);
+  
+  
+  // Multi-driven assignments
+  assign ifac = ifac;
+  assign fhvua = jzgiqgyjb;
+  assign ijletcu = fhvua;
+  assign ovsyspgo = ovsyspgo;
+endmodule: ex
+
+module psrovffyn (input logic [1:0][3:3][3:4][4:0] jbbrprfyww, inout tri0 logic [4:1][4:2][1:4][0:1] gktagtmhkx [1:4][1:4]);
+  // Multi-driven assignments
+  assign gktagtmhkx = '{'{'{'{'b10,'b1,'bz1},'{'bzx0,'bz1xxxzxx,'bx},'b0,'{'b1x,'b0z,'bxzz}},'{'{'b11,'bxzz1z011,'b1},'b10xxx101z0x01010zxzxxxzx,'bx0z000110x1z10x10x0x1zzx,'bxxzxz},'bz,'b1x0},'{'{'b1z1,'b1000,'b1zx10xzzxzz0100111z1zx1x,'b111zxz1z1z111xzz11x001zz},'{'{'b101,'b10000,'b110z0z01},'{'b1x01zx10,'bz10x1,'bzx0zz1zx},'{'b00x0zz01,'bx00z1,'b1z100101},'{'b11xz0zzx,'bz,'b00xxz0xx}},'bzzxzxzz1zzxz10z01z1z00z1z0zxxzx0zz0zx000xzxx0xxxz0zx11xz0001z110zzz1zxxz1xxx1zx1zz10z1011000xz00,'{'b0xzzzz001z0xz100xzzzx0zz,'bz1001zxz1z0x0x0001z1zxxz,'b1010100111z10x10zz1xxz00,'{'b11,'bx1,'b1z}}},'{'{'{'b001z0xz1,'bx111x00x,'bxx0z0z00},'{'b10z,'b11x0110z,'b0zxx1110},'bz,'bx1},'{'b1,'{'bzx1x,'bzx1xxz0z,'bxx0110xx},'{'bx001001x,'b0zxzx100,'b110},'{'b1x,'b0xxz1x1z,'b0x1z1}},'{'bzx1x1,'{'b111,'bzx111xzx,'bx10},'bzxx,'{'b00,'bzzzxzzx1,'bzzzxzx1x}},'{'{'b1001,'bx1110z1z,'bz1x0x},'bx11,'{'bzxxxx,'b1101011x,'b0xz0z111},'{'bz0z1z011,'bzzx000xx,'bxx01z0z0}}},'{'bx1x00,'{'bxxx01xzxz1011z10zx0x0xzz,'b01zx000xz111x1x0z1z0x10x,'bz110,'b1z},'{'b10,'bxx0xxx0z11xz00zx011zxxxx,'{'b1xzz01zz,'b11x001xx,'b01z0010x},'{'b01x1z1xx,'b1x0zz0zx,'b0xxz1z10}},'{'{'bx0z,'b0z,'bxz100zxx},'bxx1xx0z0xx00xz10xxxxz1zz,'b11,'b01zzxxxzx1x00zzx1z01z00x}}};
+  assign gktagtmhkx = gktagtmhkx;
+  assign gktagtmhkx = gktagtmhkx;
+  assign gktagtmhkx = gktagtmhkx;
+endmodule: psrovffyn
+
+module nrkouswvc (inout triand logic [1:0][2:4][0:3][4:2] sydzehh [3:4][3:2][3:4], inout triand logic [2:2][2:3][1:0][1:4] socoxog [0:3][0:4][0:3][3:1]);
+  // Multi-driven assignments
+  assign socoxog = '{'{'{'{'bxz0xxz110000z01x,'bzxxxz00x00z0101x,'b11x00110z1z10x01},'{'bxx11,'bx1x0zxxzz0101x1z,'bz10x1},'{'b00,'b1xx,'b1xx0x00x11x11x10},'{'bx,'b1000011x10zx1000,'b0x0x}},'{'{'bxz1z10xxzxx01x0z,'b0xxxzzz100zzzzzx,'b101},'{'b010xz,'b1zxzz0z01001x1z0,'b011zx111z1xz1xzz},'{'b0xz,'bxzz,'b01xxz},'{'bzxxzx110zzx110x0,'b0zx1xxx100x0x1z1,'bxz}},'{'{'b0zzxx10z0z00001x,'bzzx,'b1},'{'b10xx00110z1z1001,'b0,'bz1zx1111z01z1x0z},'{'b011001zzzz10xzx0,'bxz0x00xzzx00zxxz,'bx00xx},'{'b0x00z,'bzxz011zx1zz00zzz,'b1}},'{'{'b0z0z,'bz0z1z00zxxzx1zx0,'b11111x0zxxz0zxz1},'{'b001xx,'b0zzzz,'b1010z},'{'bx0,'bxz0,'b10x10xxx000xzx1z},'{'b011111xxx1z10x1x,'b1zx1x000zxx1xzz1,'bz0zz00x000x11x00}},'{'{'b1xzx,'b1110z10z0z111xx1,'bxzz},'{'bxxx,'bx0xz0zxxzx10zz01,'bzz1xz0zzx110xx11},'{'bxx1,'b1z1z0,'b01},'{'b0001x101xxxzx1z1,'b1zx1xz0xz00xxz00,'bxzzx1zxxzx1x1z10}}},'{'{'{'bzz,'bxzx0,'bz1zzx0zxzxzzz1z1},'{'b010,'b10xx0z10z01xz101,'b1000xz1001zzzz00},'{'bzz00zz000x0z1xz1,'bzz10z010zx0xx01x,'b1z0000x0zzz110xx},'{'b1x1,'b1z1z1,'b11}},'{'{'b0zxxx,'b0zxx010xxx101010,'bxx0z},'{'b01zx10zx0x0z0xxx,'b1z100zzx0xx1xz1x,'bx0xx},'{'b0zx01,'b01,'b1xx100xxxz1zzzzz},'{'b0z0x,'b0xzx,'bx0}},'{'{'b0z,'bzxxxx1000110zx0x,'bz01xzz0z1z1xx00x},'{'b00z111z1z00x1z00,'bx0xz1,'b0100z01zx1z0zxzz},'{'b0,'bxz110z00z0x0zz1x,'b11x1},'{'b111x,'bz0xzz1zx0x1xz0zz,'bzx1x}},'{'{'bzzx10xz1z1xxx0zz,'bz1z1z10111zz00z1,'bx1xz},'{'b0z1z,'b1z0z111z001z0zz1,'b0z00zzzx1z10001z},'{'bx,'bz0z0z,'bz0zx11z1z100xx0z},'{'b01,'bxx0x0,'b1zzzzx011xz00z01}},'{'{'bz1x,'bz10,'b0zz},'{'bx,'b1xx0,'bzx1x},'{'b1zz1010xx00xzx1z,'bxx1001xzxx0z0100,'bzz0z0},'{'b0xzzx0zz0xzz000x,'b1zz1x0x000z0z101,'bzx0x0}}},'{'{'{'b0z0xx0xzzzz001zz,'bz,'bx11100x0xz1x11z1},'{'bxxx0x,'b00,'b11zz1xxzx11x11zz},'{'b1z,'bxx00x00x0xxzz11x,'bzz0z10xz0z010zx1},'{'bxzxz01zx01zx1111,'bz11,'b00z1xx1xz0011zz0}},'{'{'b1xx0,'b0,'b01zx010zxz01xz0z},'{'bxx0x1100zx1zzx11,'b10xxz01zz11z011x,'b11z100xx0z100x0z},'{'bz1xxxxz111xzx1z0,'b01x01zx0z1111xx0,'b1},'{'bxz1xz11xxzz0x00z,'bzxx0x0z00z11xx0z,'b1z0xx10x0zx0x1zz}},'{'{'b1x,'bxz0x10xxzzx11xx0,'b11},'{'b1z0z1x0x00xzx1x0,'b1001x11x10zxx01x,'bz0z0zxxz11xxz0xz},'{'bzz,'b1z0,'bx1x},'{'bxxz0x0111xz1010x,'bzx00x000zz1xxxz1,'b11}},'{'{'b0100z,'bz0zz1111zxx1x1zz,'b1},'{'b0z01x1xxz01zx0zx,'b10z,'b1z1x},'{'b011,'b111x1zzzxx0110z0,'bxxx010zzz10zx0zx},'{'b11zzzxx1zz01z0xx,'b100z010011zxx11z,'b00x01}},'{'{'bxz11z000101xzzz0,'bz01z,'b0z0xx11z1010x0z0},'{'b10011x01z01x000z,'bz,'bxzz0},'{'b0x,'bz0x010x000xxzxzz,'bz10},'{'b10x,'bx1xx11110zx0100z,'bx1z1}}},'{'{'{'bz,'bz100,'b10001xx0x10z0111},'{'b001x0,'b11x0,'b0x1z11xxx100xx10},'{'b110xxx1z01xx10z0,'b1xx,'b1},'{'b0xz1,'b1x,'b10xzx001z111011x}},'{'{'bzz0z,'b01x1z11x11101zx0,'b11},'{'b1011,'bzz0z01x01x01z0x0,'bz1zz1},'{'bzx1xz00xzx011z0x,'b01z0z11z1zz11x1x,'bzz00z},'{'b0zxx1x1z1z1x0110,'b1,'b1}},'{'{'b1xxz,'b0x10zxx001xxx0zz,'bxz10z010zzzx11x1},'{'bz01xzx0z101xxx1z,'bx1zz1x11xz00xzz1,'b0xxx},'{'b100,'bxz0x11z1z1zx1x0z,'b0z1},'{'bxx,'bz0zxxxz10x111z1z,'b10zx010110000000}},'{'{'bxz,'bz00,'b1xx},'{'b0xx100zz0z11x100,'b00zz11x001z1zz0z,'b1x0x1x1x101z010x},'{'b11,'bx0z,'b1zzzx11xzxx11x10},'{'b10zzxx1xzzz0x010,'b1z00z0xx1z0110x1,'bz1}},'{'{'b000xxx1100xx1z1x,'bxx0101z1x10zzx10,'b1110zz1100111zzz},'{'b110x00zzz0z11x00,'bx1,'bz1100},'{'b101,'bxxxz,'bz0xx0zz1x0z110zz},'{'bxz01z01xzzx0xz11,'bxz1z0x0x11z1zz0z,'bzxx1z11xxxz0x0z0}}}};
+  assign socoxog = socoxog;
+  assign sydzehh = '{'{'{'bzxzx,'b0zz},'{'{'bz0x0,'b01zxz11x1xx011110x011x01111010zx10z0},'bx}},'{'{'{'b00,'b0zz01z0z10x0x01xzxzxzz1z0z0100xx1x0x},'{'b001xzz0zz01z0xz1110x11z10z1x01z0zzz1,'b0xz}},'{'bzz1zz,'{'b1xx01z1z110xx0zx10zz110z001zzx000010,'bz01x}}}};
+  assign socoxog = '{'{'{'{'b0xzzz,'bzx1,'b0x0zzxxx1zxz11xx},'{'b1001010xxz011x01,'bz01x1zzzzz0xzz11,'bx},'{'bz,'bz1xx0,'bz01z},'{'bxx101xxzxxx01001,'b1x1zzx1zz1xzxz1z,'bz10}},'{'{'bx0xz11zxz0z00001,'b1,'bzx1zx1z10011xz1x},'{'b01,'bzxxxz,'b1z00z1zzz01zzx01},'{'b0zxz,'b1,'b0xz01011xxx00z0x},'{'b11,'bz,'b0z}},'{'{'bxz0z0,'bzxxx,'bxzxz1x111110010z},'{'bx,'bxz01z,'bx},'{'b11zxzz010110x0zx,'bx,'b1110z00001x011zx},'{'bx1xz110zzzx0xxx0,'bzzx0x11x1z01x010,'bx1zx00x01111000x}},'{'{'bx,'bxzz0zx000xx01001,'bx},'{'b1x1xz,'bxzzx1,'bzz1zzzxx10xx01xx},'{'bzz,'bx1x00001z0z0x0zx,'b0xz},'{'bz11,'b0z0zzx001x11zx0z,'b1zz1zx0zzx0zxz10}},'{'{'b00,'b00,'bxxxxz11xzx1xz1x1},'{'bz000x0x10zx1111x,'bx1xx,'bxx0xzx0x1x1z0z11},'{'b0z01,'b0,'bz00xx111z0x0zzx1},'{'bzx100x1x1x10x11z,'b110zx01z011zx1xx,'bx001xx01z0x100x0}}},'{'{'{'b1xxz,'b0x100xxz001x1zz1,'bxxxx11xz1zzxx11z},'{'b0z01zzzx1zxzz0x0,'bx1xxz,'b1},'{'bx100zxx11x0x1xxz,'bzzzzx,'bzz},'{'b1z,'bx0x1010zz1xxzxz0,'b1xzx}},'{'{'bzzx11,'b11,'b11z0010zzx001xz1},'{'bxz1x,'b1,'bxz1z10xxxxx10xx1},'{'bzxzx,'bz0xxxz1xz0x0010z,'bzzzx},'{'bx,'b0,'b11x1z}},'{'{'bz01zz,'b11x100zzz1101xzz,'bz0},'{'bz0xz1x0zzz0111xz,'bz0,'b1x0},'{'b101,'b0xx0z,'bzx1zx1x00zx0zz01},'{'b11zz0010101x0x10,'bz1zz00zx1z111xx0,'bxx}},'{'{'bz0xz0z1zz1010zxx,'bzxz11,'b0zzx1010z0z0zxzx},'{'b0x0xz1x000010011,'b0xz11,'bzx1x1},'{'b1,'b11x,'b0x},'{'b1xzxx0zxzz1xx00x,'b0x101xzx0100zz1z,'b1z10}},'{'{'bx,'bz1,'bx1z0},'{'b1xz100x10zz11z0x,'b1zzxzz000xzxz1z0,'bzzxz1x0000z1zx0z},'{'b11xz1,'b1z0,'b00},'{'b0z0z1z10z10x01xx,'bzzx001zzzxzz1000,'bx00z1x0xz001z111}}},'{'{'{'bz0z1x1100xx0010x,'b1z00xx10xz010x10,'bz1110x0x01zx1x01},'{'bz,'b1z00zzxzxxxzx0xz,'bxxxz0},'{'bz,'b0zz11010x1xzzx0x,'bx10zzxxzxx0z10x0},'{'bz00z0x1xx01zz01x,'bx0x0zzzxx10zxzx1,'bz}},'{'{'b0z,'bz1zx1001xxz1x001,'b1},'{'bzxx0,'bx,'b00},'{'b0,'b10zzxx0x0zx0zzzz,'bx01zzzx10zzzzzz0},'{'bz0xzx101zxzzzxxx,'b010,'bx1}},'{'{'bx0z1011zx0zz1xz0,'bzzxz1zzxxzzzz100,'b0z000},'{'bz0,'bzz1,'bx},'{'b1xz0zz100xxx11z0,'bzxz1xzzx000xzz1x,'bzzzz00110xx100zx},'{'b0z0zx1zx1111x0x0,'b0xz11x100zx1011z,'bz00x001xx010x11z}},'{'{'b11,'b01zz11x0x0xzxxzx,'b011z0z1xz0xxz1x1},'{'bz0z1x111001z00xx,'b10,'b1zz},'{'b0zz0,'bxx01x,'b01x1x01z0xz000zz},'{'b0,'b1z1x101zzx1xx0zz,'bxxzxxxxz10x0z0x0}},'{'{'bx01xzz101xx010zz,'b01zx1zxx0xx1z1x1,'b0zxx0xx0zx11x10x},'{'bxx11zzz10xz11xz1,'bz0,'b0},'{'b1101z01zz0z111zz,'bx,'bz1xx},'{'bzx0x,'b00111x10x1x11x10,'bz1x0}}},'{'{'{'b10xxx,'b1xz101zzx0zx110z,'bz0z1},'{'bx1zzx,'b10xx0z0x0001x0zx,'bxzx0},'{'bxx00zz00x01z11zz,'bz0,'b1zx01},'{'bz01xxx01x0z001x0,'bz01z0,'b00z01zxx00z00011}},'{'{'b1,'b001,'b1xxz},'{'bx1,'b1z1x0111zx1xx110,'bx0zz0z0z0z0zx110},'{'b00z0,'b1zz0z1010z1zx1zz,'bz00z1},'{'b1z10100zzz1x11xx,'bx0,'bzz0x}},'{'{'bx1z1z01zxz000zx1,'b1z1zz,'b010zz0zz101xz000},'{'bxz,'bxxxx0xx10x0z0zxx,'b0z},'{'bz,'b1xzz,'b1},'{'bz01x,'bz10,'b0111xxx00zxxx000}},'{'{'bx0xxz,'bz,'b1z1zx01xx10zx100},'{'b1xzx0z10zzzxxzx1,'b1x,'b1xz0z},'{'bzz0zzz1110zz0x1x,'b0zzz,'bzx1x},'{'bxz0zzz001zz1z00x,'bx00,'b1x1x}},'{'{'b01,'bx0zx,'b1x},'{'b001,'b0z1x0z01zx11000x,'bz001z0xz100zxzz0},'{'b0z1x1xxxx1zz010z,'bxx,'b1xx},'{'b1xzz10zx1xxxzz1z,'bx1z0x0z01zz10z1z,'bzxxx}}}};
+endmodule: nrkouswvc
+
+
+
+// Seed after: 17119917497152539371,6516773034751908819
