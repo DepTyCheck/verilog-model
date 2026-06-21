@@ -20,7 +20,7 @@ import Text.PrettyPrint.Bernardy
 %default total
 
 vtypeOf : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection VHDL s usl subUs -> VHDLType
-vtypeOf mc = dtToVHt $ typeOf mc
+vtypeOf = valueOf . dtToVHt . typeOf
 
 Show PredefinedArrayTypes where
   show BOOLEAN_VECTOR = "boolean_vector"
@@ -49,9 +49,9 @@ printType StdLogic              = pure $ "std_logic"
 printType (Array t d)           = pure $ "\{show t}\{show d}"
 printType (StdLogicVector d)    = pure $ "std_logic_vector\{show d}"
 
-printPort : (name : String) -> (dir : String) -> (type : VHDLType) -> Gen0 String
+printPort : (name : String) -> (dir : String) -> (type : VHDLObject) -> Gen0 String
 printPort name dir t = do
-  ts <- printType t
+  ts <- printType $ valueOf t
   pure $ "\{name} : \{dir} \{ts}"
 
 ||| Library header followed by a separating empty line, or nothing at all.
@@ -363,13 +363,13 @@ parameters (x : Fuel) {opts : LayoutOpts} (entityName : String) (archName : Stri
     isMCTopPort f | (MkMC Nothing (Just _) _ _ @{_} @{OnlyTSK}) = True
     isMCTopPort f | (MkMC Nothing Nothing  _ _ @{_} @{NoTop})   = False
 
-  isLogic : DataType VHDL -> Bool
-  isLogic (VHD StdLogic)           = True
-  isLogic (VHD $ StdLogicVector _) = True
-  isLogic _                        = False
+  isLogic : VHDLType -> Bool
+  isLogic StdLogic           = True
+  isLogic (StdLogicVector _) = True
+  isLogic _                  = False
 
   portsHaveLogic : List (Fin $ length mcs) -> Bool
-  portsHaveLogic fins = foldl (\b, f => if (isLogic $ typeOf $ index mcs f) then True else b) False fins
+  portsHaveLogic fins = foldl (\b, f => if (isLogic $ vtypeOf $ index mcs f) then True else b) False fins
 
   ||| Multiconnections which does not represent connection to top port are treated like signals.
   filterTopOrSub : (f : Fin (length mcs) -> Bool) -> List (Fin $ length mcs)

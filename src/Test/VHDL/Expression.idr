@@ -5,6 +5,6 @@ import public Test.Common.Multiconnection
 import public Test.VHDL.Literal
 
 public export
-data VHDLExpression : (mcs : MultiConnectionsList VHDL s usl subUs) -> (t : VHDLType) -> Type where
+data VHDLExpression : (mcs : MultiConnectionsList VHDL s usl subUs) -> (t : VHDLObject) -> Type where
   -- MkQualName : (f : Fin $ length mcs) ->  SVTMPExpression {s} {usl} {subUs} mcs t -- So (equivalentSVO (dtToSVt $ typeOf $ index mcs f) t) =>
-  MkLiteral  : VHDLLiteral t -> VHDLExpression {s} {usl} {subUs} mcs t
+  MkLiteral  : VHDLLiteral (valueOf t) -> VHDLExpression {s} {usl} {subUs} mcs t

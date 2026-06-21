@@ -151,6 +151,26 @@ Eq VHDLType where
   (==) (StdLogicVector d) (StdLogicVector d') = dimsCompatible d d'
   (==) _ _ = False
 
+||| 6.4.2 Object declarations
+||| 6.4.2.1 General
+||| object_declaration ::= constant_declaration | signal_declaration | variable_declaration | file_declaration
+|||
+||| IEEE 1076-2019
+public export
+data VHDLObject : Type where
+  Var : VHDLType -> VHDLObject
+  Sig : VHDLType -> VHDLObject
+
+public export
+valueOf : VHDLObject -> VHDLType
+valueOf (Var t) = t
+valueOf (Sig t) = t
+
+public export
+Eq VHDLObject where
+  (==) (Var t) (Var t') = t == t'
+  (==) (Sig t) (Sig t') = t == t'
+  (==) _ _ = False
 
 public export
 data VHDLPortMode = In | Out | InOut | Buffer | Linkage;
@@ -163,3 +183,14 @@ Eq VHDLPortMode where
   (==) Buffer Buffer = True
   (==) Linkage Linkage = True
   (==) _ _ = False
+
+
+||| 6.5.6.3 Port clauses
+||| A formal variable port shall either be of a protected type or a composite type with a subelement of a protected type. Its mode shall be inout.
+|||
+||| IEEE 1076-2019
+||| 
+||| So now only signals are allowed
+public export
+data AllowedVHPort : VHDLObject -> VHDLPortMode -> Type where
+  YSig : AllowedVHPort (Sig t) pm

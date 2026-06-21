@@ -612,7 +612,7 @@ namespace GenMulticonns
   public export
   isResolved : DataType l -> Bool
   isResolved (SVT o) = isMDSV o
-  isResolved (VHD t) = isMDVHDL t
+  isResolved (VHD t) = isMDVHDL $ valueOf t
 
   public export
   noSource : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection l s usl subUs -> Bool

@@ -43,7 +43,7 @@ public export
 isSDVHDL : {s : _} -> {usl : _} -> {subUs : _} ->
            (mc : MultiConnection VHDL s usl subUs) -> Bool
 -- noSource already excludes IN top ports, so no need to double check
-isSDVHDL mc = noSource mc && not (isMDVHDL $ dtToVHt $ typeOf mc) && notTopInput mc && notLinkage mc
+isSDVHDL mc = noSource mc && not (isMDVHDL $ valueOf $ dtToVHt $ typeOf mc) && notTopInput mc && notLinkage mc
 
 
 vhSDFins' : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : MultiConnectionsList VHDL s usl subUs} ->
@@ -60,7 +60,7 @@ vhSDFins mcs = vhSDFins' $ allFins mcs.length
 vhMDFins' : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : MultiConnectionsList VHDL s usl subUs} ->
             List (Fin $ length mcs) -> FinsList (length mcs)
 vhMDFins' []      = []
-vhMDFins' (x::xs) = if isMDVHDL (dtToVHt $ typeOf $ index mcs x) && notTopInput (index mcs x) && notLinkage (index mcs x)
+vhMDFins' (x::xs) = if isMDVHDL (valueOf $ dtToVHt $ typeOf $ index mcs x) && notTopInput (index mcs x) && notLinkage (index mcs x)
                       then x :: vhMDFins' xs else vhMDFins' xs
 
 public export
