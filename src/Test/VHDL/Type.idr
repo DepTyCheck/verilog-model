@@ -189,7 +189,7 @@ Eq VHDLPortMode where
 ||| A formal variable port shall either be of a protected type or a composite type with a subelement of a protected type. Its mode shall be inout.
 |||
 ||| IEEE 1076-2019
-||| 
+|||
 ||| So now only signals are allowed
 public export
 data AllowedVHPort : VHDLObject -> VHDLPortMode -> Type where
