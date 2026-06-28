@@ -499,6 +499,14 @@ namespace VHDLRules
   typesCompatibleVHDL : (mc : DataType VHDL) -> (p : DataType VHDL) -> Bool
   typesCompatibleVHDL mc p = dtToVHt mc == dtToVHt p
 
+  public export
+  valueOfMc : {s : _} -> {usl : _} -> {subUs : _} -> (mc : MultiConnection VHDL s usl subUs) -> VHDLType
+  valueOfMc = valueOf . dtToVHt . typeOf
+
+  public export
+  valueOfFin : {s : _} -> {usl : _} -> {subUs : _} -> (mcs : MultiConnectionsList VHDL s usl subUs) -> (target : Fin mcs.length) -> VHDLType
+  valueOfFin mcs f = valueOfMc $ index mcs f
+
 namespace GenMulticonns
 
   public export
