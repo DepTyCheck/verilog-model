@@ -274,7 +274,8 @@ jobs:
         run: |
           pip install -r ci/runner/runner/requirements.txt
           if [ -n "$EXTRA" ] && [ "$EXTRA" != "null" ]; then
-            pip install $EXTRA
+            read -ra extra_pkgs <<< "$EXTRA"
+            pip install "${extra_pkgs[@]}"
           fi
 
       - name: Setup tool
@@ -359,7 +360,8 @@ jobs:
           pip install -r ci/runner/regression_input/requirements.txt
           pip install -r ci/runner/regression_analyze/requirements.txt
           if [ -n "$EXTRA" ] && [ "$EXTRA" != "null" ]; then
-            pip install $EXTRA
+            read -ra extra_pkgs <<< "$EXTRA"
+            pip install "${extra_pkgs[@]}"
           fi
 
       - name: Setup tool
@@ -556,8 +558,9 @@ jobs:
 
       - name: Run dataset_builder
         run: |
+          gen_dirs=( "$GENERATION_DIR_PATTERN"*/ )
           PYTHONPATH=ci/runner python -m dataset_builder.main \
-            --generated-dirs $GENERATION_DIR_PATTERN*/ \
+            --generated-dirs "${gen_dirs[@]}" \
             --per-file-results-dir "$PER_FILE_DIR" \
             --dataset-path "$DATASET_PATH" \
             --run-date "$RUN_DATE"
@@ -708,7 +711,8 @@ jobs:
         run: |
           pip install -r ci/runner/runner/requirements.txt
           if [ -n "$EXTRA" ] && [ "$EXTRA" != "null" ]; then
-            pip install $EXTRA
+            read -ra extra_pkgs <<< "$EXTRA"
+            pip install "${extra_pkgs[@]}"
           fi
 
       - name: Setup tool
