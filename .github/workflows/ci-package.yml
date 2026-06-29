@@ -603,6 +603,9 @@ jobs:
       - name: Clone dataset branch
         run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
 
+      - name: Install resolve_profile requirements
+        run: pip install -r ci/scripts/requirements.txt
+
       - name: Resolve profile
         run: python3 ci/scripts/resolve_profile.py --profiles ci/conf/profiles.yaml --profile ${{ matrix.profile }} >> "$GITHUB_ENV"
 
