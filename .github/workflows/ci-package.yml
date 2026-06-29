@@ -15,7 +15,8 @@ on:
   schedule:
     - cron: "0 1 * * *"
 
-permissions: read-all
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}@${{ github.ref }}
@@ -91,14 +92,19 @@ jobs:
         run: pack switch latest
       - name: Calculate cache key
         id: cache-key
+        env:
+          SRC_HASH: ${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}
+          UPSTREAM_MODE: ${{ matrix.upstream-mode }}
         run: |
           idris2_commit=$(idris2 -v | sed -nE 's/.*Idris 2, version [0-9.]+-([A-Za-z0-9]+).*/\1/p')
-          echo "key=build-${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}-${{ matrix.upstream-mode }}-$idris2_commit" >> "$GITHUB_OUTPUT"
+          echo "key=build-$SRC_HASH-$UPSTREAM_MODE-$idris2_commit" >> "$GITHUB_OUTPUT"
       - name: Export key
         id: export-key
         if: matrix.upstream-mode == 'latest-pack-collection'
+        env:
+          CACHE_KEY: ${{ steps.cache-key.outputs.key }}
         run: |
-          echo "latest_key=${{ steps.cache-key.outputs.key }}" >> "$GITHUB_OUTPUT"
+          echo "latest_key=$CACHE_KEY" >> "$GITHUB_OUTPUT"
           echo "build_path=$PWD" >> "$GITHUB_OUTPUT"
       - name: Restore from cache
         id: cache-build
@@ -161,16 +167,18 @@ jobs:
           echo "OUT_DIR=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.profile }}" >> "$GITHUB_ENV"
           echo "COV_DIR=mcov_${{ matrix.profile }}" >> "$GITHUB_ENV"
       - name: Generate modules
+        env:
+          PROFILE: ${{ matrix.profile }}
         run: |
-          pack run ${{ env.PACKAGE_NAME }} \
-            --to "${{ env.OUT_DIR }}" \
-            -n ${{ env.GEN_TESTS_COUNT }} \
-            --lang ${{ matrix.profile }} \
+          pack run "$PACKAGE_NAME" \
+            --to "$OUT_DIR" \
+            -n "$GEN_TESTS_COUNT" \
+            --lang "$PROFILE" \
             --seed-name \
             --seed-content \
-            --coverage "${{ env.COV_DIR }}"
+            --coverage "$COV_DIR"
       - name: Show coverage
-        run: cat ${{ env.COV_DIR }}
+        run: cat "$COV_DIR"
       - uses: actions/upload-artifact@v6
         with:
           name: "${{ env.GENERATION_DIR_PATTERN }}${{ matrix.profile }}"
@@ -226,12 +234,16 @@ jobs:
           python-version: "3.13"
       - name: Install requirements
         if: ${{ matrix.suite.requirements }}
+        env:
+          SUITE_REQUIREMENTS: ${{ matrix.suite.requirements }}
         run: |
           cd ci/runner
-          pip install -r ${{ matrix.suite.requirements }}
+          pip install -r "$SUITE_REQUIREMENTS"
       - name: Run tests
         working-directory: ci/runner
-        run: python -m ${{ matrix.suite.name }}.tests.test
+        env:
+          SUITE_NAME: ${{ matrix.suite.name }}
+        run: python -m "$SUITE_NAME.tests.test"
 
   run-tools:
     name: ${{ matrix.tool.name }}
@@ -257,14 +269,16 @@ jobs:
           python-version: "3.13"
 
       - name: Install Python dependencies
+        env:
+          EXTRA: ${{ matrix.tool.python_runner_deps }}
         run: |
           pip install -r ci/runner/runner/requirements.txt
-          EXTRA="${{ matrix.tool.python_runner_deps }}"
           if [ -n "$EXTRA" ] && [ "$EXTRA" != "null" ]; then
             pip install $EXTRA
           fi
 
       - name: Setup tool
+        id: setup-tool
         uses: ./.github/actions/setup-tool
         with:
           tool-name: ${{ matrix.tool.name }}
@@ -280,9 +294,11 @@ jobs:
           tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard || '' }}
 
       - name: Capture tool version
+        env:
+          TOOL_VERSION_CMD: ${{ matrix.tool.version }}
         run: |
           out=$({
-          ${{ matrix.tool.version }}
+          eval "$TOOL_VERSION_CMD"
           } 2>&1 | head -1 || true)
           echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
@@ -300,7 +316,7 @@ jobs:
         with:
           tool-name: ${{ matrix.tool.name }}
           tool-version: ${{ env.TOOL_VERSION }}
-          tool-commit: ${{ env.COMMIT_HASH }}
+          tool-commit: ${{ steps.setup-tool.outputs.commit-hash }}
           model-commit: ${{ github.sha }}
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           profile: ${{ matrix.tool.profile }}
@@ -336,16 +352,18 @@ jobs:
           python-version: "3.13"
 
       - name: Install Python dependencies
+        env:
+          EXTRA: ${{ matrix.tool.python_runner_deps }}
         run: |
           pip install -r ci/runner/runner/requirements.txt
           pip install -r ci/runner/regression_input/requirements.txt
           pip install -r ci/runner/regression_analyze/requirements.txt
-          EXTRA="${{ matrix.tool.python_runner_deps }}"
           if [ -n "$EXTRA" ] && [ "$EXTRA" != "null" ]; then
             pip install $EXTRA
           fi
 
       - name: Setup tool
+        id: setup-tool
         uses: ./.github/actions/setup-tool
         with:
           tool-name: ${{ matrix.tool.name }}
@@ -361,9 +379,11 @@ jobs:
           tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard || '' }}
 
       - name: Capture tool version
+        env:
+          TOOL_VERSION_CMD: ${{ matrix.tool.version }}
         run: |
           out=$({
-          ${{ matrix.tool.version }}
+          eval "$TOOL_VERSION_CMD"
           } 2>&1 | head -1 || true)
           echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
@@ -371,10 +391,12 @@ jobs:
         run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
 
       - name: Materialise regression inputs
+        env:
+          TOOL_PROFILE: ${{ matrix.tool.profile }}
         run: |
           PYTHONPATH=ci/runner python -m regression_input.main \
             --known-errors-dir "$DATASET_PATH/found_issues" \
-            --profile ${{ matrix.tool.profile }} \
+            --profile "$TOOL_PROFILE" \
             --profiles-config ci/conf/profiles.yaml \
             --out-dir regression-input
 
@@ -383,7 +405,7 @@ jobs:
         with:
           tool-name: ${{ matrix.tool.name }}
           tool-version: ${{ env.TOOL_VERSION }}
-          tool-commit: ${{ env.COMMIT_HASH }}
+          tool-commit: ${{ steps.setup-tool.outputs.commit-hash }}
           model-commit: ${{ github.sha }}
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           profile: ${{ matrix.tool.profile }}
@@ -396,12 +418,16 @@ jobs:
 
       - name: Build reproducibility table
         if: ${{ always() && hashFiles(format('regression-{0}-per-file.json', matrix.tool.name)) != '' }}
+        env:
+          TOOL_NAME: ${{ matrix.tool.name }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
         run: |
           PYTHONPATH=ci/runner python -m regression_analyze.main \
-            --per-file-input regression-${{ matrix.tool.name }}-per-file.json \
+            --per-file-input "regression-$TOOL_NAME-per-file.json" \
             --known-errors-dir "$DATASET_PATH/found_issues" \
-            --tool-name ${{ matrix.tool.name }} \
-            --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/error" \
+            --tool-name "$TOOL_NAME" \
+            --error-url-prefix "https://$REPO_OWNER.github.io/$REPO_NAME/error" \
             >> "$GITHUB_STEP_SUMMARY"
 
   count-lines:
@@ -463,13 +489,16 @@ jobs:
             echo "::warning::No run-tools per-file artifacts found — Current column will be 0% for all rows"
           fi
       - name: Compare
+        env:
+          MASTER_COMMIT_DATE: ${{ steps.master-date.outputs.date }}
+          REPO_OWNER: ${{ github.repository_owner }}
         run: |
           PYTHONPATH=ci/runner python -m compare_errors.main \
             --dataset-path "$DATASET_PATH" \
             --per-file-results-dir "$PER_FILE_DIR" \
             --regression-results-dir "$REGRESSION_DIR" \
-            --master-commit-date "${{ steps.master-date.outputs.date }}" \
-            --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
+            --master-commit-date "$MASTER_COMMIT_DATE" \
+            --error-url-prefix "https://$REPO_OWNER.github.io/$PACKAGE_NAME/error" \
             >> "$GITHUB_STEP_SUMMARY"
 
   save-dataset:
@@ -528,37 +557,42 @@ jobs:
       - name: Run dataset_builder
         run: |
           PYTHONPATH=ci/runner python -m dataset_builder.main \
-            --generated-dirs ${{ env.GENERATION_DIR_PATTERN }}*/ \
-            --per-file-results-dir "${{ env.PER_FILE_DIR }}" \
-            --dataset-path "${{ env.DATASET_PATH }}" \
-            --run-date "${{ env.RUN_DATE }}"
+            --generated-dirs $GENERATION_DIR_PATTERN*/ \
+            --per-file-results-dir "$PER_FILE_DIR" \
+            --dataset-path "$DATASET_PATH" \
+            --run-date "$RUN_DATE"
 
       - name: Build regression CSV
         run: |
           PYTHONPATH=ci/runner python -m regression_csv.main \
-            --regression-results-dir "${{ env.REGRESSION_DIR }}" \
-            --known-errors-dir "${{ env.DATASET_PATH }}/found_issues" \
-            --out-csv "${{ env.DATASET_PATH }}/latest_regression_test.csv"
+            --regression-results-dir "$REGRESSION_DIR" \
+            --known-errors-dir "$DATASET_PATH/found_issues" \
+            --out-csv "$DATASET_PATH/latest_regression_test.csv"
 
       - name: Write run metadata
         run: |
           printf '{\n  "last_regression_test_date": "%s"\n}\n' \
-            "$RUN_ISO_DATE" > "${{ env.DATASET_PATH }}/latest_run_metadata.json"
+            "$RUN_ISO_DATE" > "$DATASET_PATH/latest_run_metadata.json"
 
       - name: Bot Details
         id: bot-details
         uses: raven-actions/bot-details@v1
 
       - name: Commit & push dataset
+        env:
+          BOT_NAME: ${{ steps.bot-details.outputs.name }}
+          BOT_EMAIL: ${{ steps.bot-details.outputs.email }}
+          PAT_PUSH: ${{ secrets.PAT_PUSH }}
+          REPO: ${{ github.repository }}
         run: |
-          cd ${{ env.DATASET_PATH }}
-          git config --global user.name "${{ steps.bot-details.outputs.name }}"
-          git config --global user.email "${{ steps.bot-details.outputs.email }}"
+          cd "$DATASET_PATH"
+          git config --global user.name "$BOT_NAME"
+          git config --global user.email "$BOT_EMAIL"
           git add files/ issues.csv latest_regression_test.csv latest_run_metadata.json
           git diff --cached --quiet && echo "No changes to commit." && exit 0
-          git commit -m "[ bot ] Add dataset ${{ env.RUN_DATE }}"
-          git remote set-url origin "https://x-access-token:${{ secrets.PAT_PUSH }}@github.com/${{ github.repository }}"
-          git push origin ${{ env.DATASET_BRANCH }}
+          git commit -m "[ bot ] Add dataset $RUN_DATE"
+          git remote set-url origin "https://x-access-token:$PAT_PUSH@github.com/$REPO"
+          git push origin "$DATASET_BRANCH"
 
   build-and-deploy-site:
     name: Build & deploy gh-pages site
@@ -669,14 +703,16 @@ jobs:
           python-version: "3.13"
 
       - name: Install Python dependencies
+        env:
+          EXTRA: ${{ matrix.tool.python_runner_deps }}
         run: |
           pip install -r ci/runner/runner/requirements.txt
-          EXTRA="${{ matrix.tool.python_runner_deps }}"
           if [ -n "$EXTRA" ] && [ "$EXTRA" != "null" ]; then
             pip install $EXTRA
           fi
 
       - name: Setup tool
+        id: setup-tool
         uses: ./.github/actions/setup-tool
         with:
           tool-name: ${{ matrix.tool.name }}
@@ -692,9 +728,11 @@ jobs:
           tool-third-party-release-name-wildcard: ${{ matrix.tool.third_party_release_name_wildcard || '' }}
 
       - name: Capture tool version
+        env:
+          TOOL_VERSION_CMD: ${{ matrix.tool.version }}
         run: |
           out=$({
-          ${{ matrix.tool.version }}
+          eval "$TOOL_VERSION_CMD"
           } 2>&1 | head -1 || true)
           echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
@@ -712,7 +750,7 @@ jobs:
         with:
           tool-name: ${{ matrix.tool.name }}
           tool-version: ${{ env.TOOL_VERSION }}
-          tool-commit: ${{ env.COMMIT_HASH }}
+          tool-commit: ${{ steps.setup-tool.outputs.commit-hash }}
           model-commit: ${{ github.sha }}
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           profile: ${{ matrix.tool.profile }}
@@ -778,13 +816,16 @@ jobs:
           fi
 
       - name: Compare
+        env:
+          MASTER_COMMIT_DATE: ${{ steps.master-date.outputs.date }}
+          REPO_OWNER: ${{ github.repository_owner }}
         run: |
           PYTHONPATH=ci/runner python -m compare_errors.main \
             --dataset-path "$DATASET_PATH" \
             --per-file-results-dir "$PER_FILE_DIR" \
             --regression-results-dir "$REGRESSION_DIR" \
-            --master-commit-date "${{ steps.master-date.outputs.date }}" \
-            --error-url-prefix "https://${{ github.repository_owner }}.github.io/${{ env.PACKAGE_NAME }}/error" \
+            --master-commit-date "$MASTER_COMMIT_DATE" \
+            --error-url-prefix "https://$REPO_OWNER.github.io/$PACKAGE_NAME/error" \
             >> "$GITHUB_STEP_SUMMARY"
 
   publish-container:
@@ -873,7 +914,7 @@ jobs:
             const issueBody = `
             Workflow Run: [${context.runNumber}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
 
-            Tagging: ${{ env.TAGGED_USERS }}
+            Tagging: ${process.env.TAGGED_USERS}
 
             Please check the logs for more details
             `;
