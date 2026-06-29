@@ -121,7 +121,7 @@ runs:
       shell: bash
       env:
         TOOL_PRE_BUILD: ${{ inputs.tool-pre-build }}
-      run: $TOOL_PRE_BUILD
+      run: eval "$TOOL_PRE_BUILD"
 
     - name: Build tool
       if: inputs.tool-repo != '' && steps.cache-build.outputs.cache-hit != 'true'
@@ -132,7 +132,7 @@ runs:
       run: |
         echo "Build tool"
         cd "$TOOL_PATH"
-        $TOOL_BUILD
+        eval "$TOOL_BUILD"
 
     - name: Save build
       if: inputs.tool-repo != '' && steps.cache-build.outputs.cache-hit != 'true'
@@ -150,7 +150,7 @@ runs:
       run: |
         echo "Install tool"
         cd "$TOOL_PATH"
-        $TOOL_INSTALL
+        eval "$TOOL_INSTALL"
 
     - name: Print version
       if: inputs.tool-version != ''
