@@ -1,0 +1,70 @@
+// Seed: 4237325414809498995,16431300167878843271
+
+module t (inout tri0 logic [0:4][0:4][3:1][1:4] lv [4:0][2:1][0:2][1:0], input wire logic [0:2][3:1][4:2] a [4:3][4:1][2:4]);
+  not pjusfg(z, z);
+  
+  not h(z, z);
+  
+  
+  // Multi-driven assignments
+  assign a = '{'{'{'b1x1x11z1x011z001x0xx1xxz10z,'b1z1xx1x111z0z0zz1zxz1xx10x1,'bzz0011x0xz111zx1z1001x01z10},'{'{'bzx11,'b1xxzx1100,'b0xx00101z},'b11zxx,'{'b0z0zzx10x,'b101,'b0zzz}},'{'{'b0,'bxz,'b0},'{'b0z0z010x0,'b1z,'b01},'{'b1,'bz11xz10x0,'b10x1}},'{'b10,'{'bz1001,'b0x1z00z1x,'b1zzz1},'b0x00x1x0x1zz0x0z00z1xx1xz0x}},'{'{'bzz1z10z1x1zz01xz0xxzz1000zx,'{'b0zx0zz111,'bxz1,'b10x10xz1z},'b1zx},'{'bxz100zz11z0z0z11z111xx0zz00,'b10x0zz0x1x1xx111z1x1101z10z,'b0x},'{'bz000x1z1z10x1zx0x010x00z1z1,'bxzz1x1zzzz00x001z11zzz1111x,'b1z},'{'{'b1xxz10zx1,'b1000xz10x,'bzxxz01z00},'{'bx,'bz,'b10x1xzzxx},'bx0}}};
+endmodule: t
+
+module syvslu (inout trior logic [4:0][0:2] kzcltoitzt [2:0][4:3]);
+  // Unpacked net declarations
+  wire logic [0:2][3:1][4:2] hiilvwybwn [4:3][4:1][2:4];
+  tri0 logic [0:4][0:4][3:1][1:4] akgzsn [4:0][2:1][0:2][1:0];
+  
+  t rpxxbx(.lv(akgzsn), .a(hiilvwybwn));
+  
+  xnor ppwcu(leirww, kezwd, dykqric);
+  
+  xnor cpbwwuvo(e, leirww, e);
+  
+  xnor faiwetlq(iau, hcbxlkzg, pa);
+  
+  
+  // Multi-driven assignments
+  assign pa = leirww;
+  assign hcbxlkzg = kezwd;
+endmodule: syvslu
+
+module a (output bit [1:1][0:2][0:0] sbtjsfk);
+  // Unpacked net declarations
+  wire logic [0:2][3:1][4:2] qrzalbwc [4:3][4:1][2:4];
+  tri0 logic [0:4][0:4][3:1][1:4] cxixwkvf [4:0][2:1][0:2][1:0];
+  
+  t avhmegcn(.lv(cxixwkvf), .a(qrzalbwc));
+  
+  xnor h(agqixgdks, agqixgdks, sbtjsfk);
+  // warning: implicit conversion of port connection truncates from 3 to 1 bits
+  // warning: implicit conversion changes possible bit states from 2-state to 4-state
+  //   bit [1:1][0:2][0:0] sbtjsfk -> logic sbtjsfk
+  
+  xnor mpolwr(sbtjsfk, agqixgdks, sbtjsfk);
+  // warning: implicit conversion of port connection truncates from 3 to 1 bits
+  // warning: implicit conversion changes possible bit states from 2-state to 4-state
+  //   bit [1:1][0:2][0:0] sbtjsfk -> logic sbtjsfk
+  //
+  // warning: implicit conversion of port connection truncates from 3 to 1 bits
+  // warning: implicit conversion changes possible bit states from 2-state to 4-state
+  //   bit [1:1][0:2][0:0] sbtjsfk -> logic sbtjsfk
+  
+  
+  // Multi-driven assignments
+  assign cxixwkvf = cxixwkvf;
+  assign qrzalbwc = qrzalbwc;
+  assign cxixwkvf = '{'{'{'{'bxz10010zx0zxzz01010010zxxx0zz1zzx111x1x0xxxz01x11x0zzx1x1zzx0x00z1xxz10100zx00xzxz001zx0xzxxxzxz1zzxzx1xx0zz1x0zx0xx1x0xx0zx00xxz011x01zz11x011xxx10x00z0zzz1zzz0z01xzx1z00010z0x1xzxz1z10x1x00z0x00x001001z0xxx0000zx0zzx0zx0zxz00z1xz0x0x001xx100zzx1010zxxz0z1xxx0z01zxzz0z01101111xxzzzx00xxzxx1zx00xx0z,'bxxx},'{'bx0,'bx0},'{'bz,'b01010xzz01100xx1xxx00xz01x11xx10zzx1100xx01x1z0zxz0111z1x001xxz1zzxz11zzz1x11xz0xzxx0z0xzz1z110x01zz1z1z0xzz0zxxx0111zx0zz01x111zx1xx1101zx0z1x0z11z111zx0z1010100xxzxz101001z1xx1110111z0z01xzx11xxzzx10101x10z0101zz1xzz00z110x010zx1z1xzz1z100z10zzz1zx1111xz0x10x0x1100x1zxz0x1xz0xzx0zx11xxx1zz1010xzzx}},'{'{'bx1z,'bzzx1},'{'b100zx1xzx1zzzz1xzzz001xx00100z0zzz1xzx110010zx1x10x111zz1xzzxz1xx00010xz01z1zx110zzx10xx0xz0xzxz0zz01xx00xxzzx1z0xxx1z0zzx0zxz110110z1x101xz100x110zzz001xxzx10zx11x01zx0x1z0xz00xz101z10zzxxzz00x1x100xzzxx11xx10xx10z110z00z10z001z00010z1zx0010zzzx1zzzz000zzx011xzz0xzz00011x0x00z1zz1z1z0x010000z0100x1,'b10z1111z00xx0xxx1zxz11x01zxz0x0x01zzx000x00xx01xz0x1xx1xxx0z1x1x1zx10xxx11z1x1xx0xx110010z01z00z1zzz100001z001z1xz00xzz0xz0xxxxz0xxx1xx1x10z0x11zz1z11zx1zx1x0xxxx0z11zz01z0x11zxzxzxxx100zzx1x0z0z1zx1z1z0z0110110zzz10000xx0zxxx011zzz110z111z110zx0xzxz111xxxzxz1z010xxz000z0zzz0xxxzxz1xx1z0z0z01z1x1zxz},'{'bz1x1,'b100xx01x11z0z0x0zz1zx00x0z0111101z0xz11z10z1zxx000001xz0z0x0zx1011x00x01xz11x0x1x0zzz0000x0z100xx100xz01zz0z100zzzzz01x001xxzz0zxzz0x01z100zzzzx0xxxx11001110zxx001xxx0001xx0xz1x001111z1z1x11z01z01x1000x0zz00z1zx0010x11z0x1xzz11x010x0zz10x10z1z0zzxx0x0x00xx000zzxxxz1x1z0zzxx1zz1zx01zzxxx1z1xzz01x110x}}},'{'{'{'b00zz10x00z10z1x1x10zz0z1zzzx0xxz0111zz1zz1x0zx11x1xz0z0111z010zx10z0zzx1x00zz010x10xz0xxxzz111x10x11x0xxzx0101x1zz11xzx0z1zz10011zxxx10x1zx01xxx1z011z01x01zz111101z1xz0001000z0zz0101100xxx0z1x01xz0101z111z0110zzx0z00011z0zz0xxxz001xx1010x0zz10111zzz11xx11zx0zxz01zxxxzx1100z0xzxz111xx0zx0x011xxz1x1x0,'bxz0x00xz0zzzx0xz100xz00zxxxz0xz1x001z1x000xz01x10zz10000xx1011010001x1x0z0zz0x10xz00z00z0111xxz1zxx1zx1xzzz10xxzzzz000z0010xz0xz1000z1x1100zzxx10zz1xzx00zxx0zz011x1z1xzx1xx1011zz0011x1x11101z010zx01x0xxz101xzxzzxzxx0xx1000xxz10x0zxxz0z01z1z000x1z001z1xz10110x1x01z1x1x1x00zzzx00xx10z1100zx001z000zx0z},'{'bzxzx0x011x0001z1100z00z1110x00xxzz100xxz000xxxzzx1x100zzxz0x011z010x10xx0z01zz1zxz0zz0zxx1x000xzxz10xzz01z0zx1x101xx01x10x0z1xxzxxzxzx1xxz0xx0xzxzzxxz01xx00xxzz0z00z1z0z00x00z0xxxx000xzx1z00z1z1x1000zzz100xxxzx01x10zzxz0xzx00zz0z00xxx1z1x0110xxx10zzz0zxz1zz1xx000x10x1x1zz0x1xx0zzz1x0z1z1xx1100z01z0z,'b0z0},'{'b1z010xxz1zz0zz1x001xzx00000zx0xz1zzzzz0011x110000xx0x100zx01xz0zzxzz00xxz01xxzzz111z01zx10xzz00100011zxzz1zz11111xzzxx101xz00zzx101101xz10z0z1x10x1011x101zxzz01xzzzz1x1zzz0zx1zz1zz1xz001z10x11zzzz1x0zzxx0110x0x0z0111xx1zxz0x00xz0101x1111zx00z00xxz111111zx1x011x111x0z00x1000zx000xxx1zx1x1001z011111zz,'b0}},'{'{'bx00z101zzx0zzz00xz1z110zxxz0z0x1x110zx0xx000z0z1z0zz1010zz11zxx10zxzzx111zx1z0z1011101z001xxzzzzzxxx01z1xx0xxxzxzzxzx00z1xx1z0x11xx1xx0x00x1xz11x01zx00xx10x1z00z01xx1x0001x11100z1z0x001zxx0z1xxz00x1x0zxz1x11zx0x001x00z11xx010zzzx0x0xzx0z0zx0z1001x0zxxxzxzzzzxx101z00zx111110x011zzz000z011101zxxx1zz01,'b01x},'{'b01x1x1x1xxz01x10z00x1xzz0zz01xxzz1z010001xx0z0z11z1zzx1xx01zx001100x1z01xz10xz1zzzx01zxzxx1xxzx0z000111110z11011zx01zz0x1x1x00xx1001010xzxz1x10000z0z0x01xx1z1zzz1z100z010xz00010zx0011xxzxxz00011011zxzxxz1x0x11x0xz01xz0xxzz0zz10x1z1xxzxz111xx0z001z1xxz1zzzxz1x0z000x1x0xzxzx1zzzz0zzz0z0xx0xzx0zzz11010,'b0zzx01xx1zx1x00x1100101z111010x00xz00x00xz0001z0xxzz000xz0x01z0zzx01zz0zx0xx1xxzz1100zxx01z11010x11xz01xzzx10x00z01xxz011zz00zzz1zzz0z0zz1zz0x1zxz11xz1xxxx1z0z00x01xx0zx011x0x10zzzxxz0zz01x10zzz00zxzx10z000zx11zxz011010001xx0zxx0xx0z0z01z0zxz0zzx0010xz1xxxxzz0x0x0x0x01110z01xz0x1xzzx10xxxxz1xzzzxx11},'{'b01zz10x1x10x00zz1101z0zx1xzxx01x0xx0z10zx01zxx1110z1x01xz1000x011zz0zx10zx110zx1xzxz0xxxx1z1001zz0zx1z01110100011101101xz1xxz0zz10x01z0zx0x00x1zx00zxx01z1xx0x10z0zxxz1z1xx11zz0zx0xx1zzxx111xx001xxx01zz0zzxxxxzz01zx0zxzx0z1zxzxzz1z0xx100x00z01zzx1x0x00z1xzx11xx00x1zz1xz11x1xxzzx1zzxzx00100z0x01xxx011,'bzz}}},'{'{'{'bxz,'b0xx},'{'b0xx00zxxx00z0xxx0xz11zxxzzzx11zx111zx1z1xx0000zx11xx001x1zz011xxx0zz100x0011x1z1zxz11zzx01z10z1z0zx0z00x11xzzx0zz0zxz1z0zx1x100zz01zx10x000x1xz010111x00x1x00x1z0z011110zxxz0x0xxx000101x1xz0x100zz001x100010z010x0x0xzzz101x1x1100xx1x10x0001100x0z1x1zxz0zxzz1zz1zxzz0xzzx1101z11x00zxzz0z0z10zx110xzxz0z1,'bz1zx10z000111x11xx1x11xz1z010zxxzzzz1xz0z0xxxxx001z11z0zz1xx1z01x011zxxzzzz0x1111z11z0x0z0z00xzz1x1z10xx100xzz11zz0xx1xxxxxz1x0zz0z01x100x1zxx0x00z1x111z1100zxz0x110zz1z1x011101zx01xxxx1zxx11xxxzx0110110xz110101z00010zxzx10001111zzz01z1010zx11x01zz01xz10xzxx0010zxx1xxzz11z0x01z01xxz1z1011011xx10xzx0},'{'bz1x0z,'b1xzx}},'{'{'bx01z0x00z1zx001010xxxz0xzx11110110zzx1x110z01z0xx0zx0x1x1xzx1z1xxxxx1z1zzxxxx1z0zzz1x0x00x0110zzz1xzx1xz11x1000101zx0111xz1x1001xxx11zzx001x011zz0100z1011x0001001x0zx0x111x0z0z010x00xz0x0xxz1z10z0xx0zx1x0000z111111010zxxzx1x11xx10x1x0x01z1x1z00100z10z1100z00111z1xxz00zzxz00zz111x01xx01xzx01111xx0xx1,'bx},'{'bx,'bzx1x},'{'b0z1z001zx001zx0xzx1zx0xxxz00x10z0x0z01zx0zzzxx10xz10011x1001x0zz1zxxx1101xz1xzzz1x1x1zxz1zxx10000z0z0z0z0zx1z110110xzz0zx001100zx0xx11xzxzx00x0110110zxzx0zxz0xzx0zx1100zxx0z01zxxzz1z1zzzzxx100zz001xxz01z000z00x0011xz0x11zz0x111xzz00zx0x0zz01x0z01zxz0001zz011zx010zz1z1z0zzz0101z111xz0z11xzzz1x11zxz11,'b10zz0}}},'{'{'{'bzz1110xxz101z1zz00zzxz11z010x01xzzzzxx0xx011zz01010z0x1z1xx11x11010xx10z0zx0x00xxzxxz11xxx1xzx11z0z0x1z00010xzz011xz0xxxxzx0xx1z001x0xz0x00zz111zzxx10x00xzx0z00z0100zx11x110110zxz0zxx110z1zz00000z01z0z0z00zzx1011z0x0zx0x1z00zx011x100110xzx001xxzzz01x1zx0zx1x10z01xz11xz111xxz10x0z0xxxzxx0zzxzxz1x1011,'bx10z1zx00xxz1000xxx0x0z10zxzxzx01zxzxxz101z1x0x0zzz00x1x0x1xzz0x0xz11x01x1010xzxz111zz001z0111101zz001xxz1xx101zzzz1xxz001xzzx0z11xxxxx111x100z0zz100zx1zzx01z0x00xx1z0zx0zz10000z01z0x1xxxzxzxx1x01100z0z00x01zxx01z0xxzz0101z0x11x1z1xxx1xz11z0z1x1010xxx0z1x001z11xz10zx0x0xxzx101x01xx1101x01z0z1xzxzx0x},'{'b1,'bx1zxx1xz11z0zx1xxx11xx0110xxz00z0zx111x1100x10100xx1x01zx1xzz1x1zxz1z0xxxx1x0xx011zz00zx0000xzxzx00x0zx01x1z0x0011z1110z1x100xx0zxx100z01100zxx0xx100010zxz0zx0x000x1x01xz1100z0z01xzz11010100100z101z0zz0x1zxxzx0100z11z10zzx11xz1z0xzzx0xzz0x01x00z00x11z010z0x10xzz100xxz11zzz0x11x0zzzx01xxz110zxx001100},'{'b011x0xxzz1xx0x0xz10010x1000z10zz0z000zxzzxxxxx11x1xx010111x01z0z01000x1zxxxx11x11z0z111z0zx1zzzx0z0xxxxzxxzxzz111z0xx1z0001zxz01zxzz1xx00z11z0zz1x110x0z1x10zx0z111z10100010xxz0zz01zxz0x0xzzz1z01x10xz0zxx111xx1zz1z110zzzxx1x1z0x0xzx0xzz0x01zxzxzxzx110z0zz1z100xz1x0x010zz1xx0xx00xz0xz110x1zx1zx101101z,'bxxx0xx0xx01z01x0zzxz00zxzxzz0xzzz0zz10zxz110zx1zxx0zxz01z1x101z1xx1xzx0x0z1zzzxzxzz11zz1x0x0xx1101zzx0z0001x0001xzx1001z0x1zx0z10x1xz10x010xz1z0zz0xx11z001x0zzx0001xz1zz0x111x100zx01zzx0z1zxz101011zx00zz0z110x1xx1111zzzx0zx01xxxxzx110zx00x0zxx0z01101xx1x1z01z0x1xxxz1x0x1x000zxz10zzxx101z00xx0zz1zxx0}},'{'{'b1,'b1010z0011xz1101000001xx10x0111x1z0010zzzz0z01xx100x110z011zzz000xzzz100zx0zxx0000zzx01z0011x10100xx1111110x0x1xzxxz111z0zxzx0zzx10z10z11x0zxxz0z01xx0xz00z0x000zzx0x01z001xx0z1zxz011xxxx10zxx11z010x10x1zz1z01xzx1x1011100zx111zzxzzz11x00z1111zx0zzz11x00z101x0zxxzzz0zzx0x1x1z0100z0000xzx0110xzz001z1010},'{'b0x,'bzz00x},'{'b00z,'bzx0z}}},'{'{'{'b0x1,'bzz001},'{'bz110x1x010z1x011zzx100zx010x0z0zz0z110x1zz001z01101z1xx1z1xzx000xxxxx1zzx10x0xxx11zxxz0z1zx0zz11z1xxx10000001110101zz0x1zx10x1001xzzx0z10011xx0xz0z0zzx101110z10110z0z011z10z11xz01z01z00zz1zzx1zx1xxx0x10zx1xz0z0x1z1x01111zx0x10xx1x1zxzz0x1xxxz111z0z1x1zzzz1z0z1zzzz000xx1x1zzx0xx0z00z11x0x11x1x1z1xx0z,'bx1},'{'bx0xzxx0x1001z0x0z1z0z101x1xxz111x0xx00z1x1zz11111110xz100z0z0xx00x11zx000x111x001001x010xz01x1z1100x100z11xx1100xz1z0zzz0xz0xx1x10z01zxz10z0001zz0zxzz10zz1zx1001x110x00z1xxz11xzxz0x1x1xxx0xxxzz1xzz00x0xxz111xxzx00zx1z1xzzzz101zxz1x1001x11xx001zzz1z1xx0xz10z0zz1zxz0x011101zx01xxx1xz01z101z0xx1xz00xz1,'bz1010zx1zxx01x110zxx00111x01zzz00100z0xz10000xx0zz0110z1zx0zx01zx0z1zz1x1zzzz1z0z1x01xzzz10zxz000111xx001111111z01xx0x1z00z010x1x1z00zxzxxxz11zx01z00100x01z000x0xxx0zx1x1xz0zxzxx111001zz000z0111x11xzxz0zzzz1x10010xx0zz110zzz00zx100xzxx0zzz0x1xxz0zz000xxxz0xx10x10110xx1zzz1xx0z10z0xz001zxxzxz0x01111x}},'{'{'b0,'b0z1z0101xxzzz11zzz01010z1zz1xzz0001x0zzxzzz0x101z1010xxzzxxxxx01z01101xzx0zzx0x01zz00100x10xz1011x1z1111xzz011x0010z0x11z0000xxzzz01xxz1zxzx00xzz11zx0xxx01zxxz1z11x000xx01z00z0x00xxx1xxxx1101z000zzxx01z0z10100zx01xx111z011x00z00z0x0zxx0z0zzz1z11z1x101xx1xxzzzxz11z10zx00000z0100011x00x1000zx001010zzx},'{'b1x1x0z0xxzxzzzzzxx000z1xzx0xzzx0z110111zzzzxx00z1xzzzzxzxzx1z0xz00z10101x0z1z01001xz00xxx11x0zz00z0xzzz111zzzzx0001110x00z1zzzxz0xzzzx0zz0xz10x1zx0z0xx11111x1z101x0001zx0z0x0zx1zzxxxx0zxzx1xz1zx01x10x1100x1xxzz11x01xx110z11zz10zxz0zxx0xz0x1x1000zz10xz100011xz101zxz1zz111xz0zz1z1x1x0xz0zxxzxz00z0zz1z,'b0z0x1},'{'bzz1zz,'bx10}}}};
+endmodule: a
+
+module sum ();
+  xnor utmfhoruz(tkwrayo, dwcimknfu, tkwrayo);
+  
+  
+  // Multi-driven assignments
+  assign tkwrayo = 'b10;
+endmodule: sum
+
+
+
+// Seed after: 8418747773867518827,16431300167878843271
