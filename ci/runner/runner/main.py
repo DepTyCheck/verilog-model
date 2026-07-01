@@ -1,5 +1,6 @@
 # ci/runner/runner/main.py
 import logging
+import shlex
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -44,18 +45,42 @@ def _print_final_report(report: PerFileReport) -> None:
     )
 
 
+def _log_run_inputs(args, asset_paths, extra_ignored_regexes, commands) -> None:
+    """Log all resolved tool-run inputs so transfer/parsing bugs are visible up front."""
+    logger = get_logger()
+    logger.info(f"Tool: {args.tool_name!r}")
+    logger.info(f"Raw --assets: {args.assets!r}")
+    logger.info(f"Parsed assets ({len(asset_paths)}):")
+    for asset in asset_paths:
+        logger.info(f"  asset: {asset!r}")
+    logger.info(f"Raw --extra-ignored-regexes: {args.extra_ignored_regexes!r}")
+    logger.info(f"Parsed extra ignored regexes ({len(extra_ignored_regexes)}):")
+    for regex in extra_ignored_regexes:
+        logger.info(f"  ignore: {regex!r}")
+    logger.info(f"Commands ({len(commands)}):")
+    for cmd in commands:
+        error_pattern = cmd.error_regex.regex if cmd.error_regex else None
+        logger.info(f"  run: {cmd.run!r} | error_regex: {error_pattern!r}")
+
+
 def main() -> None:
     configure_logger(level=logging.DEBUG)
     args = parse_args()
     logger = get_logger()
 
+    extra_ignored_regexes = shlex.split(args.extra_ignored_regexes)
+    asset_paths = shlex.split(args.assets)
+
     known_errors = IgnoredErrorsList(
         args.ignored_errors_dir,
         args.tool_name,
-        regex_list=args.extra_ignored_regexes,
+        regex_list=extra_ignored_regexes,
     )
     commands = parse_commands(args.commands_json)
-    assets = Assets(args.assets) if args.assets else None
+
+    _log_run_inputs(args, asset_paths, extra_ignored_regexes, commands)
+
+    assets = Assets(asset_paths) if asset_paths else None
     file_suffix = Path(args.file_pattern).suffix
     if not file_suffix:
         logger.error(f"--file-pattern {args.file_pattern!r} has no file extension; cannot derive a suffix")

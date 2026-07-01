@@ -19,9 +19,9 @@ namespace Expressions
 
   public export
   data Expr : (l : Lang) -> {s : _} -> {usl : _} -> {subUs : _} -> (mcs : MultiConnectionsList l s usl subUs) ->
-              Fin mcs.length -> Type where
-    SV : SVTMPExpression mcs (dtToSVt $ typeOf $ index mcs f) -> Expr SystemVerilog mcs f
-    VH : VHDLExpression  mcs (dtToVHt $ typeOf $ index mcs f) -> Expr VHDL mcs f
+              (target : Fin mcs.length) -> Type where
+    SV : SVTMPExpression mcs (dtToSVt $ typeOf $ index mcs fTarget) -> Expr SystemVerilog mcs fTarget
+    VH : VHDLExpression  mcs fTarget -> Expr VHDL mcs fTarget
 
   public export
   data ExpVect : (l : Lang) -> {s : _} -> {usl : _} -> {subUs : _} -> (mcs : MultiConnectionsList l s usl subUs) ->

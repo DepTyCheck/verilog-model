@@ -39,6 +39,11 @@ inputs:
     required: false
     default: ""
 
+outputs:
+  commit-hash:
+    description: "Cloned tool commit hash"
+    value: ${{ steps.clone.outputs.commit-hash }}
+
 runs:
   using: composite
   steps:
@@ -47,17 +52,16 @@ runs:
       run: sudo apt update -qq
 
     - name: Clone tool
+      id: clone
       if: inputs.tool-repo != ''
       shell: bash
+      env:
+        TOOL_REPO: ${{ inputs.tool-repo }}
+        TOOL_PATH: ${{ inputs.tool-path }}
       run: |
-        git clone ${{ inputs.tool-repo }} ${{ inputs.tool-path }}
-        cd ${{ inputs.tool-path }}
-        echo "COMMIT_HASH=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-
-    - name: Set empty COMMIT_HASH for source-less tools
-      if: inputs.tool-repo == ''
-      shell: bash
-      run: echo "COMMIT_HASH=" >> "$GITHUB_ENV"
+        git clone "$TOOL_REPO" "$TOOL_PATH"
+        cd "$TOOL_PATH"
+        echo "commit-hash=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
     - name: Restore from cache
       if: inputs.tool-repo != ''
@@ -65,7 +69,7 @@ runs:
       uses: actions/cache/restore@v5
       with:
         path: ${{ inputs.tool-path }}
-        key: ${{ inputs.tool-name }}-cache-${{ env.COMMIT_HASH }}
+        key: ${{ inputs.tool-name }}-cache-${{ steps.clone.outputs.commit-hash }}
 
     - name: Add bazel repo (if needed)
       if: contains(inputs.tool-deps, 'bazel')
@@ -81,18 +85,22 @@ runs:
     - name: Install tool-specific dependencies
       if: inputs.tool-deps != ''
       shell: bash
-      run: sudo apt -qq -y install ${{ inputs.tool-deps }}
+      env:
+        TOOL_DEPS: ${{ inputs.tool-deps }}
+      run: sudo apt -qq -y install $TOOL_DEPS
 
     - name: Setup Rust (if needed)
       if: inputs.tool-rust-ver != ''
       shell: bash
+      env:
+        TOOL_RUST_VER: ${{ inputs.tool-rust-ver }}
       run: |
         sudo apt -y install curl
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
         sh setup.sh -y
         source "$HOME/.cargo/env"
-        rustup install ${{ inputs.tool-rust-ver }}
-        rustup default ${{ inputs.tool-rust-ver }}
+        rustup install "$TOOL_RUST_VER"
+        rustup default "$TOOL_RUST_VER"
 
     - name: Update haskell (if needed)
       if: contains(inputs.tool-deps, 'haskell') && steps.cache-build.outputs.cache-hit != 'true'
@@ -111,15 +119,20 @@ runs:
     - name: Pre-Build tool
       if: inputs.tool-pre-build != ''
       shell: bash
-      run: ${{ inputs.tool-pre-build }}
+      env:
+        TOOL_PRE_BUILD: ${{ inputs.tool-pre-build }}
+      run: eval "$TOOL_PRE_BUILD"
 
     - name: Build tool
       if: inputs.tool-repo != '' && steps.cache-build.outputs.cache-hit != 'true'
       shell: bash
+      env:
+        TOOL_PATH: ${{ inputs.tool-path }}
+        TOOL_BUILD: ${{ inputs.tool-build }}
       run: |
         echo "Build tool"
-        cd ${{ inputs.tool-path }}
-        ${{ inputs.tool-build }}
+        cd "$TOOL_PATH"
+        eval "$TOOL_BUILD"
 
     - name: Save build
       if: inputs.tool-repo != '' && steps.cache-build.outputs.cache-hit != 'true'
@@ -131,12 +144,17 @@ runs:
     - name: Install tool
       if: inputs.tool-install != ''
       shell: bash
+      env:
+        TOOL_PATH: ${{ inputs.tool-path }}
+        TOOL_INSTALL: ${{ inputs.tool-install }}
       run: |
         echo "Install tool"
-        cd ${{ inputs.tool-path }}
-        ${{ inputs.tool-install }}
+        cd "$TOOL_PATH"
+        eval "$TOOL_INSTALL"
 
     - name: Print version
       if: inputs.tool-version != ''
       shell: bash
-      run: ${{ inputs.tool-version }}
+      env:
+        TOOL_VERSION: ${{ inputs.tool-version }}
+      run: $TOOL_VERSION
