@@ -99,8 +99,8 @@ runs:
           --commands-json "$COMMANDS_JSON" \
           --translate-hook "$TRANSLATE_HOOK" \
           --ignored-errors-dir "$IGNORED_ERRORS_DIR" \
-          --assets $ASSETS \
-          --extra-ignored-regexes $EXTRA_IGNORED_REGEXES \
+          --assets "$ASSETS" \
+          --extra-ignored-regexes "$EXTRA_IGNORED_REGEXES" \
           --output "$PER_FILE_JSON"
         echo "exit=$?" >> "$GITHUB_OUTPUT"
 
