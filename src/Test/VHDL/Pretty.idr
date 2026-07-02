@@ -19,8 +19,11 @@ import Text.PrettyPrint.Bernardy
 
 %default total
 
+vobjOf : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection VHDL s usl subUs -> VHDLObject
+vobjOf = dtToVHt . typeOf
+
 vtypeOf : {s : _} -> {usl : _} -> {subUs : _} -> MultiConnection VHDL s usl subUs -> VHDLType
-vtypeOf = valueOf . dtToVHt . typeOf
+vtypeOf = valueOf . vobjOf
 
 Show PredefinedArrayTypes where
   show BOOLEAN_VECTOR = "boolean_vector"
@@ -33,6 +36,29 @@ Show PredefinedArrayTypes where
 Show ArrayDirection where
   show Up     = "to"
   show Down = "downto"
+
+||| Predefined in package STD.REFLECTION
+Show VHDLReflectionProtectedType where
+  show VALUE_MIRROR_PT               = "value_mirror"
+  show SUBTYPE_MIRROR_PT             = "subtype_mirror"
+  show ENUMERATION_VALUE_MIRROR_PT   = "enumeration_value_mirror"
+  show ENUMERATION_SUBTYPE_MIRROR_PT = "enumeration_subtype_mirror"
+  show INTEGER_VALUE_MIRROR_PT       = "integer_value_mirror"
+  show INTEGER_SUBTYPE_MIRROR_PT     = "integer_subtype_mirror"
+  show FLOATING_VALUE_MIRROR_PT      = "floating_value_mirror"
+  show FLOATING_SUBTYPE_MIRROR_PT    = "floating_subtype_mirror"
+  show PHYSICAL_VALUE_MIRROR_PT      = "physical_value_mirror"
+  show PHYSICAL_SUBTYPE_MIRROR_PT    = "physical_subtype_mirror"
+  show RECORD_VALUE_MIRROR_PT        = "record_value_mirror"
+  show RECORD_SUBTYPE_MIRROR_PT      = "record_subtype_mirror"
+  show ARRAY_VALUE_MIRROR_PT         = "array_value_mirror"
+  show ARRAY_SUBTYPE_MIRROR_PT       = "array_subtype_mirror"
+  show ACCESS_VALUE_MIRROR_PT        = "access_value_mirror"
+  show ACCESS_SUBTYPE_MIRROR_PT      = "access_subtype_mirror"
+  show FILE_VALUE_MIRROR_PT          = "file_value_mirror"
+  show FILE_SUBTYPE_MIRROR_PT        = "file_subtype_mirror"
+  show PROTECTED_VALUE_MIRROR_PT     = "protected_value_mirror"
+  show PROTECTED_SUBTYPE_MIRROR_PT   = "protected_subtype_mirror"
 
 Show (Dimension t) where
   show (MkDim start end direction) = "(\{show start} \{show direction} \{show end})"
@@ -48,22 +74,23 @@ printType Real                  = pure $ "real"
 printType StdLogic              = pure $ "std_logic"
 printType (Array t d)           = pure $ "\{show t}\{show d}"
 printType (StdLogicVector d)    = pure $ "std_logic_vector\{show d}"
+printType (Protected t)         = pure $ show t
 
 printPort : (name : String) -> (dir : String) -> (type : VHDLObject) -> Gen0 String
 printPort name dir t = do
   ts <- printType $ valueOf t
   pure $ "\{name} : \{dir} \{ts}"
 
-||| Library header followed by a separating empty line, or nothing at all.
-||| Returning a list lets callers append it without leaving a stray blank line
-||| when the header is absent.
-libHeaderSection : {opts : _} -> Bool -> List (Doc opts)
-libHeaderSection True = [
-      line "library ieee;"
-    , line "use ieee.std_logic_1164.all;"
-    , emptyLine
-    ]
-libHeaderSection False = []
+logicUseLines : {opts : _} -> List $ Doc opts
+logicUseLines = [ line "library ieee;", line "use ieee.std_logic_1164.all;" ]
+
+reflectionUseLines : {opts : _} -> List $ Doc opts
+reflectionUseLines = [ line "use std.reflection.all;" ]
+
+contextClause : {opts : _} -> List (Bool, List (Doc opts)) -> List $ Doc opts
+contextClause specs = case concatMap snd $ filter fst specs of
+  []   => []
+  uses => uses ++ [emptyLine]
 
 ||| Creates the formal => actual association
 ||| formal: the name inside the sub-component
@@ -305,7 +332,8 @@ isTimeLit (MkTimeVect _) = True
 isTimeLit _              = False
 
 exprHasTimeLit : Expr VHDL mcs f -> Bool
-exprHasTimeLit (VH $ MkLiteral lit) = isTimeLit lit
+exprHasTimeLit (VH $ MkLiteral lit)  = isTimeLit lit
+exprHasTimeLit (VH $ MkQualName _)   = False
 
 expVectHasTimeLit : ExpVect VHDL mcs fins -> Bool
 expVectHasTimeLit []        = False
@@ -368,18 +396,35 @@ parameters (x : Fuel) {opts : LayoutOpts} (entityName : String) (archName : Stri
   isLogic (StdLogicVector _) = True
   isLogic _                  = False
 
-  portsHaveLogic : List (Fin $ length mcs) -> Bool
-  portsHaveLogic fins = foldl (\b, f => if (isLogic $ vtypeOf $ index mcs f) then True else b) False fins
+  isProtected : VHDLType -> Bool
+  isProtected (Protected _) = True
+  isProtected _             = False
 
-  ||| Multiconnections which does not represent connection to top port are treated like signals.
+  ||| Does any of the given multiconnections have a type satisfying the predicate?
+  portsHave : (VHDLType -> Bool) -> List (Fin $ length mcs) -> Bool
+  portsHave pred fins = foldl (\b, f => b || pred (vtypeOf $ index mcs f)) False fins
+
+  ||| Multiconnections which does not represent connection to top port are treated like signals or variables
   filterTopOrSub : (f : Fin (length mcs) -> Bool) -> List (Fin $ length mcs)
   filterTopOrSub f = filter f $ List.allFins $ length mcs
 
-  topPortsHaveLogic : Bool
-  topPortsHaveLogic = portsHaveLogic $ filterTopOrSub isMCTopPort
+  topPorts : List (Fin $ length mcs)
+  topPorts = filterTopOrSub isMCTopPort
 
-  subPortsHaveLogic : Bool
-  subPortsHaveLogic =  portsHaveLogic $ filterTopOrSub $ not . isMCTopPort
+  subPorts : List (Fin $ length mcs)
+  subPorts = filterTopOrSub $ not . isMCTopPort
+
+  entityContext : List (Doc opts)
+  entityContext = contextClause
+    [ (portsHave isLogic     topPorts, logicUseLines)
+    , (portsHave isProtected topPorts, reflectionUseLines)
+    ]
+
+  architectureContext : List (Doc opts)
+  architectureContext = contextClause
+    [ (portsHave isLogic     subPorts, logicUseLines)
+    , (portsHave isProtected subPorts, reflectionUseLines)
+    ]
 
   ||| 3.2.2 Entity header
   ||| entity_header ::=
@@ -390,22 +435,24 @@ parameters (x : Fuel) {opts : LayoutOpts} (entityName : String) (archName : Stri
   printEntity : Gen0 $ Doc opts
   printEntity = do
     portClause <- printPortCaluse
-    pure $ vsep $ libHeaderSection topPortsHaveLogic ++ [
+    pure $ vsep $ entityContext ++ [
       line "entity \{entityName} is"
     , portClause
     , line "end \{entityName};"
     ]
 
   ||| 6.4.2.3 Signal declarations
-  |||
   ||| IEEE 1076-2019
   |||
   ||| ex: signal link_sig : Bit;
   signalDeclaration : Fin (length mcs) -> Gen0 $ Doc opts
   signalDeclaration mcFin = do
     let name = index mcFin mcsNames
-    ts <- printType $ vtypeOf $ index mcs mcFin
-    pure $ line "signal \{name} : \{ts};"
+    let obj  = vobjOf $ index mcs mcFin
+    ts <- printType $ valueOf obj
+    pure $ line $ case obj of
+      Var _ => "shared variable \{name} : \{ts};"
+      Sig _ => "signal \{name} : \{ts};"
 
   ||| 3.3.2 Architecture declarative part
   |||
@@ -458,7 +505,8 @@ parameters (x : Fuel) {opts : LayoutOpts} (entityName : String) (archName : Stri
   subEntitiesPortsMap = traverse concurrentSubEntDecl $ toList $ zip subEntNames $ Vect.allFins $ subUs.length
 
   printExpr : Expr VHDL mcs f -> Gen0 String
-  printExpr (VH $ MkLiteral lit) = printVHLit x lit
+  printExpr (VH $ MkLiteral lit)      = printVHLit x lit
+  printExpr (VH $ MkQualName fSource) = pure $ index fSource mcsNames
 
   printAssign : Fin mcs.length -> Expr VHDL mcs t -> Gen0 $ Doc opts
   printAssign f exp = do
@@ -487,7 +535,7 @@ parameters (x : Fuel) {opts : LayoutOpts} (entityName : String) (archName : Stri
   printArchitecture = do
     archDecl <- architectureDeclarative
     archState <- architectureStatement
-    pure $ vsep $ libHeaderSection subPortsHaveLogic ++ [
+    pure $ vsep $ architectureContext ++ [
       line "architecture \{archName} of \{entityName} is"
     , defaultIndent $ archDecl
     , line "begin"

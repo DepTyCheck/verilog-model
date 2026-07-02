@@ -115,6 +115,44 @@ namespace Arrays
 -- ||| index_constraint         ::= ( discrete_range { , discrete_range } )
 -- ||| IEEE 1076-2019
 
+namespace ProtectedTypes
+
+  public export
+  data VHDLReflectionProtectedType = VALUE_MIRROR_PT             | SUBTYPE_MIRROR_PT
+                                   | ENUMERATION_VALUE_MIRROR_PT | ENUMERATION_SUBTYPE_MIRROR_PT
+                                   | INTEGER_VALUE_MIRROR_PT     | INTEGER_SUBTYPE_MIRROR_PT
+                                   | FLOATING_VALUE_MIRROR_PT    | FLOATING_SUBTYPE_MIRROR_PT
+                                   | PHYSICAL_VALUE_MIRROR_PT    | PHYSICAL_SUBTYPE_MIRROR_PT
+                                   | RECORD_VALUE_MIRROR_PT      | RECORD_SUBTYPE_MIRROR_PT
+                                   | ARRAY_VALUE_MIRROR_PT       | ARRAY_SUBTYPE_MIRROR_PT
+                                   | ACCESS_VALUE_MIRROR_PT      | ACCESS_SUBTYPE_MIRROR_PT
+                                   | FILE_VALUE_MIRROR_PT        | FILE_SUBTYPE_MIRROR_PT
+                                   | PROTECTED_VALUE_MIRROR_PT   | PROTECTED_SUBTYPE_MIRROR_PT
+
+  public export
+  Eq VHDLReflectionProtectedType where
+    (==) VALUE_MIRROR_PT               VALUE_MIRROR_PT               = True
+    (==) SUBTYPE_MIRROR_PT             SUBTYPE_MIRROR_PT             = True
+    (==) ENUMERATION_VALUE_MIRROR_PT   ENUMERATION_VALUE_MIRROR_PT   = True
+    (==) ENUMERATION_SUBTYPE_MIRROR_PT ENUMERATION_SUBTYPE_MIRROR_PT = True
+    (==) INTEGER_VALUE_MIRROR_PT       INTEGER_VALUE_MIRROR_PT       = True
+    (==) INTEGER_SUBTYPE_MIRROR_PT     INTEGER_SUBTYPE_MIRROR_PT     = True
+    (==) FLOATING_VALUE_MIRROR_PT      FLOATING_VALUE_MIRROR_PT      = True
+    (==) FLOATING_SUBTYPE_MIRROR_PT    FLOATING_SUBTYPE_MIRROR_PT    = True
+    (==) PHYSICAL_VALUE_MIRROR_PT      PHYSICAL_VALUE_MIRROR_PT      = True
+    (==) PHYSICAL_SUBTYPE_MIRROR_PT    PHYSICAL_SUBTYPE_MIRROR_PT    = True
+    (==) RECORD_VALUE_MIRROR_PT        RECORD_VALUE_MIRROR_PT        = True
+    (==) RECORD_SUBTYPE_MIRROR_PT      RECORD_SUBTYPE_MIRROR_PT      = True
+    (==) ARRAY_VALUE_MIRROR_PT         ARRAY_VALUE_MIRROR_PT         = True
+    (==) ARRAY_SUBTYPE_MIRROR_PT       ARRAY_SUBTYPE_MIRROR_PT       = True
+    (==) ACCESS_VALUE_MIRROR_PT        ACCESS_VALUE_MIRROR_PT        = True
+    (==) ACCESS_SUBTYPE_MIRROR_PT      ACCESS_SUBTYPE_MIRROR_PT      = True
+    (==) FILE_VALUE_MIRROR_PT          FILE_VALUE_MIRROR_PT          = True
+    (==) FILE_SUBTYPE_MIRROR_PT        FILE_SUBTYPE_MIRROR_PT        = True
+    (==) PROTECTED_VALUE_MIRROR_PT     PROTECTED_VALUE_MIRROR_PT     = True
+    (==) PROTECTED_SUBTYPE_MIRROR_PT   PROTECTED_SUBTYPE_MIRROR_PT   = True
+    (==) _ _ = False
+
 ||| Currently only signal and variable types are implemented, and only these types can be declared as ports.
 public export
 data VHDLType : Type where
@@ -138,6 +176,9 @@ data VHDLType : Type where
   StdLogic : VHDLType
   ||| ΙΕΕΕ 1164−1993
   StdLogicVector : Dimension Natural -> VHDLType
+  ||| 5.6 Protected types
+  ||| IEEE 1076-2019
+  Protected : VHDLReflectionProtectedType -> VHDLType
   -- resolved SIGNED and UNSIGNED from IEEE.NUMERIC_STD
 
 public export
@@ -149,7 +190,23 @@ Eq VHDLType where
   (==) StdLogic StdLogic = True
   (==) (Array t d) (Array t' d') = t == t' && dimsCompatible d d'
   (==) (StdLogicVector d) (StdLogicVector d') = dimsCompatible d d'
+  (==) (Protected t) (Protected t') = t == t'
   (==) _ _ = False
+
+
+||| 6.4.2.3 Signal declarations
+||| It is an error if a signal declaration declares a signal that is of a file type, an access type, a protected
+||| type, or a composite type having a subelement that is of a file type, an access type, or a protected type.
+||| IEEE 1076-2019
+public export
+data CanBeSignal : VHDLType -> Type where
+  YSE : CanBeSignal (Enum _)
+  YSI : CanBeSignal Integer'
+  YSP : CanBeSignal Physical
+  YSR : CanBeSignal Real
+  YSA : CanBeSignal (Array at d)
+  YSL : CanBeSignal StdLogic
+  YSV : CanBeSignal (StdLogicVector d)
 
 ||| 6.4.2 Object declarations
 ||| 6.4.2.1 General
@@ -159,7 +216,7 @@ Eq VHDLType where
 public export
 data VHDLObject : Type where
   Var : VHDLType -> VHDLObject
-  Sig : VHDLType -> VHDLObject
+  Sig : (t : VHDLType) -> (0 c : CanBeSignal t) => VHDLObject
 
 public export
 valueOf : VHDLObject -> VHDLType
@@ -193,4 +250,5 @@ Eq VHDLPortMode where
 ||| So now only signals are allowed
 public export
 data AllowedVHPort : VHDLObject -> VHDLPortMode -> Type where
-  YSig : AllowedVHPort (Sig t) pm
+  YSig : (0 c : CanBeSignal t) => AllowedVHPort (Sig t) pm
+  YVar : AllowedVHPort (Var $ Protected _) InOut

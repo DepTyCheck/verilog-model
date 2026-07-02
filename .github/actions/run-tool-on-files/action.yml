@@ -50,60 +50,87 @@ runs:
   using: composite
   steps:
     - name: Resolve output JSON path
+      id: paths
       shell: bash
+      env:
+        OUTPUT_JSON: ${{ inputs.output-json }}
+        TOOL_NAME: ${{ inputs.tool-name }}
       run: |
-        if [ -n "${{ inputs.output-json }}" ]; then
-          path="${{ inputs.output-json }}"
+        if [ -n "$OUTPUT_JSON" ]; then
+          path="$OUTPUT_JSON"
         else
-          path="${{ inputs.tool-name }}-per-file.json"
+          path="$TOOL_NAME-per-file.json"
         fi
-        echo "PER_FILE_JSON=$path" >> "$GITHUB_ENV"
+        echo "per-file-json=$path" >> "$GITHUB_OUTPUT"
 
     - name: Resolve profile
+      id: profile
       shell: bash
-      run: python3 ci/scripts/resolve_profile.py --profiles "${{ inputs.profiles-config }}" --profile "${{ inputs.profile }}" >> "$GITHUB_ENV"
+      env:
+        PROFILES_CONFIG: ${{ inputs.profiles-config }}
+        PROFILE: ${{ inputs.profile }}
+      run: python3 ci/scripts/resolve_profile.py --profiles "$PROFILES_CONFIG" --profile "$PROFILE" >> "$GITHUB_OUTPUT"
 
     - name: Run tool
+      id: run
       shell: bash
+      env:
+        INPUT_DIR: ${{ inputs.input-dir }}
+        FILE_PATTERN: ${{ steps.profile.outputs.FILE_PATTERN }}
+        TOOL_NAME: ${{ inputs.tool-name }}
+        TOOL_VERSION: ${{ inputs.tool-version }}
+        TOOL_COMMIT: ${{ inputs.tool-commit }}
+        MODEL_COMMIT: ${{ inputs.model-commit }}
+        COMMANDS_JSON: ${{ inputs.commands-json }}
+        TRANSLATE_HOOK: ${{ steps.profile.outputs.TRANSLATE_HOOK }}
+        IGNORED_ERRORS_DIR: ${{ inputs.ignored-errors-dir }}
+        ASSETS: ${{ inputs.assets }}
+        EXTRA_IGNORED_REGEXES: ${{ inputs.extra-ignored-regexes }}
+        PER_FILE_JSON: ${{ steps.paths.outputs.per-file-json }}
       run: |
         set +e
         PYTHONPATH=ci/runner python -m runner.main \
-          --input-dir "${{ inputs.input-dir }}" \
+          --input-dir "$INPUT_DIR" \
           --file-pattern "$FILE_PATTERN" \
-          --tool-name "${{ inputs.tool-name }}" \
-          --tool-version "${{ inputs.tool-version }}" \
-          --tool-commit "${{ inputs.tool-commit }}" \
-          --model-commit "${{ inputs.model-commit }}" \
-          --commands-json '${{ inputs.commands-json }}' \
+          --tool-name "$TOOL_NAME" \
+          --tool-version "$TOOL_VERSION" \
+          --tool-commit "$TOOL_COMMIT" \
+          --model-commit "$MODEL_COMMIT" \
+          --commands-json "$COMMANDS_JSON" \
           --translate-hook "$TRANSLATE_HOOK" \
-          --ignored-errors-dir "${{ inputs.ignored-errors-dir }}" \
-          --assets ${{ inputs.assets }} \
-          --extra-ignored-regexes ${{ inputs.extra-ignored-regexes }} \
+          --ignored-errors-dir "$IGNORED_ERRORS_DIR" \
+          --assets "$ASSETS" \
+          --extra-ignored-regexes "$EXTRA_IGNORED_REGEXES" \
           --output "$PER_FILE_JSON"
-        echo "RUNNER_EXIT=$?" >> "$GITHUB_ENV"
+        echo "exit=$?" >> "$GITHUB_OUTPUT"
 
     - name: Install MDS deps (on failure)
-      if: ${{ env.RUNNER_EXIT != '0' && inputs.mds-on-failure == 'true' }}
+      if: ${{ steps.run.outputs.exit != '0' && inputs.mds-on-failure == 'true' }}
       shell: bash
       run: pip install -r ci/runner/mds_report/requirements.txt
 
     - name: Generate MDS report (on failure)
-      if: ${{ env.RUNNER_EXIT != '0' && inputs.mds-on-failure == 'true' && hashFiles(env.PER_FILE_JSON) != '' }}
+      if: ${{ steps.run.outputs.exit != '0' && inputs.mds-on-failure == 'true' && hashFiles(steps.paths.outputs.per-file-json) != '' }}
       shell: bash
+      env:
+        PER_FILE_JSON: ${{ steps.paths.outputs.per-file-json }}
+        IGNORED_ERRORS_DIR: ${{ inputs.ignored-errors-dir }}
+        TOOL_NAME: ${{ inputs.tool-name }}
+        JOB_LINK: ${{ inputs.job-link }}
       run: |
         PYTHONPATH=ci/runner python -m mds_report.main \
           --per-file-input "$PER_FILE_JSON" \
-          --ignored-errors-dir "${{ inputs.ignored-errors-dir }}" \
-          --tool-name "${{ inputs.tool-name }}" \
-          --job-link "${{ inputs.job-link }}" \
+          --ignored-errors-dir "$IGNORED_ERRORS_DIR" \
+          --tool-name "$TOOL_NAME" \
+          --job-link "$JOB_LINK" \
           --output error_distances.html
 
     - name: Upload per-file JSON
-      if: ${{ always() && hashFiles(env.PER_FILE_JSON) != '' }}
+      if: ${{ always() && hashFiles(steps.paths.outputs.per-file-json) != '' }}
       uses: actions/upload-artifact@v6
       with:
-        name: ${{ env.PER_FILE_JSON }}
-        path: ${{ env.PER_FILE_JSON }}
+        name: ${{ steps.paths.outputs.per-file-json }}
+        path: ${{ steps.paths.outputs.per-file-json }}
 
     - name: Upload MDS HTML
       if: ${{ failure() && hashFiles('error_distances.html') != '' }}
@@ -113,6 +140,6 @@ runs:
         path: error_distances.html
 
     - name: Re-raise runner exit code
-      if: ${{ env.RUNNER_EXIT != '0' }}
+      if: ${{ steps.run.outputs.exit != '0' }}
       shell: bash
       run: exit 1

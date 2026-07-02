@@ -13,7 +13,17 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--commands-json", type=str, required=True, help="JSON array of {run, error_regex} command objects")
     p.add_argument("--translate-hook", type=str, required=True, help="Path to the per-profile command-translation hook script")
     p.add_argument("--ignored-errors-dir", type=str, required=True)
-    p.add_argument("--assets", type=str, nargs="*", default=[])
-    p.add_argument("--extra-ignored-regexes", type=str, nargs="*", default=[])
+    p.add_argument(
+        "--assets",
+        type=str,
+        default="",
+        help="Shell-quoted, space-separated asset paths",
+    )
+    p.add_argument(
+        "--extra-ignored-regexes",
+        type=str,
+        default="",
+        help="Shell-quoted, space-separated regexes",
+    )
     p.add_argument("--output", type=str, required=True, help="Output per-file JSON path")
     return p.parse_args()

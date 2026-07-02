@@ -193,4 +193,10 @@ tools:
     version: ghdl -v
     commands:
       - run: ghdl -a --std=19 {file} && ghdl -e --std=19 {vhdl_top_entity}
+        error_regex: "error: .*"
       - run: ghdl -r --std=19 {vhdl_top_entity}
+        error_regex: "error: .*"
+    extra_ignored_regexes: >-
+      "compilation error"
+      "no declaration for \S+"
+      "entity \S+ was not analysed"

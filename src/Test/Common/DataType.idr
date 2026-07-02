@@ -87,6 +87,10 @@ namespace PortMode
     VHP : VHDLPortMode -> PortMode VHDL
 
   public export
+  pmToVHp : PortMode VHDL -> VHDLPortMode
+  pmToVHp (VHP x) = x
+
+  public export
   Eq (PortMode l) where
     (==) (SVP x) (SVP y) = x == y
     (==) (VHP x) (VHP y) = x == y
