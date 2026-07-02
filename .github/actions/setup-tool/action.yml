@@ -157,4 +157,4 @@ runs:
       shell: bash
       env:
         TOOL_VERSION: ${{ inputs.tool-version }}
-      run: $TOOL_VERSION
+      run: eval "$TOOL_VERSION"

@@ -198,3 +198,5 @@ tools:
         error_regex: "error: .*"
     extra_ignored_regexes: >-
       "compilation error"
+      "no declaration for \S+"
+      "entity \S+ was not analysed"
