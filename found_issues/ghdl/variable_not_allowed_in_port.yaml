@@ -1,0 +1,58 @@
+list: issues
+stage: synthesis
+profile: vhdl
+target: ghdl
+id: variable_not_allowed_in_port
+title: Variable not allowed in port
+regex: >
+  variable interface not allowed in generic or port clause
+short_desc: |
+  IEEE 1076-2019, §6.5.6.3 Port clauses: "A formal port shall have an object class that is either signal or variable."
+issue_novelty: new
+issue_links:
+  - url: https://github.com/ghdl/ghdl/issues/1485
+    link_name: >
+      #1485
+    # link_icon: closed.png
+examples:
+  - variable_not_allowed_in_port_ex1:
+      first_found: 28.06.2025
+      full_error: |
+        error: variable interface not allowed in generic or port clause
+          variable m : inout SomeType
+          ^
+      full_example: |
+        package some_pkg is
+          type SomeType is protected
+          end protected SomeType;
+        end package some_pkg;
+
+        package body some_pkg is
+          type SomeType is protected body
+          end protected body SomeType;
+        end package body some_pkg;
+
+        use work.some_pkg.all;
+
+        entity observer is
+          port (
+            variable m : inout SomeType
+          );
+        end entity observer;
+
+        architecture behav of observer is
+        begin
+        end architecture behav;
+
+        entity top is
+        end entity top;
+
+        architecture struct of top is
+          shared variable sv : SomeType;
+        begin
+          inst : entity work.observer
+            port map (
+              m => sv
+            );
+        end architecture struct;
+

@@ -1,0 +1,33 @@
+list: issues
+stage: synthesis
+profile: vhdl
+target: ghdl
+id: reflection_not_found
+title: Reflection not found
+regex: >
+  unit "reflection" not found in library "std"
+short_desc: |
+  The REFLECTION library is defined in IEEE 1076-2019 (§16.12), but is not included in the GHDL distribution
+issue_novelty: unsupported
+examples:
+  - reflection_not_found_ex1:
+      first_found: 28.06.2025
+      minified_error: |
+        error: unit "reflection" not found in library "std"
+      minified_example: |
+        use std.reflection.all;
+
+        entity a is
+        end entity a;
+      full_error: |
+        error: unit "reflection" not found in library "std"
+      full_example: |
+        use std.reflection.all;
+
+        entity e is
+          port (bwt : inout integer_subtype_mirror; meeenkrrq : inout protected_subtype_mirror);
+        end e;
+
+        architecture qlrdqvb of e is
+        begin
+        end qlrdqvb;
