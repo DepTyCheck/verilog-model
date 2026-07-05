@@ -1,0 +1,4 @@
+standard = "2019"
+
+[libraries.test_designs]
+files = ["**/*.vhdl"]

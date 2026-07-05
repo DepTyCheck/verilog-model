@@ -137,7 +137,7 @@ tools:
     profile: sv
     repo: https://github.com/dalance/sv-parser.git
     deps: cargo
-    rust_ver: "1.94"
+    rust_ver: "1.96"
     path: sv_parser
     build: |
       cargo build --release --example parse_sv
@@ -200,3 +200,44 @@ tools:
       "compilation error"
       "no declaration for \S+"
       "entity \S+ was not analysed"
+
+  - name: nvc
+    profile: vhdl
+    repo: https://github.com/nickg/nvc.git
+    deps: build-essential automake autoconf flex check llvm-dev pkg-config zlib1g-dev libdw-dev libffi-dev libzstd-dev
+    path: nvc
+    build: |
+      ./autogen.sh
+      mkdir build && cd build
+      ../configure
+      make -j$(nproc)
+    install: |
+      cd build
+      sudo make install
+    version: nvc -v
+    commands:
+      - run: nvc --std=2019 --messages=compact -a {file}
+        error_regex: "error: .*"
+      - run: nvc --std=2019 --messages=compact -e {vhdl_top_entity}
+        error_regex: "error: .*"
+      - run: nvc --std=2019 --messages=compact -r {vhdl_top_entity}
+        error_regex: "error: .*"
+
+  - name: rust_hdl
+    profile: vhdl
+    repo: https://github.com/VHDL-LS/rust_hdl.git
+    deps: git curl build-essential
+    rust_ver: "1.96"
+    path: rust_hdl
+    build: |
+      sudo cargo install --path vhdl_lang
+      sudo mkdir -p /usr/local/lib/rust_hdl
+      sudo cp -r vhdl_libraries /usr/local/lib/rust_hdl/
+    install: |
+      sudo cargo install --path vhdl_lang
+      sudo mkdir -p /usr/local/lib/rust_hdl
+      sudo cp -r vhdl_libraries /usr/local/lib/rust_hdl/
+    version: vhdl_lang -V
+    commands:
+      - run: vhdl_lang -c ci/conf/rust_hdl/vhdl_ls.toml
+    assets: ci/conf/rust_hdl/vhdl_ls.toml
