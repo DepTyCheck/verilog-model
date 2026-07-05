@@ -230,11 +230,9 @@ tools:
     rust_ver: "1.96"
     path: rust_hdl
     build: |
-      sudo cargo install --path vhdl_lang
-      sudo mkdir -p /usr/local/lib/rust_hdl
-      sudo cp -r vhdl_libraries /usr/local/lib/rust_hdl/
+      cargo build --release --manifest-path vhdl_lang/Cargo.toml
     install: |
-      sudo cargo install --path vhdl_lang
+      cargo install --force --path vhdl_lang
       sudo mkdir -p /usr/local/lib/rust_hdl
       sudo cp -r vhdl_libraries /usr/local/lib/rust_hdl/
     version: vhdl_lang -V
