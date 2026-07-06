@@ -79,7 +79,10 @@ printType (Protected t)         = pure $ show t
 printPort : (name : String) -> (dir : String) -> (type : VHDLObject) -> Gen0 String
 printPort name dir t = do
   ts <- printType $ valueOf t
-  pure $ "\{name} : \{dir} \{ts}"
+  let objectClass = case t of
+        Var _ => "variable "
+        _     => ""
+  pure $ "\{objectClass}\{name} : \{dir} \{ts}"
 
 logicUseLines : {opts : _} -> List $ Doc opts
 logicUseLines = [ line "library ieee;", line "use ieee.std_logic_1164.all;" ]
