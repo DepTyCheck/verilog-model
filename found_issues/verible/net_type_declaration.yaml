@@ -1,0 +1,56 @@
+list: issues
+stage: parsing
+profile: sv
+target: verible
+id: net_type_declaration 
+title: Net type declaration
+issue_novelty: new
+examples:
+  - syntax_error_at_token_ex1:
+      first_found: 06.07.2026
+      minified_error: |
+        test.sv:2:8-14: syntax error at token "logic"
+      minified_example: |
+        module a ();
+          wire logic b;
+        endmodule: a
+      full_error: |
+        test.sv:26:8-12: syntax error at token "logic"
+        test.sv:27:9-13: syntax error at token "logic"
+      full_example: |
+        module at ( output trior logic [0:0] avqec [3:2][4:0][3:0][1:2]
+                  , output bit [3:2][1:4][4:3] g
+                  , input supply0 logic [0:1][2:3] lq
+                  , inout wire logic [3:0][0:0] p [4:2][2:3][4:2]
+                  );
+          or suvmyuyhuy(xguumkiu, lq, dlr);
+          or jultrzude(jvsbpcxxt, xguumkiu, glpunyhzj);
+          
+          // Single-driven assignments
+          assign g = g;
+          
+          // Multi-driven assignments
+          assign jvsbpcxxt = xguumkiu;
+        endmodule: at
+
+        module c ( inout supply0 logic [1:2][2:3] mkbp [2:0][0:2][2:2][1:0]
+                , inout tri1 logic [1:4][1:1][3:3] khf [1:4][2:4][3:3][1:4]
+                , inout tri logic [1:0][2:1] phuqgwf [4:0][1:1]
+                );
+          // Unpacked net declarations
+          wire logic [3:0][0:0] dpaduht [4:2][2:3][4:2];
+          trior logic [0:0] q [3:2][4:0][3:0][1:2];
+          
+          or y(tjv, tjv, tjv);
+          not pobwotqk(j, e);  
+          at i(.avqec(q), .g(xjhutm), .lq(kmm), .p(dpaduht));
+
+          // Multi-driven assignments
+          assign j = 'bz;
+          assign q = '{'{'{'{'bxx,'bz},'{'bz,'b00101},'{'bzxx1x,'bz},'{'b0,'b0}},'{'{'bx,'bz},'{'bxz,'b10z0x},'{'bz,'bx},'{'bx,'b00xx}},'{'{'b1,'b0},'{'bx,'bx},'{'bx01,'b0},'{'b0000,'b1}},'{'{'b1,'b1},'{'b1,'b1},'{'b1110z,'b01},'{'bz1z1x,'bzx}},'{'{'b1,'bx111},'{'bx,'b1},'{'b0,'b0},'{'b0z0,'b0}}},'{'{'{'bx0z1z,'bz1xx},'{'b1,'bx1xx},'{'bx,'b1},'{'b0zzz,'bx}},'{'{'b0,'bz},'{'b0,'bz1x},'{'b1,'bz},'{'b0,'bx000}},'{'{'bx,'b0},'{'bz,'b00x},'{'bx,'bx},'{'b111x,'bx}},'{'{'bx,'b0zz1},'{'b1,'b11zz},'{'bz,'bx},'{'bz1z,'bxzzzz}},'{'{'b1,'bx},'{'bxz0,'b1},'{'bz111,'b0010},'{'b1,'bz}}}};
+          assign kmm = 'bz;
+          assign phuqgwf = '{'{'{'{'bzz,'b0z},'{'bz,'b00x0}}},'{'{'{'bz,'bx},'{'b0000,'bz}}},'{'{'{'b0xz,'b01},'b00xz}},'{'{'{'bz01,'b0},'{'b01zz,'b1}}},'{'{'{'bx,'b10},'b0xzz}}};
+        endmodule: c
+
+        module fou ();
+        endmodule: fou

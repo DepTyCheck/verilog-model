@@ -1,0 +1,24 @@
+list: issues
+stage: analysis
+profile: sv
+target: nvc
+id: multiple_conflicting_visible_declarations
+title: Multiple conflicting visible declarations
+regex: >
+  multiple conflicting visible declarations of .*_PT
+issue_novelty: new
+examples:
+  - multiple_conflicting_visible_declarations_ex1:
+      first_found: 06.07.2026
+      full_error: |
+        test.vhdl:6:33: error: multiple conflicting visible declarations of ACCESS_SUBTYPE_MIRROR_PT
+      full_example: |
+        use std.reflection.all;
+
+        entity acufgoiopy is
+          port (variable dturgv : inout access_subtype_mirror_pt; ato : linkage integer);
+        end acufgoiopy;
+
+        architecture uxyxyxokn of acufgoiopy is
+        begin
+        end uxyxyxokn;

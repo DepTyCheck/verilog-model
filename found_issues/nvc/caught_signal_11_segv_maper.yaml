@@ -1,0 +1,47 @@
+list: issues
+stage: analysis
+profile: sv
+target: nvc
+id: caught_signal_11_segv_maper
+title: Caught signal 11 (SEGV_MAPERR)
+issue_novelty: new
+examples:
+  - caught_signal_11_segv_maper_ex1:
+      first_found: 06.07.2026
+      minified_error: |
+        *** Caught signal 11 (SEGV_MAPERR) [address=(nil), ip=0x561dff6212f4] ***
+
+        [0x561dff5b49f5] ../src/util.c:724 signal_handler.lto_priv.0
+        [0x7f350d6b932f] (/usr/lib/x86_64-linux-gnu/libc.so.6) 
+        [0x561dff6212f4] ../src/common.c:684 is_subprogram
+        [0x561dff67110e] ../src/names.c:2470 solve_record_ref
+        [0x561dff67110e] ../src/names.c:5850 _solve_types.lto_priv.0
+        [0x561dff5c4587] ../src/names.c:5897 solve_types
+        [0x561dff5c4587] ../src/names.c:3958 p_type_mark.lto_priv.0
+        [0x561dff5c5a47] ../src/parse.c:4230 p_subtype_indication.lto_priv.0
+        [0x561dff5c8e05] ../src/parse.c:5069 p_interface_type_indication
+        [0x561dff5cb688] ../src/parse.c:5272 p_interface_declaration
+        [0x561dff5cb688] ../src/parse.c:5922 p_interface_element
+        [0x561dff5cc3e9] ../src/parse.c:5939 p_interface_list
+        [0x561dff5cc74b] ../src/parse.c:5959 p_port_list
+        [0x561dff5cc74b] ../src/parse.c:5971 p_port_clause.lto_priv.0
+        [0x561dff5d8667] ../src/parse.c:6013 p_entity_declaration
+        [0x561dff5d8667] ../src/parse.c:9515 p_primary_unit.lto_priv.0
+        [0x561dff5e53e9] ../src/parse.c:13602 p_design_unit
+        [0x561dff5e53e9] ../src/parse.c:13722 parse
+        [0x561dff5a987b] ../src/nvc.c:185 analyse_file
+        [0x561dff5afbbf] ../src/nvc.c:429 analyse
+        [0x561dff5afbbf] ../src/nvc.c:2556 process_command
+        [0x561dff5a7074] ../src/nvc.c:2733 main
+
+        nvc 1.22-devel (1.21.0.r74.gae5627250) (Using LLVM 18.1.3) [x86_64-pc-linux-gnu]
+
+        Please report this bug at https://github.com/nickg/nvc/issues
+      minified_example: |
+        entity a is
+          port (variable p : inout std.reflection.access_subtype_mirror_pt);
+        end a;
+
+        architecture arch of a is
+        begin
+        end arch;
