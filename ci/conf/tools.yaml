@@ -239,7 +239,7 @@ tools:
     commands:
       - run: vhdl_lang -c ci/conf/rust_hdl/vhdl_ls.toml
     assets: ci/conf/rust_hdl/vhdl_ls.toml
-  
+
   - name: verible
     profile: sv
     repo: https://github.com/chipsalliance/verible.git
