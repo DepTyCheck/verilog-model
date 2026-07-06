@@ -239,3 +239,19 @@ tools:
     commands:
       - run: vhdl_lang -c ci/conf/rust_hdl/vhdl_ls.toml
     assets: ci/conf/rust_hdl/vhdl_ls.toml
+  
+  - name: verible
+    profile: sv
+    repo: https://github.com/chipsalliance/verible.git
+    deps: bazel bison build-essential ca-certificates curl flex git libfl-dev python3 unzip zip
+    path: verible
+    build: |
+      bazel build :install-binaries --//bazel:use_local_flex_bison -c opt
+    install: |
+      .github/bin/simple-install.sh /usr/local/bin
+      bazel shutdown
+    version: verible-verilog-format --version
+    commands:
+      - run: verible-verilog-format --failsafe_success=false {file}
+      - run: verible-verilog-lint {file}
+      - run: verible-verilog-syntax {file}
