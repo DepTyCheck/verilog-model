@@ -222,6 +222,8 @@ tools:
         error_regex: "error: .*"
       - run: nvc --std=2019 --messages=compact -r {vhdl_top_entity}
         error_regex: "error: .*"
+    extra_ignored_regexes: >-
+      "design unit depends on WORK.* which was analysed with errors"
 
   - name: rust_hdl
     profile: vhdl

@@ -50,6 +50,7 @@ class TestLoadTools(unittest.TestCase):
             "ghdl",
             "nvc",
             "rust_hdl",
+            "verible",
         }
         self.assertEqual(names, expected)
 
