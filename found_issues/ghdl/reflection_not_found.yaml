@@ -11,7 +11,7 @@ short_desc: |
 issue_novelty: unsupported
 examples:
   - reflection_not_found_ex1:
-      first_found: 28.06.2025
+      first_found: 28.06.2026
       minified_error: |
         error: unit "reflection" not found in library "std"
       minified_example: |
@@ -19,13 +19,17 @@ examples:
 
         entity a is
         end entity a;
+
+        architecture a1 of a is
+        begin
+        end a1;
       full_error: |
         error: unit "reflection" not found in library "std"
       full_example: |
         use std.reflection.all;
 
         entity e is
-          port (bwt : inout integer_subtype_mirror; meeenkrrq : inout protected_subtype_mirror);
+          port (bwt : inout integer_subtype_mirror_pt; meeenkrrq : inout protected_subtype_mirror_pt);
         end e;
 
         architecture qlrdqvb of e is

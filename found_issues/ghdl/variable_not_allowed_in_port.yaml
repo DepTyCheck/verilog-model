@@ -16,7 +16,7 @@ issue_links:
     # link_icon: closed.png
 examples:
   - variable_not_allowed_in_port_ex1:
-      first_found: 28.06.2025
+      first_found: 28.06.2026
       full_error: |
         error: variable interface not allowed in generic or port clause
           variable m : inout SomeType
@@ -46,6 +46,8 @@ examples:
 
         entity top is
         end entity top;
+
+        use work.some_pkg.all;
 
         architecture struct of top is
           shared variable sv : SomeType;
