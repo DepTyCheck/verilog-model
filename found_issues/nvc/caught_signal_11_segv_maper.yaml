@@ -1,6 +1,6 @@
 list: issues
 stage: analysis
-profile: sv
+profile: vhdl
 target: nvc
 id: caught_signal_11_segv_maper
 title: Caught signal 11 (SEGV_MAPERR)

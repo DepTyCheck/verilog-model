@@ -1,6 +1,6 @@
 list: issues
 stage: analysis
-profile: sv
+profile: vhdl
 target: nvc
 id: multiple_conflicting_visible_declarations
 title: Multiple conflicting visible declarations
