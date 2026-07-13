@@ -256,4 +256,5 @@ tools:
     commands:
       - run: verible-verilog-format --failsafe_success=false {file}
       - run: verible-verilog-lint {file}
+        error_regex: ^.*\[Style:.*] \[.*]
       - run: verible-verilog-syntax {file}
