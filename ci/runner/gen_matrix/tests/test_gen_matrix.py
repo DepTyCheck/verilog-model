@@ -46,7 +46,7 @@ class TestLoadTools(unittest.TestCase):
             "tree-sitter-systemverilog",
             "synlig",
             "sv_parser",
-            "yosys-slang",
+            "sv-elab",
             "ghdl",
         }
         self.assertEqual(names, expected)
@@ -55,16 +55,24 @@ class TestLoadTools(unittest.TestCase):
         tools = load_tools(str(TOOLS_YAML))
         for tool in tools:
             for field in ("name", "profile", "commands"):
-                self.assertIn(field, tool, f"Tool '{tool.get('name')}' missing field '{field}'")
+                self.assertIn(
+                    field, tool, f"Tool '{tool.get('name')}' missing field '{field}'"
+                )
 
     def test_commands_is_non_empty_list(self):
         tools = load_tools(str(TOOLS_YAML))
         for tool in tools:
             cmds = tool.get("commands")
-            self.assertIsInstance(cmds, list, f"Tool '{tool['name']}' commands is not a list")
-            self.assertGreater(len(cmds), 0, f"Tool '{tool['name']}' has empty commands list")
+            self.assertIsInstance(
+                cmds, list, f"Tool '{tool['name']}' commands is not a list"
+            )
+            self.assertGreater(
+                len(cmds), 0, f"Tool '{tool['name']}' has empty commands list"
+            )
             for cmd in cmds:
-                self.assertIn("run", cmd, f"Tool '{tool['name']}' command missing 'run' field")
+                self.assertIn(
+                    "run", cmd, f"Tool '{tool['name']}' command missing 'run' field"
+                )
 
     def test_empty_tools_list(self):
         with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
@@ -99,7 +107,10 @@ class TestBuildMatrix(unittest.TestCase):
             self.assertIn("name", item["tool"])
 
     def test_all_tools_present_in_matrix(self):
-        names = {item["tool"]["name"] for item in build_matrix(self._parse_minimal())["include"]}
+        names = {
+            item["tool"]["name"]
+            for item in build_matrix(self._parse_minimal())["include"]
+        }
         self.assertEqual(names, {"tool-a", "tool-b"})
 
     def test_matrix_is_json_serialisable(self):
@@ -113,7 +124,9 @@ class TestRoundTrip(unittest.TestCase):
     def test_error_regex_backslashes_preserved(self):
         tools = load_tools(str(TOOLS_YAML))
         decoded = json.loads(json.dumps(build_matrix(tools)))
-        iverilog = next(i["tool"] for i in decoded["include"] if i["tool"]["name"] == "iverilog")
+        iverilog = next(
+            i["tool"] for i in decoded["include"] if i["tool"]["name"] == "iverilog"
+        )
         first_cmd = iverilog["commands"][0]
         self.assertIn(r"\W", first_cmd["error_regex"])
         self.assertIn(r"\S", first_cmd["error_regex"])
@@ -121,7 +134,9 @@ class TestRoundTrip(unittest.TestCase):
     def test_multiline_build_commands_preserved(self):
         tools = load_tools(str(TOOLS_YAML))
         decoded = json.loads(json.dumps(build_matrix(tools)))
-        verilator = next(i["tool"] for i in decoded["include"] if i["tool"]["name"] == "verilator")
+        verilator = next(
+            i["tool"] for i in decoded["include"] if i["tool"]["name"] == "verilator"
+        )
         self.assertIn("\n", verilator["build"])
 
     def test_commands_array_survives_json_roundtrip(self):
@@ -147,7 +162,13 @@ class TestMainOutput(unittest.TestCase):
         env["PYTHONPATH"] = str(Path(__file__).parents[2])
 
         subprocess.run(
-            [sys.executable, "-m", "gen_matrix.main", "--tools-config", str(TOOLS_YAML)],
+            [
+                sys.executable,
+                "-m",
+                "gen_matrix.main",
+                "--tools-config",
+                str(TOOLS_YAML),
+            ],
             env=env,
             check=True,
             cwd=Path(__file__).parents[2],
@@ -155,7 +176,9 @@ class TestMainOutput(unittest.TestCase):
 
         with open(output_path, encoding="utf-8") as f:
             content = f.read()
-        self.assertTrue(content.strip(), "gen_matrix.main wrote nothing to GITHUB_OUTPUT")
+        self.assertTrue(
+            content.strip(), "gen_matrix.main wrote nothing to GITHUB_OUTPUT"
+        )
         lines = content.strip().split("\n")
 
         self.assertEqual(len(lines), 1, f"Expected 1 output line, got: {lines}")

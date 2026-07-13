@@ -147,12 +147,12 @@ tools:
     commands:
       - run: parse_sv {file}
 
-  - name: yosys-slang
+  - name: sv-elab
     profile: sv
-    repo: https://github.com/povik/yosys-slang.git
+    repo: https://github.com/povik/sv-elab.git
     deps: >-
       gawk git cmake make python3 lld bison clang flex libffi-dev libfl-dev libreadline-dev pkg-config tcl-dev zlib1g-dev graphviz xdot
-    path: yosys-slang
+    path: sv-elab
     build: |
       git clone https://github.com/YosysHQ/yosys.git
       cd yosys
@@ -162,13 +162,13 @@ tools:
       sudo cmake --install build --strip
       cd ..
       git submodule update --init --recursive
-      make -j$(nproc)
+      cmake -B build .
+      cmake --build build -j$(nproc)
     install: |
       cd yosys
       sudo cmake --install build --strip
       cd ..
-      sudo make install
-      cd ..
+      sudo cmake --install build
     version: yosys --version
     commands:
       - run: yosys -m slang -p "read_slang {file}; hierarchy -check -top {top_module}; proc; opt; fsm; memory; sim -assert; clean"
