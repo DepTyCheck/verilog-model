@@ -46,7 +46,7 @@ class TestLoadTools(unittest.TestCase):
             "tree-sitter-systemverilog",
             "synlig",
             "sv_parser",
-            "yosys-slang",
+            "sv-elab",
             "ghdl",
         }
         self.assertEqual(names, expected)
@@ -147,7 +147,13 @@ class TestMainOutput(unittest.TestCase):
         env["PYTHONPATH"] = str(Path(__file__).parents[2])
 
         subprocess.run(
-            [sys.executable, "-m", "gen_matrix.main", "--tools-config", str(TOOLS_YAML)],
+            [
+                sys.executable,
+                "-m",
+                "gen_matrix.main",
+                "--tools-config",
+                str(TOOLS_YAML),
+            ],
             env=env,
             check=True,
             cwd=Path(__file__).parents[2],
