@@ -1,7 +1,7 @@
 list: issues
 stage: parsing
 profile: sv
-target: yosys-slang
+target: sv-elab
 id: abort_tristate
 title: Abort due to tristate
 issue_novelty: new

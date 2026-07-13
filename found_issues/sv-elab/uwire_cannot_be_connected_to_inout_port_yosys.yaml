@@ -1,6 +1,6 @@
 list: controversial
 profile: sv
-target: yosys-slang
+target: sv-elab
 id: uwire_cannot_be_connected_to_inout_port_yosys
 title: Uwire cannot be connected to inout port (yosys)
 issue_novelty: new

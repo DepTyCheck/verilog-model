@@ -1,7 +1,7 @@
 list: issues
 stage: parsing
 profile: sv
-target: yosys-slang
+target: sv-elab
 id: abort_in_181
 title: Abort due to real
 issue_novelty: already_known

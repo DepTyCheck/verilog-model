@@ -1,7 +1,7 @@
 list: issues
 stage: parsing
 profile: sv
-target: yosys-slang
+target: sv-elab
 id: feature_unimplemented_see_ast
 title: Real is not supported
 issue_novelty: already_known

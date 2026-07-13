@@ -1,7 +1,7 @@
 list: issues
 stage: parsing
 profile: sv
-target: yosys-slang
+target: sv-elab
 id: input_port_of_special_tristate_type_is_not_supported
 title: Input port of tristate type is not supported
 issue_novelty: unsupported

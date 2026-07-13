@@ -1,7 +1,7 @@
 list: issues
 stage: parsing
 profile: sv
-target: yosys-slang
+target: sv-elab
 id: inout_cannot_be_inlined
 title: Inout cannot be inlined
 issue_novelty: already_known

@@ -1,7 +1,7 @@
 list: issues
 stage: synthesis
 profile: sv
-target: yosys-slang
+target: sv-elab
 id: conflicting_init_values_for_signal
 title: Conflicting init values for signal
 issue_novelty: already_known

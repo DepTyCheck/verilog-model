@@ -1,7 +1,7 @@
 list: issues
 stage: parsing
 profile: sv
-target: yosys-slang
+target: sv-elab
 id: real_is_unsupported_for_conversion_to_bits
 title: Real is unsupported for conversion to bits
 issue_novelty: unsupported
