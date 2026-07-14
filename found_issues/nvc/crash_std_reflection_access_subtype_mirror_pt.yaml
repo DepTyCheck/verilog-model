@@ -2,11 +2,11 @@ list: issues
 stage: analysis
 profile: vhdl
 target: nvc
-id: caught_signal_11_segv_maper
-title: Caught signal 11 (SEGV_MAPERR)
+id: crash_std_reflection_access_subtype_mirror_pt
+title: Crash due to std.reflection.access_subtype_mirror_pt
 issue_novelty: new
 examples:
-  - caught_signal_11_segv_maper_ex1:
+  - crash_std_reflection_access_subtype_mirror_pt_ex1:
       first_found: 06.07.2026
       minified_error: |
         *** Caught signal 11 (SEGV_MAPERR) [address=(nil), ip=0x561dff6212f4] ***
