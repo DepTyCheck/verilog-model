@@ -133,7 +133,7 @@ runs:
         path: ${{ steps.paths.outputs.per-file-json }}
 
     - name: Upload MDS HTML
-      if: ${{ failure() && hashFiles('error_distances.html') != '' }}
+      if: ${{ steps.run.outputs.exit != '0' && hashFiles('error_distances.html') != '' }}
       uses: actions/upload-artifact@v6
       with:
         name: error-distances-${{ inputs.tool-name }}
