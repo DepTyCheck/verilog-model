@@ -176,6 +176,7 @@ tools:
     extra_ignored_regexes: >-
       "Compilation failed"
       "too many errors emitted, stopping now"
+      "Design elaboration failed; see full log for details"
 
   - name: ghdl
     profile: vhdl
@@ -249,9 +250,13 @@ tools:
     path: verible
     build: |
       bazel build :install-binaries --//bazel:use_local_flex_bison -c opt
-    install: |
-      .github/bin/simple-install.sh /usr/local/bin
+      # bazel-bin is a symlink into Bazel's output base (outside the repo), so
+      # caching the clone leaves broken links. Materialize real binaries first.
+      mkdir -p .ci-installed
+      .github/bin/simple-install.sh "$PWD/.ci-installed"
       bazel shutdown
+    install: |
+      sudo install .ci-installed/* /usr/local/bin/
     version: verible-verilog-format --version
     commands:
       - run: verible-verilog-format --failsafe_success=false {file}
