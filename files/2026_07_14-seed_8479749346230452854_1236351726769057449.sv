@@ -1,0 +1,10 @@
+// Seed: 8479749346230452854,1236351726769057449
+
+module dnaydup ();
+  not pehx(v, v);
+  
+endmodule: dnaydup
+
+
+
+// Seed after: 11766453941591298956,1236351726769057449
