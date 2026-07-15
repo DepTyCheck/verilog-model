@@ -6,6 +6,9 @@ expressed with dependent types in [Idris 2](https://github.com/idris-lang/Idris2
 This model is designed for property-based testing using the [DepTyCheck library](https://github.com/buzden/deptycheck/),
 a library for property-based testing and generation of dependently-typed data.
 
+See the [HDL analyzer tracking sheet](https://docs.google.com/spreadsheets/d/1JY1ILDxWARNFFp06S_5EkPXnVUtn4lJ_CY8cWk5hNxE/edit?usp=sharing)
+for the analyzers known to the maintainers and whether they are tested, under consideration, or not planned.
+
 ## The model
 
 This model is not meant to be the full specification of SystemVerilog.

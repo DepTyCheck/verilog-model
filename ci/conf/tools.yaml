@@ -260,6 +260,7 @@ tools:
     version: verible-verilog-format --version
     commands:
       - run: verible-verilog-format --failsafe_success=false {file}
+        error_regex: .*.sv:.*$
       - run: verible-verilog-lint --rules_config ci/conf/verible/.rules.verible_lint {file}
         error_regex: ^.*\[Style:.*] \[.*]
       - run: verible-verilog-syntax {file}
