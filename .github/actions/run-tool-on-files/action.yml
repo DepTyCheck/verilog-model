@@ -36,6 +36,9 @@ inputs:
   mds-on-failure:
     required: false
     default: "true"
+  mds-artifact-suffix:
+    required: false
+    default: ""
   job-link:
     required: true
   profile:
@@ -55,6 +58,7 @@ runs:
       env:
         OUTPUT_JSON: ${{ inputs.output-json }}
         TOOL_NAME: ${{ inputs.tool-name }}
+        MDS_ARTIFACT_SUFFIX: ${{ inputs.mds-artifact-suffix }}
       run: |
         if [ -n "$OUTPUT_JSON" ]; then
           path="$OUTPUT_JSON"
@@ -62,6 +66,11 @@ runs:
           path="$TOOL_NAME-per-file.json"
         fi
         echo "per-file-json=$path" >> "$GITHUB_OUTPUT"
+        mds_artifact_name="error-distances-$TOOL_NAME"
+        if [ -n "$MDS_ARTIFACT_SUFFIX" ]; then
+          mds_artifact_name="$mds_artifact_name-$MDS_ARTIFACT_SUFFIX"
+        fi
+        echo "mds-artifact-name=$mds_artifact_name" >> "$GITHUB_OUTPUT"
 
     - name: Resolve profile
       id: profile
@@ -136,7 +145,7 @@ runs:
       if: ${{ steps.run.outputs.exit != '0' && hashFiles('error_distances.html') != '' }}
       uses: actions/upload-artifact@v6
       with:
-        name: error-distances-${{ inputs.tool-name }}
+        name: ${{ steps.paths.outputs.mds-artifact-name }}
         path: error_distances.html
 
     - name: Re-raise runner exit code

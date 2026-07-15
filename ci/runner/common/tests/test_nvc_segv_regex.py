@@ -9,7 +9,7 @@ from common.ignored_errors_list import IgnoredErrorsList
 NVC_SEGV_EMIT_STORE_REGEX = r"""\*\*\* Caught signal 11 \(SEGV_MAPERR\) \[address=.*, ip=.*] \*\*\*
 
 \[.*] ..\/src\/util.c:724 signal_handler.lto_priv.0
-\[.*] \(\/usr\/lib\/x86_64-linux-gnu\/libc.so.6\) 
+\[.*] \(\/usr\/lib\/x86_64-linux-gnu\/libc.so.6\)
 \[.*] ..\/src\/vcode.c:3854 emit_store
 \[.*] ..\/src\/lower.c:11824 lower_ports
 \[.*] ..\/src\/lower.c:12823 lower_instance
@@ -23,7 +23,7 @@ NVC_SEGV_EMIT_STORE_REGEX = r"""\*\*\* Caught signal 11 \(SEGV_MAPERR\) \[addres
 NVC_SEGV_EMIT_STORE_OUTPUT = """*** Caught signal 11 (SEGV_MAPERR) [address=0x558c00c64318, ip=0x5583fe5ced8b] ***
 
 [0x5583fe5268a5] ../src/util.c:724 signal_handler.lto_priv.0
-[0x7effdaa4532f] (/usr/lib/x86_64-linux-gnu/libc.so.6) 
+[0x7effdaa4532f] (/usr/lib/x86_64-linux-gnu/libc.so.6)
 [0x5583fe5ced8b] ../src/vcode.c:3854 emit_store
 [0x5583fe5ca1b1] ../src/lower.c:11824 lower_ports
 [0x5583fe5ca1b1] ../src/lower.c:12823 lower_instance
@@ -43,7 +43,9 @@ Please report this bug at https://github.com/nickg/nvc/issues
 class TestNvcSegvRegex(unittest.TestCase):
     def test_segv_emit_store_stack_matches_whole_output(self):
         """nvc SEGV dumps are classified via WHOLE mode (tool regex is 'error: .*')."""
-        ignored = IgnoredErrorsList.from_patterns([NVC_SEGV_EMIT_STORE_REGEX], MatchingMode.WHOLE)
+        ignored = IgnoredErrorsList.from_patterns(
+            [NVC_SEGV_EMIT_STORE_REGEX], MatchingMode.WHOLE
+        )
         found = ignored.match(NVC_SEGV_EMIT_STORE_OUTPUT, MatchingMode.WHOLE)
         self.assertIsNotNone(found)
         self.assertIn("Caught signal 11 (SEGV_MAPERR)", found.matched_text)

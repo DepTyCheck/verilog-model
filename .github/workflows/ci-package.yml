@@ -416,6 +416,7 @@ jobs:
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
           output-json: regression-${{ matrix.tool.name }}-per-file.json
+          mds-artifact-suffix: regression
           job-link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}
 
       - name: Build reproducibility table
