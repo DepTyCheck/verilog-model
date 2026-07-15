@@ -30,7 +30,6 @@ examples:
           , input integer gymw
           );
 
-
           assign eiezecp = wx;
           assign kjagrfjq = gymw;
           assign jbfwqxka = wx;
@@ -47,5 +46,24 @@ examples:
 
         module qzczsyeanw
           (input real ov, input integer dftixk, input int lvxtzb, input uwire qu);
-
         endmodule: qzczsyeanw
+
+  - expression_width_does_not_match_width_ex2:
+      first_found: 15.07.2026
+      full_error: |
+        /home/runner/work/verilog-model/verilog-model/tmpaa6tv5do/f56557a0cbb24fea87af23e7cf45e5ab.sv:12: error: Expression width 10 does not match width 1 of logic gate array port 1.
+        1 error(s) during elaboration.
+      full_example: |
+        module ggveqhi (input longint fspta, output supply0 logic [4:0][3:2] tmjpmrzjiv);
+          and cufxwr(yeircxwoc, quuhoxj, fspta);
+          or qew(sx, tevxxvvmr, sujdvmacfl);
+
+          xnor qfpgagys(tmjpmrzjiv, tiyvyxkuj, mcygrwcom);
+          // warning: implicit conversion of port connection truncates from 10 to 1 bits
+          //   supply0 logic [4:0][3:2] tmjpmrzjiv -> logic tmjpmrzjiv
+
+          // Multi-driven assignments
+          assign tiyvyxkuj = 'bz1zzz;
+          assign yeircxwoc = sujdvmacfl;
+          assign tevxxvvmr = yeircxwoc;
+        endmodule: ggveqhi

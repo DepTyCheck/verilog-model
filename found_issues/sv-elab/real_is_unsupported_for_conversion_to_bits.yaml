@@ -51,3 +51,29 @@ examples:
           assign czirmwx = '{'{'{'b0z10,'bz,'bx11zx},'{'bzz,'b00z1,'b1}}};
           assign irqynk = 'b0001;
         endmodule: wyovinsce
+
+  - real_is_unsupported_for_conversion_to_bits_ex2:
+      first_found: 15.07.2026
+      full_error: |
+        a4bc92b713f248439094a3fd03213a9a.sv:15:124: error: value of type 'real' is unsupported for conversion to bits in this context
+        module cbaeylo (input reg [0:4][3:4] splgzkq, inout wire logic [3:2] ue [1:4], output trior logic encyvsj, output realtime elajfka);
+                                                                                                                                   ^
+      full_example: |
+        module xjlr (inout tri logic [3:4][0:2] lejcyz, inout supply0 logic [3:1][2:1] oamrrjp [2:3]);
+          nand yqcxrolv(ca, sfwgpkm, npxqfnbv);
+          xnor xmhyg(o, fatawbjr, wsf);
+          xor zqqjow(ca, ca, gjbrrj);
+
+          // Multi-driven assignments
+          assign fatawbjr = npxqfnbv;
+        endmodule: xjlr
+
+        module cbaeylo (input reg [0:4][3:4] splgzkq, inout wire logic [3:2] ue [1:4], output trior logic encyvsj, output realtime elajfka);
+          // Single-driven assignments
+          assign elajfka = elajfka;
+
+          // Multi-driven assignments
+          assign encyvsj = encyvsj;
+          assign encyvsj = 'bx;
+          assign ue = '{'{'b1zx,'bzzx},'{'b10zx,'bx},'{'b0,'bzxx0z},'{'b0z1x,'bx01}};
+        endmodule: cbaeylo
