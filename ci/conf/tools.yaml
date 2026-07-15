@@ -137,7 +137,7 @@ tools:
     profile: sv
     repo: https://github.com/dalance/sv-parser.git
     deps: cargo
-    rust_ver: "1.94"
+    rust_ver: "1.96"
     path: sv_parser
     build: |
       cargo build --release --example parse_sv
@@ -176,6 +176,7 @@ tools:
     extra_ignored_regexes: >-
       "Compilation failed"
       "too many errors emitted, stopping now"
+      "Design elaboration failed; see full log for details"
 
   - name: ghdl
     profile: vhdl
@@ -200,3 +201,67 @@ tools:
       "compilation error"
       "no declaration for \S+"
       "entity \S+ was not analysed"
+
+  - name: nvc
+    profile: vhdl
+    repo: https://github.com/nickg/nvc.git
+    deps: build-essential automake autoconf flex check llvm-dev pkg-config zlib1g-dev libdw-dev libffi-dev libzstd-dev
+    path: nvc
+    build: |
+      ./autogen.sh
+      mkdir build && cd build
+      ../configure
+      make -j$(nproc)
+    install: |
+      cd build
+      sudo make install
+    version: nvc -v
+    commands:
+      - run: nvc --std=2019 --messages=compact -a {file}
+        error_regex: "error: .*"
+      - run: nvc --std=2019 --messages=compact -e {vhdl_top_entity}
+        error_regex: "error: .*"
+      - run: nvc --std=2019 --messages=compact -r {vhdl_top_entity}
+        error_regex: "error: .*"
+    extra_ignored_regexes: >-
+      "design unit depends on WORK.* which was analysed with errors"
+
+  - name: rust_hdl
+    profile: vhdl
+    repo: https://github.com/VHDL-LS/rust_hdl.git
+    deps: git curl build-essential
+    rust_ver: "1.96"
+    path: rust_hdl
+    build: |
+      cargo build --release --manifest-path vhdl_lang/Cargo.toml
+    install: |
+      cargo install --force --path vhdl_lang
+      sudo mkdir -p /usr/local/lib/rust_hdl
+      sudo cp -r vhdl_libraries /usr/local/lib/rust_hdl/
+    version: vhdl_lang -V
+    commands:
+      - run: vhdl_lang -c ci/conf/rust_hdl/vhdl_ls.toml
+    assets: ci/conf/rust_hdl/vhdl_ls.toml
+
+  - name: verible
+    profile: sv
+    repo: https://github.com/chipsalliance/verible.git
+    deps: bazel bison build-essential ca-certificates curl flex git libfl-dev python3 unzip zip
+    path: verible
+    build: |
+      bazel build :install-binaries --//bazel:use_local_flex_bison -c opt
+      # bazel-bin is a symlink into Bazel's output base (outside the repo), so
+      # caching the clone leaves broken links. Materialize real binaries first.
+      mkdir -p .ci-installed
+      .github/bin/simple-install.sh "$PWD/.ci-installed"
+      bazel shutdown
+    install: |
+      sudo install .ci-installed/* /usr/local/bin/
+    version: verible-verilog-format --version
+    commands:
+      - run: verible-verilog-format --failsafe_success=false {file}
+        error_regex: .*.sv:.*$
+      - run: verible-verilog-lint --rules_config ci/conf/verible/.rules.verible_lint {file}
+        error_regex: ^.*\[Style:.*] \[.*]
+      - run: verible-verilog-syntax {file}
+    assets: ci/conf/verible/.rules.verible_lint

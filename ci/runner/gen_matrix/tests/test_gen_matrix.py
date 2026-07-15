@@ -34,7 +34,7 @@ class TestLoadTools(unittest.TestCase):
         self.assertIsInstance(tools, list)
         self.assertGreater(len(tools), 0)
 
-    def test_all_ten_tools_present(self):
+    def test_all_tools_present(self):
         tools = load_tools(str(TOOLS_YAML))
         names = {t["name"] for t in tools}
         expected = {
@@ -48,6 +48,9 @@ class TestLoadTools(unittest.TestCase):
             "sv_parser",
             "sv-elab",
             "ghdl",
+            "nvc",
+            "rust_hdl",
+            "verible",
         }
         self.assertEqual(names, expected)
 
@@ -133,6 +136,14 @@ class TestRoundTrip(unittest.TestCase):
             self.assertGreater(len(tool["commands"]), 0)
             for cmd in tool["commands"]:
                 self.assertIn("run", cmd)
+
+    def test_rust_hdl_config_asset_survives_json_roundtrip(self):
+        tools = load_tools(str(TOOLS_YAML))
+        decoded = json.loads(json.dumps(build_matrix(tools)))
+        rust_hdl = next(i["tool"] for i in decoded["include"] if i["tool"]["name"] == "rust_hdl")
+
+        self.assertEqual(rust_hdl["assets"], "ci/conf/rust_hdl/vhdl_ls.toml")
+        self.assertEqual(rust_hdl["commands"][0]["run"], "vhdl_lang -c ci/conf/rust_hdl/vhdl_ls.toml")
 
 
 class TestMainOutput(unittest.TestCase):

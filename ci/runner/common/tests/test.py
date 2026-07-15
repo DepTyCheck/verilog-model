@@ -4,6 +4,7 @@ from common.tests.test_command_result import TestAnalyzeCommand, TestCommandResu
 from common.tests.test_error_file_parser import TestProfileRequired
 from common.tests.test_first_found_index import TestFirstFoundIndexErrors, TestFirstFoundIndexHappyPath
 from common.tests.test_make_command import TestMakeCommand
+from common.tests.test_nvc_segv_regex import TestNvcSegvRegex
 from common.tests.test_per_file_report import TestFileOutcome, TestPerFileReportRoundtrip
 from common.tests.test_profiles_config import TestProfilesConfig
 from common.tests.test_resolve_profile import TestResolveProfile
@@ -17,6 +18,7 @@ if __name__ == "__main__":
             TestCommandResult,
             TestAnalyzeCommand,
             TestMakeCommand,
+            TestNvcSegvRegex,
             TestRunFileClean,
             TestRunFileFailure,
             TestRunFileAssets,
