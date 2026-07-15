@@ -43,9 +43,7 @@ Please report this bug at https://github.com/nickg/nvc/issues
 class TestNvcSegvRegex(unittest.TestCase):
     def test_segv_emit_store_stack_matches_whole_output(self):
         """nvc SEGV dumps are classified via WHOLE mode (tool regex is 'error: .*')."""
-        ignored = IgnoredErrorsList.from_patterns(
-            [NVC_SEGV_EMIT_STORE_REGEX], MatchingMode.WHOLE
-        )
+        ignored = IgnoredErrorsList.from_patterns([NVC_SEGV_EMIT_STORE_REGEX], MatchingMode.WHOLE)
         found = ignored.match(NVC_SEGV_EMIT_STORE_OUTPUT, MatchingMode.WHOLE)
         self.assertIsNotNone(found)
         self.assertIn("Caught signal 11 (SEGV_MAPERR)", found.matched_text)
