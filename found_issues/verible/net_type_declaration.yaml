@@ -2,9 +2,11 @@ list: issues
 stage: parsing
 profile: sv
 target: verible
-id: net_type_declaration 
+id: net_type_declaration_syntax_error
 title: Net type declaration
 issue_novelty: new
+regex: >
+  syntax error at token
 examples:
   - syntax_error_at_token_ex1:
       first_found: 06.07.2026
@@ -25,10 +27,10 @@ examples:
                   );
           or suvmyuyhuy(xguumkiu, lq, dlr);
           or jultrzude(jvsbpcxxt, xguumkiu, glpunyhzj);
-          
+
           // Single-driven assignments
           assign g = g;
-          
+
           // Multi-driven assignments
           assign jvsbpcxxt = xguumkiu;
         endmodule: at
@@ -40,9 +42,9 @@ examples:
           // Unpacked net declarations
           wire logic [3:0][0:0] dpaduht [4:2][2:3][4:2];
           trior logic [0:0] q [3:2][4:0][3:0][1:2];
-          
+
           or y(tjv, tjv, tjv);
-          not pobwotqk(j, e);  
+          not pobwotqk(j, e);
           at i(.avqec(q), .g(xjhutm), .lq(kmm), .p(dpaduht));
 
           // Multi-driven assignments
