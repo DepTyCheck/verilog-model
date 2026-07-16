@@ -8,7 +8,7 @@ Keys:
 - target: The name of the tool where the error was encountered.
 - profile: HDL language (sv, vhdl)
 - list: Which list the issue belongs to: `issues` (main) or `controversial`. Required. No issue belongs to both.
-- issue_type: The type of the issue (crash, bad_message, infinite_loop, feature)
+- issue_type: The type of the issue (crash, bad_message, infinite_loop, feature, downstream)
 - short_desc: A concise summary of the error
 - issue_novelty: The novelty of the issue (new, already_known, unsupported, late)
 - issue_links: 

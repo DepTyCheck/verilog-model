@@ -1,0 +1,124 @@
+list: issues
+stage: analysis
+profile: vhdl
+target: nvc
+id: target_of_signal_assignment_must_be_a_signal_name_or_aggregate
+title: target of signal assignment must be a signal name or aggregate
+issue_novelty: new
+issue_type: downstream
+regex: >
+  target of signal assignment must be a signal name or aggregate
+examples:
+  - target_of_signal_assignment_must_be_a_signal_name_or_aggregate_ex1:
+      first_found: 16.07.2026
+      minified_error: |
+        test.vhdl:6:33: error: multiple conflicting visible declarations of ENUMERATION_SUBTYPE_MIRROR_PT
+        test.vhdl:10:27: error: design unit depends on WORK.JB which was analysed with errors
+        test.vhdl:14:3: error: target of signal assignment must be a signal name or aggregate
+      minified_example: |
+        use std.reflection.all;
+
+        entity jb is
+          port (
+            cr : out real
+          ; variable shrsmhtzmv : inout enumeration_subtype_mirror_pt
+          );
+        end jb;
+
+        architecture ikzxbkoms of jb is
+        begin
+          -- Single-driven assignments
+          cr <= cr;
+        end ikzxbkoms;
+      full_error: |
+        /home/runner/work/verilog-model/verilog-model/tmpjckw7bwo/c9e4b7e73285405db0c1a16cf9ea3380.vhdl:6:32: error: multiple conflicting visible declarations of INTEGER_SUBTYPE_MIRROR_PT
+        /home/runner/work/verilog-model/verilog-model/tmpjckw7bwo/c9e4b7e73285405db0c1a16cf9ea3380.vhdl:6:99: error: multiple conflicting visible declarations of VALUE_MIRROR_PT
+        /home/runner/work/verilog-model/verilog-model/tmpjckw7bwo/c9e4b7e73285405db0c1a16cf9ea3380.vhdl:9:19: error: design unit depends on WORK.OFFFFASWW which was analysed with errors
+        /home/runner/work/verilog-model/verilog-model/tmpjckw7bwo/c9e4b7e73285405db0c1a16cf9ea3380.vhdl:22:33: error: multiple conflicting visible declarations of ENUMERATION_SUBTYPE_MIRROR_PT
+        /home/runner/work/verilog-model/verilog-model/tmpjckw7bwo/c9e4b7e73285405db0c1a16cf9ea3380.vhdl:26:27: error: design unit depends on WORK.JB which was analysed with errors
+        /home/runner/work/verilog-model/verilog-model/tmpjckw7bwo/c9e4b7e73285405db0c1a16cf9ea3380.vhdl:30:3: error: target of signal assignment must be a signal name or aggregate
+      full_example: |
+        use std.reflection.all;
+
+        entity offffasww is
+          port (variable lyaxi : inout integer_subtype_mirror_pt; s : inout real; variable zrbate : inout value_mirror_pt);
+        end offffasww;
+
+        architecture w of offffasww is
+
+        begin
+          -- Single-driven assignments
+          s <= 111.13421;
+        end w;
+
+        use std.reflection.all;
+
+        entity jb is
+          port ( variable z : inout protected_value_mirror_pt
+          ; jihnluwreh : linkage time
+          ; cr : out real
+          ; variable shrsmhtzmv : inout enumeration_subtype_mirror_pt
+          );
+        end jb;
+
+        architecture ikzxbkoms of jb is
+
+        begin
+          -- Single-driven assignments
+          cr <= cr;
+        end ikzxbkoms;
+
+        library ieee;
+        use ieee.std_logic_1164.all;
+        use std.reflection.all;
+
+        entity u is
+          port ( do : linkage std_logic_vector(0 to 0)
+          ; variable xugdmsmylz : inout physical_subtype_mirror_pt
+          ; variable aipqcihk : inout array_subtype_mirror_pt
+          );
+        end u;
+
+        architecture wrmhufql of u is
+
+        begin
+
+        end wrmhufql;
+
+        use std.reflection.all;
+
+        entity czrl is
+          port ( twbyge : linkage integer
+          ; variable dtml : inout subtype_mirror_pt
+          ; variable ydjhftzz : inout integer_value_mirror_pt
+          ; variable wjfy : inout array_value_mirror_pt
+          );
+        end czrl;
+
+        library ieee;
+        use ieee.std_logic_1164.all;
+        use std.reflection.all;
+
+        architecture jtrwjwbhbk of czrl is
+          shared variable dces : enumeration_subtype_mirror_pt;
+          signal dypjoibzkw : real;
+          signal qbocw : time;
+          shared variable kdgrwepkil : protected_value_mirror_pt;
+          shared variable xaxeu : array_subtype_mirror_pt;
+          shared variable ktmmfc : physical_subtype_mirror_pt;
+          shared variable bnjgnwj : value_mirror_pt;
+          signal wvtrujtiq : real;
+          shared variable cnpmv : integer_subtype_mirror_pt;
+          shared variable c : array_subtype_mirror_pt;
+          shared variable fjtbc : physical_subtype_mirror_pt;
+          signal vctzspdy : std_logic_vector(0 to 0);
+        begin
+          gferlqis : entity work.u
+            port map (do => vctzspdy, xugdmsmylz => fjtbc, aipqcihk => c);
+          tnx : entity work.offffasww
+            port map (lyaxi => cnpmv, s => wvtrujtiq, zrbate => bnjgnwj);
+          kqqqqp : entity work.u
+            port map (do => vctzspdy, xugdmsmylz => ktmmfc, aipqcihk => xaxeu);
+          pxksba : entity work.jb
+            port map (z => kdgrwepkil, jihnluwreh => qbocw, cr => dypjoibzkw, shrsmhtzmv => dces);
+        end jtrwjwbhbk;
