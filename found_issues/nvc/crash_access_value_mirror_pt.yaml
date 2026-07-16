@@ -5,12 +5,16 @@ target: nvc
 id: crash_access_value_mirror_pt
 title: Crash due to access_value_mirror_pt
 issue_novelty: new
+issue_links:
+  - url: https://github.com/nickg/nvc/issues/1615
+    link_name: >
+      #1615
 matching_mode: whole
 regex: |
   \*\*\* Caught signal 11 \(SEGV_MAPERR\) \[address=.*, ip=.*] \*\*\*
 
   \[.*] ..\/src\/util.c:724 signal_handler.lto_priv.0
-  \[.*] \(\/usr\/lib\/x86_64-linux-gnu\/libc.so.6\) 
+  \[.*] \(\/usr\/lib\/x86_64-linux-gnu\/libc.so.6\)
   \[.*] ..\/src\/vcode.c:3854 emit_store
   \[.*] ..\/src\/lower.c:11824 lower_ports
   \[.*] ..\/src\/lower.c:12823 lower_instance
@@ -27,7 +31,7 @@ examples:
         *** Caught signal 11 (SEGV_MAPERR) [address=0x5580da40e218, ip=0x5578d99b4d8b] ***
 
         [0x5578d990a9f5] ../src/util.c:724 signal_handler.lto_priv.0
-        [0x7fcf4032f32f] (/usr/lib/x86_64-linux-gnu/libc.so.6) 
+        [0x7fcf4032f32f] (/usr/lib/x86_64-linux-gnu/libc.so.6)
         [0x5578d99b4d8b] ../src/vcode.c:3854 emit_store
         [0x5578d99b01b1] ../src/lower.c:11824 lower_ports
         [0x5578d99b01b1] ../src/lower.c:12823 lower_instance
@@ -55,7 +59,7 @@ examples:
         *** Caught signal 11 (SEGV_MAPERR) [address=0x558c00c64318, ip=0x5583fe5ced8b] ***
 
         [0x5583fe5268a5] ../src/util.c:724 signal_handler.lto_priv.0
-        [0x7effdaa4532f] (/usr/lib/x86_64-linux-gnu/libc.so.6) 
+        [0x7effdaa4532f] (/usr/lib/x86_64-linux-gnu/libc.so.6)
         [0x5583fe5ced8b] ../src/vcode.c:3854 emit_store
         [0x5583fe5ca1b1] ../src/lower.c:11824 lower_ports
         [0x5583fe5ca1b1] ../src/lower.c:12823 lower_instance
@@ -75,7 +79,7 @@ examples:
         end mqihcyvuqj;
 
         architecture klghbumolh of mqihcyvuqj is
-          
+
         begin
           -- Single-driven assignments
           mrhuz <= mrhuz;
@@ -92,7 +96,7 @@ examples:
         begin
           uft : entity work.mqihcyvuqj
             port map (mrhuz => aihkowpoep);
-          
+
           -- Single-driven assignments
           ipswyvfokg <= ipswyvfokg;
         end kbyb;

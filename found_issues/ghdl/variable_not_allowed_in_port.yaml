@@ -14,6 +14,9 @@ issue_links:
     link_name: >
       #1485
     # link_icon: closed.png
+  - url: https://github.com/ghdl/ghdl/issues/3309
+    link_name: >
+      #3309
 examples:
   - variable_not_allowed_in_port_ex1:
       first_found: 28.06.2026
@@ -43,18 +46,3 @@ examples:
         architecture behav of observer is
         begin
         end architecture behav;
-
-        entity top is
-        end entity top;
-
-        use work.some_pkg.all;
-
-        architecture struct of top is
-          shared variable sv : SomeType;
-        begin
-          inst : entity work.observer
-            port map (
-              m => sv
-            );
-        end architecture struct;
-
