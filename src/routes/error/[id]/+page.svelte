@@ -62,18 +62,11 @@
 			{/if}
 			{#if errorsStats[foundError.id]}
 				<FieldDisplay label="Stats">
-					<ErrorStatsCell
-						errorId={foundError.id}
-						{errorsStats}
-						percentages={errorPercentages[foundError.id]}
-					/>
+					<ErrorStatsCell errorId={foundError.id} {errorsStats} percentages={errorPercentages[foundError.id]} />
 				</FieldDisplay>
 			{/if}
 			<FieldDisplay label="Still relevant">
-				<ReproductionBadge
-					showText
-					state={errorReproducedStates[foundError.id] ?? 'untested'}
-				/>
+				<ReproductionBadge showText state={errorReproducedStates[foundError.id] ?? 'untested'} />
 			</FieldDisplay>
 			{#if foundError.issue_links && foundError.issue_links.length > 0}
 				<FieldDisplay label="Related issues">
@@ -95,10 +88,7 @@
 					{#if example.minified_example != null && example.minified_example !== ''}
 						<h3 class="mt-4 mb-1 flex items-center gap-8 font-semibold">
 							Minified example
-							<ReproductionBadge
-								showText
-								state={exampleReproducedStates[example.id]?.minified ?? 'untested'}
-							/>
+							<ReproductionBadge showText state={exampleReproducedStates[example.id]?.minified ?? 'untested'} />
 						</h3>
 						<CodeBlock code={example.minified_example} language="verilog" />
 					{/if}
@@ -109,10 +99,7 @@
 					{#if example.full_example != null && example.full_example !== ''}
 						<h3 class="mt-4 mb-1 flex items-center gap-8 font-semibold">
 							Generated example
-							<ReproductionBadge
-								showText
-								state={exampleReproducedStates[example.id]?.full ?? 'untested'}
-							/>
+							<ReproductionBadge showText state={exampleReproducedStates[example.id]?.full ?? 'untested'} />
 						</h3>
 						<CodeBlock code={example.full_example} language="verilog" />
 					{/if}

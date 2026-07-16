@@ -3,6 +3,7 @@ import path from 'path';
 import { parse } from 'yaml';
 
 const VALID_LISTS = ['issues', 'controversial'];
+const VALID_ISSUE_TYPES = ['crash', 'bad_message', 'infinite_loop', 'feature', 'downstream'];
 
 /**
  * @param {unknown} list
@@ -14,6 +15,33 @@ export function validateList(list, filePath) {
 		throw new Error(`Invalid or missing "list" in ${filePath}: got ${JSON.stringify(list)}, expected one of ${VALID_LISTS.join(', ')}`);
 	}
 	return /** @type {string} */ (list);
+}
+
+/**
+ * Normalize and validate issue_type (string or string[]) to string[] | null.
+ * @param {unknown} issueType
+ * @param {string} filePath
+ * @returns {string[] | null}
+ */
+export function validateIssueType(issueType, filePath) {
+	if (issueType == null) {
+		return null;
+	}
+
+	const types = Array.isArray(issueType) ? issueType : [issueType];
+	if (types.length === 0) {
+		return null;
+	}
+
+	for (const type of types) {
+		if (!VALID_ISSUE_TYPES.includes(/** @type {string} */ (type))) {
+			throw new Error(
+				`Invalid "issue_type" in ${filePath}: got ${JSON.stringify(type)}, expected one of ${VALID_ISSUE_TYPES.join(', ')}`
+			);
+		}
+	}
+
+	return /** @type {string[]} */ (types);
 }
 
 /**
@@ -131,7 +159,7 @@ export function parseYamlFile(filePath) {
 			issue_links: cleanIssueLinks(issue_links),
 			issue_novelty: issue_novelty || null,
 			maintainers_response: maintainers_response || null,
-			issue_type: doc.issue_type || null,
+			issue_type: validateIssueType(doc.issue_type, filePath),
 			list: validatedList
 		};
 	} catch (error) {

@@ -5,7 +5,7 @@ export type CheckBoxChoice = {
 
 export type IssueNovelty = 'new' | 'already_known' | 'unsupported' | 'late' | null;
 export type MaintainersResponse = 'bug' | 'enhancement' | 'low' | 'wontfix' | null;
-export type IssueType = 'crash' | 'bad_message' | 'infinite_loop' | 'feature' | null;
+export type IssueType = 'crash' | 'bad_message' | 'infinite_loop' | 'feature' | 'downstream' | null;
 export type IssueList = 'issues' | 'controversial';
 
 export type IssueLink = {

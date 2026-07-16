@@ -13,7 +13,7 @@
 	<div class="flex flex-col gap-1">
 		{#each issueLinks as link}
 			<div>
-				<IssueLinkAnchor {link} class="text-sm text-primary-600 underline hover:text-primary-800" />
+				<IssueLinkAnchor {link} class="text-primary-600 hover:text-primary-800 text-sm underline" />
 			</div>
 		{/each}
 	</div>

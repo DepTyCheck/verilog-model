@@ -13,7 +13,7 @@
 </script>
 
 <div class="flex items-start gap-6 py-2.5">
-	<span class="w-36 shrink-0 pt-0.5 text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500">{label}</span>
+	<span class="w-36 shrink-0 pt-0.5 text-xs tracking-wider text-gray-400 uppercase dark:text-gray-500">{label}</span>
 	<span class="text-sm text-gray-900 dark:text-gray-100">
 		{#if children}
 			{@render children()}

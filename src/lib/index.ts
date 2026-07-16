@@ -55,6 +55,8 @@ export function getIssueTypeDisplay(type: IssueType): DisplayInfo {
 			return { text: 'Infinite loop', color: 'purple' };
 		case 'feature':
 			return { text: 'Feature', color: 'gray' };
+		case 'downstream':
+			return { text: 'Downstream', color: 'blue' };
 		default:
 			return { text: '', color: 'gray' };
 	}

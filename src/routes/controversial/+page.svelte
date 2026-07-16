@@ -18,7 +18,7 @@
 		<A href={githubUrl} class="underline">verilog-model</A> using
 		<A href={depTyCheckGithubUrl} class="underline">DepTyCheck</A>.
 		<br />
-		It highlights cases where the IEEE standard is unclear, leading to different interpretations among
-		HDL analysis tools that may or may not be considered errors.
+		It highlights cases where the IEEE standard is unclear, leading to different interpretations among HDL analysis tools that may or may not be considered
+		errors.
 	</p>
 {/snippet}

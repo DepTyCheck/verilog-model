@@ -53,10 +53,7 @@
 	let toolChoices = $derived(createToolChoices(errors));
 	let stageChoices = $derived(createStageChoices(errors));
 	let noveltyChoices = $derived(createNoveltyChoices(errors));
-	let maintainersChoices = $derived(createMaintainersChoices(
-		errors,
-		getMaintainersResponseDisplay
-	));
+	let maintainersChoices = $derived(createMaintainersChoices(errors, getMaintainersResponseDisplay));
 	let issueTypeChoices = $derived(createIssueTypeChoices(errors));
 	let reproducedChoices: CheckBoxChoice[] = createReproducedChoices();
 
@@ -117,14 +114,16 @@
 	onMount(() => {
 		loadFromQueryParams(page.url);
 	});
-	let filteredErrors = $derived(applyFilters(errors, [
-		createFilter(targetGroup, (e) => e.target),
-		createFilter(stageGroup, (e) => e.stage),
-		createFilter(issueTypeGroup, (e) => e.issue_type),
-		createFilter(noveltyGroup, (e) => e.issue_novelty),
-		createFilter(maintainersGroup, (e) => e.maintainers_response),
-		createFilter(reproducedGroup, (e) => errorReproducedStates[e.id])
-	]));
+	let filteredErrors = $derived(
+		applyFilters(errors, [
+			createFilter(targetGroup, (e) => e.target),
+			createFilter(stageGroup, (e) => e.stage),
+			createFilter(issueTypeGroup, (e) => e.issue_type),
+			createFilter(noveltyGroup, (e) => e.issue_novelty),
+			createFilter(maintainersGroup, (e) => e.maintainers_response),
+			createFilter(reproducedGroup, (e) => errorReproducedStates[e.id])
+		])
+	);
 
 	let sortedErrors = $derived(new SortedIssues(filteredErrors, errorPercentages).sorted(sortColumn, sortDest));
 
@@ -147,58 +146,29 @@
 	<div class="items-center justify-between lg:flex">
 		<div class="mt-px mb-4 lg:mb-0">
 			<Heading tag="h3" class="mb-2 -ml-0.25 text-xl font-semibold dark:text-white">{heading}</Heading>
-				{@render description()}
+			{@render description()}
 		</div>
 		<div class="flex items-center gap-2">
 			<Button color="light" onclick={clearAllFilters}>Clear filters</Button>
 		</div>
 	</div>
 	<div class="relative mt-6">
-		<p class="mb-2 text-sm dark:text-white">{sortedErrors.length}/{errors.length} issues ({Math.round((sortedErrors.length / errors.length) * 100)}%)</p>
+		<p class="mb-2 text-sm dark:text-white">
+			{sortedErrors.length}/{errors.length} issues ({Math.round((sortedErrors.length / errors.length) * 100)}%)
+		</p>
 		<div bind:this={scrollContainer} style="overflow-x: auto; max-width: 100%;">
 			<table class="w-full min-w-max divide-y divide-gray-200 text-sm dark:divide-gray-600">
 				<thead class="bg-gray-50 dark:bg-gray-700">
 					<tr>
 						<TableColHead label="№" widthClass="w-12" colorClass="text-gray-400" />
 						<TableColSortHead label="Title" sortKey="title" {sortColumn} {sortDest} {setSort} />
-						<TableColFilterHead
-							choices={toolChoices}
-							bind:group={targetGroup}
-							label="Tool"
-							name="targets"
-						/>
-						<TableColSortHead
-							label="First Found"
-							sortKey="firstFound"
-							{sortColumn}
-							{sortDest}
-							{setSort}
-						/>
-						<TableColFilterHead
-							choices={issueTypeChoices}
-							bind:group={issueTypeGroup}
-							label="Issue type"
-							name="issue_type"
-						/>
-						<TableColFilterHead
-							choices={stageChoices}
-							bind:group={stageGroup}
-							label="Stage"
-							name="stage"
-						/>
-						<TableColFilterHead
-							choices={noveltyChoices}
-							bind:group={noveltyGroup}
-							label="Novelty"
-							name="novelty"
-						/>
+						<TableColFilterHead choices={toolChoices} bind:group={targetGroup} label="Tool" name="targets" />
+						<TableColSortHead label="First Found" sortKey="firstFound" {sortColumn} {sortDest} {setSort} />
+						<TableColFilterHead choices={issueTypeChoices} bind:group={issueTypeGroup} label="Issue type" name="issue_type" />
+						<TableColFilterHead choices={stageChoices} bind:group={stageGroup} label="Stage" name="stage" />
+						<TableColFilterHead choices={noveltyChoices} bind:group={noveltyGroup} label="Novelty" name="novelty" />
 						<TableColHead label="Related<br>issues" />
-						<TableColFilterHead
-							choices={maintainersChoices}
-							bind:group={maintainersGroup}
-							label="Maintainers<br>response"
-							name="maintainers"
-						/>
+						<TableColFilterHead choices={maintainersChoices} bind:group={maintainersGroup} label="Maintainers<br>response" name="maintainers" />
 						<TableColSortHead
 							label="Stats"
 							sortKey="stats"
@@ -221,10 +191,7 @@
 						<tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
 							<TableData widthClass="w-12" specialClass="text-gray-400">{i + 1}</TableData>
 							<TableData textAlign="text-left">
-								<A
-									href={fixLink(`/error/${item.id}`)}
-									class="line-clamp-2 break-words whitespace-normal"
-								>
+								<A href={fixLink(`/error/${item.id}`)} class="line-clamp-2 break-words whitespace-normal">
 									{item.title}
 								</A>
 							</TableData>
@@ -247,11 +214,7 @@
 							</TableData>
 							<TableData widthClass="w-48">
 								{#if errorsStats[item.id]}
-									<ErrorStatsCell
-										errorId={item.id}
-										{errorsStats}
-										percentages={errorPercentages[item.id]}
-									/>
+									<ErrorStatsCell errorId={item.id} {errorsStats} percentages={errorPercentages[item.id]} />
 								{/if}
 							</TableData>
 							<TableData>

@@ -30,10 +30,7 @@
 	});
 </script>
 
-<div
-	class="relative overflow-x-auto rounded-lg p-4 font-mono text-gray-100"
-	style="background-color: #0d1117;"
->
+<div class="relative overflow-x-auto rounded-lg p-4 font-mono text-gray-100" style="background-color: #0d1117;">
 	<Button
 		class="absolute top-2 right-2 rounded bg-gray-700 px-2 py-1 text-xs text-white hover:bg-gray-600 focus:ring focus:outline-none"
 		onclick={copyToClipboard}
