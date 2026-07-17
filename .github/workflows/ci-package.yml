@@ -27,10 +27,8 @@ defaults:
     shell: bash
 
 env:
-  PACK_DIR: /root/.pack
   GENERATION_DIR_PATTERN: "generated-"
   GEN_TESTS_COUNT: 256
-  BUILD_DIR: ".build"
   PACKAGE_NAME: verilog-model
   ERROR_DISTANCES_OUT: error_distances.html
   DATASET_PATH: dataset-clone
@@ -43,96 +41,10 @@ env:
   # COMBINED_RUN_STATS_FILE: "combined-run-stats.json"
 
 jobs:
-  get-upstream-matrix:
-    name: Acquire matrix of upstream modes
-    runs-on: ubuntu-latest
-    container: ghcr.io/stefan-hoeck/idris2-pack:latest
-    outputs:
-      upstream-matrix: "${{ steps.get-upstream-matrix.outputs.upstream-matrix }}"
-    steps:
-      - name: Install Git
-        run: apt-get update && apt-get install git
-      - name: Get upstream matrix
-        id: get-upstream-matrix
-        run: |
-          CURR="$(idris2 --version | sed 's/.*-//')"
-          MAIN="$(git ls-remote https://github.com/idris-lang/Idris2 main | head -c 9)"
-          echo "Current: $CURR, bleeding edge: $MAIN"
-          if [ "$CURR" == "$MAIN" ]; then
-            echo 'upstream-matrix=["latest-pack-collection"]'
-          else
-            echo 'upstream-matrix=["latest-pack-collection", "bleeding-edge-compiler"]'
-          fi >> "$GITHUB_OUTPUT"
-
   build-and-test:
-    name: Build and test `${{ github.repository }}`
-    needs: get-upstream-matrix
-    runs-on: ubuntu-latest
-    container: ghcr.io/stefan-hoeck/idris2-pack:latest
-    outputs:
-      latest-cache-key: ${{ steps.export-key.outputs.latest_key }}
-      build-path: ${{ steps.export-key.outputs.build_path }}
-    strategy:
-      fail-fast: false
-      matrix:
-        upstream-mode: ${{ fromJSON(needs.get-upstream-matrix.outputs.upstream-matrix) }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - name: Update `pack-db`
-        run: pack update-db
-      - name: Switch to the latest compiler, if needed
-        if: matrix.upstream-mode == 'bleeding-edge-compiler'
-        run: |
-          { echo; echo "[idris2]"; echo 'commit = "latest:main"'; } >> pack.toml
-          pack fetch
-      - name: Switch to the latest collection
-        run: pack switch latest
-      - name: Calculate cache key
-        id: cache-key
-        env:
-          SRC_HASH: ${{ hashFiles('src/**', 'verilog-model.ipkg', 'pack.toml') }}
-          UPSTREAM_MODE: ${{ matrix.upstream-mode }}
-        run: |
-          idris2_commit=$(idris2 -v | sed -nE 's/.*Idris 2, version [0-9.]+-([A-Za-z0-9]+).*/\1/p')
-          echo "key=build-$SRC_HASH-$UPSTREAM_MODE-$idris2_commit" >> "$GITHUB_OUTPUT"
-      - name: Export key
-        id: export-key
-        if: matrix.upstream-mode == 'latest-pack-collection'
-        env:
-          CACHE_KEY: ${{ steps.cache-key.outputs.key }}
-        run: |
-          echo "latest_key=$CACHE_KEY" >> "$GITHUB_OUTPUT"
-          echo "build_path=$PWD" >> "$GITHUB_OUTPUT"
-      - name: Restore from cache
-        id: cache-build
-        uses: actions/cache/restore@v5
-        with:
-          path: ${{ env.BUILD_DIR }}
-          key: ${{ steps.cache-key.outputs.key }}
-      - name: Touch files
-        if: steps.cache-build.outputs.cache-hit == 'true'
-        run: |
-          find "${{ env.BUILD_DIR }}" -type f -exec touch {} +
-          sync
-      - name: Build `${{ env.PACKAGE_NAME }}`
-        run: pack build ${{ env.PACKAGE_NAME }}
-      - name: Save build
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v5
-        with:
-          path: ${{ env.BUILD_DIR }}
-          key: ${{ steps.cache-key.outputs.key }}
-      # - name: Fix file system  ¯\_(ツ)_/¯
-      #   run: |
-      #     set -x +e
-      #     pack run ${{ env.PACKAGE_NAME }} --coverage mcov -n 1 --seed 0,1
-      #     touch tests/printer/model-coverage/dummy
-      #     touch tests/printer/create-dir/dummy
-      # - name: Test ${{ env.PACKAGE_NAME }}
-      #   run: pack test ${{ env.PACKAGE_NAME }}
+    uses: DepTyCheck/idris2-actions/.github/workflows/build-and-test.yml@v1
+    with:
+      run_tests: false
 
   generate-modules:
     name: Generate ${{ matrix.profile }} files
@@ -148,29 +60,21 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Update `pack-db`
-        run: pack update-db
-      - name: Switch to the latest collection
-        run: pack switch latest
-      - name: Restore from cache
-        uses: actions/cache/restore@v5
+      - name: Restore Idris2 pack state
+        uses: DepTyCheck/idris2-actions/.github/actions/restore-pack-state@v1
         with:
-          path: ${{ env.BUILD_DIR }}
-          key: ${{ needs.build-and-test.outputs.latest-cache-key }}
-          fail-on-cache-miss: true
-      - name: Touch files
-        run: |
-          find "${{ env.BUILD_DIR }}" -type f -exec touch {} +
-          sync
+          state: ${{ fromJSON(needs.build-and-test.outputs.pack_states)[0] }}
       - name: Set env vars
         run: |
           echo "OUT_DIR=${{ env.GENERATION_DIR_PATTERN }}${{ matrix.profile }}" >> "$GITHUB_ENV"
           echo "COV_DIR=mcov_${{ matrix.profile }}" >> "$GITHUB_ENV"
       - name: Generate modules
+        working-directory: ${{ needs.build-and-test.outputs.project_dir }}
         env:
           PROFILE: ${{ matrix.profile }}
+          PACKAGE: ${{ needs.build-and-test.outputs.package }}
         run: |
-          pack run "$PACKAGE_NAME" \
+          pack run "$PACKAGE" \
             --to "$OUT_DIR" \
             -n "$GEN_TESTS_COUNT" \
             --lang "$PROFILE" \
@@ -838,6 +742,7 @@ jobs:
     needs: [build-and-test, run-tools]
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
+    container: ghcr.io/stefan-hoeck/idris2-pack:latest
     permissions:
       contents: read
       packages: write
@@ -851,17 +756,10 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Restore from cache
-        id: cache-build
-        uses: actions/cache/restore@v5
+      - name: Restore Idris2 pack state
+        uses: DepTyCheck/idris2-actions/.github/actions/restore-pack-state@v1
         with:
-          path: ${{ env.BUILD_DIR }}
-          key: ${{ needs.build-and-test.outputs.latest-cache-key }}
-      - name: Touch ${{ env.BUILD_DIR }} dir (-_-)
-        run: |
-          set +e
-          ls -la
-          mkdir ${{ env.BUILD_DIR }}
+          state: ${{ fromJSON(needs.build-and-test.outputs.pack_states)[0] }}
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
@@ -883,8 +781,6 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          build-args: |
-            WORK_DIR=${{ needs.build-and-test.outputs.build-path }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       - name: Generate artifact attestation
@@ -898,7 +794,7 @@ jobs:
     name: Create an issue on failure
     if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
-    needs: [get-upstream-matrix, build-and-test, run-tools, regression-test]
+    needs: [build-and-test, run-tools, regression-test]
     permissions:
       contents: read
       issues: write
@@ -912,7 +808,7 @@ jobs:
           TAGGED_USERS=$(awk '{printf "@%s ", $0}' MAINTAINERS)
           echo "TAGGED_USERS=${TAGGED_USERS}" >> "$GITHUB_ENV"
       - name: Create Issue
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const issueTitle = `Workflow Failed: ${context.workflow} #${context.runNumber}`;

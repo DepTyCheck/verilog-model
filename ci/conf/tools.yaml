@@ -193,7 +193,9 @@ tools:
       sudo make install
     version: ghdl -v
     commands:
-      - run: ghdl -a --std=19 {file} && ghdl -e --std=19 {vhdl_top_entity}
+      - run: ghdl -a --std=19 {file}
+        error_regex: "error: .*"
+      - run: ghdl -e --std=19 {vhdl_top_entity}
         error_regex: "error: .*"
       - run: ghdl -r --std=19 {vhdl_top_entity}
         error_regex: "error: .*"
