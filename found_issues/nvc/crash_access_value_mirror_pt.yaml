@@ -13,17 +13,17 @@ matching_mode: whole
 regex: |
   \*\*\* Caught signal 11 \(SEGV_MAPERR\) \[address=.*, ip=.*] \*\*\*
 
-  \[.*] ..\/src\/util.c:724 signal_handler.lto_priv.0
+  \[.*] ..\/src\/util.c:.* signal_handler.lto_priv.0
   \[.*] \(\/usr\/lib\/x86_64-linux-gnu\/libc.so.6\)
-  \[.*] ..\/src\/vcode.c:3854 emit_store
-  \[.*] ..\/src\/lower.c:11824 lower_ports
-  \[.*] ..\/src\/lower.c:12823 lower_instance
-  \[.*] ..\/src\/elab.c:1452 elab_lower.lto_priv.0
-  \[.*] ..\/src\/elab.c:2162 elab_architecture.lto_priv.0
-  \[.*] ..\/src\/elab.c:2781 elab
-  \[.*] ..\/src\/elab.c:715 elaborate
-  \[.*] ..\/src\/nvc.c:2561 process_command
-  \[.*] ..\/src\/nvc.c:2736 main
+  \[.*] ..\/src\/vcode.c:.* emit_store
+  \[.*] ..\/src\/lower.c:.* lower_ports
+  \[.*] ..\/src\/lower.c:.* lower_instance
+  \[.*] ..\/src\/elab.c:.* elab_lower.lto_priv.0
+  \[.*] ..\/src\/elab.c:.* elab_architecture.lto_priv.0
+  \[.*] ..\/src\/elab.c:.* elab
+  \[.*] ..\/src\/elab.c:.* elaborate
+  \[.*] ..\/src\/nvc.c:.* process_command
+  \[.*] ..\/src\/nvc.c:.* main
 examples:
   - crash_access_value_mirror_pt_ex1:
       first_found: 13.07.2026
