@@ -251,4 +251,4 @@ Eq VHDLPortMode where
 public export
 data AllowedVHPort : VHDLObject -> VHDLPortMode -> Type where
   YSig : (0 c : CanBeSignal t) => AllowedVHPort (Sig t) pm
-  YVar : AllowedVHPort (Var $ Protected _) InOut
+  -- YVar : AllowedVHPort (Var $ Protected _) InOut
