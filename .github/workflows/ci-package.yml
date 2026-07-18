@@ -46,6 +46,13 @@ jobs:
     with:
       run_tests: false
 
+  fake-build-and-test:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    name: Build and test `DepTyCheck/verilog-model`
+    steps:
+      - run: echo "Fix repo merge rules"
+
   generate-modules:
     name: Generate ${{ matrix.profile }} files
     needs: build-and-test
