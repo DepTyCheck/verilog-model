@@ -22,3 +22,18 @@ examples:
         architecture uxyxyxokn of acufgoiopy is
         begin
         end uxyxyxokn;
+
+        entity top is
+        end entity top;
+
+        use std.reflection.all;
+
+        architecture struct of top is
+          shared variable sv : access_subtype_mirror_pt;
+        begin
+          inst : entity work.acufgoiopy
+            port map (
+              dturgv => sv,
+              ato => open
+            );
+        end architecture struct;

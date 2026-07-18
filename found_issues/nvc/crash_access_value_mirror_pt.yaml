@@ -55,6 +55,20 @@ examples:
         architecture kbyb of xythfccnun is
         begin
         end kbyb;
+
+        entity top is
+        end entity top;
+
+        use std.reflection.all;
+
+        architecture struct of top is
+          shared variable sv : access_value_mirror_pt;
+        begin
+          inst : entity work.xythfccnun
+            port map (
+              s => sv
+            );
+        end architecture struct;
       full_error: |
         *** Caught signal 11 (SEGV_MAPERR) [address=0x558c00c64318, ip=0x5583fe5ced8b] ***
 
@@ -100,3 +114,18 @@ examples:
           -- Single-driven assignments
           ipswyvfokg <= ipswyvfokg;
         end kbyb;
+
+        entity top is
+        end entity top;
+
+        use std.reflection.all;
+
+        architecture struct of top is
+          shared variable sv : access_value_mirror_pt;
+        begin
+          inst : entity work.xythfccnun
+            port map (
+              s => sv,
+              ipswyvfokg => open
+            );
+        end architecture struct;

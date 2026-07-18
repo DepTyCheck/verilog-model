@@ -46,3 +46,17 @@ examples:
         architecture behav of observer is
         begin
         end architecture behav;
+
+        entity top is
+        end entity top;
+
+        use work.some_pkg.all;
+
+        architecture struct of top is
+          shared variable sv : SomeType;
+        begin
+          inst : entity work.observer
+            port map (
+              m => sv
+            );
+        end architecture struct;

@@ -30,6 +30,21 @@ examples:
           -- Single-driven assignments
           cr <= cr;
         end ikzxbkoms;
+
+        entity top is
+        end entity top;
+
+        use std.reflection.all;
+
+        architecture struct of top is
+          shared variable sv : enumeration_subtype_mirror_pt;
+        begin
+          inst : entity work.jb
+            port map (
+              cr => open,
+              shrsmhtzmv => sv
+            );
+        end architecture struct;
       full_error: |
         /home/runner/work/verilog-model/verilog-model/tmpjckw7bwo/c9e4b7e73285405db0c1a16cf9ea3380.vhdl:6:32: error: multiple conflicting visible declarations of INTEGER_SUBTYPE_MIRROR_PT
         /home/runner/work/verilog-model/verilog-model/tmpjckw7bwo/c9e4b7e73285405db0c1a16cf9ea3380.vhdl:6:99: error: multiple conflicting visible declarations of VALUE_MIRROR_PT
@@ -122,3 +137,22 @@ examples:
           pxksba : entity work.jb
             port map (z => kdgrwepkil, jihnluwreh => qbocw, cr => dypjoibzkw, shrsmhtzmv => dces);
         end jtrwjwbhbk;
+
+        entity top is
+        end entity top;
+
+        use std.reflection.all;
+
+        architecture struct of top is
+          shared variable sv1 : subtype_mirror_pt;
+          shared variable sv2 : integer_value_mirror_pt;
+          shared variable sv3 : array_value_mirror_pt;
+        begin
+          inst : entity work.czrl
+            port map (
+              twbyge => open,
+              dtml => sv1,
+              ydjhftzz => sv2,
+              wjfy => sv3
+            );
+        end architecture struct;

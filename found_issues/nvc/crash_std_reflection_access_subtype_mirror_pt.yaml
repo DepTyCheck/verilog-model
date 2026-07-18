@@ -12,7 +12,7 @@ examples:
         *** Caught signal 11 (SEGV_MAPERR) [address=(nil), ip=0x561dff6212f4] ***
 
         [0x561dff5b49f5] ../src/util.c:724 signal_handler.lto_priv.0
-        [0x7f350d6b932f] (/usr/lib/x86_64-linux-gnu/libc.so.6) 
+        [0x7f350d6b932f] (/usr/lib/x86_64-linux-gnu/libc.so.6)
         [0x561dff6212f4] ../src/common.c:684 is_subprogram
         [0x561dff67110e] ../src/names.c:2470 solve_record_ref
         [0x561dff67110e] ../src/names.c:5850 _solve_types.lto_priv.0
@@ -45,3 +45,17 @@ examples:
         architecture arch of a is
         begin
         end arch;
+
+        entity top is
+        end entity top;
+
+        use std.reflection.all;
+
+        architecture struct of top is
+          shared variable sv : access_subtype_mirror_pt;
+        begin
+          inst : entity work.a
+            port map (
+              p => sv
+            );
+        end architecture struct;

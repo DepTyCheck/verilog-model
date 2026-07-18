@@ -35,3 +35,19 @@ examples:
         architecture qlrdqvb of e is
         begin
         end qlrdqvb;
+
+        entity top is
+        end entity top;
+
+        use std.reflection.all;
+
+        architecture struct of top is
+          shared variable sv : integer_subtype_mirror_pt;
+          shared variable sv1 : protected_subtype_mirror_pt;
+        begin
+          inst : entity work.e
+            port map (
+              bwt => sv,
+              meeenkrrq => sv1
+            );
+        end architecture struct;
