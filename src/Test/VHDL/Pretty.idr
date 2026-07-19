@@ -573,7 +573,7 @@ prettyDesign x pds @{un} (New {s} {usl} {subUs} {mcs} design cont) = do
       subEntNamesVect = toVect subEntNames
 
   -- Generate architecture name
-  (archName ** unEntConnSubArch) <- genOneName x allEntConSubNames unEntConnSub
+  (archName ** unEntConnSubArch) <- genOneUniqueName keywords x allEntConSubNames unEntConnSub
 
   -- Resolve names
   let topNames = resolveInpsOutsNames design mcsNames
