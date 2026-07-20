@@ -5,7 +5,7 @@ target: verilator
 id: unsupported_tristate_construct_triand_graph
 title: Unsupported tristate construct (in graph; not converted)
 regex: >
-  Unsupported tristate construct \(in graph; not converted\): (CONST|VARREF|INITITEM|ASSIGNW|OR|NOT|AND|INITARRAY)
+  Unsupported tristate construct \(in graph; not converted\): (CONST|VARREF|INITITEM|ASSIGNW|OR|NOT|AND|INITARRAY|VAR '.*')
 issue_novelty: unsupported
 examples:
   - unsupported_tristate_construct_triand_graph_const:
@@ -390,3 +390,32 @@ examples:
           assign naubdo = '{'{'{'{'bxz0},'{'b1xxx},'{'bz},'{'b1zx}},'{'b0,'{'b1x},'{'b0},'{'bx}},'{'{'bz},'b1zz,'{'b0},'{'bz}},'{'bz1zx1,'b0,'b1x,'b1x},'{'b0,'{'bxx0},'{'bx},'{'b1zz1x}}},'{'{'{'b0},'bz,'bz,'{'b1}},'{'{'b0},'{'b0},'b101,'{'b11}},'{'{'bxz},'b1,'bz,'bxxxx0},'{'b1,'{'b0},'{'b1},'b1},'{'bz,'{'bz},'b1,'b0}}};
           assign naubdo = '{'{'b1xz10,'{'{'b0x},'b10,'{'bxxz01},'b1},'{'bz,'bz,'{'bz},'{'bxx10}},'{'{'b1},'bx,'{'bzz1x1},'bz0},'b0x1z},'{'b00z0,'{'bx,'{'b1},'b0,'bz},'b0z1z,'{'bx,'bx,'{'bx10},'bz},'bx0x1}};
         endmodule: sqbvitez
+
+  - unsupported_tristate_construct_triand_graph_var_mvk_en:
+      first_found: 20.07.2026
+      full_error: |
+        %Error-UNSUPPORTED: top.sv:3:43: Unsupported tristate construct (in graph; not converted): VAR 'mvk__en'
+      full_example: |
+        module cygsuzowl (inout trior logic [2:2] mvk [1:0]);
+          // Multi-driven assignments
+          assign mvk = mvk;
+          assign mvk = mvk;
+          assign mvk = mvk;
+          assign mvk = '{'{'bxzz0},'{'b1}};
+        endmodule: cygsuzowl
+
+        module sscjtsx (input uwire logic [3:1][0:2] nignu [4:1]);
+          // Unpacked net declarations
+          trior logic [2:2] oyujfct [1:0];
+
+          xor ve(okaovjaqok, okaovjaqok, okaovjaqok);
+          cygsuzowl stgvw(.mvk(oyujfct));
+          xor scpsiqeo(okaovjaqok, okaovjaqok, l);
+          xnor s(okaovjaqok, qgeijqj, qgeijqj);
+
+          // Multi-driven assignments
+          assign qgeijqj = okaovjaqok;
+          assign qgeijqj = qgeijqj;
+          assign oyujfct = '{'{'bx},'{'bzz0x}};
+          assign okaovjaqok = 'bx;
+        endmodule: sscjtsx
