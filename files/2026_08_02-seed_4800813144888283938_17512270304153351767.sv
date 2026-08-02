@@ -1,0 +1,30 @@
+// Seed: 4800813144888283938,17512270304153351767
+
+module zfjccxiy (inout trior logic [4:2][4:1][4:4][4:1] gshw [3:2][2:3][4:0][3:1]);
+  or ecy(ad, rof, ad);
+  
+  
+  // Multi-driven assignments
+  assign gshw = '{'{'{'{'bxz0,'bxx1,'b0xzzxzz0zzz111z10x10x0z0010xz11x0x1xx0zz0x10xx1x},'{'b00x0z00xz1zxxz10z0zz1zz11z0x1z01zz010xz0x1zz10xz,'bx,'bz01zz0zx10zx1xxz1z0xxzx1xz01xz10x101zzz1101z1010},'{'bxzz111x1z10110xzz1x010110x0z1z00x111z001x10zxz01,'bzz0x0,'b1x1xx0xz0x101zxxzxxzxxxzzzzz1zz1xzx1x1x011x10x10},'{'b0zzzz,'bx1zxxz01zz00101zx0x1x01100x110z100x111xx11x0011z,'b0100x0zx1xx1zxxx00xzx1xzzxx0001zzxxxx1zz1z00z0zz},'{'b00z01zz0z010x000100xxz11z000z1x0x0zz01zzz0z1100z,'b0x1z0,'bz0xx0}},'{'{'bxx1,'b1z,'bzx00100xzxzx1101010xxx1x100x000z0x01111xxx10zz0z},'{'bx0,'bz0xxx0x10x11zx1x00x0x1x110x11x1zzxz01z00xz11x01x,'bx},'{'bz,'b0zz1z10zx000x10zz0zz10xxxx1xzzzx1x0z0zz10zxxxxzz,'bzz0x},'{'b111,'b0111zz10z10011z000001x00zxx0xz1z1x10zz11z1z0000x,'bxxz1x},'{'bxx0z1zzz001x001x1z01z11zz0xz1x1xz1z1z1x1xxzxxz0z,'bx0,'bx}}},'{'{'{'b1,'bx,'bx10xx1zx100x0x1xz1xx0xx1xx00xxz1zz001zx0zxz0zzxz},'{'b010110z10zxxzzz00zxx1xx11101zzx00zxzxx11x0xx0zx1,'b01,'bxz1zzzzzz1xxzzxz01z0xxxzx1xxz10x00zzxzxx0zx1x111},'{'bz0xx,'bx000101zx00110xx1xzxxzzx1xxx010z00000zx1xxzz1xzx,'b0xzxzzzx1z0zx000x000zz110zzzxzx0xzxxz00x0x0z11z0},'{'bxz01z0zzxzz1z0xz110xxxzzzx0101z0x1z0xxx0xzzz0zxx,'bzz1x00z0110z1110zzz1x1z0zxx00zx00xzxxzxxxx00z1x0,'bx0z01x1zxz0z1z01xxx0xxzz1zxz0z1zzz00z00z10xx010x},'{'b1x001100x111x00xzzz1zzz11z00z101xzzx01011z1z0x1x,'b00x1x10x0xx11z0zx1zx11zx1zzz1xz0zx0x01zz0x111zx1,'b1}},'{'{'bzx0,'bx,'bz11x00x00x1zzx0z11x1x0001x11zzz100xz01z1zxz1xx10},'{'b00,'bzzz0z1x0zz1z0x00x110zz0x0x010z0xx00xx1xzxz1010zx,'bz1z0110010xxz101x00xzz00z11x10xxzx0xxzxzz0z000zz},'{'b1zzz,'bz0zx1z0x10zxxx10z11zx0111x00110x0001xzx0x00zxz10,'b00x110xxx0z110xxz001xxxx11z0x1011xz011z00001z0xz},'{'bzx1011x1x1zxzxz100z0xz1zz00z101xz011xz0xzx010z10,'bxz00x0x011z1zx1x00z11z0xzxzxzxxx00zzzxxzzx00xxzx,'b11xz11z1z01zx01x111zz1010zz1000x000x0z0xx1zxx1z0},'{'b1zz,'bz,'bxx0x01zz00z1z1z10zz01z01xxzz0000x00x0z1xz0xz0x00}}}};
+  assign rof = 'bz;
+  assign gshw = '{'{'{'{'bz0x,'bz1111z01zx0xz10xxzz1xz1zz100zz0zzzzx011z0z11z010,'bz},'{'bzxz1,'bxzx01xxzx0z1x1zx11xz10110xxxzx1xz1xz10xx1zx1z001,'b010zz},'{'bxz,'bx0x,'b10x01101x1zxzz00x1010101x1zx10zzx0x1zx0xxzzxz1xx},'{'b1zzzx110xz1z0x101x0zzzzz011101zxz1000zzzzx1x1xx0,'b10,'b1x10x11xx1zx0zz1x1x011xz0zx0zz10zx000x0zz1x0xxxz},'{'bzzz0,'bxx,'b10xx00xzzxzz10x111xxz0z0xxzx0101x0xxz0010x0x0x1z}},'{'{'b1zxz111xzz1z1x00xz0x1zz0xz1x11xxz001z00zzx1x1z1z,'bx1110z1zx11x01x10z1x000z100x0z1zxxxx0zzx0z00x01z,'b1x0},'{'bzx10x0xxxz10x0z10z1zxz0x11x110xz11x11zzx01xz1xxz,'b1zz11x0xzxx1001x10100x01z00100xz01x0z01zzxx11zzz,'bx1z},'{'bxzx0z,'b0x10,'bx01x1x0xz0z1xzzxxz1zz1x0z0000xxxx00100x000x00x0z},'{'b10z01xx1x1zx01z0zz010100110xz01xx1z01zxx1x1xxzxz,'b100xzz011xx1zxz1z1z1x0x0x0xxx1x1zx100x1xx10x0zz1,'bx1z},'{'bzx,'b100,'b0z10zx00z1xzx0z0zzxz10xzzxxzz10x1z0xzz0x0xzz00zz}}},'{'{'{'b111x0z00xx1x10z111zz00z1xxz0xxx0zzx11101x0011000,'bxx0,'b010xzzz0zz1xz10x0x00101z0z00zxzz1z100x010z00z101},'{'bx11z1zz1z011z0zz0xxxxzxx1z1101x1xxzzz1x00x10xxx0,'b0x0,'bx01zz},'{'bx10111xxzx1zxxx00x1z0001z111zz1z10zzzxz1x11zz10z,'b010xx11xx0001z010101z1100zzzzxz101zz000001xx0x11,'bz1z0},'{'bz0zzz1z11z00z1z00z00zzxx01x11z0xzx1xxxxz1x0zz10z,'bzx1zzzxz010z00100zxxxzxzzz11x1x11x00xxz0z110zxx0,'bxzx},'{'bxz00z,'b0x1x0x1100111xx10x101z1x0xzz0001xz0011z0x1z1z0z1,'bz01z0z1xx0xx1xxxzzxzxxzx0x00zz0zx1xxzzx1x11xx0zx}},'{'{'b1110z,'b1x0111z0z110xz0z0xx0100x111z1111110x1110xx001xzx,'bzzx111x0110z0zz1100x10x10z011zzx0zzz000z1zx1xzx1},'{'b1z0z0z0010x0xzz0zz0011101xx0x0z1xz111zx10x01010x,'bx00,'b010},'{'bxxz0zx110z11x000xzz0x0x1001z1z00xz10x1x0xzxx10x1,'b000,'b1010},'{'b1011,'bz0xz01x1xz1xzxx1xz0xzz1z1z1z11zzz1z11z1zz0z0zzz0,'bzzz},'{'b0x1,'bxz1x,'bxzxzzz11zz11zx1x0z1x0zxxzx10zx10z1zx0x00xzx0x00x}}}};
+  assign gshw = gshw;
+endmodule: zfjccxiy
+
+module ekknpuctj ();
+  and qisvqu(jxgfyykt, jxgfyykt, nmzkk);
+  
+  
+  // Multi-driven assignments
+  assign jxgfyykt = 'bz;
+  assign nmzkk = 'bx;
+endmodule: ekknpuctj
+
+module c (inout supply0 logic [4:3][1:2] gpdtxej, input logic [0:3][2:0] wtyg [2:4], input tri0 logic [4:0][2:0] zppkgok [2:1][0:3]);
+  // Multi-driven assignments
+  assign gpdtxej = gpdtxej;
+endmodule: c
+
+
+
+// Seed after: 11383485767085225941,17512270304153351767
