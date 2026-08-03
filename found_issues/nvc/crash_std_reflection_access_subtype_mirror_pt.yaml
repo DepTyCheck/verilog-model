@@ -5,6 +5,31 @@ target: nvc
 id: crash_std_reflection_access_subtype_mirror_pt
 title: Crash due to std.reflection.access_subtype_mirror_pt
 issue_novelty: new
+regex: |
+  \*\*\* Caught signal 11 \(SEGV_MAPERR\) \[address=\(nil\), ip=.*] \*\*\*
+
+  \[.*] ..\/src\/util.c:.* signal_handler.lto_priv.0
+  \[.*] \(\/usr\/lib\/x86_64-linux-gnu\/libc.so.6\)
+  \[.*] ..\/src\/common.c:.* is_subprogram
+  \[.*] ..\/src\/names.c:.* solve_record_ref
+  \[.*] ..\/src\/names.c:.* _solve_types.lto_priv.0
+  \[.*] ..\/src\/names.c:.* solve_types
+  \[.*] ..\/src\/names.c:.* p_type_mark.lto_priv.0
+  \[.*] ..\/src\/parse.c:.* p_subtype_indication.lto_priv.0
+  \[.*] ..\/src\/parse.c:.* p_interface_type_indication
+  \[.*] ..\/src\/parse.c:.* p_interface_declaration
+  \[.*] ..\/src\/parse.c:.* p_interface_element
+  \[.*] ..\/src\/parse.c:.* p_interface_list
+  \[.*] ..\/src\/parse.c:.* p_port_list
+  \[.*] ..\/src\/parse.c:.* p_port_clause.lto_priv.0
+  \[.*] ..\/src\/parse.c:.* p_entity_declaration
+  \[.*] ..\/src\/parse.c:.* p_primary_unit.lto_priv.0
+  \[.*] ..\/src\/parse.c:.* p_design_unit
+  \[.*] ..\/src\/parse.c:.* parse
+  \[.*] ..\/src\/nvc.c:.* analyse_file
+  \[.*] ..\/src\/nvc.c:.* analyse
+  \[.*] ..\/src\/nvc.c:.* process_command
+  \[.*] ..\/src\/nvc.c:.* main
 examples:
   - crash_std_reflection_access_subtype_mirror_pt_ex1:
       first_found: 06.07.2026
