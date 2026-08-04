@@ -16,7 +16,7 @@ regex: |
   \[.*] ..\/src\/names.c:.* solve_types
   \[.*] ..\/src\/names.c:.* p_type_mark.lto_priv.0
   \[.*] ..\/src\/parse.c:.* p_subtype_indication.lto_priv.0
-  \[.*] ..\/src\/parse.c:.* p_interface_type_indication
+  \[.*] ..\/src\/parse.c:.* p_interface_type_indication(.lto_priv.0|)
   \[.*] ..\/src\/parse.c:.* p_interface_declaration
   \[.*] ..\/src\/parse.c:.* p_interface_element
   \[.*] ..\/src\/parse.c:.* p_interface_list
@@ -60,6 +60,60 @@ examples:
         [0x561dff5a7074] ../src/nvc.c:2733 main
 
         nvc 1.22-devel (1.21.0.r74.gae5627250) (Using LLVM 18.1.3) [x86_64-pc-linux-gnu]
+
+        Please report this bug at https://github.com/nickg/nvc/issues
+      minified_example: |
+        entity a is
+          port (variable p : inout std.reflection.access_subtype_mirror_pt);
+        end a;
+
+        architecture arch of a is
+        begin
+        end arch;
+
+        entity top is
+        end entity top;
+
+        use std.reflection.all;
+
+        architecture struct of top is
+          shared variable sv : access_subtype_mirror_pt;
+        begin
+          inst : entity work.a
+            port map (
+              p => sv
+            );
+        end architecture struct;
+
+  - crash_std_reflection_access_subtype_mirror_pt_ex2:
+      first_found: 04.08.2026
+      minified_error: |
+        *** Caught signal 11 (SEGV_MAPERR) [address=(nil), ip=0x55beffd318a4] ***
+
+        [0x55beffcc6da5] ../src/util.c:724 signal_handler.lto_priv.0
+        [0x7fec7e24532f] (/usr/lib/x86_64-linux-gnu/libc.so.6)
+        [0x55beffd318a4] ../src/common.c:684 is_subprogram
+        [0x55beffd8172e] ../src/names.c:2471 solve_record_ref
+        [0x55beffd8172e] ../src/names.c:5891 _solve_types.lto_priv.0
+        [0x55beffcd5acf] ../src/names.c:5938 solve_types
+        [0x55beffcd5acf] ../src/names.c:3964 p_type_mark.lto_priv.0
+        [0x55beffcd7487] ../src/parse.c:4236 p_subtype_indication.lto_priv.0
+        [0x55beffcd9cd9] ../src/parse.c:5073 p_interface_type_indication.lto_priv.0
+        [0x55beffcdccf8] ../src/parse.c:5276 p_interface_declaration
+        [0x55beffcdccf8] ../src/parse.c:5926 p_interface_element
+        [0x55beffcdd9b9] ../src/parse.c:5943 p_interface_list
+        [0x55beffcddd1b] ../src/parse.c:5963 p_port_list
+        [0x55beffcddd1b] ../src/parse.c:5975 p_port_clause.lto_priv.0
+        [0x55beffcea0f7] ../src/parse.c:6017 p_entity_declaration
+        [0x55beffcea0f7] ../src/parse.c:9519 p_primary_unit.lto_priv.0
+        [0x55beffcf5729] ../src/parse.c:13606 p_design_unit
+        [0x55beffcf5729] ../src/parse.c:13726 parse
+        [0x55beffcbbc6b] ../src/nvc.c:185 analyse_file
+        [0x55beffcc1eff] ../src/nvc.c:429 analyse
+        [0x55beffcc1eff] ../src/nvc.c:2559 process_command
+        [0x55beffcb9470] ../src/nvc.c:2737 main
+
+        nvc 1.23-devel (1.22.0.r35.g37e7dfe1e) (Using LLVM 18.1.3) [x86_64-pc-linux-gnu]
 
         Please report this bug at https://github.com/nickg/nvc/issues
       minified_example: |
