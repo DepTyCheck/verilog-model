@@ -5,6 +5,7 @@ target: nvc
 id: crash_std_reflection_access_subtype_mirror_pt
 title: Crash due to std.reflection.access_subtype_mirror_pt
 issue_novelty: new
+matching_mode: whole
 regex: |
   \*\*\* Caught signal 11 \(SEGV_MAPERR\) \[address=\(nil\), ip=.*] \*\*\*
 
