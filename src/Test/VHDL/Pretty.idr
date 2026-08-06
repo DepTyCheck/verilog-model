@@ -561,9 +561,10 @@ parameters (x : Fuel) {opts : LayoutOpts} (entityName : String) (archName : Stri
 export
 prettyDesign : {opts : _} -> {dus : _} -> Fuel ->
                (pds : PrintableDesigns VHDL dus) -> UniqNames dus.length (allDesignNames pds) => VHDLDesign dus -> Gen0 $ Doc opts
-prettyDesign _ _         End                                      = pure empty
+prettyDesign _ _         End                                       = pure empty
 prettyDesign x pds @{un} (New {s} {usl} {subUs} {mcs} design cont) = do
   let (_ ** keywords) = vhdlKeywordsFor design
+
   (entityName ** connNames ** subEntNames ** unDes ** unEntConnSub) <- genPDNames keywords x pds {un} design
   let allEntConSubNames : ?
       allEntConSubNames = subEntNames ++ connNames ++ entityName :: allDesignNames pds
