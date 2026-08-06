@@ -10,7 +10,7 @@ regex: |
   \*\*\* Caught signal 11 \(SEGV_MAPERR\) \[address=\(nil\), ip=.*] \*\*\*
 
   \[.*] ..\/src\/util.c:.* signal_handler.lto_priv.0
-  \[.*] \(\/usr\/lib\/x86_64-linux-gnu\/libc.so.6\)
+  \[.*] \(\/usr\/lib\/x86_64-linux-gnu\/libc.so.6\)(| )
   \[.*] ..\/src\/common.c:.* is_subprogram
   \[.*] ..\/src\/names.c:.* solve_record_ref
   \[.*] ..\/src\/names.c:.* _solve_types.lto_priv.0
