@@ -1,7 +1,8 @@
-# SystemVerilog model for property-based testing
+# HDL model for property-based testing
 
-This is a set of descriptions (a model) of semantically correct definitions in the SystemVerilog language
-expressed with dependent types in [Idris 2](https://github.com/idris-lang/Idris2) programming language.
+**HDL-model** is a set of descriptions (a model) of semantically correct definitions in
+[SystemVerilog](https://en.wikipedia.org/wiki/SystemVerilog) and [VHDL](https://en.wikipedia.org/wiki/VHDL),
+expressed with dependent types in the [Idris 2](https://github.com/idris-lang/Idris2) programming language.
 
 This model is designed for property-based testing using the [DepTyCheck library](https://github.com/buzden/deptycheck/),
 a library for property-based testing and generation of dependently-typed data.
@@ -11,31 +12,31 @@ for the analyzers known to the maintainers and whether they are tested, under co
 
 ## The model
 
-This model is not meant to be the full specification of SystemVerilog.
+This model is not meant to be the full specification of SystemVerilog or VHDL.
 However, it is not strictly required for good property-based testing.
 
-Currently, we test the following property: for every semantically correct SystemVerilog description (from the supported subset),
+Currently, we test the following property: for every semantically correct HDL description (from the supported subset),
 an instrument taking it should accept it without issue.
 For several particular instruments supporting simulation,
 we also run this simulation for several ticks in order to check it is feasible.
 
 ### Features
 
-We are currently working on extending supported features of SystemVerilog,
+We are currently working on extending supported features of SystemVerilog and VHDL,
 and there would be a list of supported features.
 
 TBD
 
 ### Found bugs
 
-Currently we have found several bugs in open-source instruments working with SystemVerilog.
+Currently we have found several bugs in open-source instruments working with SystemVerilog and VHDL.
 We are on the way of reporting them officially.
 
 To see the bugs and issues we have discovered, please visit our [site](https://deptycheck.github.io/verilog-model/).
 
 ## Installation
 
-The generator of semantically correct SystemVerilog definitions uses [pack](https://github.com/stefan-hoeck/idris2-pack),
+The generator of semantically correct HDL definitions uses [pack](https://github.com/stefan-hoeck/idris2-pack),
 the package manager for the Idris 2 programming language.
 
 You can either:
@@ -71,7 +72,7 @@ verilog-model --help
 
 ### Usage
 
-The generator produces SystemVerilog test designs.
+The generator produces SystemVerilog or VHDL test designs (choose with `--lang sv` or `--lang vhdl`; default is `sv`).
 Each generated file corresponds to a **separate test**.
 
 - By default, tests are printed to the console, but you can specify a directory to save files using `--to`.
@@ -88,7 +89,7 @@ For all available options, run:
 verilog-model -h
 ```
 
-Here is a basic usage example. Generate 10 tests in the tests folder with a fixed seed:
+Here is a basic usage example. Generate 10 SystemVerilog tests in the tests folder with a fixed seed:
 
 ```console
 verilog-model --to ./tests -n 10 --seed 12345,6789
