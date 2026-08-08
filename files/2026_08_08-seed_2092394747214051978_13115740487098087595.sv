@@ -1,0 +1,13 @@
+// Seed: 2092394747214051978,13115740487098087595
+
+module ull (input reg [4:2][1:3][3:4][2:0] xgyvljaw, inout supply1 logic [3:3][0:3] wmxrtwcz [2:4][0:3][2:1][0:2], input bit [4:2] tch);
+  // Multi-driven assignments
+  assign wmxrtwcz = '{'{'{'{'bx01x,'bx0xzz,'b010z},'{'b1xx1,'bxzx,'b1z1x}},'{'{'bxx0z,'b0,'bzx10},'{'b1z11,'bx0x,'bz1z1}},'{'{'b01z1,'bxxx0,'b10zx},'{'bz,'bx00,'b0z0}},'{'{'b00z0,'b101x,'b1x},'{'b1zxx,'b0z0x,'b1010x}}},'{'{'{'b0xz1,'b0x1,'b1zxzx},'{'bz0,'bxxx,'b10zz}},'{'{'b0xxz0,'bx10z,'b111},'{'bz0z0,'b0x11,'bxz0z}},'{'{'b011,'b1zxzx,'bz111},'{'b10x0,'b0z01,'bz}},'{'{'bz1z1,'b01,'b1011},'{'bxz1zz,'bz0z,'b01z}}},'{'{'{'b110z,'b0zzx,'bzx10x},'{'b10z0,'bz001,'b01z1}},'{'{'b1z11,'b10zx,'b011z},'{'bx10x,'bz,'b01x1}},'{'{'b0xxzz,'bx,'b101x1},'{'bz,'bx,'b0}},'{'{'bx,'b0011,'bz1xz},'{'b1001,'bxzxx,'b101}}}};
+  assign wmxrtwcz = '{'{'{'{'b010z,'b1z0x1,'bx110},'{'bx011,'bz01,'b10x}},'{'{'bx1,'bz0xz,'b1xzz},'{'bz0zx,'b0z0,'b01xx}},'{'{'b00x0,'b00xz,'b1x001},'{'bxzx,'bx1z0,'bzz}},'{'{'b10z,'b1100,'bx10xx},'{'b00z1,'bz00,'b1z11}}},'{'{'{'bx11,'b1x01,'b101},'{'b11x,'b11z,'bz000}},'{'{'bx,'bz0z0,'b1x},'{'b1,'bxx0,'b000}},'{'{'b0011,'b1x0z1,'bx0},'{'b11x0,'b0z1z,'bx11z}},'{'{'b1111,'bxx01,'bz0x},'{'bzz11,'b0xz0,'bzxx1}}},'{'{'{'b011,'b01x1,'bx1},'{'bzz1,'bx100,'b01z0}},'{'{'bx11z,'bz010,'bzzxz},'{'b0,'b1xx0,'b0x00}},'{'{'bxxxzx,'bxz01,'bzxzz},'{'b1111,'bz1x,'b11x0}},'{'{'b10x1,'bz0x0,'bz0xz},'{'b1z11,'b0,'b0z0x}}}};
+  assign wmxrtwcz = '{'{'{'{'bzx1x,'b0,'b10z0},'{'b1zz1,'b1xz0,'bz1z1}},'{'{'b10z1,'b0z000,'bx1z},'{'b11xx,'bzxz1,'bx1}},'{'{'bz001,'b01xx,'bx0zz},'{'b1x1,'b00z1,'bx0zx}},'{'{'bz110z,'bz00z,'b0x},'{'b0000,'b1xx0,'b0x}}},'{'{'{'bx00,'b01z01,'b01x1},'{'bzxzz,'b1z,'b1x10}},'{'{'b11z10,'b1,'b0x1x},'{'bxxz,'b00zx,'b0100}},'{'{'b1xz1,'b1x,'b100},'{'bz101,'b0z0,'b1zzx}},'{'{'bz1xx,'bz0,'bx11x},'{'b0zz1,'bxx11,'b0zxx}}},'{'{'{'b01,'bxx,'b0001},'{'bz,'bz10,'b0}},'{'{'bzz10,'b0001,'bz10z},'{'b1x10,'b0010z,'bx101}},'{'{'bzx01,'b10xz,'bxx0x},'{'bz,'bx01,'bz1z1}},'{'{'bx1x,'b01z1,'b1001},'{'bx0,'bzz0x,'bz11x}}}};
+  assign wmxrtwcz = '{'{'{'{'bz,'bz,'bx1xz},'{'b0010,'bzxz1,'b0}},'{'{'b10zz,'b0x,'bz10x},'{'b00zxx,'bz100,'bxx01}},'{'{'bzz1x,'bxxz1,'bxzxx},'{'b1,'bxzz0,'bxxzz}},'{'{'bxzz1,'b0z11,'b000x},'{'b1z,'b0,'bx0x}}},'{'{'{'b1,'bx0,'bzz},'{'bz10,'bz0x1,'b001z}},'{'{'b0111,'bz110z,'b00100},'{'bx1zx,'b00xzx,'b001xz}},'{'{'b1xzx,'bxxz,'bz1},'{'b111z,'b0zz1,'bxz0x}},'{'{'b11,'b00,'b0x11z},'{'bz,'bx1,'bx101}}},'{'{'{'b1,'b0110,'b0z},'{'b0010,'b0,'b1xxx}},'{'{'b011,'bxxzz,'bx},'{'bx10x,'b01xx,'b0x}},'{'{'bz011,'b10z,'b001},'{'b1,'b10xx,'b0xxz}},'{'{'bzx1xz,'bz0xz,'bz010},'{'b000,'b1100,'b10100}}}};
+endmodule: ull
+
+
+
+// Seed after: 17839168244002439498,13115740487098087595
