@@ -1,0 +1,36 @@
+// Seed: 15360163826202818251,3239635060317007189
+
+module mqiiteipuy (input supply1 logic [2:4] livxgoak [3:0], inout wand logic [0:2][0:4][0:3] sx [4:2][0:4][3:2][4:2]);
+  not fcn(ta, sjdwku);
+  
+  
+  // Multi-driven assignments
+  assign sx = '{'{'{'{'b0001111x1z1zx1x0x0z1111x101x1zxx0xz000z00zx1xz1010zx0x11xz00,'b0x11100xz00z0x11x1x00z01x1x1011z01x1z1z1x0x1z1x01x10z11z0z00,'b1x},'{'bxzx10,'b111xxxxzx0xzzzx0z0z1010xz00x01xxxxx1xx1100z0x1z1z1zxx0zzxx00,'b1xz1x01xzz11xz1x0z0xz1011z0x11z1x00x1001xxzx00xz01x0z0xzz00z}},'{'{'bzxzzx0z1x111zz0xx0000z1x1xz0z0xx0z0001z1z00zz01xz1z1z0z00010,'b1,'b1xxz1xz00x1zx110x0xxz10100z11zx0xx1zxzz1xz1zx01xxx11xx1zxxz0},'{'b1,'b10xzx1zz0x0x0001zzz001z01z1xz010z000x1x00x11x0z1z01000zx01x0,'bx0}},'{'{'bzz010z010z0z0zz0zzz1zz001x01z101x00x1x1zxxx0zz1x00xxzzxxx11z,'b0z0xx,'bzx10},'{'bx00zx0xx1z10z1zz1xxx1011xx1z0xz11x0x0z1x01x0z10zzx10z1xzzzxx,'bxxx11z0x1x0z011100zzx110x11x1x00z01zzzxz0010xx01x11xx0x01xzz,'bxzzz}},'{'{'bz111x,'b00x,'b1xz001xx0z0x0z0110z1010001xzxx00zzzx1x0z1xxxxz111x11zxx00z01},'{'b0z0x1xxz00x1z110xzxxzx1010xzz101zx1xzxx0x110zx01z0xx10zx01zz,'bx00xxzz11000zxzz10xz01xxzxzz1zxxx01xxxx0z10zz01xz0zx1z0z10zz,'bxz10}},'{'{'b001zxzxx0x00xxxzxz1zzxzxx1110zxzz11xzz00z11z0zx0x0xxx10x1xx0,'b1xzx01xz0z1z0xxx011zx1xz1x0xxxzx1zzx1zxz1zz00xx1z1zx0zz0x10z,'b1xz0zz1z0101z1x1zxzz01zx1z0xx0z0zxx1xx0xxz01xxzz01z1x00zz011},'{'b0xz0z,'b01111x10zxxz11zx10x1x01z11101x0x011z0111xx0x01xzz0zz1z000x01,'bz0z}}},'{'{'{'bzzzxzxz10110x110x001z101z1z1zx1xz10zzz11zzx0x1xz1zxxz1zx1x00,'b1x0z001xz11z1xz010xx00xzxxzzxx0zx11z1zzx0z1zz0111011101x1z1z,'bxz01xxz10xxz00xzzx0zx0zx1zxxxxx1zx00z00xzxzzx1z0zx1xxx0xx0x1},'{'b0000001z111xxzzzxxzz00x10zx1zz0xz10000x1z0xz1zzx011z10zzx1z1,'b01,'b0x1x11zz0z0xxx10110x011zzzzzxzx0xx0xz1zz0zz0x1z0zzxzz1z1110z}},'{'{'b10,'b0x,'bxxz},'{'b0zzzz0x101z0x000x00zzx011zxx11x10xxxxzx111z100000000111x00z1,'bx0111xxx101zz0111z11xxxz1xxxx0xz010xzzxzzz1zz101zx11zx0z00xx,'b10zz1zz0110111111xx1xzxzx100xx1zx010z1110xx00zzz00z11x0zxzx1}},'{'{'bx,'bx110xzxx0011z1zzz0x00x1zzzxxzzzx1x0z1x01z1x110001xx11x1101xx,'b0z011},'{'bzxz,'bzz00,'bxx}},'{'{'bxz1x,'b0,'b011x},'{'b0xzz0001xxz11x101zxxzx11z0z1x1zzzz1zz1x01z1z1xx1z0zz1xx1100z,'b11z,'b10z}},'{'{'bz11x1,'bz,'bxxzx0zx01100zxx10x1xxxxx0z01z1z0x0xzz100xx000011100001zz1xzx},'{'b0,'bxx1101z011z01zxx1zx01xxxxzx01x110z10zxzzzx1x1z00x1x11110x0zz,'bz0xzxx011010x1z1000z0z0zx1x101zx10x01zxzz1xx1zz0xz010z1z1x1x}}},'{'{'{'b01zx111z11x1zx001zxx1x111z1x0z101z0x0xxzx11x011010100z1zz011,'b10xx0z1x011x0x1x1xxz011z0x0x1zxz11z1zz101zxxz1x1zx0zxz110xxx,'bzxxzz001z0x1zx1zzzz1z1xxzxx1zx01xz1100zzz10zz000zxzzxzzx1101},'{'bx001x1z1zzx1x0010z000zzx0xx01x11xz01xx11z1xxxz0zxx100zz010zz,'bzx0x1zx00z0xx01zxx10xzxxx0011z0zzz0x1x0x1z1zxz1100xz00x1x1x1,'bz}},'{'{'bz,'b0z,'bz1z1zx1zzxx0xxzz1zxzz011zzx0000111zz10x0xzxz10z100x1xzz1x101},'{'bz00xzz00x011xx0x11100xzzz011zx1x0z10x01z00zx1z01001xxxzx100x,'bx,'b1011x1z1zz100x0zx01xxx0zz0x1x100zxzxz1x01zxz11110100xzz1xz00}},'{'{'bzx,'b10z10z0z000zzz1zx1111110z01zxxz01x1zz00zz0x01z01x1xz0zzxz1z0,'b1x},'{'bz1z1,'bx,'bx1zzx1xzz00x0z00z01xx0010001z001111x01xzx10z1x1x100000110xzz}},'{'{'b1zxzzzzx101x1zx1x0xz1z0xzz00x0z0z0x1zx11x00z10x1x0zxzz000010,'bx0100x0xx10zx010x1zz1zx0z0zxxx01z0z11xx01xz0z010zx1z11110x01,'b1xx011zx0z110xzzz0011x0100x11x1x0x01z011zzz011z0zz111xz1xxz0},'{'b0z,'bx10x1zxxzzz111zzz000000zx10x1x1xz0xz110x11xz001xz10xz0xzz00x,'b0xxzx}},'{'{'bxz1zz1xxxxxxzzxx0111xxz1zxx11xx01x10xz0xxz11zzz0zzz11xzz10z0,'b10z0z10xz11z0001zx00x01zzzx1xzzxxz011zz1z1100x10001xzx100xz1,'b10zx},'{'bzx01x11x0x000x0x10011011010z01x00x1z1101xx11z0zxz0zx11110zxz,'b0zxxxzxx0xxxz0z0x1xx1xz11zx01x01x1010100x1xx01x000z111100z0z,'bx01xxzx1z1111z10100zzxzzx00x10xz0z1111xz0001xz0x1x0zx01z1z0x}}}};
+  assign sjdwku = 'bz;
+endmodule: mqiiteipuy
+
+module p ();
+  and twhlyahte(ehkecfyz, rv, tugev);
+  
+  
+  // Multi-driven assignments
+  assign ehkecfyz = ehkecfyz;
+endmodule: p
+
+module djlbmae (input real xdzfyf);
+  // Unpacked net declarations
+  wand logic [0:2][0:4][0:3] qohbby [4:2][0:4][3:2][4:2];
+  supply1 logic [2:4] bncbrc [3:0];
+  
+  mqiiteipuy gyla(.livxgoak(bncbrc), .sx(qohbby));
+  
+  
+  // Multi-driven assignments
+  assign qohbby = qohbby;
+  assign qohbby = '{'{'{'{'b0z,'b11x,'b0011xx1xxz1111011xz10001100xx011xxxz1zz00xzz1xxx110111z00x11},'{'bzx,'bz1z,'bxx0z}},'{'{'b0x0,'bz01zzzz1x0x110zzx0x01xxx1xz111x1x1x1xx1zx01zx110z0000x01zzxx,'bxzx0},'{'bxx101z0zxz0zz1z1xxx0z01z0z01zz10z0z11zxz1xxzz010zx1xxz0zz11z,'bx0,'bz1xx1xzx1z0x0xz0x1001x0xz01zx1zzz1xzzx01z0111zxz0x0x011x10x0}},'{'{'b10x1,'b011x100100111xx101101zxx1z1zzxx101x10111000zx1110xzzzx101xx0,'b0zx0x0x0x0zz0z0zz11001xz1zxx0zxz1zzz00xz00x0z0z0zz10000z0111},'{'bz0zzxxx011x11x10x100z0x110x01x1x0011z1zx111z0zz100xxx01zz0x1,'bx,'b011x0zxz101z10x00xz1xx01zx110zz0x1xz0z0100xx1xx000z01z1zxzxx}},'{'{'b01zx0z0xx01x110xz1x0z0001xx001010xzzz00zx0x0zzzz1x0xxz11111z,'bx001,'bzxxzx001xx01z0z1zxzxzzzx00x1z00xx0x0xzx1xz1xz0z01xx1xzz0x000},'{'b0000110z0011z0x1x1xzxz0xx1011x111zz1xzz0z1z0z10zzz001011x1xz,'bx1x1xx011111zz1001xxzxz1xz00z00x10z1x1z11z11z11x1z010x100x01,'bxx}},'{'{'bx1z00xxzx10x100x0x11zz0xx1xxz0x0x1010100x1z10xz11x0z10x0xxxx,'bz,'bz0zxx11001x1zzxzzxz1x111xx111z00z0001110xz10zzxzzxzzz010xxxx},'{'bzz01,'b1zz1zz0xxz1z101xx1zxz1x00z0xxz01zxx100xx11x1zz0x1z111z0z1x0x,'bzz0}}},'{'{'{'b0xxzzz00zxx1xxx11xxzz1010z110xxx11xx0xx0z0z1x0zz0zxz0z000zz0,'bx1z0xx1z0xxz0001xz111zzz0z11xzzx101z1z0z01xxxx10x1xxx101x110,'bx0zx},'{'b01x00,'b0x011x0zz0xz10x10001x1xzz010x1z0z0zx111zx100x1x11z0xzx1x11xx,'b0}},'{'{'b00,'bx0z10,'bzx01},'{'b0,'b0z1z01x0zz0100zxz0z10x00xz01z0xzx100xzx0xzxz0011x0z10zz0z1zz,'bz0xx011z01x10z0x0zz0x0zx1zxx010100x0x0z10xzzx1111zx1x1x0011z}},'{'{'bx1xzzx1111xxxzz0111xx01z101zx00z001x1x11z0zzx0z11xz0zzz01xzx,'b0100x,'bx01110xzzzzz0zzz1xzxzz01x0z0x01z1z0x11z0011z1011x01101x01zz1},'{'b1,'b0x0x100zz1x1zz1x10xzx10111z10110z0x1z0xz11x0xx100x11zzxz11zx,'bz0xx01z001x00xz0zzz1xxx0x1111001xx110x10xxxx0xxzz0zzzx0x1xz1}},'{'{'bz1z0z0z100x1xxzz0z0x10100zxz001x01xz1z10zzzx1000x10z1110xx10,'b0x1110001x100000101zzzzz00zzx1x011zx0z11z0zzx0xxxzzzxxzz11z1,'b01},'{'b0,'bxzz,'bz0x000zz0xx00x11z010z001xz1x0x1x1zzx111000zzx010xz1z10z0xxxz}},'{'{'b0x,'bxx,'bz1z1x1zzzzxx0z11x0zx11x0z00000zx1xxx011zz11z11zxx1z010z10xx0},'{'b0zx1z,'bxz10z1x0x0x1xxx01z0x00zxx1x1z0z11xz111xzz1x01z1z00x1x101z111,'bzxz}}},'{'{'{'b11z,'b111zz00x0zz0z1zx0x0z000z001zxz11011zxx10xx111x101xz1zxzz111z,'b111111010x00zx0xxzxz010xx1xz1z0zxxz111z010zz0z1011z1xzx0xz0z},'{'b0x1x,'b111z0,'b1001zzzzz10zzz1110z1xz111z1xx001x1110z0xxzxxx0x10x000xzzz110}},'{'{'bz1z1z00zx111xxxzz1z0z010z0zx0z00zz0xzx0xz1xz0z10xxz0x001z1z1,'b1zxx,'b0zxx0},'{'bx,'b0x0x0,'b1xx11}},'{'{'bxzxxx,'b1x,'b1zx00xzzx1xxxzx01z10x1xx100z1x0zx00zxx000z1xz10x1xz1zzzx1z01},'{'b1x0,'bx01zx1x0zx1x0100010x11xz1z1z111011zzzzxxz1xx0z100zxzx11z00xx,'bxx}},'{'{'bzz11,'bzz100xxxzx0xx1xz1x11zx1x0x1110011xz1zzx00x001x1z110xzz0zz0z1,'bzx11},'{'bxx11zxxzz0zxx00zxz110110000000000zx11x01z011000z1000zxzx1010,'bxx0,'bxx}},'{'{'b010x1z1001z1zz1xzxz10z01x0001zz1xxx111x01x001z100x0z100z0x11,'bzxxx,'bxxz},'{'b01xxx,'b010,'b11z00011x10z101001zx1x100z0zzx1z1xxxz0x100000xz0x110z01zx01z}}}};
+  assign bncbrc = bncbrc;
+endmodule: djlbmae
+
+
+
+// Seed after: 9754127655185506877,3239635060317007189
