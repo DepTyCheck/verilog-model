@@ -3,6 +3,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from common.logger import get_logger
+
 
 @dataclass
 class AtomGroup:
@@ -51,13 +53,12 @@ def covered_atom_indices(spans: list[tuple[int, int]], start: int, end: int) -> 
     return [i for i, (lo, hi) in enumerate(spans) if lo < end and hi > start]
 
 
-def carve_group(
-    atoms: list[str], patterns: list[tuple[object, str]]
-) -> tuple[list[tuple[object, str]], list[str]]:
+def carve_group(atoms: list[str], patterns: list[tuple[object, str]]) -> tuple[list[tuple[object, str]], list[str]]:
     remaining = list(atoms)
     hits: list[tuple[object, str]] = []
     while remaining:
         text = "\n".join(remaining)
+        get_logger().info(f"searching a match for {text}")
         spans = atom_spans(remaining)
         claimed: list[int] | None = None
         for error_obj, pattern_str in patterns:

@@ -1,6 +1,10 @@
+import re
 import unittest
 
-from common.line_group_errors import AtomGroup, group_atoms, locate_line_number
+from common.error_file_parser import ErrorFile
+from common.error_types import MatchingMode as MM
+from common.ignored_errors_list import IgnoredErrorsList
+from common.line_group_errors import AtomGroup, carve_group, group_atoms, locate_line_number
 
 LOC = r"^[A-z0-9_.\/,-]+:(\d+):"
 
@@ -39,9 +43,6 @@ class TestLocateAndGroup(unittest.TestCase):
         )
 
 
-from common.line_group_errors import carve_group
-
-
 class TestCarveGroup(unittest.TestCase):
     def test_carve_non_prefix_then_edges(self):
         atoms = ["L1", "L2", "L3", "L4", "L5"]
@@ -51,11 +52,14 @@ class TestCarveGroup(unittest.TestCase):
             ("C", r"L4\nL5"),
         ]
         hits, left = carve_group(atoms, patterns)
-        self.assertEqual([(h[0], h[1]) for h in hits], [
-            ("A", "L2\nL3"),
-            ("B", "L1"),
-            ("C", "L4\nL5"),
-        ])
+        self.assertEqual(
+            [(h[0], h[1]) for h in hits],
+            [
+                ("A", "L2\nL3"),
+                ("B", "L1"),
+                ("C", "L4\nL5"),
+            ],
+        )
         self.assertEqual(left, [])
 
     def test_leftover_when_partial(self):
@@ -69,9 +73,6 @@ class TestCarveGroup(unittest.TestCase):
         hits, left = carve_group(atoms, [("first", r"shared"), ("second", r"shared")])
         self.assertEqual([h[0] for h in hits], ["first"])
         self.assertEqual(left, [])
-
-
-from common.ignored_errors_list import IgnoredErrorsList
 
 
 class TestIverilogLineGroupMatching(unittest.TestCase):
@@ -98,22 +99,21 @@ class TestIverilogLineGroupMatching(unittest.TestCase):
     ]
 
     def test_carve_finds_invalid_module_item(self):
-        hits, left = carve_group(self.TRANSCRIPT_ATOMS, self.PATTERNS)
+        hits, _ = carve_group(self.TRANSCRIPT_ATOMS, self.PATTERNS)
         hit_ids = [h[0] for h in hits]
         self.assertIn("invalid_module_item", hit_ids)
 
     def test_carve_finds_port_declarations(self):
-        hits, left = carve_group(self.TRANSCRIPT_ATOMS, self.PATTERNS)
+        hits, _ = carve_group(self.TRANSCRIPT_ATOMS, self.PATTERNS)
         hit_ids = [h[0] for h in hits]
         self.assertIn("errors_in_port_declarations", hit_ids)
 
     def test_carve_no_unknown_when_bare_syntax_error_in_extra(self):
-        hits, left = carve_group(self.TRANSCRIPT_ATOMS, self.PATTERNS)
+        _, left = carve_group(self.TRANSCRIPT_ATOMS, self.PATTERNS)
         self.assertEqual(left, [], f"Unexpected leftover atoms: {left}")
 
     def test_new_pattern_does_not_match_bare_syntax_error_line(self):
         """Tightened patterns must NOT consume a bare 'syntax error' line alone."""
-        import re
         bare = "test.sv:5: syntax error"
         self.assertIsNone(re.search(r"Invalid module item\.$", bare))
         self.assertIsNone(re.search(r"Errors in port declarations\.$", bare))
@@ -129,19 +129,10 @@ class TestIverilogLineGroupMatching(unittest.TestCase):
 
 class TestSpecificMatchersOrder(unittest.TestCase):
     def test_sorted_known_then_extras(self):
-        from common.error_file_parser import ErrorFile
-        from common.error_types import MatchingMode as MM
-
         files = [
-            ErrorFile(
-                error_id="zeta", tool="t", regex="Z", mode=MM.SPECIFIC, title="", profile="sv"
-            ),
-            ErrorFile(
-                error_id="alpha", tool="t", regex="A", mode=MM.SPECIFIC, title="", profile="sv"
-            ),
-            ErrorFile(
-                error_id="whole", tool="t", regex="W", mode=MM.WHOLE, title="", profile="sv"
-            ),
+            ErrorFile(error_id="zeta", tool="t", regex="Z", mode=MM.SPECIFIC, title="", profile="sv"),
+            ErrorFile(error_id="alpha", tool="t", regex="A", mode=MM.SPECIFIC, title="", profile="sv"),
+            ErrorFile(error_id="whole", tool="t", regex="W", mode=MM.WHOLE, title="", profile="sv"),
         ]
         lst = IgnoredErrorsList.from_error_files(files, extra_regexes=["extra1", "extra2"])
         ids_or_pat = []

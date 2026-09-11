@@ -136,8 +136,7 @@ def main() -> None:
 
     _print_final_report(report)
 
-    has_unknown = collector.has_unknown_errors()
-    sys.exit(1 if has_unknown else 0)
+    sys.exit(1 if collector.has_unknown_errors() else 0)
 
 
 if __name__ == "__main__":

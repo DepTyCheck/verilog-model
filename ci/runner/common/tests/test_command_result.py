@@ -151,10 +151,7 @@ class TestAnalyzeCommand(unittest.TestCase):
         self.assertEqual(ids, ["e0", "e1"])
 
     def test_location_grouping_leftover_becomes_unknown(self):
-        output = (
-            "tmp/x.sv:10: known error here\n"
-            "tmp/x.sv:20: completely unrecognised error\n"
-        )
+        output = "tmp/x.sv:10: known error here\ntmp/x.sv:20: completely unrecognised error\n"
         cmd_cfg = CommandConfig(
             run="tool {file}",
             error_regex=ToolErrorRegex(r"^[A-z0-9_.\/,-]+:\d+: .+$"),
@@ -196,10 +193,7 @@ class TestAnalyzeCommand(unittest.TestCase):
         Expected: outcome=known_errors, matches contains only the KnownError id,
         no 'unknown', and the extra/ignored atom does NOT surface as an error_id.
         """
-        output = (
-            "tmp/x.sv:10: syntax error\n"
-            "tmp/x.sv:10: error: Invalid module item.\n"
-        )
+        output = "tmp/x.sv:10: syntax error\ntmp/x.sv:10: error: Invalid module item.\n"
         cmd_cfg = CommandConfig(
             run="tool {file}",
             error_regex=ToolErrorRegex(r"^[A-z0-9_.\/,-]+:\d+: .+$"),

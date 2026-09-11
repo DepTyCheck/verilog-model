@@ -5,6 +5,7 @@ from common.tests.test_error_file_parser import TestProfileRequired
 from common.tests.test_first_found_index import TestFirstFoundIndexErrors, TestFirstFoundIndexHappyPath
 from common.tests.test_line_group_errors import TestCarveGroup, TestIverilogLineGroupMatching, TestLocateAndGroup, TestSpecificMatchersOrder
 from common.tests.test_make_command import TestMakeCommand
+from common.tests.test_match_search_logging import TestMatchSearchLogging
 from common.tests.test_nvc_segv_regex import TestNvcSegvRegex
 from common.tests.test_per_file_report import TestFileOutcome, TestPerFileReportRoundtrip
 from common.tests.test_profiles_config import TestProfilesConfig
@@ -32,6 +33,7 @@ if __name__ == "__main__":
             TestFirstFoundIndexErrors,
             TestLocateAndGroup,
             TestCarveGroup,
+            TestMatchSearchLogging,
             TestIverilogLineGroupMatching,
             TestSpecificMatchersOrder,
             TestSvHook,
