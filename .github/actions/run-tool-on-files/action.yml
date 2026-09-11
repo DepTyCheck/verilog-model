@@ -30,6 +30,9 @@ inputs:
   extra-ignored-regexes:
     required: false
     default: ""
+  location-regex:
+    required: false
+    default: ""
   output-json:
     required: false
     default: ""
@@ -95,6 +98,7 @@ runs:
         IGNORED_ERRORS_DIR: ${{ inputs.ignored-errors-dir }}
         ASSETS: ${{ inputs.assets }}
         EXTRA_IGNORED_REGEXES: ${{ inputs.extra-ignored-regexes }}
+        LOCATION_REGEX: ${{ inputs.location-regex }}
         PER_FILE_JSON: ${{ steps.paths.outputs.per-file-json }}
       run: |
         set +e
@@ -110,6 +114,7 @@ runs:
           --ignored-errors-dir "$IGNORED_ERRORS_DIR" \
           --assets "$ASSETS" \
           --extra-ignored-regexes "$EXTRA_IGNORED_REGEXES" \
+          --location-regex "$LOCATION_REGEX" \
           --output "$PER_FILE_JSON"
         echo "exit=$?" >> "$GITHUB_OUTPUT"
 

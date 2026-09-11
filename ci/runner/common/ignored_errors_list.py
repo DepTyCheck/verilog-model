@@ -74,3 +74,8 @@ class IgnoredErrorsList:
 
     def errors(self) -> List[KnownError]:
         return self._errors.copy()
+
+    def specific_matchers_in_order(self) -> list[KnownError | IgnoredError]:
+        specific = [e for e in self._errors if e.mode == MatchingMode.SPECIFIC]
+        specific.sort(key=lambda e: e.error_id)
+        return specific + self._extra_regexes

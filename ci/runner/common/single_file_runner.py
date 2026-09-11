@@ -20,6 +20,7 @@ def run_file(
     translate_hook: str,
     assets: Assets | None = None,
     logical_name: str | None = None,
+    location_regex: str | None = None,
 ) -> list[CommandResult]:
     """
     Write content to a temp file, run commands in sequence (stop on first failing
@@ -56,7 +57,7 @@ def run_file(
                 )
                 return results
 
-            command_result = analyze_command(cmd, run_command(cmd, cwd=tmp_dir), cmd_config, known_errors, report_path)
+            command_result = analyze_command(cmd, run_command(cmd, cwd=tmp_dir), cmd_config, known_errors, report_path, location_regex=location_regex)
             results.append(command_result)
             if command_result.outcome != "clean":
                 return results

@@ -229,6 +229,7 @@ jobs:
           ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
+          location-regex: ${{ matrix.tool.location_regex || '' }}
           output-json: ${{ matrix.tool.name }}-per-file.json
           job-link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}
 
@@ -319,6 +320,7 @@ jobs:
           ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
+          location-regex: ${{ matrix.tool.location_regex || '' }}
           output-json: regression-${{ matrix.tool.name }}-per-file.json
           mds-artifact-suffix: regression
           job-link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}
@@ -667,6 +669,7 @@ jobs:
           ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
+          location-regex: ${{ matrix.tool.location_regex || '' }}
           output-json: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.name }}-per-file.json
           job-link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}
 

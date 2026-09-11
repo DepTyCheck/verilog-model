@@ -11,14 +11,16 @@ tools:
     install: |
       sudo make install
     version: iverilog -V
+    location_regex: '^[A-z0-9_.\/,-]+:(\d+):'
     commands:
       - run: iverilog -g2012 -o a.out {file}
-        error_regex: '(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)'
+        error_regex: '(^[A-z0-9_.\/,-]+:\d+: .+$|^(?:error|sorry|assert|vvp): [\S ]+$)'
       - run: vvp a.out
-        error_regex: '(syntax error\W[A-z-\/0-9,.:]+ .*$|(error|sorry|assert|vvp): [\S ]+$)'
+        error_regex: '(^[A-z0-9_.\/,-]+:\d+: .+$|^(?:error|sorry|assert|vvp): [\S ]+$)'
     extra_ignored_regexes: >-
       "Unable to elaborate r-value: .*"
       "Code generation had .* error\(s\)\."
+      "^[A-z0-9_.\/,-]+:\d+: syntax error$"
 
   - name: slang
     profile: sv

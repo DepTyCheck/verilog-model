@@ -81,6 +81,13 @@ class TestLoadTools(unittest.TestCase):
             tmp = f.name
         self.assertEqual(load_tools(tmp), [])
 
+    def test_iverilog_has_location_regex(self):
+        tools = load_tools(str(TOOLS_YAML))
+        iverilog = next(t for t in tools if t["name"] == "iverilog")
+        loc = iverilog["location_regex"]
+        self.assertIn(",", loc)
+        self.assertIn(r"(\d+)", loc)
+
 
 class TestBuildMatrix(unittest.TestCase):
 
@@ -118,7 +125,7 @@ class TestRoundTrip(unittest.TestCase):
         decoded = json.loads(json.dumps(build_matrix(tools)))
         iverilog = next(i["tool"] for i in decoded["include"] if i["tool"]["name"] == "iverilog")
         first_cmd = iverilog["commands"][0]
-        self.assertIn(r"\W", first_cmd["error_regex"])
+        self.assertIn(r"\d", first_cmd["error_regex"])
         self.assertIn(r"\S", first_cmd["error_regex"])
 
     def test_multiline_build_commands_preserved(self):
@@ -144,6 +151,12 @@ class TestRoundTrip(unittest.TestCase):
 
         self.assertEqual(rust_hdl["assets"], "ci/conf/rust_hdl/vhdl_ls.toml")
         self.assertEqual(rust_hdl["commands"][0]["run"], "vhdl_lang -c ci/conf/rust_hdl/vhdl_ls.toml")
+
+    def test_location_regex_survives_json_roundtrip(self):
+        tools = load_tools(str(TOOLS_YAML))
+        decoded = json.loads(json.dumps(build_matrix(tools)))
+        iverilog = next(i["tool"] for i in decoded["include"] if i["tool"]["name"] == "iverilog")
+        self.assertIn(r"(\d+)", iverilog["location_regex"])
 
 
 class TestMainOutput(unittest.TestCase):

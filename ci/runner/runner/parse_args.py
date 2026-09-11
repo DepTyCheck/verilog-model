@@ -25,5 +25,11 @@ def parse_args() -> argparse.Namespace:
         default="",
         help="Shell-quoted, space-separated regexes",
     )
+    p.add_argument(
+        "--location-regex",
+        type=str,
+        default="",
+        help="Optional regex with capture group 1 = source line number; enables line-group matching",
+    )
     p.add_argument("--output", type=str, required=True, help="Output per-file JSON path")
     return p.parse_args()
