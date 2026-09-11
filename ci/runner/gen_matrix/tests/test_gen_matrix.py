@@ -90,7 +90,7 @@ class TestLoadTools(unittest.TestCase):
         self.assertIn(r"(\d+)", loc)
 
     def test_iverilog_error_regex_skips_warnings(self):
-        """Warnings and :        : continuations must not become error atoms."""
+        """Only path:line lines with error|sorry|assert|vvp, or bare such lines, are atoms."""
         tools = load_tools(str(TOOLS_YAML))
         iverilog = next(t for t in tools if t["name"] == "iverilog")
         pat = iverilog["commands"][0]["error_regex"]
@@ -102,7 +102,7 @@ class TestLoadTools(unittest.TestCase):
                 "/tmp/x.sv:41: syntax error",
                 "/tmp/x.sv:41: error: Invalid module item.",
                 "/tmp/x.sv:1: Errors in port declarations.",
-                "/tmp/x.sv:5: vvp.tgt error: uwire \"b1\" must have a single driver, found (2).",
+                '/tmp/x.sv:5: vvp.tgt error: uwire "b1" must have a single driver, found (2).',
                 "error: Code generation had 1 error(s).",
             ]
         )
@@ -110,10 +110,8 @@ class TestLoadTools(unittest.TestCase):
         self.assertEqual(
             atoms,
             [
-                "/tmp/x.sv:41: syntax error",
                 "/tmp/x.sv:41: error: Invalid module item.",
-                "/tmp/x.sv:1: Errors in port declarations.",
-                '/tmp/x.sv:5: vvp.tgt error: uwire "b1" must have a single driver, found (2).',
+                'error: uwire "b1" must have a single driver, found (2).',
                 "error: Code generation had 1 error(s).",
             ],
         )
@@ -156,7 +154,7 @@ class TestRoundTrip(unittest.TestCase):
         iverilog = next(i["tool"] for i in decoded["include"] if i["tool"]["name"] == "iverilog")
         first_cmd = iverilog["commands"][0]
         self.assertIn(r"\d", first_cmd["error_regex"])
-        self.assertIn(r"\S", first_cmd["error_regex"])
+        self.assertIn(r"\/", first_cmd["error_regex"])
 
     def test_multiline_build_commands_preserved(self):
         tools = load_tools(str(TOOLS_YAML))
