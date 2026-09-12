@@ -1,0 +1,92 @@
+list: issues
+profile: sv
+target: iverilog
+id: warn_port_expects_x_bit_s_given_y
+title: Port expects X bit(s), given Y
+regex: >
+  warning: Port .*[\W].*Padding.*bits of the port
+issue_type: warning
+examples:
+  - icarus_syntax_error_ex1:
+      first_found: 12.09.2026
+      full_error: |
+        3fbb7296e06d4bd8b2e5fd41bb0f1a54.sv:54: warning: Port 1 (nrxlh) of module p expects 4 bit(s), given 1.
+        3fbb7296e06d4bd8b2e5fd41bb0f1a54.sv:54:        : Padding 3 high bits of the port.
+      full_example: |
+        // Seed: 11493357105585473117,4774223038945246479
+
+        module p (output logic [2:3][2:1][2:2] nrxlh, output longint efxmqhcr, output bit [0:2] x);
+          xor ly(x, q, efxmqhcr);
+          // warning: implicit conversion of port connection truncates from 3 to 1 bits
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   bit [0:2] x -> logic x
+          //
+          // warning: implicit conversion of port connection truncates from 64 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   longint efxmqhcr -> logic efxmqhcr
+
+          or mmndy(cqd, qtv, x);
+          // warning: implicit conversion of port connection truncates from 3 to 1 bits
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   bit [0:2] x -> logic x
+
+          xor iogckay(ictrvuxy, nrxlh, x);
+          // warning: implicit conversion of port connection truncates from 4 to 1 bits
+          //   logic [2:3][2:1][2:2] nrxlh -> logic nrxlh
+          //
+          // warning: implicit conversion of port connection truncates from 3 to 1 bits
+          // warning: implicit conversion changes possible bit states from 2-state to 4-state
+          //   bit [0:2] x -> logic x
+
+          xnor yyazeow(gzmgejyk, wkwpct, j);
+
+
+          // Single-driven assignments
+          assign efxmqhcr = efxmqhcr;
+        endmodule: p
+
+        module dkbpo (inout trior logic [3:1][0:4] egcs, input uwire logic [2:4] fcx [4:3][3:1][3:4][1:3], output logic [1:3] ciqobzqdeb [4:3]);
+          nand acjeegqh(nww, nww, nww);
+
+          xor kfmcg(haqwhkg, pqdwwa, addlubgcc);
+
+
+          // Single-driven assignments
+          assign ciqobzqdeb = '{'bxz0,'{'bz,'bz,'bx01}};
+
+          // Multi-driven assignments
+          assign addlubgcc = 'b1;
+          assign haqwhkg = 'b10;
+        endmodule: dkbpo
+
+        module bnqjx (output integer jngqf);
+          and rxrug(ihoza, hect, jngqf);
+          // warning: implicit conversion of port connection truncates from 32 to 1 bits
+          // warning: implicit conversion changes signedness from signed to unsigned
+          //   integer jngqf -> logic jngqf
+
+          p hioofiix(.nrxlh(ykth), .efxmqhcr(mt), .x(yfpmfjn));
+          // warning: implicit conversion of port connection expands from 1 to 4 bits
+          //   wire logic ykth -> logic [2:3][2:1][2:2] nrxlh
+          //
+          // warning: implicit conversion of port connection expands from 1 to 64 bits
+          // warning: implicit conversion changes signedness from unsigned to signed
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic mt -> longint efxmqhcr
+          //
+          // warning: implicit conversion of port connection expands from 1 to 3 bits
+          // warning: implicit conversion changes possible bit states from 4-state to 2-state
+          //   wire logic yfpmfjn -> bit [0:2] x
+
+          xnor gkdtz(ym, yfpmfjn, ykth);
+
+          xnor i(fchec, fchec, ym);
+
+
+          // Single-driven assignments
+          assign jngqf = 'b0x0;
+
+          // Multi-driven assignments
+          assign ykth = 'bxxzzx;
+        endmodule: bnqjx

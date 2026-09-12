@@ -14,7 +14,6 @@ issue_links:
     link_name: >
       #1271
 short_desc: wreal is a Verilog-AMS keyword, which is an extension enabled by default in iverilog
-matching_mode: whole
 examples:
   - syntax_error_in_in_instance_port_expression_ex1:
       first_found: 02.09.2025

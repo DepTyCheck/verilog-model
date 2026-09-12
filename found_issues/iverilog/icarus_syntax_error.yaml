@@ -1,0 +1,56 @@
+list: issues
+stage: parsing
+profile: sv
+target: iverilog
+id: icarus_syntax_error
+title: Syntax error
+regex: >
+  syntax error
+issue_links:
+  - link_name: parent
+    local_id: syntax_error_in_in_instance_port_expression
+examples:
+  - icarus_syntax_error_ex1:
+      first_found: 12.09.2026
+      full_error: |
+        6de55ec76545437790369239af754d10.sv:22: syntax error
+      full_example: |
+        // Seed: 6857496710870797403,4774223038945246479
+
+        module stymu (output realtime yvhc, inout triand logic [0:4] pg [0:1][0:4][2:0][0:0], input shortreal amwxmsso);
+          or jnxr(h, ejor, cd);
+
+          nand inqzp(x, xalbxmatk, kbhhcvf);
+
+          or icgafymrl(gn, d, dlmoonqfo);
+
+
+          // Single-driven assignments
+          assign yvhc = 'b00xz1;
+
+          // Multi-driven assignments
+          assign kbhhcvf = 'bz0z;
+          assign d = kbhhcvf;
+        endmodule: stymu
+
+        module tmc ( input logic [3:4][0:3] hnjzkamik
+                    , input supply0 logic [4:3][2:4] fkavqdtuq [2:1][1:0]
+                    , output triand logic [4:3][2:0][3:4][1:0] whikfi [0:3][0:2]
+                    , inout trireg logic [0:2][0:4] kuxrmnxbcw
+                    );
+          or baqwfgmvc(udmnmzw, xccrc, zlupgpr);
+
+
+          // Multi-driven assignments
+          assign zlupgpr = 'b1;
+        endmodule: tmc
+
+        module klvgjlsvow (inout tri0 logic [0:0] nsw [2:3][3:1][2:1][1:0], output wire logic [2:0] hsre [2:2][0:4][1:2]);
+          xnor eieerkx(dopst, dopst, i);
+
+
+          // Multi-driven assignments
+          assign hsre = hsre;
+          assign hsre = hsre;
+          assign hsre = hsre;
+        endmodule: klvgjlsvow
