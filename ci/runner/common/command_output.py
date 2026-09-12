@@ -45,12 +45,14 @@ class CommandOutput:
         ignored_errors_list: ErrorMatcherProtocol,
         tool_error_regex: ToolErrorRegex,
         file_path: str,
+        location_regex: str | None = None,
     ) -> AnalyzisResult:
         extracted_errors = ExtractedErrorsByToolRegex(
             self.out,
             tool_error_regex,
             ignored_errors_list,
             file_path,
+            location_regex=location_regex,
         )
 
         if extracted_errors.some_matches_found() and extracted_errors.all_errors_are_known():

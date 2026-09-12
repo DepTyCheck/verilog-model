@@ -22,6 +22,7 @@ def analyze_command(
     cmd_config: CommandConfig,
     ignored_errors: ErrorMatcherProtocol,
     file_path: str,
+    location_regex: str | None = None,
 ) -> CommandResult:
     """
     Classify one command execution into a CommandResult.
@@ -52,6 +53,7 @@ def analyze_command(
         ignored_errors_list=ignored_errors,
         tool_error_regex=cmd_config.error_regex,
         file_path=file_path,
+        location_regex=location_regex,
     )
 
     matches: list[MatchRecord] = []

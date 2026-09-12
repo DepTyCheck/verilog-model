@@ -2,6 +2,7 @@
 import unittest
 
 from common.command_config import CommandConfig
+from common.error_file_parser import ErrorFile
 from common.error_types import MatchingMode
 from common.ignored_errors_list import IgnoredErrorsList
 from common.run_command import ExecutionResult
@@ -25,6 +26,21 @@ class TestCommandResult(unittest.TestCase):
         self.assertEqual(m.error_id, "unknown")
 
 
+_PATH_LINE_ATOM = r"^[A-z0-9_.\/,-]+:\d+: .+$"
+_LOCATION_REGEX = r"^[A-z0-9_.\/,-]+:(\d+):"
+
+
+def _known_error(error_id: str, regex: str) -> ErrorFile:
+    return ErrorFile(
+        error_id=error_id,
+        tool="tool",
+        regex=regex,
+        mode=MatchingMode.SPECIFIC,
+        title="",
+        profile="sv",
+    )
+
+
 class TestAnalyzeCommand(unittest.TestCase):
     """Behavioral tests for analyze_command."""
 
@@ -34,6 +50,19 @@ class TestAnalyzeCommand(unittest.TestCase):
             result_code_is_ok=ok,
             timed_out=timed_out,
             output=output,
+        )
+
+    def _path_line_cfg(self) -> CommandConfig:
+        return CommandConfig(run="tool {file}", error_regex=ToolErrorRegex(_PATH_LINE_ATOM))
+
+    def _analyze_grouped(self, output: str, ignored: IgnoredErrorsList) -> CommandResult:
+        return analyze_command(
+            "tool /tmp/x.sv",
+            self._exec(output=output),
+            self._path_line_cfg(),
+            ignored,
+            "/tmp/x.sv",
+            location_regex=_LOCATION_REGEX,
         )
 
     def test_timeout_outcome(self):
@@ -59,6 +88,7 @@ class TestAnalyzeCommand(unittest.TestCase):
         self.assertEqual(result.matches[0].matched_text, full_output)
 
     def test_known_error_records_match(self):
+        """Without location_regex, the legacy per-atom path records a KnownError match."""
         cmd_cfg = CommandConfig(run="tool {file}", error_regex=ToolErrorRegex(r"error: .*"))
         ignored = IgnoredErrorsList.from_patterns(["error: syntax error"], MatchingMode.SPECIFIC)
         result = analyze_command(
@@ -105,6 +135,63 @@ class TestAnalyzeCommand(unittest.TestCase):
         self.assertEqual(result.outcome, "unknown")
         self.assertEqual(len(result.matches), 1)
         self.assertEqual(result.matches[0].error_id, "unknown")
+
+    def test_location_grouping_carves_invalid_module_item(self):
+        output = (
+            "tmp/x,y.sv:41: syntax error\n"
+            "tmp/x,y.sv:41: error: Syntax error in instance port expression(s).\n"
+            "tmp/x,y.sv:41: error: Invalid module item.\n"
+        )
+        ignored = IgnoredErrorsList.from_error_files(
+            [
+                _known_error("e0", r"Syntax error in instance port expression"),
+                _known_error("e1", r"Invalid module item\."),
+            ],
+            extra_regexes=[r"syntax error$"],
+        )
+        result = self._analyze_grouped(output, ignored)
+        self.assertEqual(result.outcome, "known_errors")
+        ids = sorted(m.error_id for m in result.matches)
+        self.assertEqual(ids, ["e0", "e1"])
+
+    def test_location_grouping_leftover_becomes_unknown(self):
+        output = "tmp/x.sv:10: known error here\ntmp/x.sv:20: completely unrecognised error\n"
+        ignored = IgnoredErrorsList.from_patterns(
+            [r"known error here"],
+            MatchingMode.SPECIFIC,
+        )
+        result = self._analyze_grouped(output, ignored)
+        self.assertEqual(result.outcome, "unknown")
+        unknown_ids = [m.error_id for m in result.matches if m.error_id == "unknown"]
+        self.assertGreater(len(unknown_ids), 0)
+
+    def test_grouping_extra_and_known_same_line_yields_only_known_id(self):
+        """Same-line group: extra_ignored matches one atom, KnownError matches another.
+
+        Expected: outcome=known_errors, matches contains only the KnownError id,
+        no 'unknown', and the extra/ignored atom does NOT surface as an error_id.
+        """
+        output = "tmp/x.sv:10: syntax error\ntmp/x.sv:10: error: Invalid module item.\n"
+        ignored = IgnoredErrorsList.from_error_files(
+            [_known_error("e42", r"Invalid module item\.")],
+            extra_regexes=[r"syntax error$"],
+        )
+        result = self._analyze_grouped(output, ignored)
+        self.assertEqual(result.outcome, "known_errors")
+        ids = [m.error_id for m in result.matches]
+        self.assertEqual(ids, ["e42"], f"Expected only KnownError id, got: {ids}")
+
+    def test_grouping_extra_only_classified_as_known_errors_not_unknown(self):
+        """Bare syntax error matched only by extra_ignored via grouping path.
+
+        This mirrors the legacy ignored-only case: outcome must be known_errors,
+        no unknown entry, and no .error_id access on the IgnoredError object.
+        """
+        output = "tmp/x.sv:5: syntax error\n"
+        ignored = IgnoredErrorsList.from_error_files([], extra_regexes=[r"syntax error$"])
+        result = self._analyze_grouped(output, ignored)
+        self.assertEqual(result.outcome, "known_errors")
+        self.assertEqual(result.matches, [])
 
 
 if __name__ == "__main__":

@@ -50,6 +50,7 @@ class IgnoredErrorsList:
 
     def match(self, input_text: str, mode: MatchingMode) -> FoundMatch | None:
         """Check if any known error pattern matches input_text in the given mode."""
+        get_logger().info(f"searching a match for {input_text}")
         for error in self._errors:
             if error.mode != mode:
                 continue
@@ -74,3 +75,8 @@ class IgnoredErrorsList:
 
     def errors(self) -> List[KnownError]:
         return self._errors.copy()
+
+    def specific_matchers_in_order(self) -> list[KnownError | IgnoredError]:
+        specific = [e for e in self._errors if e.mode == MatchingMode.SPECIFIC]
+        specific.sort(key=lambda e: e.error_id)
+        return specific + self._extra_regexes

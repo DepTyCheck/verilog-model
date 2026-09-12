@@ -1,7 +1,7 @@
 verilog-model (DepTyCheck model for semantically correct SystemVerilog descriptions)
 
-Copyright 2024-2025 Verilog-model authors
-Copyright 2024-2025 Ivannikov Institute for System Programming of the Russian Academy of Sciences
+Copyright 2024-2026 Verilog-model authors
+Copyright 2024-2026 Ivannikov Institute for System Programming of the Russian Academy of Sciences
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
