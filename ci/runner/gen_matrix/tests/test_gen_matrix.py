@@ -90,7 +90,7 @@ class TestLoadTools(unittest.TestCase):
         self.assertIn(r"(\d+)", loc)
 
     def test_iverilog_error_regex_skips_warnings(self):
-        """Only path:line lines with error|sorry|assert|vvp, or bare such lines, are atoms."""
+        """path:line lines that are not warnings, plus bare error|sorry|assert|vvp lines, are atoms."""
         tools = load_tools(str(TOOLS_YAML))
         iverilog = next(t for t in tools if t["name"] == "iverilog")
         pat = iverilog["commands"][0]["error_regex"]
@@ -110,8 +110,11 @@ class TestLoadTools(unittest.TestCase):
         self.assertEqual(
             atoms,
             [
+                "/tmp/x.sv:49:        : Padding (signed) 7 high bits of the port.",
+                "/tmp/x.sv:41: syntax error",
                 "/tmp/x.sv:41: error: Invalid module item.",
-                'error: uwire "b1" must have a single driver, found (2).',
+                "/tmp/x.sv:1: Errors in port declarations.",
+                '/tmp/x.sv:5: vvp.tgt error: uwire "b1" must have a single driver, found (2).',
                 "error: Code generation had 1 error(s).",
             ],
         )
