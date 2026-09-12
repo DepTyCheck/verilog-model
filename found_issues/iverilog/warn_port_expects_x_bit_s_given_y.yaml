@@ -7,7 +7,7 @@ regex: >
   warning: Port .*[\W].*Padding.*bits of the port
 issue_type: warning
 examples:
-  - icarus_syntax_error_ex1:
+  - warn_port_expects_x_bit_s_given_y_ex1:
       first_found: 12.09.2026
       full_error: |
         3fbb7296e06d4bd8b2e5fd41bb0f1a54.sv:54: warning: Port 1 (nrxlh) of module p expects 4 bit(s), given 1.
