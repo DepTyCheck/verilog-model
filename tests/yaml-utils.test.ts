@@ -39,6 +39,11 @@ describe('validateIssueType', () => {
 		expect(validateIssueType(['feature', 'downstream'], 'f.yaml')).toEqual(['feature', 'downstream']);
 	});
 
+	it('accepts warning', () => {
+		expect(validateIssueType('warning', 'f.yaml')).toEqual(['warning']);
+		expect(validateIssueType(['warning', 'crash'], 'f.yaml')).toEqual(['warning', 'crash']);
+	});
+
 	it('throws on an unknown issue type', () => {
 		expect(() => validateIssueType('other', 'f.yaml')).toThrow(/issue_type/);
 		expect(() => validateIssueType(['crash', 'other'], 'f.yaml')).toThrow(/f\.yaml/);

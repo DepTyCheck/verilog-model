@@ -4,7 +4,7 @@ import type { IssueNovelty, IssueType, MaintainersResponse } from './core';
 
 export interface DisplayInfo {
 	text: string;
-	color: 'red' | 'blue' | 'purple' | 'gray' | 'green' | 'yellow' | 'indigo' | 'pink';
+	color: 'red' | 'blue' | 'purple' | 'gray' | 'green' | 'yellow' | 'indigo' | 'pink' | 'orange';
 }
 
 export function getFirstFound(error: FoundError): Date | null {
@@ -50,13 +50,15 @@ export function getIssueTypeDisplay(type: IssueType): DisplayInfo {
 		case 'crash':
 			return { text: 'Crash', color: 'red' };
 		case 'bad_message':
-			return { text: 'Bad message', color: 'yellow' };
+			return { text: 'Bad message', color: 'orange' };
 		case 'infinite_loop':
 			return { text: 'Infinite loop', color: 'purple' };
 		case 'feature':
 			return { text: 'Feature', color: 'gray' };
 		case 'downstream':
 			return { text: 'Downstream', color: 'blue' };
+		case 'warning':
+			return { text: 'Warning', color: 'yellow' };
 		default:
 			return { text: '', color: 'gray' };
 	}

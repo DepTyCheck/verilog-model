@@ -3,7 +3,7 @@ import path from 'path';
 import { parse } from 'yaml';
 
 const VALID_LISTS = ['issues', 'controversial'];
-const VALID_ISSUE_TYPES = ['crash', 'bad_message', 'infinite_loop', 'feature', 'downstream'];
+const VALID_ISSUE_TYPES = ['crash', 'bad_message', 'infinite_loop', 'feature', 'downstream', 'warning'];
 
 /**
  * @param {unknown} list
