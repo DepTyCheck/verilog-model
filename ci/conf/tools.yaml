@@ -14,13 +14,12 @@ tools:
     location_regex: '^[A-z0-9_.\/,-]+:(\d+):'
     commands:
       - run: iverilog -g2012 -o a.out {file}
-        error_regex: '(^[A-z0-9_.\/,-]+:\d+:(?!\s*warning:).*$)|((?:error|sorry|assert|vvp): .*$)'
+        error_regex: '(^[A-z0-9_.\/,-]+:\d+:.*$)|((?:error|sorry|assert|vvp): .*$)'
       - run: vvp a.out
-        error_regex: '(^[A-z0-9_.\/,-]+:\d+:(?!\s*warning:).*$)|((?:error|sorry|assert|vvp): .*$)'
+        error_regex: '(^[A-z0-9_.\/,-]+:\d+:.*$)|((?:error|sorry|assert|vvp): .*$)'
     extra_ignored_regexes: >-
       "Unable to elaborate r-value: .*"
       "Code generation had .* error\(s\)\."
-      "^[A-z0-9_.\/,-]+:\d+: syntax error$"
 
   - name: slang
     profile: sv
