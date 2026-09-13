@@ -4,10 +4,10 @@ target: iverilog
 id: warn_port_expects_x_bit_s_given_y
 title: Port expects X bit(s), given Y
 regex: >
-  warning: Port .* of module .* expects .* bit\(s\), given .*[\W].*(Padding|Leaving) .* bits of the (port|expression)
+  warning: Port .* of module .* expects .* bit\(s\), given .*[\W].*(Padding|Leaving|Pruning) .* bits of the (port|expression)
 issue_type: warning
 examples:
-  - warn_port_expects_x_bit_s_given_y_ex1:
+  - warn_port_expects_x_bit_s_given_y_ex1_padding_port:
       first_found: 12.09.2026
       full_error: |
         3fbb7296e06d4bd8b2e5fd41bb0f1a54.sv:54: warning: Port 1 (nrxlh) of module p expects 4 bit(s), given 1.
@@ -91,7 +91,7 @@ examples:
           assign ykth = 'bxxzzx;
         endmodule: bnqjx
 
-  - warn_port_expects_x_bit_s_given_y_ex2:
+  - warn_port_expects_x_bit_s_given_y_ex2_leaving_port:
       first_found: 12.09.2026
       full_error: |
         b36763e17e8346fa94b7638479656b32.sv:21: warning: Port 1 (gg) of module khn expects 4 bit(s), given 1.
@@ -132,7 +132,7 @@ examples:
           assign ephplpuo = 'b0;
         endmodule: quozydmjll
 
-  - warn_port_expects_x_bit_s_given_y_ex3:
+  - warn_port_expects_x_bit_s_given_y_ex3_padding_expression:
       first_found: 13.09.2026
       full_error: |
         d91f2904cd5f48c2aadc3fa427000ee4.sv:22: warning: Port 2 (dnvrgqno) of module bmppkl expects 3 bit(s), given 36.
@@ -203,3 +203,73 @@ examples:
           assign ovt = ovt;
           assign aaxmrsyje = aaxmrsyje;
         endmodule: upmswy
+
+  - warn_port_expects_x_bit_s_given_y_ex4_pruning_expression:
+      first_found: 13.09.2026
+      full_error: |
+        fd5cae808ada41189427f94597aa9fe1.sv:54: warning: Port 4 (cvuedb) of module shwhirms expects 3 bit(s), given 8.
+        fd5cae808ada41189427f94597aa9fe1.sv:54:        : Pruning 5 high bits of the expression.
+      full_example: |
+        module shwhirms
+          ( output shortreal ueyty
+          , input tri logic [0:1][1:4][1:3][1:3] igxxieh [2:4][4:0][4:1][2:3]
+          , input real vuk [3:0][1:2]
+          , input reg [2:0] cvuedb
+          );
+
+          xor wtclhetysm(t, ueyty, t);
+          not qgmqiqbpl(ueyty, brr);
+
+          // Single-driven assigns
+          assign brr = 'b1;
+
+          // Multi-driven assigns
+          assign t = 'b1;
+          assign t = 'bx;
+          assign t = 'bx;
+          assign t = 'bz;
+        endmodule: shwhirms
+
+        module nybpantrf
+          (output triand logic srm [0:2][0:3], output logic [3:4][0:4][2:1] mlq, output trior logic [1:4][2:1] ae [2:1], output int zkn);
+
+          tri logic [0:1][1:4][1:3][1:3] h [2:4][4:0][4:1][2:3];
+          real vaweqx [3:0][1:2];
+
+          not owzdsa(tix, zkn);
+          not yqnxlkpdz(mlq, nkqcbj);
+          shwhirms gegw(.ueyty(zkn), .igxxieh(h), .vuk(vaweqx), .cvuedb(zkn));
+
+          // Single-driven assigns
+          assign ae = '{'bx,'b0};
+          assign vaweqx = '{'{'b0,'bz},'{'bx,'bx},'{'bx,'b1},'{'bx,'bx}};
+          assign srm = '{'{'bz,'b0,'bx,'b0},'{'bz,'bx,'bx,'bx},'{'b0,'b1,'b1,'bz}};
+          assign h = '{'{'{'{'b0,'b1},'{'b1,'b1},'{'b0,'bx},'{'bz,'b0}},'{'{'b0,'bz},'{'b1,'b1},'{'b1,'b0},'{'b0,'b0}},'{'{'b0,'b1},'{'bx,'b0},'{'b0,'bx},'{'b0,'b0}},'{'{'b1,'b1},'{'b1,'b1},'{'bx,'b0},'{'b1,'bx}},'{'{'bz,'b0},'{'bx,'b0},'{'bz,'bx},'{'b1,'bx}}},'{'{'{'b1,'b0},'{'bx,'bx},'{'bx,'bx},'{'b1,'bz}},'{'{'b0,'b0},'{'b1,'b0},'{'b0,'b1},'{'b0,'b1}},'{'{'bx,'bx},'{'b0,'b0},'{'bx,'b0},'{'b1,'b1}},'{'{'bx,'b1},'{'bz,'b0},'{'bz,'bx},'{'b0,'bx}},'{'{'bx,'bz},'{'bz,'b0},'{'bx,'b1},'{'b0,'b1}}},'{'{'{'b0,'b1},'{'b0,'bz},'{'bz,'bx},'{'bz,'b1}},'{'{'bx,'b1},'{'b1,'bz},'{'b0,'b0},'{'bz,'bz}},'{'{'bx,'b0},'{'b0,'b0},'{'b1,'b1},'{'b0,'bz}},'{'{'b1,'bz},'{'b1,'bz},'{'bx,'bx},'{'b1,'b1}},'{'{'bz,'b0},'{'bx,'bz},'{'bx,'b1},'{'bx,'b1}}}};
+
+          // Multi-driven assigns
+          assign ae = '{'bz,'bz};
+        endmodule: nybpantrf
+
+        module mdhaspwso
+          ( output uwire logic ryg
+          , output supply0 logic [4:1][2:2][0:0][0:1] uzlgaoelv
+          , input logic [4:2] s
+          , input reg [3:2][2:0] mm [1:4]
+          , input reg [0:4][3:2][4:3] qbedoxcp
+          );
+
+          tri logic [0:1][1:4][1:3][1:3] ckqjae [2:4][4:0][4:1][2:3];
+          real lt [3:0][1:2];
+          triand logic abtmw [0:2][0:3];
+          trior logic [1:4][2:1] ueizey [2:1];
+
+          shwhirms pvvneordd(.ueyty(jbotghnut), .igxxieh(ckqjae), .vuk(lt), .cvuedb(uzlgaoelv));
+          nybpantrf mbojk(.srm(abtmw), .mlq(ryg), .ae(ueizey), .zkn(uzlgaoelv));
+
+          // Single-driven assigns
+          assign lt = '{'{'bz,'bz},'{'b0,'bx},'{'b1,'bz},'{'b0,'b1}};
+
+          // Multi-driven assigns
+          assign uzlgaoelv = 'b0;
+          assign jbotghnut = 'bz;
+        endmodule: mdhaspwso

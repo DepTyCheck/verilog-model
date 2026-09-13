@@ -1,0 +1,129 @@
+list: issues
+profile: sv
+target: iverilog
+id: warn_port_coerced_to_inout
+title: Port is coerced to inout
+regex: >
+  warning: (input|output) port .* is coerced to inout
+issue_type: warning
+examples:
+  - warn_port_coerced_to_inout_ex1_input:
+      first_found: 12.09.2026
+      full_error: |
+        b36763e17e8346fa94b7638479656b32.sv:21: warning: input port cqiwhx is coerced to inout.
+      full_example: |
+        // Seed: 14936781224045901056,3531907219659100733
+
+        module khn (inout tri0 logic [1:1][4:1] gg, output tri logic a [2:3], output logic chxtgrvbc, input wire logic [2:0][2:1] cqiwhx [0:3][2:4][4:4]);
+          or nzjwictaz(vrwggkrbaz, pwa, chxtgrvbc);
+
+          not poetdk(plobkvaq, chxtgrvbc);
+
+          xnor teomrux(chxtgrvbc, wfkmc, chxtgrvbc);
+
+
+          // Multi-driven assignments
+          assign gg = '{'{'bz0z1,'bx1,'b0,'bz}};
+          assign cqiwhx = '{'{'{'bxx1x},'{'{'b1z111,'b0x,'b1zx1x}},'{'b0x1z0x}},'{'{'bx1x100},'{'{'b11z,'b00,'b00}},'{'{'b0xz,'bx,'bx0}}},'{'{'{'bx0,'b00,'bxz}},'{'{'b10,'b0z,'b11}},'{'b010zz0}},'{'{'{'b1xz,'bzz,'bx01}},'{'b1xzx0z},'{'bzz1xxz}}};
+        endmodule: khn
+
+        module quozydmjll (input tri logic [1:2][1:4] urlhqmjrkr [2:4], inout wor logic [0:4] u);
+          // Unpacked net declarations
+          wire logic [2:0][2:1] skzhecxjur [0:3][2:4][4:4];
+          tri logic mtj [2:3];
+
+          khn gbgdhr(.gg(rh), .a(mtj), .chxtgrvbc(zufzvmwciz), .cqiwhx(skzhecxjur));
+          // warning: implicit conversion of port connection expands from 1 to 4 bits
+          //   wire logic rh -> tri0 logic [1:1][4:1] gg
+
+          or ahbotg(zufzvmwciz, zufzvmwciz, ephplpuo);
+
+          nand ng(zufzvmwciz, zufzvmwciz, zufzvmwciz);
+
+
+          // Multi-driven assignments
+          assign urlhqmjrkr = '{'{'bxxz1,'b1x100},'bx111xz1x,'{'{'bzx1,'bx,'b0,'b0xx10},'{'bz,'bz0,'b0,'b101z0}}};
+          assign zufzvmwciz = rh;
+          assign ephplpuo = 'b0;
+        endmodule: quozydmjll
+
+  - warn_port_coerced_to_inout_ex2_output:
+      first_found: 13.09.2026
+      full_error: |
+        082b770e3a0b4141989aa85f8556d377.sv:42: warning: output port k is coerced to inout.
+      full_example: |
+        module nt
+          (input supply1 logic [0:0][1:2][4:2][1:2] irjnhwb, input realtime odtjxy);
+
+          not nraw(vpoe, irjnhwb);
+          xor e(cglxtgqc, cglxtgqc, ybqvnrmfcz);
+
+          not ntd(mkwfgabsg, irjnhwb);
+
+          assign vpoe = 'bz;
+          assign cglxtgqc = 'b1;
+        endmodule: nt
+
+        module thqjsww
+          ( output longint hinfmmmc [2:2]
+          , output shortreal vzbcvxk
+          , output wor logic tggow
+          , output uwire logic k
+          , input time pdjt [4:0][0:3][1:0]
+          , input shortint ckeyv
+          , input bit [4:4][0:4][3:1] mtpkv
+          , input tri1 logic [3:4][1:0][0:1][1:4] vchnafbf [0:3]
+          );
+
+          nt uekjjvqge(.irjnhwb(k), .odtjxy(nswbe));
+          xor dtjytlnzj(csblmehu, ckeyv, nswbe);
+          or bbrzftyh(nswbe, k, ckeyv);
+          not w(k, tqkh);
+
+          assign tggow = 'b0;
+
+          assign nswbe = 'b0;
+          assign tggow = 'bz;
+        endmodule: thqjsww
+
+        module taejvqtg
+          ();
+
+          time f [4:0][0:3][1:0];
+          tri1 logic [3:4][1:0][0:1][1:4] eg [0:3];
+          longint zielsum [2:2];
+
+          thqjsww jqyzzhoj(.hinfmmmc(zielsum), .vzbcvxk(ggr), .tggow(ncinbpbx), .k(rjxfqlp), .pdjt(f), .ckeyv(rfrc), .mtpkv(rjxfqlp), .vchnafbf(eg));
+          not zxdlg(cxpzzf, vitddqtpf);
+
+          assign f = '{'{'{'bz,'bx},'{'b1,'b1},'{'b0,'bz},'{'bx,'bx}},'{'{'b0,'bz},'{'b1,'bz},'{'b0,'bx},'{'bx,'bz}},'{'{'bx,'b1},'{'b0,'bx},'{'b1,'bx},'{'bx,'bx}},'{'{'b0,'bx},'{'b0,'bz},'{'bz,'bx},'{'b1,'bx}},'{'{'bz,'bx},'{'b1,'b1},'{'bx,'b0},'{'b0,'bz}}};
+          assign rfrc = 'b1;
+          assign eg = '{'b0,'bx,'bz,'b0};
+          assign vitddqtpf = 'b1;
+
+          assign ggr = 'b0;
+          assign eg = '{'b0,'bz,'b1,'bz};
+          assign eg = '{'b0,'b0,'bz,'b1};
+          assign eg = '{'b0,'b0,'bx,'bx};
+        endmodule: taejvqtg
+
+        module jgctabv
+          ( output tri1 logic [3:4][3:2][4:4] evp [2:3]
+          , output logic djfsmk
+          , output tri logic [0:4][2:3] lr [3:0][1:0][4:3]
+          , output supply1 logic [1:2][3:0][0:0] kl [3:1][4:1]
+          , input byte volqxmmfv
+          );
+
+          not dmmrcv(djfsmk, df);
+          nt sjcznoha(.irjnhwb(hhd), .odtjxy(volqxmmfv));
+
+          assign evp = '{'b1,'b1};
+          assign kl = '{'{'bz,'b1,'bz,'b0},'{'b1,'bx,'bz,'b0},'{'bz,'bx,'bz,'bx}};
+          assign df = 'bx;
+
+          assign hhd = 'b1;
+          assign kl = '{'{'bx,'b0,'b1,'bx},'{'b1,'bx,'b0,'bx},'{'b1,'bx,'bz,'b1}};
+          assign lr = '{'{'{'bz,'b0},'{'bz,'bx}},'{'{'bz,'bx},'{'bz,'b0}},'{'{'b0,'b0},'{'b1,'b0}},'{'{'b0,'bx},'{'b0,'bz}}};
+          assign kl = '{'{'bx,'bz,'b1,'b0},'{'bz,'bx,'b0,'bx},'{'b0,'bx,'b1,'b0}};
+        endmodule: jgctabv
