@@ -5,16 +5,14 @@ target: iverilog
 id: inout_port_expression_must_support_continuous_assignment
 title: Inout port expression must support continuous assignment
 regex: >
-  Inout port expression must support continuous assignment
+  Inout port expression must support continuous assignment\.\W.*Port .* is connected to
 issue_novelty: new
 examples:
   - inout_port_expression_must_support_continuous_assignment_ex1:
       first_found: 21.12.2025
       full_error: >
-        warning: input port hidcqr is coerced to inout.
-        error: Cannot automatically connect bit based inout port 1 (hidcqr) of module wxa to real signal cyodhdm.
-        warning: input port jea is coerced to inout.
-        error: Unresolved wire 'cyodhdm' cannot have multiple drivers.
+        test.sv:19: error: Inout port expression must support continuous assignment.
+        test.sv:19:      : Port 2 (jea) of wxa is connected to cyodhdm
       full_example: |
         module wxa
           (input trior logic hidcqr, input tri1 logic jea, input logic [0:1]  upq, input supply1 logic eoohmknjrq [0:1][1:4][4:1][1:4]);
