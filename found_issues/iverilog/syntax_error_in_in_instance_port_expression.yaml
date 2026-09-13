@@ -5,7 +5,7 @@ target: iverilog
 id: syntax_error_in_in_instance_port_expression
 title: Syntax error in instance port expression(s)
 regex: >
-  Syntax error in instance port expression.[\s\S]*Invalid module instantiation
+  Syntax error in instance port expression\(s\)\.\W.*Invalid module item
 issue_novelty: new
 issue_type:
   - feature
@@ -79,3 +79,19 @@ examples:
           fut jjtaxcqk(.podxwvtjdy(zaoeozuvrj), .wreal(ivhpokl), .byqk(l), .gecw(zaoeozuvrj), .pdznz(l));
 
         endmodule: uezldust
+  
+  - syntax_error_in_in_instance_port_expression_ex2:
+      first_found: 13.09.2026
+      minified_error: |
+        test.sv:1: syntax error
+        test.sv:1: Errors in port declarations.
+        test.sv:5: syntax error
+        test.sv:5: error: Syntax error in instance port expression(s).
+        test.sv:5: error: Invalid module item.
+      minified_example: |
+        module a(output logic wreal);
+        endmodule: a
+
+        module b();
+            a a_inst(.wreal(b1));
+        endmodule: b

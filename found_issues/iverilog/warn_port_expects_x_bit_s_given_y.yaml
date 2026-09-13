@@ -4,7 +4,7 @@ target: iverilog
 id: warn_port_expects_x_bit_s_given_y
 title: Port expects X bit(s), given Y
 regex: >
-  warning: Port .*[\W].*(Padding|Leaving).*bits of the port
+  warning: Port .* of module .* expects .* bit\(s\), given .*[\W].*(Padding|Leaving) .* bits of the (port|expression)
 issue_type: warning
 examples:
   - warn_port_expects_x_bit_s_given_y_ex1:
@@ -131,3 +131,75 @@ examples:
           assign zufzvmwciz = rh;
           assign ephplpuo = 'b0;
         endmodule: quozydmjll
+
+  - warn_port_expects_x_bit_s_given_y_ex3:
+      first_found: 13.09.2026
+      full_error: |
+        d91f2904cd5f48c2aadc3fa427000ee4.sv:22: warning: Port 2 (dnvrgqno) of module bmppkl expects 3 bit(s), given 36.
+        d91f2904cd5f48c2aadc3fa427000ee4.sv:22:        : Padding 33 high bits of the expression.
+      full_example: |
+        module bmppkl
+          (output logic [0:1][2:1][2:3][2:4]  brwf, output reg [1:3]  dnvrgqno, output reg mreujppx [3:1]);
+
+          and ekxbmj(zkmytprpms, brwf, bsk);
+          not oyg(iimbfhm, dihvad);
+          xor iif(brwf, bbfyezpion, ense);
+          and rsrzeq(dgxopoz, xi, bsk);
+
+          assign mreujppx = mreujppx;
+        endmodule: bmppkl
+
+        module ihgsjtp
+          ( output reg [4:4][3:2][0:2][2:1]  tnhsva
+          , output triand logic [0:2][1:3][1:1][4:1]  pjevu
+          , input tri logic [2:0] xn [1:2][3:2][1:4]
+          , input shortreal hsmhxncgqs
+          , input logic [0:3][1:0][1:2] sjojggcnt [1:4]
+          );
+          reg wysxlcpioq [3:1];
+
+          and byn(wvzflknkpw, tnhsva, tnhsva);
+          bmppkl tmy(.brwf(tnhsva), .dnvrgqno(pjevu), .mreujppx(wysxlcpioq));
+          not rrodraez(pjevu, tnhsva);
+          nand lnnt(pjevu, pjevu, tnhsva);
+
+          // Multi-driven assigns
+          assign xn = '{'{'{'{'bzx00x,'bz0x1,'b10},'{'bz00z,'bx,'b10},'{'b011,'b0zz,'bxxxzz},'{'b0z0x,'bz0,'b0xz11}},'{'{'bz0010,'b1zz0x,'bzx1z},'{'b01x,'bzxz,'bz0x},'{'bz0,'b00xz,'b1},'{'b0z,'b0x1zz,'bz}}},'{'{'{'b1xxz,'bx1,'bx11},'{'bzx1x,'bxxxz,'b11x1},'{'b0x1x,'bz0x,'b11z11},'{'bzxx01,'bzxz1,'bz}},'{'{'b1001,'b0z,'b0x},'{'bxzxx,'bx,'bzx1x0},'{'b0,'b0zxz,'bzx011},'{'bx0x,'b1,'bx0}}}};
+          assign pjevu = hsmhxncgqs;
+          assign wvzflknkpw = tnhsva;
+        endmodule: ihgsjtp
+
+        module bqpgwsi
+          (output longint hdaa, output shortreal qff, output longint ydxs, output logic [2:3][4:0][2:4] zooulp [4:2]);
+          reg qk [3:1];
+
+          xor wh(hdaa, opfd, hdaa);
+          bmppkl mutvfug(.brwf(pf), .dnvrgqno(qff), .mreujppx(qk));
+          or puweibowqt(ydxs, lfzyrhjgep, qff);
+
+          // Single-driven assigns
+          assign zooulp = zooulp;
+
+          // Multi-driven assigns
+          assign lfzyrhjgep = 'bx1x0z;
+          assign pf = hdaa;
+          assign opfd = 'b1;
+        endmodule: bqpgwsi
+
+        module upmswy
+          ( output tri1 logic [3:2][4:2][2:3][2:3] kgcevp [1:2]
+          , output shortreal pxew [0:1][3:3][2:1]
+          , output uwire logic [2:0][3:1][3:0][3:0]  arshyrxyx
+          , input realtime uagbrmhn [1:2]
+          );
+          not lcwvcpbm(ovt, aaxmrsyje);
+
+          // Single-driven assigns
+          assign pxew = pxew;
+          assign arshyrxyx = arshyrxyx;
+
+          // Multi-driven assigns
+          assign kgcevp = kgcevp;
+          assign ovt = ovt;
+          assign aaxmrsyje = aaxmrsyje;
+        endmodule: upmswy

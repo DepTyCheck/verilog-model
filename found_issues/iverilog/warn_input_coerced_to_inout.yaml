@@ -1,7 +1,7 @@
 list: issues
 profile: sv
 target: iverilog
-id: warn_input_coerced_to_output
+id: warn_input_coerced_to_inout
 title: input port is coerced to inout
 regex: >
   warning: input port .* is coerced to inout
