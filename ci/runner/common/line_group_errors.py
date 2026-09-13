@@ -60,7 +60,7 @@ def carve_group(atoms: list[str], patterns: list[tuple[object, str]]) -> tuple[l
         text = "\n".join(remaining)
         get_logger().info(f"searching a match for {text}")
         spans = atom_spans(remaining)
-        claimed: list[int] | None = None
+        best: tuple[int, list[int], object, str] | None = None
         for error_obj, pattern_str in patterns:
             match = re.search(pattern_str, text, re.MULTILINE)
             if match is None:
@@ -70,12 +70,14 @@ def carve_group(atoms: list[str], patterns: list[tuple[object, str]]) -> tuple[l
             indices = covered_atom_indices(spans, match.start(), match.end())
             if not indices:
                 continue  # skip zero-atom covers
-            claimed = indices
-            matched_text = "\n".join(remaining[i] for i in indices)
-            hits.append((error_obj, matched_text))
+            cover = len(indices)
+            if best is None or cover > best[0]:
+                matched_text = "\n".join(remaining[i] for i in indices)
+                best = (cover, indices, error_obj, matched_text)
+        if best is None:
             break
-        if claimed is None:
-            break
+        _, claimed, error_obj, matched_text = best
+        hits.append((error_obj, matched_text))
         drop = set(claimed)
         remaining = [a for i, a in enumerate(remaining) if i not in drop]
     return hits, remaining

@@ -56,8 +56,8 @@ class TestCarveGroup(unittest.TestCase):
             [(h[0], h[1]) for h in hits],
             [
                 ("A", "L2\nL3"),
-                ("B", "L1"),
                 ("C", "L4\nL5"),
+                ("B", "L1"),
             ],
         )
         self.assertEqual(left, [])
@@ -72,6 +72,23 @@ class TestCarveGroup(unittest.TestCase):
         atoms = ["shared"]
         hits, left = carve_group(atoms, [("first", r"shared"), ("second", r"shared")])
         self.assertEqual([h[0] for h in hits], ["first"])
+        self.assertEqual(left, [])
+
+    def test_longest_cover_wins_over_pattern_order(self):
+        atoms = [
+            "/tmp/d7d650d688524a069060c1bda3fb4533.sv:25: syntax error",
+            "/tmp/d7d650d688524a069060c1bda3fb4533.sv:25: error: Invalid module item.",
+        ]
+        patterns = [
+            ("icarus_syntax_error", r"syntax error"),
+            ("invalid_module_item", r"syntax error\W.*Invalid module item"),
+        ]
+        hits, left = carve_group(atoms, patterns)
+        self.assertEqual([h[0] for h in hits], ["invalid_module_item"])
+        self.assertEqual(
+            hits[0][1],
+            "\n".join(atoms),
+        )
         self.assertEqual(left, [])
 
 
