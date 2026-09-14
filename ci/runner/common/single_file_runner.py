@@ -12,14 +12,16 @@ from common.run_command import run_command
 from common.run_tool_command import CommandResult, MatchRecord, analyze_command
 
 
-def run_file(
+def run_file(  # pylint: disable=too-many-arguments
     content: str,
     commands: list[CommandConfig],
     known_errors: IgnoredErrorsList,
     file_suffix: str,
     translate_hook: str,
+    *,
     assets: Assets | None = None,
     logical_name: str | None = None,
+    location_regex: str | None = None,
 ) -> list[CommandResult]:
     """
     Write content to a temp file, run commands in sequence (stop on first failing
@@ -40,13 +42,11 @@ def run_file(
         tmp_path = str(Path(tmp_dir) / f"{uuid.uuid4().hex}{file_suffix}")
         Path(tmp_path).write_text(content, encoding="utf-8")
 
-        report_path = logical_name if logical_name is not None else tmp_path
-
         for cmd_config in commands:
             try:
                 cmd = make_command(cmd_config.run, tmp_path, translate_hook)
             except Exception as exc:
-                get_logger().warning(f"make_command failed for {report_path!r}: {exc}")
+                get_logger().warning(f"make_command failed for {logical_name if logical_name is not None else tmp_path!r}: {exc}")
                 results.append(
                     CommandResult(
                         command=cmd_config.run,
@@ -56,7 +56,14 @@ def run_file(
                 )
                 return results
 
-            command_result = analyze_command(cmd, run_command(cmd, cwd=tmp_dir), cmd_config, known_errors, report_path)
+            command_result = analyze_command(
+                cmd,
+                run_command(cmd, cwd=tmp_dir),
+                cmd_config,
+                known_errors,
+                logical_name if logical_name is not None else tmp_path,
+                location_regex=location_regex,
+            )
             results.append(command_result)
             if command_result.outcome != "clean":
                 return results

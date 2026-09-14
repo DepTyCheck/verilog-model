@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -81,6 +82,45 @@ class TestLoadTools(unittest.TestCase):
             tmp = f.name
         self.assertEqual(load_tools(tmp), [])
 
+    def test_iverilog_has_location_regex(self):
+        tools = load_tools(str(TOOLS_YAML))
+        iverilog = next(t for t in tools if t["name"] == "iverilog")
+        loc = iverilog["location_regex"]
+        self.assertIn(",", loc)
+        self.assertIn(r"(\d+)", loc)
+
+    def test_iverilog_error_regex_includes_warnings(self):
+        """path:line lines (including warnings) plus bare error|sorry|assert|vvp lines are atoms."""
+        tools = load_tools(str(TOOLS_YAML))
+        iverilog = next(t for t in tools if t["name"] == "iverilog")
+        pat = iverilog["commands"][0]["error_regex"]
+        sample = "\n".join(
+            [
+                "/tmp/x.sv:49: warning: Port 1 (a) of module es expects 8 bit(s), given 1.",
+                "/tmp/x.sv:49:        : Padding (signed) 7 high bits of the port.",
+                "/tmp/x.sv:49: warning: input port yympbvapqc is coerced to inout.",
+                "/tmp/x.sv:41: syntax error",
+                "/tmp/x.sv:41: error: Invalid module item.",
+                "/tmp/x.sv:1: Errors in port declarations.",
+                '/tmp/x.sv:5: vvp.tgt error: uwire "b1" must have a single driver, found (2).',
+                "error: Code generation had 1 error(s).",
+            ]
+        )
+        atoms = [m.group(0) for m in re.finditer(pat, sample, re.MULTILINE)]
+        self.assertEqual(
+            atoms,
+            [
+                "/tmp/x.sv:49: warning: Port 1 (a) of module es expects 8 bit(s), given 1.",
+                "/tmp/x.sv:49:        : Padding (signed) 7 high bits of the port.",
+                "/tmp/x.sv:49: warning: input port yympbvapqc is coerced to inout.",
+                "/tmp/x.sv:41: syntax error",
+                "/tmp/x.sv:41: error: Invalid module item.",
+                "/tmp/x.sv:1: Errors in port declarations.",
+                '/tmp/x.sv:5: vvp.tgt error: uwire "b1" must have a single driver, found (2).',
+                "error: Code generation had 1 error(s).",
+            ],
+        )
+
 
 class TestBuildMatrix(unittest.TestCase):
 
@@ -118,8 +158,8 @@ class TestRoundTrip(unittest.TestCase):
         decoded = json.loads(json.dumps(build_matrix(tools)))
         iverilog = next(i["tool"] for i in decoded["include"] if i["tool"]["name"] == "iverilog")
         first_cmd = iverilog["commands"][0]
-        self.assertIn(r"\W", first_cmd["error_regex"])
-        self.assertIn(r"\S", first_cmd["error_regex"])
+        self.assertIn(r"\d", first_cmd["error_regex"])
+        self.assertIn(r"\/", first_cmd["error_regex"])
 
     def test_multiline_build_commands_preserved(self):
         tools = load_tools(str(TOOLS_YAML))
@@ -144,6 +184,12 @@ class TestRoundTrip(unittest.TestCase):
 
         self.assertEqual(rust_hdl["assets"], "ci/conf/rust_hdl/vhdl_ls.toml")
         self.assertEqual(rust_hdl["commands"][0]["run"], "vhdl_lang -c ci/conf/rust_hdl/vhdl_ls.toml")
+
+    def test_location_regex_survives_json_roundtrip(self):
+        tools = load_tools(str(TOOLS_YAML))
+        decoded = json.loads(json.dumps(build_matrix(tools)))
+        iverilog = next(i["tool"] for i in decoded["include"] if i["tool"]["name"] == "iverilog")
+        self.assertIn(r"(\d+)", iverilog["location_regex"])
 
 
 class TestMainOutput(unittest.TestCase):

@@ -168,9 +168,9 @@ namespace SVType
   ||| | reg       | 4-state data type, user-defined vector size, unsigned           |
   ||| | integer   | 4-state data type, 32-bit signed integer                        |
   ||| | time      | 4-state data type, 64-bit unsigned integer                      |
-  ||| | real      | The “real” data type is 64-bit                                  |
-  ||| | shortreal | The “shortreal” data type is 32-bit                             |
-  ||| | realtime  | The “realtime” declarations is treated synonymously with “real” |
+  ||| | real      | The "real" data type is 64-bit                                  |
+  ||| | shortreal | The "shortreal" data type is 32-bit                             |
+  ||| | realtime  | The "realtime" declarations is treated synonymously with "real" |
   |||
   ||| Net types
   |||
@@ -180,14 +180,14 @@ namespace SVType
   ||| | tri     | A high impedance net; multi-driver net                  |
   ||| | tri0    | Resistive pulldown net                                  |
   ||| | tri1    | Resistive pullup net                                    |
-  ||| | trior   | Same as “wor”; “1” wins in all cases; multi-driver net  |
-  ||| | triand  | Same as “wand”; “0” wins in all cases; multi-driver net |
+  ||| | trior   | Same as "wor"; "1" wins in all cases; multi-driver net  |
+  ||| | triand  | Same as "wand"; "0" wins in all cases; multi-driver net |
   ||| | trireg  | Models charge storage node                              |
   ||| | uwire   | Unresolved type; allows only one driver on the net      |
-  ||| | wand    | Same as “triand”; “0” wins in all cases                 |
-  ||| | wor     | Same as trior; “1” wins in all cases                    |
-  ||| | supply0 | Net with supply strength to model “gnd”                 |
-  ||| | supply1 | Net with supply strength to model “power”               |
+  ||| | wand    | Same as "triand"; "0" wins in all cases                 |
+  ||| | wor     | Same as trior; "1" wins in all cases                    |
+  ||| | supply0 | Net with supply strength to model "gnd"                 |
+  ||| | supply1 | Net with supply strength to model "power"               |
   |||
   ||| Ashok B. Mehta. Introduction to SystemVerilog, 2021
   |||
@@ -325,12 +325,16 @@ namespace SVType
 
   ||| 6.7.1 Net declarations with built-in net types
   ||| Certain restrictions apply to the data type of a net. A valid data type for a net shall be one of the following:
+  |||
+  |||   @requality dc0b3ac4-bcb8-4fa8-adac-063afc2dd275
   |||   a) A 4-state integral type, including, for example, a packed array or packed structure (see 6.11.1).
-  |||   b) A fixed-size unpacked array or unpacked structure or union, where each element has a valid data
-  |||      type for a net.
+  |||
+  |||   @requality ff279c46-ad4d-453e-86dd-00497c6cae10
+  |||   b) A fixed-size unpacked array or unpacked structure or union, where each element has a valid data type for a net.
+  |||
+  ||| IEEE 1800-2023
   public export
   data AllowedNetData : SVType -> Type where
-    -- Imp : ImplOrPacked Implicit
     NA : (i : SVIntegral obj) => (s : State4 i) => NotReg i => AllowedNetData obj
     NB : AllowedNetData t => AllowedNetData $ UnpackedArr t s e
     -- TODO: unpacked structure, union

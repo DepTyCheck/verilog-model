@@ -46,6 +46,7 @@ def run_all(
     known_errors: IgnoredErrorsList,
     translate_hook: str,
     handler: ResultHandler,
+    location_regex: str | None = None,
 ) -> None:
     """Iterate inputs, run each through run_file, dispatch the per-command list to handler."""
     for file_input in inputs:
@@ -57,5 +58,6 @@ def run_all(
             translate_hook=translate_hook,
             assets=file_input.assets,
             logical_name=file_input.logical_name,
+            location_regex=location_regex,
         )
         handler.handle(file_input, results)

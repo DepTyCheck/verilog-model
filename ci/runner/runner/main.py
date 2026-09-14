@@ -45,7 +45,7 @@ def _print_final_report(report: PerFileReport) -> None:
     )
 
 
-def _log_run_inputs(args, asset_paths, extra_ignored_regexes, commands) -> None:
+def _log_run_inputs(args, asset_paths, extra_ignored_regexes, commands, location_regex) -> None:
     """Log all resolved tool-run inputs so transfer/parsing bugs are visible up front."""
     logger = get_logger()
     logger.info(f"Tool: {args.tool_name!r}")
@@ -61,6 +61,8 @@ def _log_run_inputs(args, asset_paths, extra_ignored_regexes, commands) -> None:
     for cmd in commands:
         error_pattern = cmd.error_regex.regex if cmd.error_regex else None
         logger.info(f"  run: {cmd.run!r} | error_regex: {error_pattern!r}")
+    logger.info(f"Raw --location-regex: {args.location_regex!r}")
+    logger.info(f"Parsed location_regex: {location_regex!r}")
 
 
 def main() -> None:
@@ -70,6 +72,7 @@ def main() -> None:
 
     extra_ignored_regexes = shlex.split(args.extra_ignored_regexes)
     asset_paths = shlex.split(args.assets)
+    location_regex = args.location_regex or None
 
     known_errors = IgnoredErrorsList(
         args.ignored_errors_dir,
@@ -78,7 +81,7 @@ def main() -> None:
     )
     commands = parse_commands(args.commands_json)
 
-    _log_run_inputs(args, asset_paths, extra_ignored_regexes, commands)
+    _log_run_inputs(args, asset_paths, extra_ignored_regexes, commands, location_regex)
 
     assets = Assets(asset_paths) if asset_paths else None
     file_suffix = Path(args.file_pattern).suffix
@@ -97,7 +100,14 @@ def main() -> None:
     logger.info(f"Found {len(files)} files matching {args.file_pattern!r} in {input_dir}")
 
     collector = ResultCollector()
-    run_all(iter_test_files(files, file_suffix, assets), commands, known_errors, args.translate_hook, collector)
+    run_all(
+        iter_test_files(files, file_suffix, assets),
+        commands,
+        known_errors,
+        args.translate_hook,
+        collector,
+        location_regex=location_regex,
+    )
 
     report = PerFileReport(
         tool_name=args.tool_name,
@@ -126,8 +136,7 @@ def main() -> None:
 
     _print_final_report(report)
 
-    has_unknown = collector.has_unknown_errors()
-    sys.exit(1 if has_unknown else 0)
+    sys.exit(1 if collector.has_unknown_errors() else 0)
 
 
 if __name__ == "__main__":
