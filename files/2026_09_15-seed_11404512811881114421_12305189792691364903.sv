@@ -1,0 +1,9 @@
+// Seed: 11404512811881114421,12305189792691364903
+
+module waxie (output time batlrv [4:0]);
+  
+endmodule: waxie
+
+
+
+// Seed after: 4619630682937618768,12305189792691364903
