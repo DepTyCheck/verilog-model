@@ -143,19 +143,19 @@
 </script>
 
 <Card size="xl" class="max-w-none p-4 shadow-sm sm:p-6">
-	<div class="items-center justify-between lg:flex">
-		<div class="mt-px mb-4 lg:mb-0">
-			<Heading tag="h3" class="mb-2 -ml-0.25 text-xl font-semibold dark:text-white">{heading}</Heading>
+	<div class="mt-px">
+		<Heading tag="h3" class="mb-2 -ml-0.25 text-xl font-semibold dark:text-white">{heading}</Heading>
+		<div class="w-2/3">
 			{@render description()}
-		</div>
-		<div class="flex items-center gap-2">
-			<Button color="light" onclick={clearAllFilters}>Clear filters</Button>
 		</div>
 	</div>
 	<div class="relative mt-6">
-		<p class="mb-2 text-sm dark:text-white">
-			{sortedErrors.length}/{errors.length} issues ({Math.round((sortedErrors.length / errors.length) * 100)}%)
-		</p>
+		<div class="mb-2 flex items-end justify-between gap-4">
+			<p class="min-w-0 text-sm dark:text-white">
+				{sortedErrors.length}/{errors.length} issues ({errors.length === 0 ? 0 : Math.round((sortedErrors.length / errors.length) * 100)}%)
+			</p>
+			<Button class="shrink-0" color="light" onclick={clearAllFilters}>Clear filters</Button>
+		</div>
 		<div bind:this={scrollContainer} style="overflow-x: auto; max-width: 100%;">
 			<table class="w-full min-w-max divide-y divide-gray-200 text-sm dark:divide-gray-600">
 				<thead class="bg-gray-50 dark:bg-gray-700">

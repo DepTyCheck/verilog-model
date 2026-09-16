@@ -10,6 +10,10 @@ describe('validateList', () => {
 		expect(validateList('controversial', 'f.yaml')).toBe('controversial');
 	});
 
+	it('accepts warnings', () => {
+		expect(validateList('warnings', 'f.yaml')).toBe('warnings');
+	});
+
 	it('throws on a missing list', () => {
 		expect(() => validateList(undefined, 'f.yaml')).toThrow(/list/);
 	});

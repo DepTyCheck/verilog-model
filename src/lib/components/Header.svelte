@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { GithubSolid } from 'flowbite-svelte-icons';
-	import { Navbar, NavBrand, A, Button } from 'flowbite-svelte';
+	import { Navbar, NavBrand, A, Button, ButtonGroup } from 'flowbite-svelte';
 	import { githubUrl } from '$lib/consts';
 	import { fixLink } from '$lib';
 	import { page } from '$app/state';
 
-	const isControversial = $derived(page.url.pathname.replace(/\/$/, '').endsWith('/controversial'));
+	const path = $derived(page.url.pathname.replace(/\/$/, ''));
+	const isWarnings = $derived(path.endsWith('/warnings'));
+	const isControversial = $derived(path.endsWith('/controversial'));
+	const isIssues = $derived(!isWarnings && !isControversial);
 </script>
 
 <header>
@@ -15,8 +18,11 @@
 				<img src={fixLink('/icons/logo_no_bg.png')} class="mr-2 h-8 sm:h-9" alt="Project Logo" />
 				<span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Verilog model</span>
 			</NavBrand>
-			<Button size="sm" href={fixLink('/')} color={isControversial ? 'light' : 'primary'}>Bugs & issues</Button>
-			<Button size="sm" href={fixLink('/controversial')} color={isControversial ? 'primary' : 'light'}>Controversial</Button>
+			<ButtonGroup size="sm">
+				<Button href={fixLink('/warnings')} color={isWarnings ? 'primary' : 'alternative'}>Warnings</Button>
+				<Button href={fixLink('/')} color={isIssues ? 'primary' : 'alternative'}>Bugs & issues</Button>
+				<Button href={fixLink('/controversial')} color={isControversial ? 'primary' : 'alternative'}>Controversial</Button>
+			</ButtonGroup>
 		</div>
 		<A href={githubUrl}>
 			<GithubSolid />
