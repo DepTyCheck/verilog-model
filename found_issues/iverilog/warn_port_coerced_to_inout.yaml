@@ -1,4 +1,4 @@
-list: issues
+list: warnings
 profile: sv
 target: iverilog
 id: warn_port_coerced_to_inout

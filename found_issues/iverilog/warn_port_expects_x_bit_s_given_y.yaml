@@ -1,4 +1,4 @@
-list: issues
+list: warnings
 profile: sv
 target: iverilog
 id: warn_port_expects_x_bit_s_given_y
