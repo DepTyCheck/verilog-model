@@ -37,5 +37,3 @@ examples:
           );
 
         endmodule: ef
-  - variable_has_same_name_as_instance:
-      first_found: 04.03.2025

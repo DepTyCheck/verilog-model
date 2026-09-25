@@ -1,0 +1,68 @@
+list: issues
+stage: synthesis
+profile: sv
+target: verilator
+id: varscope_has_the_same_name_as_instance
+title: VARSCOPE ... has the same name as instance
+regex: >
+  Unsupported in C: VARSCOPE .* has the same name as instance: .*
+issue_novelty: unsupported
+examples:
+  - varscope_has_the_same_name_as_instance_ex1:
+      first_found: 24.09.2026
+      minified_error: |
+        %Error: top.sv:1:26: Unsupported in C: VARSCOPE 'p' has the same name as instance: 'p'
+            1 | module xkkf (input logic p);
+              |                          ^
+                top.sv:1:8: ... Location of original declaration
+            1 | module xkkf (input logic p);
+              |        ^~~~
+                ... See the manual at https://verilator.org/verilator_doc.html?v=5.053 for more assistance.
+      minified_example: |
+        module xkkf (input logic p);
+        endmodule: xkkf
+
+        module p ();
+        endmodule: p
+      full_error: |
+        %Error: top.sv:2:93: Unsupported in C: VARSCOPE 'p' has the same name as instance: 'p'
+            2 |   (output wire hk, output bit sekew, output bit frqhrnh, output wire pwkkdczkw, input logic p, input wire vfuvoh);
+              |                                                                                             ^
+                top.sv:1:8: ... Location of original declaration
+            1 | module xkkf
+              |        ^~~~
+                ... See the manual at https://verilator.org/verilator_doc.html?v=5.053 for more assistance.
+        %Error: Internal Error: top.sv:11:38: ../V3LinkDot.cpp:2772: No symbol for alias item: p.uxeit
+          11 |   (output wire avbsmmkv, output wire uxeit);
+             |                                      ^~~~~
+                                ... This fatal error may be caused by the earlier error(s); resolve those first.
+      full_example: |
+        module xkkf
+          (output wire hk, output bit sekew, output bit frqhrnh, output wire pwkkdczkw, input logic p, input wire vfuvoh);
+
+          assign hk = vfuvoh;
+          assign sekew = vfuvoh;
+          assign frqhrnh = p;
+          assign pwkkdczkw = vfuvoh;
+        endmodule: xkkf
+
+        module p
+          (output wire avbsmmkv, output wire uxeit);
+
+          or jlnzrbasnv(uxeit, uxeit, uxeit);
+
+          assign avbsmmkv = uxeit;
+        endmodule: p
+
+        module quxrwlxgk
+          (input logic a, input uwire xhc, input int qtwwqyp, input real qw);
+
+          or mbakoem(bttmnvylhq, a, a);
+          and ptnkgc(ucxkqd, qtwwqyp, bttmnvylhq);
+
+        endmodule: quxrwlxgk
+
+        module tbjwaeog
+          (input bit u, input integer vzhlr, input wire iwgcoh);
+
+        endmodule: tbjwaeog
