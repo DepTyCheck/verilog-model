@@ -1,0 +1,34 @@
+// Seed: 2164145201703104086,4438440825957213925
+
+module jhac (output wor logic [3:3] lhxhzqt);
+  xnor qyji(lhxhzqt, lhxhzqt, lhxhzqt);
+  
+  xor hsiglne(lhxhzqt, vrjyaulglk, lhxhzqt);
+  
+  xnor qkwqntiz(jndldapgep, lhxhzqt, vrjyaulglk);
+  
+endmodule: jhac
+
+module rfev ( output wand logic [1:3][2:1][4:0][2:0] wtjipnc [3:4][3:4][2:3]
+            , input supply1 logic [1:4][4:4][3:1][3:0] quqmi [4:0][4:1][1:2][0:4]
+            , input int kuug [3:3]
+            , input shortreal hhf
+            );
+  xnor cvlpggeo(fgff, hhf, znybgdq);
+  // warning: implicit conversion of port connection truncates from 32 to 1 bits
+  // warning: implicit conversion changes signedness from signed to unsigned
+  //   shortreal hhf -> logic hhf
+  
+  or cimjpyju(vd, yotad, znybgdq);
+  
+  not xbahhnt(yotad, hmgh);
+  
+  
+  // Multi-driven assignments
+  assign wtjipnc = wtjipnc;
+  assign quqmi = '{'{'{'{'bzx0z1,'bzx00000z10z001x0z1z10z1101000zz100zzxz101z1x0x1z,'b0xz0xxx01x11zz0001x0x0z0zz10010x10z01zxz00zx1z00,'bzzz110xx111x0x1z11zzzzx0xz1xxzz0z110z0xx1zz1x0zz,'b11x0z00x11x0z10z0111z01z0011x11xzz10x0zxzzx10xxx},'{'b0x1z,'bx0,'b1z10,'b0,'b0zxxz1z10z1xzz1000x1zx000x01000100z000110xxxxx10}},'{'{'b1xzx,'b1zx11xz0zx110zz0z0001x1xz0x1zxzxzx1z11zz1zx01z01,'bz1zz,'b01z11,'b01x},'{'bz11101zzzzzxz0101011x1x1001xz1zz0z101x1x1xx0x1z1,'bz,'bxxz1x1110z01z00z01101xzzxx010xzx10xzx0zz1xxzx1x0,'bxz01z00xzx1xxz0x001011zz101xz11xzz01x1x0z1x1zx0x,'bz000}},'{'{'b0z0z001xxx1xx0101xz0z1z0zz0111xz11x1101zzz0000z1,'b11xxx00x11xz0z1xz0x10zzx11xx1z00111x1zzx0z0zx1xz,'bz0x1x1zxz1zxx110z000z0zzxxx0zzzx01x0xx111zzzx10x,'bz0z,'bxzx111zz111x0x11zx1x1zz1zx0x0zzx01zzz1000x1xz00z},'{'bxzxzzzzz0x1x0z1z01z1zxxzzx01z1x11z0zx011x1xxzzxz,'b0010xx0zxxx01z00111x01zxzz11x0xx11xx1011x1z01zxx,'b1z0z,'b1zzz,'bx10}},'{'{'b1xx0z,'bz1x,'bzx0x1z111zx1z000zz0xzx1z1111xzzx0zzzzxxz1000001z,'b0z01x000001z0x0z0x00z1001xxz011zz00xxxxzx0xxx11x,'b0xz},'{'b0x1z,'b1x01zxxz10xzzzz1zzxzz11xx0zz1xx110xz0z1xx1x1xzxz,'b0z101z1zz1zx0110x11z0x0x1z01z1z101zxz11100zz01xz,'b01100x1xx0zxzxxz0xz00xxxxzzz10xxzz0x00x10zz1x01z,'bx1011xz10z1x11111z1011z1z11z000zzxzz0xzxz011z01z}}},'{'{'{'b0100zx00xxzzxx0zzxxx0xz1z00xzxz0x00100zx0xx1000x,'bxzz110z00x01zzzz010111zz1zzxxz1zx01001x1xx11x011,'bzz1x101z0xx1z0zxx1x0zzzx0z1z0z11z0x10zx0x1zzz110,'b10zxz100z11110zxxz1xzz110x1z0xz0xzx00x1x111x01zz,'bzz0z},'{'b01zzxz0z0100z0x10zz10xx0z0x1xzz00zzxz10x1zzx10xx,'bz1x01110zzx0z1z0xxx0xxzxx00x0xxz100zzx0xx1xz1xx0,'b10z,'bz10z11x11zz000xz100zx0z10x10z10xxx10xzzzx1zzxzxx,'bz100z}},'{'{'b1zxz001xx1z01x111zzzz1x01z01x1xx1x010zz11zx1z10x,'b110zx10zzz01x1x1xz1z00xxz00zxxx010z0zxx10zz1zzx0,'bz0z,'b10,'b0zx0xzx101x01xz00z10zxx00xzx0110100x0101z0zxzxz1},'{'bx0x,'bxz,'bz,'bzzz11x1xzx00z011xzxzxx00zxz1zx00x1zxz0zxz1z1xxxx,'b100xx}},'{'{'bx110z1x11zz10xzzzz100xxxxzxz1z0z01z0zx0zxx1z1zxx,'bz0zz,'bz00xz,'b01,'bz1},'{'bxx1z100xxxx111100z01zz010z0xzx00x01zx0100111xx0z,'b1z1,'b1z01,'bz111xzz1z1zx011x0xx1xx100zzzz1z1x1z0xzz00z0xxzx0,'bzz}},'{'{'bz0000,'b0zx,'b1zz0x1z100z0x1101z1111010x10100x0z010zzxzz0x11xx,'b010001110xx1011z11x0x101zz1zzxx0x1xzx1x00xxxz101,'bxx11z},'{'b0z0100xxzzxx11xx0x0101z101xzx1x01xx0011x01z010zx,'bx0x01xxz110x1x1x100001zxx1z1xxzxz1x111zzxxz00zx1,'b0,'b10z1xx0xxx100x101zz1xxz111zxzxxxxxz001xxzx0xxz1z,'b0zx}}},'{'{'{'b11010xx01zzx0zzx110xz10zxz101x0100x0zx0x1xz1x1z0,'bx1x,'b01zx,'bz0xx,'b1xzz0},'{'bx1x,'b1,'bx111x,'bz1,'b111000x10010z00z10xz10x001xz0z1000010x01zzz1001z}},'{'{'bxzx1z011x0010x1x00z0zz0z0z1x1z111zzzxx1xz0xzzx00,'bzxz,'b1zx1z0x00xxz100xz00zzx000z0z100xxz1z0z0xz11x1x01,'b0xxzz0x0zx010x10zzzxz0zzx0zz0xzxx010x0x0xx11zzxz,'b1x01001zxz110zz0x111z111z10x101x0x1z0011z0x1z1xx},'{'bxzx11,'b010z,'b00,'bxx,'b010111xzx10xx101x1x001z01zxz0z1z101z10110z1z11z0}},'{'{'bxx,'bx0xx,'bzx1,'b0xx,'b1x01zx00x1z1z1z011xx01x1z1x0x11x1xzx11z110xx0zxx},'{'b1x1x,'b1xz01z11z1zz10z10xxzx1z1xxzzzxxz011x1x01x0z101zz,'b11xx1010x010zxz0zz01111z00zz1x1zz0zx11101xz1z01z,'b1xx0zx11000x1z01xx1z1z0z10x1zxz0z0xxz1z10zx011zx,'b10001x1zx01zz110011001xx0xz010x101z0z10xx0x10zxx}},'{'{'bxzx,'b00,'bz1zz00z0z0100xxz10xx0000xxzxz11zx0xxz1z110zz1x0x,'b1110x0z10zxxz1xxzxzzzx00x0010zxz1xzx110x00110110,'bzx1zx011z010z0zx010zxxz11x110xzz0z1100x0x0011zxz},'{'b010zx,'bz1x01000xxxz1zxzz001zzxx0x0z0xz0zx01z001x1z01z01,'bzz,'b1z10zz001101xz0zx1z10x0z0z1zxx1z01z000zxzzzz1x00,'b101zz1z0xx0xx011z1xzx00x1zx11z000x1zzzx000zxx1x0}}},'{'{'{'b1110xxxxz1xxxxz10zz0z0x111z0x0zzz0xz0zz1xx00101x,'b1z10z,'bxx1z0z0z11xz1x0z0011xx10z10x0x00zx0x1zxx11xzxz1x,'b00zxxzzz0000z10z0zz0z0101xzz01xxx1z0zxxz0zx0x0z1,'bz0101xzx0zzz010zx1zzxx0xzxxz10z001011xxzzzzxxz11},'{'bxzz1x,'b1x10x1x11110zxxxz011x100zx1x00xxzzzzzzz0x110z01z,'bxz11x1zx00x11xz1101xzx0x1z11x1100x00x01z100zz110,'b0,'b0zxzz0xz0zx00zzz0xx000x1zzxx0zxxx00xz11000111z00}},'{'{'b1xx1z1zzzxx1xxzzxx0x0xzxz1xz00001xxx110xz01xz1zx,'bz0x0x,'b0,'bxx1z01z1z01xx0zx1zxxz1x10x0011x1x1xxxz0z1zzxx000,'bx00zz1z11x1100x10zx01xz1zxzzxzzzxzx1xzzzzz1xzz11},'{'b0z1,'bzzz011x1xz1x0z001100zxz1x10zx1zx1xzzxxz00zxzzzx1,'bxzz1x0x000x00z11x1zxx0zzx00x00111zz01z0x11z10100,'bzz1z,'b111}},'{'{'b0z,'b0z111,'bx0x,'b0xx01zx010z1xzzzz0100x001xxxz00x01xz1zxx0zz00110,'b1x},'{'b100zz0z11xxzxzzzzxz001z11z00x10zxxzx11x001z1011x,'b001x0xzxz1z0xzxz0xxx101zxxxzzx0xzxz1z1zxx1x110zx,'bx00xz011xz10xx101011z1xx0z1xz011x11010z0000zzxxx,'bx1z1,'b100}},'{'{'bx100xz01z0x00010zxz1z0z1zx0xzxzxx01zx1x11zxx1z11,'bxz10,'bx0zxzz01x1x011xx00xxzxz0x1xzz0zzx0011x1x0z11xzzz,'bz0001xxz1zxzx1x0z000zzxxzxx0z0z1zxxxzxz0z0x01z00,'b00},'{'bzxz,'bz0x,'bx1z0z1z110x1011x0101x1xzz10x1x1100zx1xzxxx0zx0zz,'bz10x,'b000zxx1zxzzz0111z1xxxzx0z111zxxxxxx01x1x0xzzz1z0}}},'{'{'{'b1xz1zz10x1xxx111zzzz01z00010x0z1110z0zz0x101xz1z,'bxz1,'bx01,'bz0xz0z11z1xxx0xx0zz11z011zx0z0x010z1z1100xxz0xx1,'b1z11xzx01xz0111zz10x1xzxx0x10z11zz0x110zx0x0x0xz},'{'b111xxz0zzx0x01x1z01z1xxxz00z10z0xzzzx0x10zxx0011,'b1zz,'bz1,'b0z011101z1xxzxxz0zzzx000z0x0z0x1zzx100zzz11z1xz1,'bx}},'{'{'b100x,'b1,'b1,'bz001001z0x1x1z1x0001z01x00xzxx0x0zzzx101zz110x1x,'b0010},'{'bxxz100z00xz0100z1xx1z1x0zzx010xzxxzzx1zzx01xxx11,'b00,'bz,'b0zz,'b1x0zzz101x1010zx1z01z0z0x00z00zzz10x1z1zx1x10x00}},'{'{'bzzxzx0xz11xx0zxz0z00x01xx101x0xxzzxx111z11x011z0,'b0x,'b110x11xzx0x10x0xxz10xx0x000xxzx1xzxz0011zx1x0011,'bx0100z1x0z1xz0z10x1x1z0xz10xxzx01xx01zzzx11xxxxz,'b0z},'{'bzx01zzzx1zx1x1x10x0101z1x1zz01zxz0z1zzxxx10110xx,'b011xzx001xxz0zx0xz0xx01z1zx0z0xx100xx10zz00x0zx0,'bx00zxz0x1xzxxz0001zz00xx0xx0x100zzxzx0z0xx0z1z0x,'b110x0zzx010x1z10x0xz01zx0z0zzzzx10zz10zxx0zxxxzz,'b0zxz}},'{'{'bxx0xz,'bz1z011zzxx1x10zz0z001xz0zx11x11xzzz0xxz010xx1xzx,'b1z1x,'b0,'bxz},'{'bz0zxzx0xx1011x0xz11z001z001zxzx1z0zx1z0xzz0z011z,'bz1z11xz1z1zx01z01z0xzzzz11xxxx001x1x1xxzz10000z0,'b1x1zz111xzzz110zzzx1x11zx010x1z11101xz0xxz101z10,'bz,'b0x01xz01zx0z0xz001zz1x1101xz11101zzz1x110xx0x110}}}};
+endmodule: rfev
+
+
+
+// Seed after: 2857731744392284537,4438440825957213925
