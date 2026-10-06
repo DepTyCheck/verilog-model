@@ -1,0 +1,9 @@
+// Seed: 12396567764918138024,10689714739547469623
+
+module oargo (output tri0 logic [3:4][0:0] iotni [4:4]);
+  
+endmodule: oargo
+
+
+
+// Seed after: 1565633315082788848,10689714739547469623
