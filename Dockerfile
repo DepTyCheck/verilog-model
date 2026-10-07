@@ -1,24 +1,18 @@
+# syntax=docker/dockerfile:1
 FROM ghcr.io/stefan-hoeck/idris2-pack:latest
 
-ENV BUILD_DIR=.build
 ENV PACKAGE_NAME=verilog-model
 
-ARG WORK_DIR=/app
+ARG WORK_DIR
+ARG PACK_STATE
 
 WORKDIR ${WORK_DIR}
 
-# Copy Idris sources and cached .build
+# Copy sources.
 COPY . .
-COPY ${BUILD_DIR} ${BUILD_DIR}
 
-# Switch latest to match cached build
-RUN pack switch latest
-
-# Try to force build from cache
-RUN find ${BUILD_DIR} -type f -exec touch {} +
-
-# Build
-RUN pack build ${PACKAGE_NAME}
+# Restore the same compiler, dependencies, configuration and build used by CI.
+RUN --mount=type=bind,from=pack-state,target=/pack-state tar -xmf "/pack-state/${PACK_STATE}.tar" -C /
 
 # Install
 RUN pack install-app ${PACKAGE_NAME}
