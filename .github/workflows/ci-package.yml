@@ -743,9 +743,8 @@ jobs:
   publish-container:
     name: Build and publish Docker image
     needs: [build-and-test, run-tools]
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
-    container: ghcr.io/stefan-hoeck/idris2-pack:latest
     permissions:
       contents: read
       packages: write
@@ -754,15 +753,26 @@ jobs:
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
+      PACK_STATE: ${{ fromJSON(needs.build-and-test.outputs.pack_states)[0] }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Restore Idris2 pack state
-        uses: DepTyCheck/idris2-actions/.github/actions/restore-pack-state@v1
+      - name: Download Idris2 pack state
+        uses: actions/download-artifact@v8
         with:
-          state: ${{ fromJSON(needs.build-and-test.outputs.pack_states)[0] }}
+          name: ${{ env.PACK_STATE }}
+          path: .pack-state
+      - name: Locate the archived project directory
+        id: pack-state
+        env:
+          BUILD_DIR: ${{ needs.build-and-test.outputs.build_dir }}
+        run: |
+          work_dir=$(python3 ci/scripts/pack_state_workdir.py ".pack-state/$PACK_STATE.tar" "$BUILD_DIR")
+          echo "work-dir=$work_dir" >> "$GITHUB_OUTPUT"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
       - name: Log in to the Container registry
         uses: docker/login-action@v4
         with:
@@ -782,6 +792,11 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: .
+          build-contexts: |
+            pack-state=.pack-state
+          build-args: |
+            PACK_STATE=${{ env.PACK_STATE }}
+            WORK_DIR=${{ steps.pack-state.outputs.work-dir }}
           file: Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
