@@ -6,7 +6,7 @@ id: abort_tristate
 title: Abort due to tristate
 issue_novelty: new
 regex: >
-  slang_frontend\.cc:(2627|2629|2654|2659|2700|2983|3010|3012|3018|3062|3141|3131|3029|3256|3255|3192|3246|3207)
+  Assert `false && "unreachable"' failed in .*slang_frontend\.cc:3247
 issue_type:
   - crash
   - bad_message
@@ -179,3 +179,11 @@ examples:
           or lp(bjnqkmwn, mspttbro, rlrydycjuf);
 
         endmodule: kjprlt
+  - abort_tristate_ex6:
+      first_found: 08.10.2026
+      minified_error: |
+        ERROR: Assert `false && "unreachable"' failed in /home/runner/work/verilog-model/verilog-model/sv-elab/src/slang_frontend.cc:3247.
+      minified_example: |
+        module a();
+          tri0 logic b;
+        endmodule: a
