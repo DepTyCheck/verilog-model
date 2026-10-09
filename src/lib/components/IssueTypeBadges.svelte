@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Badge } from 'flowbite-svelte';
+	import { Badge, Tooltip } from 'flowbite-svelte';
 	import type { IssueType } from '$lib/core';
-	import { getIssueTypeDisplay } from '$lib/index';
+	import { getIssueTypeDisplay, getIssueTypeTooltip } from '$lib/index';
 
 	interface Props {
 		types: IssueType[] | null;
@@ -15,6 +15,9 @@
 		{#each types as itype}
 			{@const display = getIssueTypeDisplay(itype)}
 			<Badge color={display.color} rounded>{display.text}</Badge>
+			{#if getIssueTypeTooltip(itype)}
+				<Tooltip type="auto">{getIssueTypeTooltip(itype)}</Tooltip>
+			{/if}
 		{/each}
 	</div>
 {/if}

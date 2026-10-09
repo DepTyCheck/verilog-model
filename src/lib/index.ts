@@ -64,6 +64,25 @@ export function getIssueTypeDisplay(type: IssueType): DisplayInfo {
 	}
 }
 
+export function getIssueTypeTooltip(type: IssueType): string {
+	switch (type) {
+		case 'bad_message':
+			return 'The message incorrectly describes the problem';
+		case 'crash':
+			return 'The tool failed unexpectedly';
+		case 'feature':
+			return 'The tool behaviour deviates from the specification without documentation';
+		case 'downstream':
+			return 'An issue triggered by an upstream failure';
+		case 'warning':
+			return 'Warning returned by the tool';
+		case 'infinite_loop':
+			return 'Infinite processing loop';
+		default:
+			return '';
+	}
+}
+
 export function getMaintainersResponseDisplay(tag: MaintainersResponse): DisplayInfo {
 	switch (tag) {
 		case 'bug':

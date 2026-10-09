@@ -16,6 +16,12 @@ Once you've installed dependencies, start a development server:
 npm run dev
 ```
 
+Run tests:
+
+```bash
+npm run test
+```
+
 ## Codegen (optional)
 
 To generate errors data (it also runs when `npm run dev` and `npm run build` by default):
