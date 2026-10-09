@@ -11,6 +11,7 @@ abort_tristate_ex3,full,true
 abort_tristate_ex4,full,true
 abort_tristate_ex4,minified,true
 abort_tristate_ex5,full,true
+abort_tristate_ex6,minified,true
 and_unexpected_in_assignment_to_unpacked_array,full,true
 array_initialization_should_have_been_removed_earlier_ex1,full,true
 array_initialization_should_have_been_removed_earlier_ex1,minified,true
