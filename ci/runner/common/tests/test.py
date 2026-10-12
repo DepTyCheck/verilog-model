@@ -7,6 +7,7 @@ from common.tests.test_line_group_errors import TestCarveGroup, TestIverilogLine
 from common.tests.test_make_command import TestMakeCommand
 from common.tests.test_match_search_logging import TestMatchSearchLogging
 from common.tests.test_nvc_segv_regex import TestNvcSegvRegex
+from common.tests.test_pack_state_workdir import TestPackStateWorkdir
 from common.tests.test_per_file_report import TestFileOutcome, TestPerFileReportRoundtrip
 from common.tests.test_profiles_config import TestProfilesConfig
 from common.tests.test_resolve_profile import TestResolveProfile
@@ -41,5 +42,6 @@ if __name__ == "__main__":
             TestProfileRequired,
             TestProfilesConfig,
             TestResolveProfile,
+            TestPackStateWorkdir,
         ]
     )
