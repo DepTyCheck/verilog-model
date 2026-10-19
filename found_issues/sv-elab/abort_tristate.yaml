@@ -6,7 +6,7 @@ id: abort_tristate
 title: Abort due to tristate
 issue_novelty: new
 regex: >
-  Assert `false && "unreachable"' failed in .*slang_frontend\.cc:3247
+  Assert `false && "unreachable"' failed in .*slang_frontend\.cc:.*
 issue_type:
   - crash
   - bad_message
