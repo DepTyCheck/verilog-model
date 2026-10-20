@@ -5,7 +5,7 @@ target: verilator
 id: unsupported_tristate_construct_triand_graph
 title: Unsupported tristate construct (in graph; not converted)
 regex: >
-  Unsupported tristate construct \(in graph; not converted\): (CONST|VARREF|INITITEM|ASSIGNW|OR|NOT|AND|INITARRAY|VAR '.*'|ALWAYS)
+  Unsupported tristate construct \(in graph; not converted\): (CONST|VARREF|INITITEM|ASSIGNW|OR|NOT|AND|INITARRAY|VAR '.*'|ALWAYS|CONSARRAY)
 issue_novelty: unsupported
 examples:
   - unsupported_tristate_construct_triand_graph_const:
@@ -452,3 +452,35 @@ examples:
 
         module ysfos ();
         endmodule: ysfos
+
+  - unsupported_tristate_construct_triand_graph_consarray:
+      first_found: 20.10.2026
+      full_error: |
+        %Error-UNSUPPORTED: top.sv:6:16: Unsupported tristate construct (in graph; not converted): CONSARRAY
+                                      : ... note: In instance 'sscjtsx.stgvw'
+            6 |   assign mvk = '{'{'bxzz0},'{'b1}};
+              |
+      full_example: |
+        module cygsuzowl (inout trior logic [2:2] mvk [1:0]);
+          // Multi-driven assignments
+          assign mvk = mvk;
+          assign mvk = mvk;
+          assign mvk = mvk;
+          assign mvk = '{'{'bxzz0},'{'b1}};
+        endmodule: cygsuzowl
+
+        module sscjtsx (input uwire logic [3:1][0:2] nignu [4:1]);
+          // Unpacked net declarations
+          trior logic [2:2] oyujfct [1:0];
+
+          xor ve(okaovjaqok, okaovjaqok, okaovjaqok);
+          cygsuzowl stgvw(.mvk(oyujfct));
+          xor scpsiqeo(okaovjaqok, okaovjaqok, l);
+          xnor s(okaovjaqok, qgeijqj, qgeijqj);
+
+          // Multi-driven assignments
+          assign qgeijqj = okaovjaqok;
+          assign qgeijqj = qgeijqj;
+          assign oyujfct = '{'{'bx},'{'bzz0x}};
+          assign okaovjaqok = 'bx;
+        endmodule: sscjtsx
