@@ -45,6 +45,9 @@ modules = Test.Common.Utils
         , Test.VHDL.UniqueNames
         , Test.VHDL.Defaults
         , Test.VHDL.Type
+        , Test.VHDL.Literal
+        , Test.VHDL.Expression
+        , Test.VHDL.Assign
 
         , Test.Common.Design
         , Test.Common.Design.Derived
