@@ -8,6 +8,7 @@ import public Test.Common.Multiconnection
 
 ||| 10.3.2
 ||| Continuous assignments to singledriven types are illegal when assigned to top input ports and submodule output ports
+public export
 isSDSV : {s : _} -> {usl : _} -> {subUs : _} ->
           (mc : MultiConnection SystemVerilog s usl subUs) -> Bool
 isSDSV mc = noSource mc && isSD (dtToSVt $ typeOf mc) && notInoutUwire && notTopInputVar
@@ -38,6 +39,7 @@ isSDSV mc = noSource mc && isSD (dtToSVt $ typeOf mc) && notInoutUwire && notTop
     (MkMC Nothing Nothing  ssc ssk @{ne} @{NoTop})   => True
 
 
+public export
 svSDFins' : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : MultiConnectionsList SystemVerilog s usl subUs} ->
             List (Fin $ length mcs) -> FinsList (length mcs)
 svSDFins' []      = []
@@ -47,6 +49,11 @@ public export
 svSDFins : {s : _} -> {usl : _} -> {subUs : _} -> (mcs : MultiConnectionsList SystemVerilog s usl subUs) ->
            FinsList (length mcs)
 svSDFins mcs = svSDFins' $ allFins mcs.length
+
+public export
+sdFins : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : MultiConnectionsList SystemVerilog s usl subUs} ->
+         List (Fin $ length mcs) -> FinsList (length mcs)
+sdFins = svSDFins'
 
 
 svMDFins' : {s : _} -> {usl : _} -> {subUs : _} -> {mcs : MultiConnectionsList SystemVerilog s usl subUs} ->

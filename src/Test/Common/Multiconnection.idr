@@ -241,13 +241,42 @@ namespace MultiConnection
   isTop (MkMC Nothing (Just x) ssc ssk @{ne} @{OnlyTSK}) = True
   isTop (MkMC Nothing Nothing  ssc ssk @{ne} @{NoTop})   = False
 
+  -- Top source plus any sub source, or two or more sub sources.
+  public export
+  hasTwoSources : MultiConnection l s usl subUs -> Bool
+  hasTwoSources (MkMC (Just _) _ []        _) = False
+  hasTwoSources (MkMC (Just _) _ (_ :: _)  _) = True
+  hasTwoSources (MkMC Nothing  _ []        _) = False
+  hasTwoSources (MkMC Nothing  _ [_]       _) = False
+  hasTwoSources (MkMC Nothing  _ (_::_::_) _) = True
+
+  public export
+  isResolvedNetObj : SVObject -> Bool
+  isResolvedNetObj (Net Uwire' _) = False
+  isResolvedNetObj (Net _ _)      = True
+  isResolvedNetObj _              = False
+
+  ||| Prefer a resolved-net type.
+  |||
+  ||| 23.3.3.2: a variable may have only one port driver
+  ||| IEEE 1800-2023
+  public export
+  firstResolvedSub : {usl : DesignUnitSigsList SystemVerilog} -> {subUs : FinsList usl.length} ->
+                     FinsList (totalSubs' usl subUs) -> Maybe (DataType SystemVerilog)
+  firstResolvedSub []        = Nothing
+  firstResolvedSub (f :: fs) = let t = subPortType usl subUs f in
+    if isResolvedNetObj (dtToSVt t) then Just t else firstResolvedSub fs
+
   public export
   typeOf : {l : _} -> {s : _} -> {usl : _} -> {subUs : _} ->
            MultiConnection l s usl subUs -> DataType l
-  typeOf {l = SystemVerilog} mc = if isTop mc then rawTypeOf mc else case isUnpacked (dtToSVt $ rawTypeOf mc) of
-    True  => rawTypeOf mc
-    False => SVT defaultNetType
-  typeOf {l = VHDL}          mc = rawTypeOf mc
+  typeOf {l = SystemVerilog} mc@(MkMC _ _ ssc _) = if isTop mc then rawTypeOf mc else
+    case isUnpacked (dtToSVt $ rawTypeOf mc) of
+      True  => case (hasTwoSources mc, firstResolvedSub ssc) of
+        (True, Just t) => t
+        _              => rawTypeOf mc
+      False => SVT defaultNetType
+  typeOf {l = VHDL} mc = rawTypeOf mc
 
   ||| Find type of port by fin
   public export

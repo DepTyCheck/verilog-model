@@ -1,7 +1,7 @@
 module UnitTest
 
 import Test.Common.DataType
-import Test.Common.Design
+import Test.Common.Multiconnection
 import Test.Verilog.SVType
 
 %default total
