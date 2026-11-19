@@ -1,0 +1,95 @@
+list: issues
+stage: analysis
+profile: vhdl
+target: nvc
+id: crash_access_value_mirror_pt2
+title: Crash due to access_value_mirror_pt №2
+issue_novelty: new
+matching_mode: whole
+regex: |
+  \[.*] ..\/src\/util.c:.* signal_handler.lto_priv.0
+  \[.*] \(\/usr\/lib\/x86_64-linux-gnu\/libc.so.6\) 
+  \[.*] ..\/src\/common.c:.* is_subprogram
+  \[.*] \.\.\/src\/names\.c:.* resolve_selected_name
+  \[.*] \.\.\/src\/names\.c:.* solve_record_ref
+  \[.*] \.\.\/src\/names\.c:.* _solve_types.lto_priv.0
+  \[.*] \.\.\/src\/names\.c:.* solve_types
+  \[.*] \.\.\/src\/names\.c:.* p_type_mark.lto_priv.0
+  \[.*] ..\/src\/parse\.c:.* p_subtype_indication.lto_priv.0
+  \[.*] ..\/src\/parse\.c:.* p_interface_type_indication
+  \[.*] ..\/src\/parse\.c.* p_interface_variable_declaration
+  \[.*] ..\/src\/parse\.c.* p_interface_declaration
+  \[.*] ..\/src\/parse\.c.* p_interface_element
+  \[.*] ..\/src\/parse\.c.* p_interface_list
+  \[.*] ..\/src\/parse\.c.* p_port_list
+  \[.*] ..\/src\/parse\.c.* p_port_clause.lto_priv.0
+  \[.*] ..\/src\/parse\.c.* p_entity_header
+  \[.*] ..\/src\/parse\.c.* p_entity_declaration
+  \[.*] ..\/src\/parse\.c.* p_primary_unit.lto_priv.0
+  \[.*] ..\/src\/parse\.c.* p_library_unit
+  \[.*] ..\/src\/parse\.c.* p_design_unit
+  \[.*] ..\/src\/parse\.c.* parse
+  \[.*] ..\/src\/nvc.c.* analyse_file
+  \[.*] ..\/src\/nvc.c.* analyse
+  \[.*] ..\/src\/nvc.c.* process_command
+  \[.*] ..\/src\/nvc.c.* main
+examples:
+  - crash_access_value_mirror_pt2_ex1:
+      first_found: 19.11.2026
+      full_error: |
+        *** Caught signal 11 (SEGV_MAPERR) [address=(nil), ip=0x57fa46c2f704] ***
+
+        [0x57fa46bbc75d] ../src/util.c:724 signal_handler.lto_priv.0
+        [0x728402447dcf] (/usr/lib/x86_64-linux-gnu/libc.so.6)
+        [0x57fa46c2f704] ../src/common.c:684 is_subprogram
+        [0x57fa46c90ece] ../src/names.c:2451 resolve_selected_name
+        [0x57fa46c90ece] ../src/names.c:4714 solve_record_ref
+        [0x57fa46c90ece] ../src/names.c:5888 _solve_types.lto_priv.0
+        [0x57fa46bcc6fd] ../src/names.c:5935 solve_types
+        [0x57fa46bcc6fd] ../src/names.c:3980 p_type_mark.lto_priv.0
+        [0x57fa46bce9b7] ../src/parse.c:4256 p_subtype_indication.lto_priv.0
+        [0x57fa46bd22ca] ../src/parse.c:5093 p_interface_type_indication
+        [0x57fa46bd4c85] ../src/parse.c:5296 p_interface_variable_declaration
+        [0x57fa46bd4c85] ../src/parse.c:5905 p_interface_declaration
+        [0x57fa46bd4c85] ../src/parse.c:5946 p_interface_element
+        [0x57fa46bd5b53] ../src/parse.c:5970 p_interface_list
+        [0x57fa46bd5ecf] ../src/parse.c:5983 p_port_list
+        [0x57fa46bd5ecf] ../src/parse.c:5995 p_port_clause.lto_priv.0
+        [0x57fa46be3537] ../src/parse.c:6037 p_entity_header
+        [0x57fa46be3537] ../src/parse.c:8717 p_entity_declaration
+        [0x57fa46be3537] ../src/parse.c:9535 p_primary_unit.lto_priv.0
+        [0x57fa46bf0099] ../src/parse.c:13640 p_library_unit
+        [0x57fa46bf0099] ../src/parse.c:13707 p_design_unit
+        [0x57fa46bf0099] ../src/parse.c:13760 parse
+        [0x57fa46baf913] ../src/nvc.c:185 analyse_file
+        [0x57fa46bb4bf7] ../src/nvc.c:449 analyse
+        [0x57fa46bb4bf7] ../src/nvc.c:2580 process_command
+        [0x57fa46bada37] ../src/nvc.c:2759 main
+
+        nvc 1.24-devel (1.23.0.r72.g75da1dd4f) (Using LLVM 21.1.8) [x86_64-pc-linux-gnu]
+
+        Please report this bug at https://github.com/nickg/nvc/issues
+      full_example: |
+        use std.reflection.all;
+
+        entity xythfccnun is
+          port (variable s : inout access_value_mirror_pt);
+        end xythfccnun;
+
+        architecture kbyb of xythfccnun is
+        begin
+        end kbyb;
+
+        entity top is
+        end entity top;
+
+        use std.reflection.all;
+
+        architecture struct of top is
+          shared variable sv : access_value_mirror_pt;
+        begin
+          inst : entity work.xythfccnun
+            port map (
+              s => sv
+            );
+        end architecture struct;
