@@ -78,7 +78,7 @@ tools:
     build: |
       pip3 install orderedmultidict psutil
       git submodule update --init --recursive
-      make -j$(nproc)
+      make -j$(nproc) ADDITIONAL_CMAKE_OPTIONS="-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
     install: |
       sudo apt install -y libgoogle-perftools-dev
       pip3 install orderedmultidict
@@ -119,16 +119,16 @@ tools:
     profile: sv
     repo: https://github.com/chipsalliance/synlig.git
     deps: >-
-      gcc-11 g++-11 build-essential cmake tclsh ant default-jre swig google-perftools
+      gcc-11 g++-11 build-essential cmake tclsh ant default-jre swig
       libgoogle-perftools-dev python3 python3-dev python3-pip uuid uuid-dev tcl-dev flex
       libfl-dev git pkg-config libreadline-dev bison libffi-dev wget python3-orderedmultidict
     path: synlig
     build: |
       git submodule sync
       git submodule update --init --recursive third_party/{surelog,yosys}
-      make -j$(nproc)
+      make -j$(nproc) ADDITIONAL_CMAKE_OPTIONS="-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
     install: |
-      sudo make install -j$(nproc)
+      sudo make install -j$(nproc) ADDITIONAL_CMAKE_OPTIONS="-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
     version: synlig --version
     commands:
       - run: synlig -f systemverilog -o output.blif -S {file}
