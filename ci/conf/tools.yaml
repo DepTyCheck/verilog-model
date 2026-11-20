@@ -126,9 +126,9 @@ tools:
     build: |
       git submodule sync
       git submodule update --init --recursive third_party/{surelog,yosys}
-      make -j$(nproc) ADDITIONAL_CMAKE_OPTIONS="-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+      CMAKE_POLICY_VERSION_MINIMUM=3.5 make CC=gcc-11 CXX=g++-11 -j$(nproc)
     install: |
-      sudo make install -j$(nproc) ADDITIONAL_CMAKE_OPTIONS="-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+      sudo env CMAKE_POLICY_VERSION_MINIMUM=3.5 make CC=gcc-11 CXX=g++-11 install -j$(nproc)
     version: synlig --version
     commands:
       - run: synlig -f systemverilog -o output.blif -S {file}
