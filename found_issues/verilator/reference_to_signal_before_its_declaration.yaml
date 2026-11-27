@@ -1,0 +1,32 @@
+list: issues
+stage: synthesis
+profile: sv
+target: verilator
+id: reference_to_signal_before_its_declaration
+title: Reference to signal before its declaration
+regex: >
+  Reference to signal '.*' before its declaration \(IEEE 1800-2023 6.5\)
+issue_type: bad_message
+issue_novelty: new
+examples:
+  - reference_to_signal_before_its_declaration_ex1:
+      first_found: 26.11.2026
+      full_error: |
+        %Error-USEBEFOREDECL: top.sv:2:14: Reference to signal 'bmstst' before its declaration (IEEE 1800-2023 6.5)
+      full_example: |
+        module nivfrs ();
+          xnor mtexv(bmstst, glozizol, bmstst);
+          nand bez(eexcd, iyvwv, bmstst);
+          nand o(bmstst, ufmprwb, ioed);
+          xor qarcgzwt(ivbrz, gbkdxwzdc, glozizol);
+
+          // Multi-driven assignments
+          assign ivbrz = 'bz01;
+          assign eexcd = ivbrz;
+        endmodule: nivfrs
+
+        module aorvzg (output tri1 logic [1:0][0:1][4:1][4:4] owqdeutf [0:1][1:4], inout triand logic [2:0] dkhzcktuz [0:0][3:0][0:3]);
+          not w(a, f);
+          xnor icadzrxa(a, f, onutkis);
+        endmodule: aorvzg
+
