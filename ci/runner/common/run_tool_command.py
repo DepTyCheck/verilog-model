@@ -2,11 +2,10 @@
 from dataclasses import dataclass, field
 
 from common.command_config import CommandConfig
-from common.command_output import CommandOutput
-from common.error_types import KnownError
-from common.handle_errors import ErrorMatcherProtocol
+from common.ignored_errors_list import IgnoredErrorsList
 from common.per_file_report import MatchRecord
 from common.run_command import ExecutionResult
+from cwm import parse_messages
 
 
 @dataclass
@@ -20,8 +19,7 @@ def analyze_command(
     cmd: str,
     cmd_result: ExecutionResult,
     cmd_config: CommandConfig,
-    ignored_errors: ErrorMatcherProtocol,
-    file_path: str,
+    ignored_errors: IgnoredErrorsList,
     location_regex: str | None = None,
 ) -> CommandResult:
     """
@@ -49,34 +47,14 @@ def analyze_command(
             matches=[MatchRecord(error_id="unknown", matched_text=cmd_result.output)],
         )
 
-    analysis = CommandOutput(cmd_result.output).analyze(
-        ignored_errors_list=ignored_errors,
-        tool_error_regex=cmd_config.error_regex,
-        file_path=file_path,
+    result = parse_messages(
+        cmd_result.output,
+        cmd_config.error_regex.regex,
+        ignored_errors.needles,
         location_regex=location_regex,
+        ignored_regexes=ignored_errors.ignored_regexes,
     )
-
-    matches: list[MatchRecord] = []
-    has_unknown = False
-    seen_ignored_match = False
-
-    for em in analysis.found_matches:
-        err = em.match.error
-        if isinstance(err, KnownError):
-            matches.append(MatchRecord(error_id=err.error_id, matched_text=em.match.matched_text))
-        else:
-            # IgnoredError (extra-regex passthrough) — handled, but not stored in the per-file report.
-            seen_ignored_match = True
-
-    for unexpected in analysis.unexpected_errors:
-        matches.append(MatchRecord(error_id="unknown", matched_text=unexpected.tool_output_error_text))
-        has_unknown = True
-
-    if not matches and not seen_ignored_match:
-        # Tool failed and nothing was extracted by either tool regex or whole-output match —
-        # record the whole output as a single unknown. (Per spec: full output, not an excerpt.)
-        matches.append(MatchRecord(error_id="unknown", matched_text=cmd_result.output))
-        has_unknown = True
-
-    outcome = "unknown" if has_unknown else "known_errors"
+    matches = [MatchRecord(error_id=m.needle_id, matched_text=m.matched_text) for m in result.matches]
+    matches.extend(MatchRecord(error_id="unknown", matched_text=text) for text in result.unmatched_messages)
+    outcome = "unknown" if result.unmatched_messages else "known_errors"
     return CommandResult(command=cmd, outcome=outcome, matches=matches)

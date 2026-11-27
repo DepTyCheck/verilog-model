@@ -34,7 +34,7 @@ def main() -> None:
     report = load_report(args.per_file_input)
     new_errors = _collect_unknowns(report)
 
-    ignored_errors = IgnoredErrorsList(dir_path=args.ignored_errors_dir, tool=args.tool_name)
+    ignored_errors = IgnoredErrorsList.from_directory(dir_path=args.ignored_errors_dir, tool=args.tool_name)
 
     MDSDistancesReport(
         new_errors=new_errors,

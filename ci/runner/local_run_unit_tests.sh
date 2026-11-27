@@ -6,6 +6,8 @@ set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
+python -m pip install -r runner/requirements.txt
+
 PASS=0
 FAIL=0
 

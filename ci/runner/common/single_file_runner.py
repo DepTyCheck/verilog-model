@@ -61,7 +61,6 @@ def run_file(  # pylint: disable=too-many-arguments
                 run_command(cmd, cwd=tmp_dir),
                 cmd_config,
                 known_errors,
-                logical_name if logical_name is not None else tmp_path,
                 location_regex=location_regex,
             )
             results.append(command_result)

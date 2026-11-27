@@ -243,6 +243,10 @@ def step_test_python_units(suites: list[dict]) -> None:
     """Run each discovered suite and track pass/fail per suite."""
     _sep("Step 3 · test-python-units  (each discovered suite)")
 
+    rc, _, stderr = _run([sys.executable, "-m", "pip", "install", "-r", "runner/requirements.txt"])
+    if rc:
+        _abort(f"Runner dependency installation failed: {stderr}")
+
     suite_pass = 0
     suite_fail = 0
 
