@@ -427,7 +427,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          token: ${{ secrets.PAT_PUSH }}
           persist-credentials: false
 
       - name: Set run date
@@ -495,7 +494,7 @@ jobs:
         env:
           BOT_NAME: ${{ steps.bot-details.outputs.name }}
           BOT_EMAIL: ${{ steps.bot-details.outputs.email }}
-          PAT_PUSH: ${{ secrets.PAT_PUSH }}
+          GITHUB_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
           cd "$DATASET_PATH"
@@ -504,7 +503,7 @@ jobs:
           git add files/ issues.csv latest_regression_test.csv latest_run_metadata.json
           git diff --cached --quiet && echo "No changes to commit." && exit 0
           git commit -m "[ bot ] Add dataset $RUN_DATE"
-          git remote set-url origin "https://x-access-token:$PAT_PUSH@github.com/$REPO"
+          git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/$REPO"
           git push origin "$DATASET_BRANCH"
 
   build-and-deploy-site:
@@ -746,7 +745,7 @@ jobs:
   publish-container:
     name: Build and publish Docker image
     needs: [build-and-test, run-tools]
-    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
