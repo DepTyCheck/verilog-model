@@ -10,8 +10,7 @@ class ReproducedIndex:
 
     Inputs:
       - ``regression_dir``: contains ``regression-<tool>-per-file.json`` files.
-      - ``dataset_path``: clone of the dataset branch; YAMLs live under
-        ``found_issues/<tool>/``.
+      - ``known_errors_dir``: directory containing per-tool issue definitions.
 
     Behaviour: for each per-file JSON, infer the tool from ``tool_name``,
     parse the matching ``found_issues/<tool>/`` YAMLs to build a
@@ -23,28 +22,28 @@ class ReproducedIndex:
     Unknown ``error_id`` lookups return ``False``.
     """
 
-    def __init__(self, regression_dir: str | Path, dataset_path: str | Path):
+    def __init__(self, regression_dir: str | Path, known_errors_dir: str | Path):
         self._reproduced: dict[str, bool] = {}
-        self._scan(Path(regression_dir), Path(dataset_path))
+        self._scan(Path(regression_dir), Path(known_errors_dir))
 
     def reproduced(self, error_id: str) -> bool:
         return self._reproduced.get(error_id, False)
 
-    def _scan(self, regression_dir: Path, dataset_path: Path) -> None:
+    def _scan(self, regression_dir: Path, known_errors_dir: Path) -> None:
         if not regression_dir.exists():
             return
         for path in sorted(regression_dir.glob("regression-*-per-file.json")):
-            self._ingest(path, dataset_path)
+            self._ingest(path, known_errors_dir)
 
-    def _ingest(self, path: Path, dataset_path: Path) -> None:
+    def _ingest(self, path: Path, known_errors_dir: Path) -> None:
         report = load_report(path)
-        expected = self._build_expected(dataset_path, report.tool_name)
+        expected = self._build_expected(known_errors_dir, report.tool_name)
         for _parsed, error_id, reproduced in iter_reproductions(report, expected):
             self._reproduced[error_id] = self._reproduced.get(error_id, False) or reproduced
 
     @staticmethod
-    def _build_expected(dataset_path: Path, tool: str) -> dict[tuple[str, str], str]:
-        sub = dataset_path / "found_issues" / tool
+    def _build_expected(known_errors_dir: Path, tool: str) -> dict[tuple[str, str], str]:
+        sub = known_errors_dir / tool
         expected: dict[tuple[str, str], str] = {}
         if not sub.exists():
             return expected

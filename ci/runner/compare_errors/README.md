@@ -7,7 +7,8 @@ column derived from the regression-test artifacts.
 ## Inputs
 
 - **Dataset branch clone** (`--dataset-path`): provides `issues.csv`,
-  `files/`, `legacy_stats.csv`, and `found_issues/`. Aggregated by
+  `files/`, and `legacy_stats.csv`. The checkout supplies `found_issues/`
+  (`--known-errors-dir`). Aggregated by
   `dataset_stats.CombinedReport` into the historical denominator and count
   per `error_id`.
 - **Per-file artifacts** (`--per-file-results-dir`): `<tool>-per-file.json`

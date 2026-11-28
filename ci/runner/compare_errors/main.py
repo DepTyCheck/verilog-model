@@ -22,6 +22,7 @@ def parse_args() -> argparse.Namespace:
         description="Compare per-error_id occurrence percentages between the dataset branch and the current PR.",
     )
     p.add_argument("--dataset-path", required=True, help="Path to a clone of the dataset branch")
+    p.add_argument("--known-errors-dir", default="found_issues", help="Directory containing per-tool issue definitions")
     p.add_argument("--per-file-results-dir", required=True, help="Directory of <tool>-per-file.json artifacts from run-tools")
     p.add_argument("--regression-results-dir", required=True, help="Directory of regression-<tool>-per-file.json artifacts from regression-test")
     p.add_argument(
@@ -39,7 +40,7 @@ def main() -> None:
     root = Path(args.dataset_path)
     issues = IssuesIndex(root / "issues.csv")
     files = FilesIndex(root / "files")
-    first_found = FirstFoundIndex(root / "found_issues")
+    first_found = FirstFoundIndex(Path(args.known_errors_dir))
     legacy = LegacyIndex(root / "legacy_stats.csv")
 
     report = CombinedReport.build(issues=issues, files=files, first_found=first_found, legacy=legacy)
@@ -55,7 +56,7 @@ def main() -> None:
     )
 
     current = CurrentIndex(args.per_file_results_dir)
-    reproduced = ReproducedIndex(args.regression_results_dir, args.dataset_path)
+    reproduced = ReproducedIndex(args.regression_results_dir, args.known_errors_dir)
 
     deltas = ErrorsComparison(historical=historical, current=current, master=master).compare()
     known_errors = {d.error_id: reproduced.reproduced(d.error_id) for d in deltas}

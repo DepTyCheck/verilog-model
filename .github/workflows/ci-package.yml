@@ -31,7 +31,8 @@ env:
   GEN_TESTS_COUNT: 256
   PACKAGE_NAME: verilog-model
   ERROR_DISTANCES_OUT: error_distances.html
-  DATASET_PATH: dataset-clone
+  KNOWN_ISSUES_PATH: found_issues
+  DATASET_CLONE_PATH: dataset-clone
   DATASET_BRANCH: dataset
   KEEP_DIVERSE_URL: https://github.com/DepTyCheck/keep_diverse.git
   KEEP_DIVERSE_BRANCH: experimental/compare_datasets
@@ -210,9 +211,6 @@ jobs:
           } 2>&1 | head -1 || true)
           echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
-      - name: Clone dataset
-        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
-
       - name: Download generated files
         uses: actions/download-artifact@v8
         with:
@@ -229,7 +227,7 @@ jobs:
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           profile: ${{ matrix.tool.profile }}
           input-dir: generated-${{ matrix.tool.profile }}
-          ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
+          ignored-errors-dir: ${{ env.KNOWN_ISSUES_PATH }}/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
           location-regex: ${{ matrix.tool.location_regex || '' }}
@@ -297,15 +295,12 @@ jobs:
           } 2>&1 | head -1 || true)
           echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
-      - name: Clone dataset
-        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
-
       - name: Materialise regression inputs
         env:
           TOOL_PROFILE: ${{ matrix.tool.profile }}
         run: |
           PYTHONPATH=ci/runner python -m regression_input.main \
-            --known-errors-dir "$DATASET_PATH/found_issues" \
+            --known-errors-dir "$KNOWN_ISSUES_PATH" \
             --profile "$TOOL_PROFILE" \
             --profiles-config ci/conf/profiles.yaml \
             --out-dir regression-input
@@ -320,7 +315,7 @@ jobs:
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           profile: ${{ matrix.tool.profile }}
           input-dir: regression-input
-          ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
+          ignored-errors-dir: ${{ env.KNOWN_ISSUES_PATH }}/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
           location-regex: ${{ matrix.tool.location_regex || '' }}
@@ -337,7 +332,7 @@ jobs:
         run: |
           PYTHONPATH=ci/runner python -m regression_analyze.main \
             --per-file-input "regression-$TOOL_NAME-per-file.json" \
-            --known-errors-dir "$DATASET_PATH/found_issues" \
+            --known-errors-dir "$KNOWN_ISSUES_PATH" \
             --tool-name "$TOOL_NAME" \
             --error-url-prefix "https://$REPO_OWNER.github.io/$REPO_NAME/error" \
             >> "$GITHUB_STEP_SUMMARY"
@@ -381,7 +376,7 @@ jobs:
       - name: Install requirements
         run: pip install -r ci/runner/compare_errors/requirements.txt
       - name: Clone dataset branch
-        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
+        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_CLONE_PATH }}
       - name: Download per-file artifacts
         uses: actions/download-artifact@v8
         with:
@@ -406,7 +401,8 @@ jobs:
           REPO_OWNER: ${{ github.repository_owner }}
         run: |
           PYTHONPATH=ci/runner python -m compare_errors.main \
-            --dataset-path "$DATASET_PATH" \
+            --known-errors-dir "$KNOWN_ISSUES_PATH" \
+            --dataset-path "$DATASET_CLONE_PATH" \
             --per-file-results-dir "$PER_FILE_DIR" \
             --regression-results-dir "$REGRESSION_DIR" \
             --master-commit-date "$MASTER_COMMIT_DATE" \
@@ -463,7 +459,7 @@ jobs:
 
       - name: Clone dataset branch
         run: |
-          git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
+          git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_CLONE_PATH }}
 
       - name: Run dataset_builder
         run: |
@@ -471,20 +467,20 @@ jobs:
           PYTHONPATH=ci/runner python -m dataset_builder.main \
             --generated-dirs "${gen_dirs[@]}" \
             --per-file-results-dir "$PER_FILE_DIR" \
-            --dataset-path "$DATASET_PATH" \
+            --dataset-path "$DATASET_CLONE_PATH" \
             --run-date "$RUN_DATE"
 
       - name: Build regression CSV
         run: |
           PYTHONPATH=ci/runner python -m regression_csv.main \
             --regression-results-dir "$REGRESSION_DIR" \
-            --known-errors-dir "$DATASET_PATH/found_issues" \
-            --out-csv "$DATASET_PATH/latest_regression_test.csv"
+            --known-errors-dir "$KNOWN_ISSUES_PATH" \
+            --out-csv "$DATASET_CLONE_PATH/latest_regression_test.csv"
 
       - name: Write run metadata
         run: |
           printf '{\n  "last_regression_test_date": "%s"\n}\n' \
-            "$RUN_ISO_DATE" > "$DATASET_PATH/latest_run_metadata.json"
+            "$RUN_ISO_DATE" > "$DATASET_CLONE_PATH/latest_run_metadata.json"
 
       - name: Bot Details
         id: bot-details
@@ -497,7 +493,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          cd "$DATASET_PATH"
+          cd "$DATASET_CLONE_PATH"
           git config --global user.name "$BOT_NAME"
           git config --global user.email "$BOT_EMAIL"
           git add files/ issues.csv latest_regression_test.csv latest_run_metadata.json
@@ -547,7 +543,7 @@ jobs:
           pip install -e ${{ env.KEEP_DIVERSE_REPO }}/
 
       - name: Clone dataset branch
-        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
+        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_CLONE_PATH }}
 
       - name: Install resolve_profile requirements
         run: pip install -r ci/scripts/requirements.txt
@@ -558,7 +554,7 @@ jobs:
       - name: Copy dataset files
         run: |
           mkdir -p dataset-files
-          find "${{ env.DATASET_PATH }}/files" -name "$FILE_PATTERN" -exec cp {} dataset-files/ \;
+          find "${{ env.DATASET_CLONE_PATH }}/files" -name "$FILE_PATTERN" -exec cp {} dataset-files/ \;
 
       - name: Filter files
         run: |
@@ -649,9 +645,6 @@ jobs:
           } 2>&1 | head -1 || true)
           echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
-      - name: Clone dataset
-        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
-
       - name: Download filtered files
         uses: actions/download-artifact@v8
         with:
@@ -668,7 +661,7 @@ jobs:
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           profile: ${{ matrix.tool.profile }}
           input-dir: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.profile }}
-          ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
+          ignored-errors-dir: ${{ env.KNOWN_ISSUES_PATH }}/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
           location-regex: ${{ matrix.tool.location_regex || '' }}
@@ -702,7 +695,7 @@ jobs:
         run: pip install -r ci/runner/compare_errors/requirements.txt
 
       - name: Clone dataset branch
-        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
+        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_CLONE_PATH }}
 
       - name: Download filtered per-file artifacts
         uses: actions/download-artifact@v8
@@ -735,7 +728,8 @@ jobs:
           REPO_OWNER: ${{ github.repository_owner }}
         run: |
           PYTHONPATH=ci/runner python -m compare_errors.main \
-            --dataset-path "$DATASET_PATH" \
+            --known-errors-dir "$KNOWN_ISSUES_PATH" \
+            --dataset-path "$DATASET_CLONE_PATH" \
             --per-file-results-dir "$PER_FILE_DIR" \
             --regression-results-dir "$REGRESSION_DIR" \
             --master-commit-date "$MASTER_COMMIT_DATE" \

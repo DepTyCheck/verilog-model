@@ -1,0 +1,189 @@
+list: issues
+stage: parsing
+profile: sv
+target: sv-elab
+id: abort_tristate
+title: Abort due to tristate
+issue_novelty: new
+regex: >
+  Assert `false && "unreachable"' failed in .*slang_frontend\.cc:.*
+issue_type:
+  - crash
+  - bad_message
+examples:
+  - abort_tristate_ex1:
+      first_found: 07.04.2026
+      minified_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2627
+      minified_example: |
+        module a();
+          tri0 logic b;
+        endmodule: a
+      full_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2627
+      full_example: |
+        module wqsy
+          ( output tri1 logic [0:0] bjztr [1:3][4:0][4:3][3:4]
+          , input supply0 logic kfwudamn [3:4][4:1][2:0][0:4]
+          , input logic [2:2] rbkvferiqg [0:3]
+          );
+
+          xor ozc(yqqmr, s, s);
+          not uy(eaxc, yqqmr);
+
+        endmodule: wqsy
+
+  - abort_tristate_ex2:
+      first_found: 23.04.2026
+      minified_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2629.
+      minified_example: |
+        module p (output tri0 logic worel);
+        endmodule: p
+      full_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2629
+      full_example: |
+        module p (output tri0 logic worel [3:1][2:2][2:4][3:4]);
+
+          not gayrbsoe(uutasc, agdueqz);
+          xnor bbksamgz(uutasc, uutasc, uutasc);
+          xnor eiavuq(uutasc, yjhdklqt, yjhdklqt);
+          or bnfykmpnt(yszvl, oquqrtkbq, uzovrilu);
+
+          // Multi-driven assigns
+          assign yszvl = yjhdklqt;
+          assign oquqrtkbq = 'b11x;
+        endmodule: p
+
+        module avjbg ( input triand logic [1:0][2:3][1:4] wox [3:4][3:0][1:0][1:3]
+                    , input triand logic [3:0][3:3][2:4][3:4] j [0:4]
+                    , inout trior logic [1:0] hdelnr [0:0][4:3][4:1][3:3]
+                    , inout wand logic [0:4][3:4] gg [2:4][2:2][3:2]
+                    );
+
+          nand fabbahwbn(ywigojoe, isvsyica, ywigojoe);
+
+          // Multi-driven assigns
+          assign j = j;
+        endmodule: avjbg
+
+  - abort_tristate_ex3:
+      first_found: 25.04.2026
+      full_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2654
+      full_example: |
+        module a ();
+
+          not cdhs(qr, qr);
+
+        endmodule: a
+
+        module gj (inout wire logic [1:0][3:0] mn [3:1][3:2][1:4]);
+
+          // Multi-driven assigns
+          assign mn = mn;
+        endmodule: gj
+
+        module tayibb (output trireg logic [2:2][4:0][0:2] wjaqyzx, output trior logic [4:0][2:1][1:1] fedaxb [2:2][2:2][1:4]);
+
+          xor wqxghuyy(wjaqyzx, njntdh, mtbzoyukpm);
+          not gwswmmvdj(muq, npkh);
+          xor thqzexi(njntdh, njntdh, ci);
+          xor mp(bsqdouv, wjaqyzx, u);
+
+          // Multi-driven assigns
+          assign muq = u;
+          assign wjaqyzx = wjaqyzx;
+        endmodule: tayibb
+
+  - abort_tristate_ex4:
+      first_found: 08.05.2026
+      minified_error: |
+        ERROR: Abort in /yosys-slang/src/slang_frontend.cc:2659.
+      minified_example: |
+        module vjjqa (inout tri1 logic aqhljy [1:0]);
+        endmodule: vjjqa
+      full_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2659.
+      full_example: |
+        module bxsooh ();
+
+          not lvmsc(f, f);
+          or qlhsoij(f, rvqvflwwuh, xq);
+          xnor skhsv(fsckaf, maabslzovd, f);
+
+          // Multi-driven assigns
+          assign xq = 'b0z;
+        endmodule: bxsooh
+
+        module vjjqa ( inout tri logic cg [2:0][0:2]
+                    , inout tri1 logic aqhljy [1:0]
+                    , input triand logic [4:1] u [4:1][2:2][4:2]
+                    , output reg [0:3] hillwiofpq [1:3]
+                    );
+
+          or vtwot(joymcjkqt, joymcjkqt, joymcjkqt);
+          xnor fdnvn(joymcjkqt, joymcjkqt, joymcjkqt);
+
+          // Single-driven assigns
+          assign hillwiofpq = '{'{'b111x,'b1z,'bz01x,'bxz010},'{'bz01,'b1x10,'b10z,'b1},'{'bzzz,'b01,'bzz00,'b01xxx}};
+
+          // Multi-driven assigns
+          assign u = u;
+        endmodule: vjjqa
+
+        module ek ();
+
+          xnor hoffodpzwq(ueps, zs, zs);
+          xnor xrreb(zs, ueps, ij);
+          xnor yiqbbjp(n, ueps, isgzwwkssk);
+          xnor vmn(ij, odao, ueps);
+
+        endmodule: ek
+
+        module fnhy ();
+
+          bxsooh uklgdfgt();
+          not cnoygj(ryizgbi, cmesns);
+          bxsooh urz();
+
+          // Multi-driven assigns
+          assign cmesns = 'b1zx0;
+          assign ryizgbi = 'bx;
+        endmodule: fnhy
+  - abort_tristate_ex5:
+      first_found: 12.05.2026
+      full_error: |
+        ERROR: Abort in /home/runner/work/verilog-model/verilog-model/yosys-slang/src/slang_frontend.cc:2700.
+      full_example: |
+        module smgyuiatg (inout tri0 logic [3:2][1:1][1:4][0:4] jp [1:4][2:2][0:1]);
+
+          xor nuy(sbvfmivowv, knulj, ofzjhcde);
+          or gucgqrti(sbvfmivowv, fib, knulj);
+
+          // Multi-driven assigns
+          assign sbvfmivowv = 'b1;
+          assign jp = jp;
+          assign knulj = sbvfmivowv;
+        endmodule: smgyuiatg
+
+        module kjprlt ( inout wor logic [0:4][2:0] askj [1:3]
+                      , output logic bjnqkmwn
+                      , inout supply1 logic [3:3][1:2][3:4][2:4] adzys [4:4][1:4][1:1]
+                      , inout tri0 logic [2:3][1:0] kx [4:1][1:2]
+                      );
+          // Unpacked net declarations
+          tri0 logic [3:2][1:1][1:4][0:4] n [1:4][2:2][0:1];
+
+          smgyuiatg lizfoi(.jp(n));
+          or lp(bjnqkmwn, mspttbro, rlrydycjuf);
+
+        endmodule: kjprlt
+  - abort_tristate_ex6:
+      first_found: 08.10.2026
+      minified_error: |
+        ERROR: Assert `false && "unreachable"' failed in /home/runner/work/verilog-model/verilog-model/sv-elab/src/slang_frontend.cc:3247.
+      minified_example: |
+        module a();
+          tri0 logic b;
+        endmodule: a
