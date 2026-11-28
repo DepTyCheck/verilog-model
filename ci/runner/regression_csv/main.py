@@ -3,7 +3,7 @@
 
 Inputs:
   --regression-results-dir : dir of regression-<tool>-per-file.json files.
-  --known-errors-dir       : root of found_issues/ on the dataset branch clone.
+  --known-errors-dir       : root of found_issues/ in the current checkout.
   --out-csv                : destination path; overwritten if rows exist.
 
 Behaviour:

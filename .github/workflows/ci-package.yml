@@ -210,9 +210,6 @@ jobs:
           } 2>&1 | head -1 || true)
           echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
-      - name: Clone dataset
-        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
-
       - name: Download generated files
         uses: actions/download-artifact@v8
         with:
@@ -229,7 +226,7 @@ jobs:
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           profile: ${{ matrix.tool.profile }}
           input-dir: generated-${{ matrix.tool.profile }}
-          ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
+          ignored-errors-dir: found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
           location-regex: ${{ matrix.tool.location_regex || '' }}
@@ -297,15 +294,12 @@ jobs:
           } 2>&1 | head -1 || true)
           echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
-      - name: Clone dataset
-        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
-
       - name: Materialise regression inputs
         env:
           TOOL_PROFILE: ${{ matrix.tool.profile }}
         run: |
           PYTHONPATH=ci/runner python -m regression_input.main \
-            --known-errors-dir "$DATASET_PATH/found_issues" \
+            --known-errors-dir "found_issues" \
             --profile "$TOOL_PROFILE" \
             --profiles-config ci/conf/profiles.yaml \
             --out-dir regression-input
@@ -320,7 +314,7 @@ jobs:
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           profile: ${{ matrix.tool.profile }}
           input-dir: regression-input
-          ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
+          ignored-errors-dir: found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
           location-regex: ${{ matrix.tool.location_regex || '' }}
@@ -337,7 +331,7 @@ jobs:
         run: |
           PYTHONPATH=ci/runner python -m regression_analyze.main \
             --per-file-input "regression-$TOOL_NAME-per-file.json" \
-            --known-errors-dir "$DATASET_PATH/found_issues" \
+            --known-errors-dir "found_issues" \
             --tool-name "$TOOL_NAME" \
             --error-url-prefix "https://$REPO_OWNER.github.io/$REPO_NAME/error" \
             >> "$GITHUB_STEP_SUMMARY"
@@ -478,7 +472,7 @@ jobs:
         run: |
           PYTHONPATH=ci/runner python -m regression_csv.main \
             --regression-results-dir "$REGRESSION_DIR" \
-            --known-errors-dir "$DATASET_PATH/found_issues" \
+            --known-errors-dir "found_issues" \
             --out-csv "$DATASET_PATH/latest_regression_test.csv"
 
       - name: Write run metadata
@@ -649,9 +643,6 @@ jobs:
           } 2>&1 | head -1 || true)
           echo "TOOL_VERSION=$out" >> "$GITHUB_ENV"
 
-      - name: Clone dataset
-        run: git clone https://github.com/${{ github.repository }}.git --branch ${{ env.DATASET_BRANCH }} --single-branch ${{ env.DATASET_PATH }}
-
       - name: Download filtered files
         uses: actions/download-artifact@v8
         with:
@@ -668,7 +659,7 @@ jobs:
           commands-json: ${{ toJSON(matrix.tool.commands) }}
           profile: ${{ matrix.tool.profile }}
           input-dir: ${{ env.FILTERED_DIR_PATTERN }}${{ matrix.tool.profile }}
-          ignored-errors-dir: ${{ env.DATASET_PATH }}/found_issues/${{ matrix.tool.path }}
+          ignored-errors-dir: found_issues/${{ matrix.tool.path }}
           assets: ${{ matrix.tool.assets }}
           extra-ignored-regexes: ${{ matrix.tool.extra_ignored_regexes }}
           location-regex: ${{ matrix.tool.location_regex || '' }}

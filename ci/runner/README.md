@@ -34,7 +34,7 @@ Combine legacy stats with modern.
 PYTHONPATH=ci/runner python -m dataset_stats.main \
     --issues-csv debug_dataset/issues.csv \
     --files-dir debug_dataset/files \
-    --found-issues-dir debug_dataset/found_issues \
+    --found-issues-dir found_issues \
     --legacy-stats-csv debug_dataset/legacy_stats.csv \
     --output combined_stats.csv
 ```

@@ -14,7 +14,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--found-issues-dir",
         required=True,
-        help="Path to dataset/found_issues directory containing tool subdirs of yaml files",
+        help="Path to found_issues directory containing tool subdirs of yaml files",
     )
     p.add_argument(
         "--legacy-stats-csv",

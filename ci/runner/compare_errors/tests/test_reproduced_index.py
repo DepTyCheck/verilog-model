@@ -39,7 +39,7 @@ class TestReproducedIndex(unittest.TestCase):
                     make_file("ex1-full.sv", ("err_a", "boom")),  # reproduced
                 ],
             )
-            idx = ReproducedIndex(regression_dir, dataset)
+            idx = ReproducedIndex(regression_dir, dataset / "found_issues")
         self.assertTrue(idx.reproduced("err_a"))
 
     def test_not_reproduced_when_no_example_matches(self):
@@ -53,19 +53,19 @@ class TestReproducedIndex(unittest.TestCase):
                     make_file("ex1-minified.sv", ("err_b", "wrong")),  # wrong id
                 ],
             )
-            idx = ReproducedIndex(regression_dir, dataset)
+            idx = ReproducedIndex(regression_dir, dataset / "found_issues")
         self.assertFalse(idx.reproduced("err_a"))
 
     def test_unknown_error_id_returns_false(self):
         with _scenario() as (regression_dir, dataset):
             write_yaml(dataset, "tool_a", "err_a", "sv", [("ex1", "minified")])
             _write_regression_per_file(regression_dir, "tool_a", "", [make_file("ex1-minified.sv")])
-            idx = ReproducedIndex(regression_dir, dataset)
+            idx = ReproducedIndex(regression_dir, dataset / "found_issues")
         self.assertFalse(idx.reproduced("not_in_dataset"))
 
     def test_empty_regression_dir_returns_false_for_everything(self):
         with _scenario() as (regression_dir, dataset):
-            idx = ReproducedIndex(regression_dir, dataset)
+            idx = ReproducedIndex(regression_dir, dataset / "found_issues")
         self.assertFalse(idx.reproduced("anything"))
 
     def test_files_for_unmapped_pair_skipped(self):
@@ -81,7 +81,7 @@ class TestReproducedIndex(unittest.TestCase):
                     make_file("ghost-minified.sv", ("err_b", "boom")),
                 ],
             )
-            idx = ReproducedIndex(regression_dir, dataset)
+            idx = ReproducedIndex(regression_dir, dataset / "found_issues")
         self.assertFalse(idx.reproduced("err_a"))
         self.assertFalse(idx.reproduced("err_b"))
 
@@ -107,7 +107,7 @@ class TestReproducedIndex(unittest.TestCase):
                     make_file("ex2-full.vhdl"),  # no match -> not reproduced
                 ],
             )
-            idx = ReproducedIndex(regression_dir, dataset)
+            idx = ReproducedIndex(regression_dir, dataset / "found_issues")
         self.assertTrue(idx.reproduced("err_a"))
         self.assertFalse(idx.reproduced("err_b"))
 
@@ -131,5 +131,5 @@ class TestReproducedIndex(unittest.TestCase):
                     make_file("ex1-minified.sv", ("err_a", "boom")),  # reproduced
                 ],
             )
-            idx = ReproducedIndex(regression_dir, dataset)
+            idx = ReproducedIndex(regression_dir, dataset / "found_issues")
         self.assertTrue(idx.reproduced("err_a"))
