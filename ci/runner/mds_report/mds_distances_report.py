@@ -39,7 +39,7 @@ class MDSDistancesReport:
         self.job_link = job_link
 
     def save(self, output_path: str = "error_distances.html") -> None:
-        nodes_text = [e.error_text for e in self.new_errors] + [ke.pattern for ke in self.ignored_errors.errors()]
+        nodes_text = [e.error_text for e in self.new_errors] + [ke.regex for ke in self.ignored_errors.needles]
         if len(nodes_text) < 2:
             print_pretty(["Not enough errors to plot MDS."])
             return
@@ -48,7 +48,7 @@ class MDSDistancesReport:
 
     def _plot(self, distances: dict[tuple[int, int], float], output_path: str) -> None:
         n_found = len(self.new_errors)
-        n_known = len(self.ignored_errors.errors())
+        n_known = len(self.ignored_errors.needles)
         n_total = n_found + n_known
 
         dist_matrix = np.zeros((n_total, n_total))
@@ -108,9 +108,9 @@ class MDSDistancesReport:
 
     def _known_trace(self, x, y) -> go.Scatter:
         n_found = len(self.new_errors)
-        known = self.ignored_errors.errors()
-        labels = [ke.error_id for ke in known]
-        hover = [f"Known: {ke.error_id}<br>Pattern: {ke.pattern}" for ke in known]
+        known = self.ignored_errors.needles
+        labels = [ke.id for ke in known]
+        hover = [f"Known: {ke.id}<br>Pattern: {ke.regex}" for ke in known]
         return go.Scatter(
             x=x[n_found:],
             y=y[n_found:],

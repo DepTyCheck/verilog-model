@@ -136,6 +136,9 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
+      - name: Install runner dependencies
+        if: matrix.suite.name == 'common' || matrix.suite.name == 'mds_report'
+        run: python -m pip install -r ci/runner/runner/requirements.txt
       - name: Install requirements
         if: ${{ matrix.suite.requirements }}
         env:

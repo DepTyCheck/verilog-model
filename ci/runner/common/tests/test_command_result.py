@@ -61,19 +61,31 @@ class TestAnalyzeCommand(unittest.TestCase):
             self._exec(output=output),
             self._path_line_cfg(),
             ignored,
-            "/tmp/x.sv",
             location_regex=_LOCATION_REGEX,
         )
 
+    def test_repeated_hits_survive_whole_fallback(self):
+        usual = _known_error("u", "known")
+        whole = _known_error("w", "summary")
+        whole.mode = MatchingMode.WHOLE
+        result = analyze_command(
+            "tool",
+            self._exec("error known\nerror known\nerror other\nsummary"),
+            CommandConfig(run="tool", error_regex=ToolErrorRegex("error .*")),
+            IgnoredErrorsList.from_error_files([usual, whole]),
+        )
+        self.assertEqual(result.outcome, "known_errors")
+        self.assertEqual([(m.error_id, m.matched_text) for m in result.matches], [("u", "known"), ("u", "known"), ("w", "summary")])
+
     def test_timeout_outcome(self):
         cmd_cfg = CommandConfig(run="tool {file}", error_regex=ToolErrorRegex("error: .*"))
-        result = analyze_command("tool /tmp/x.sv", self._exec(timed_out=True), cmd_cfg, IgnoredErrorsList.from_patterns([]), "/tmp/x.sv")
+        result = analyze_command("tool /tmp/x.sv", self._exec(timed_out=True), cmd_cfg, IgnoredErrorsList.from_patterns([]))
         self.assertEqual(result.outcome, "timeout")
         self.assertEqual(result.matches, [])
 
     def test_clean_outcome(self):
         cmd_cfg = CommandConfig(run="tool {file}", error_regex=ToolErrorRegex("error: .*"))
-        result = analyze_command("tool /tmp/x.sv", self._exec(ok=True), cmd_cfg, IgnoredErrorsList.from_patterns([]), "/tmp/x.sv")
+        result = analyze_command("tool /tmp/x.sv", self._exec(ok=True), cmd_cfg, IgnoredErrorsList.from_patterns([]))
         self.assertEqual(result.outcome, "clean")
         self.assertEqual(result.matches, [])
 
@@ -81,7 +93,7 @@ class TestAnalyzeCommand(unittest.TestCase):
         """Per spec: with no regex configured, the whole tool output goes into matched_text."""
         full_output = "line one\nline two\nline three\nline four"
         cmd_cfg = CommandConfig(run="tool {file}", error_regex=None)
-        result = analyze_command("tool /tmp/x.sv", self._exec(output=full_output), cmd_cfg, IgnoredErrorsList.from_patterns([]), "/tmp/x.sv")
+        result = analyze_command("tool /tmp/x.sv", self._exec(output=full_output), cmd_cfg, IgnoredErrorsList.from_patterns([]))
         self.assertEqual(result.outcome, "unknown")
         self.assertEqual(len(result.matches), 1)
         self.assertEqual(result.matches[0].error_id, "unknown")
@@ -96,7 +108,6 @@ class TestAnalyzeCommand(unittest.TestCase):
             self._exec(output="error: syntax error\n"),
             cmd_cfg,
             ignored,
-            "/tmp/x.sv",
         )
         self.assertEqual(result.outcome, "known_errors")
         self.assertEqual(len(result.matches), 1)
@@ -117,7 +128,6 @@ class TestAnalyzeCommand(unittest.TestCase):
             self._exec(output="error: ignorable thing\n"),
             cmd_cfg,
             ignored,
-            "/tmp/x.sv",
         )
         self.assertEqual(result.outcome, "known_errors")
         self.assertEqual(result.matches, [])
@@ -130,7 +140,6 @@ class TestAnalyzeCommand(unittest.TestCase):
             self._exec(output="some other failure\n"),
             cmd_cfg,
             ignored,
-            "/tmp/x.sv",
         )
         self.assertEqual(result.outcome, "unknown")
         self.assertEqual(len(result.matches), 1)

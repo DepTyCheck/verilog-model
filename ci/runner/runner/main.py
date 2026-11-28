@@ -67,6 +67,7 @@ def _log_run_inputs(args, asset_paths, extra_ignored_regexes, commands, location
 
 def main() -> None:
     configure_logger(level=logging.DEBUG)
+    configure_logger(name="cwm", level=logging.DEBUG)
     args = parse_args()
     logger = get_logger()
 
@@ -74,7 +75,7 @@ def main() -> None:
     asset_paths = shlex.split(args.assets)
     location_regex = args.location_regex or None
 
-    known_errors = IgnoredErrorsList(
+    known_errors = IgnoredErrorsList.from_directory(
         args.ignored_errors_dir,
         args.tool_name,
         regex_list=extra_ignored_regexes,

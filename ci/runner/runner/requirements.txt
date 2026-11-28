@@ -1,1 +1,2 @@
 PyYAML
+cwm @ git+https://github.com/DepTyCheck/cwm.git@febe1701aefc22c93eddd419a3cc1746b35a6cdc
